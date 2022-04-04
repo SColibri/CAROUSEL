@@ -12,4 +12,4 @@ sudo get-apt install
 - Matcalc 6.0 with valid license https://www.matcalc.at/
 
 # How to use
-This framework is currently under construction, this will updated soon.
+This framework is currently under construction, this will updated soon...
