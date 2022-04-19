@@ -1,0 +1,13 @@
+﻿# CMakeList.txt : CMake project for AMCore, include source and define
+# project specific logic here.
+#
+cmake_minimum_required (VERSION 3.8)
+project(AM_MATCALC_Lib VERSION 1.0.1 DESCRIPTION "AMFramework library using matcalc APIs")
+
+# Add source to this project's executable.
+file(GLOB AM_MATCALC_LIB_SRC "src/*.cpp")
+file(GLOB AM_MATCALC_LIB_H "include/*.hpp")
+
+add_library(AM_MATCALC_Lib STATIC AM_API_Matcalc.cpp AM_API_Matcalc.h ${AM_MATCALC_LIB_SRC} ${AM_MATCALC_LIB_H})
+
+# TODO: Add tests and install targets if needed.
