@@ -59,17 +59,20 @@ public:
 	// setters-getters
 	// ---------------------------------------------
 
+	std::string get_filename();
+
 
 	AM_FileManagement& get_fileManagement(); 
-	void set_mainPath(std::string mainPath);
-
+	void set_mainPath(std::string mainPath); 
+	void set_config_name(std::string newName); // sets a new name for the config file
+	
 	// --------------------------------------------
 	// END
 
 	// Interfaces
 	// --------------------------------------------
 	
-	// IStringify
+	// IStringify - IMPLEMENTATION
 	std::string get_save_string();
 	void load_string(std::ifstream& save_string);
 

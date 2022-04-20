@@ -9,6 +9,7 @@ AM_Config::AM_Config()
 
 AM_Config::AM_Config(std::string filename)
 {
+	load(filename);
 }
 
 AM_Config::~AM_Config()
@@ -17,10 +18,18 @@ AM_Config::~AM_Config()
 
 void AM_Config::save()
 {
+	_fileManagement.save_file(AM_FileManagement::FILEPATH::GENERAL,
+							  Name + ".config",
+							  get_save_string());
 }
 
 void AM_Config::load(std::string filename)
 {
+	std::ifstream streamF;
+	streamF.open(filename);
+
+	load_string(streamF);
+	streamF.close();
 }
 
 AM_FileManagement& AM_Config::get_fileManagement()
@@ -28,8 +37,18 @@ AM_FileManagement& AM_Config::get_fileManagement()
 	return _fileManagement;
 }
 
+std::string AM_Config::get_filename()
+{
+	return _fileManagement.get_filePath(AM_FileManagement::FILEPATH::GENERAL) + Name + ".config";
+}
+
 void AM_Config::set_mainPath(std::string mainPath)
 {
+}
+
+void AM_Config::set_config_name(std::string newName)
+{
+	Name = newName;
 }
 
 

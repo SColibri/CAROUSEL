@@ -12,7 +12,7 @@
 class AM_FileManagement:IStringify {
 	public:
 
-		enum FILEPATH{NONE};
+		enum FILEPATH{NONE, GENERAL};
 		std::string TestName{ "Namey" };
 
 		//Methods
@@ -39,11 +39,6 @@ class AM_FileManagement:IStringify {
 		/// <param name="option_"></param>
 		/// <returns></returns>
 		std::string get_filePath(FILEPATH option_);
-
-		template<typename T>
-		void save(const T& classData, std::string filename);
-
-
 
 		//-----------------------------------------------
 		//END

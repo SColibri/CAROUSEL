@@ -4,23 +4,20 @@
 #include <sstream>
 
 std::string AM_FileManagement::save_file(FILEPATH option_, std::string filename, std::string content) {
-	return "";
+	std::ofstream class_file;
+	std::string Save01 = content;
+	std::string fullFileName = get_filePath(option_) + filename;
+
+	class_file.open(fullFileName);
+	class_file << content;
+	class_file.close();
+
+	return fullFileName;
 }
 
 std::string AM_FileManagement::get_filePath(FILEPATH option_)
 {
 	return std::string();
-}
-
-template<typename T>
-inline void AM_FileManagement::save(const T& classData, std::string filename)
-{
-	std::ofstream class_file;
-
-	class_file.open(filename, std::ios::app);
-	class_file.write((char*)&classData, sizeof(classData));
-	class_file.close();
-
 }
 
 // Interfaces ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
