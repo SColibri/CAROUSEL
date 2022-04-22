@@ -1,4 +1,4 @@
-#include "../IAM_API.h"
+#include "../../AMLib/interfaces/IAM_API.h"
 
 /** \defgroup AM_API_lib
  *  @{
@@ -9,7 +9,7 @@
  /** \addtogroup AM_API_lib
   *  @{
   */
-class AM_API_Matcalc : IAMAPI {
+class AM_API_Matcalc : IAM_API {
 
 	AM_API_Matcalc();
 	~AM_API_Matcalc();

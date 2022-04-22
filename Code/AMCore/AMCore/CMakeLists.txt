@@ -13,8 +13,9 @@ file(GLOB AMLIBRARY "../AMLib/include/*.hpp")
 #add_library(matcalc STATIC IMPORTED "C:/Program Files/MatCalc 6/mc_core.dll")
 #set_target_properties(matcalc PROPERTIES LINKER_LANGUAGE C IMPORTED_LOCATION "C:/Program Files/MatCalc 6/mc_core.lib")
 
-add_executable (AMCore "AMCore.cpp" "AMCore.h"  ${AMCORE_SRC} ${AMCORE_H} ${AMLIBRARY})
+add_executable (AMCore "AMCore.cpp" "AMCore.h"  ${AMCORE_SRC} ${AMCORE_H} ${AMLIBRARY}  )
 #target_link_libraries(AMCore matcalc)
 target_link_libraries(AMCore AMLib) 
+target_link_libraries(AMCore sqlite3) 
 
 # TODO: Add tests and install targets if needed.

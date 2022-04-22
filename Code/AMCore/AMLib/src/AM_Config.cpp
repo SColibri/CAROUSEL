@@ -3,91 +3,116 @@
 #include <vector>
 #include <fstream>
 
-AM_Config::AM_Config()
-{
-}
+// Constructors, destructors and other
+// -------------------------------------------------------------------------------------
+#pragma region Cons_Des
+	AM_Config::AM_Config()
+	{
+	}
 
-AM_Config::AM_Config(std::string filename)
-{
-	load(filename);
-}
+	AM_Config::AM_Config(std::string filename)
+	{
+		load(filename);
+	}
 
-AM_Config::~AM_Config()
-{
-}
+	AM_Config::~AM_Config()
+	{
+	}
 
-void AM_Config::save()
-{
-	_fileManagement.save_file(AM_FileManagement::FILEPATH::GENERAL,
-							  Name + ".config",
-							  get_save_string());
-}
+#pragma endregion Cons_Des
 
-void AM_Config::load(std::string filename)
-{
-	std::ifstream streamF;
-	streamF.open(filename);
+// Methods
+// -------------------------------------------------------------------------------------
+#pragma region Methods
+	void AM_Config::save()
+	{
+		_fileManagement.save_file(AM_FileManagement::FILEPATH::GENERAL,
+								  Name + ".config",
+								  get_save_string());
+	}
 
-	load_string(streamF);
-	streamF.close();
-}
+	void AM_Config::load(std::string filename)
+	{
+		std::ifstream streamF;
+		streamF.open(filename);
 
-AM_FileManagement& AM_Config::get_fileManagement()
-{
-	return _fileManagement;
-}
+		load_string(streamF);
+		streamF.close();
+	}
+#pragma endregion Methods
 
-std::string AM_Config::get_filename()
-{
-	return _fileManagement.get_filePath(AM_FileManagement::FILEPATH::GENERAL) + Name + ".config";
-}
+// Getters and setters
+// -------------------------------------------------------------------------------------
+#pragma region Getters_Setters
+	std::string AM_Config::get_filename()
+	{
+		return _fileManagement.get_filePath(workingDirectoryOption) + Name + ".config";
+	}
 
-void AM_Config::set_mainPath(std::string mainPath)
-{
-}
+	void AM_Config::set_working_directory(std::string mainPath)
+	{
+	}
 
-void AM_Config::set_config_name(std::string newName)
-{
-	Name = newName;
-}
+	const std::string AM_Config::get_working_directory()
+	{
+		return _fileManagement.get_filePath(workingDirectoryOption);
+	}
 
+	void AM_Config::set_config_name(std::string newName)
+	{
+		Name = newName;
+	}
 
+	void AM_Config::set_workingDirectory_option(AM_FileManagement::FILEPATH newOption)
+	{
+		workingDirectoryOption = newOption;
+	}
 
-// Interfaces ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	AM_FileManagement::FILEPATH AM_Config::get_workingDirectory_option()
+	{
+		return workingDirectoryOption;
+	}
+#pragma endregion Getters_Setters
 
-std::string AM_Config::get_save_string()
-{
-	std::stringstream ss;
+// Interfaces
+// -------------------------------------------------------------------------------------
+#pragma region Interfaces
+
+	std::string AM_Config::get_save_string()
+	{
+		std::stringstream ss;
 	
-	ss << "#*** AMFramework config file ****\n";
-	ss << "*********************************\n";
-	ss << "\n";
-	ss << "Name" << separatorChar << Name;
-	ss << "\n";
-	ss << _fileManagement.get_save_string();
-	ss << "\n";
-	ss << "END\n";
+		ss << "#*** AMFramework config file ****\n";
+		ss << "*********************************\n";
+		ss << "\n";
+		ss << "Name" << separatorChar << Name;
+		ss << "\n";
+		ss << _fileManagement.get_save_string();
+		ss << "\n";
+		ss << "END\n";
 
-	return ss.str();
-}
+		return ss.str();
+	}
 
-void AM_Config::load_string(std::ifstream& save_string)
-{
-	if (save_string.is_open()) {
-		std::string var, var2{ "" };
-		while (!save_string.eof() && save_string.good()) {
-			std::getline(save_string, var);
-			if (var[0] == '#') { // find headers
-				if (var.find("AM_FileManagement") != std::string::npos) {
-					_fileManagement.load_string(save_string);
+	void AM_Config::load_string(std::ifstream& save_string)
+	{
+		if (save_string.is_open()) {
+			std::string var, var2{ "" };
+			while (!save_string.eof() && save_string.good()) {
+				std::getline(save_string, var);
+				if (var[0] == '#') { // find headers
+					if (var.find("AM_FileManagement") != std::string::npos) {
+						_fileManagement.load_string(save_string);
+					}
 				}
-			}
-			else {
-				if (var.find("Name") != std::string::npos) {
-					Name = var.substr(var.find(separatorChar) + 1);
+				else {
+					if (var.find("Name") != std::string::npos) {
+						Name = var.substr(var.find(separatorChar) + 1);
+					}
 				}
 			}
 		}
+
 	}
 
-}
+#pragma endregion Interfaces
