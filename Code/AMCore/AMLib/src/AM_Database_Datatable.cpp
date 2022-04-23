@@ -2,6 +2,8 @@
 #include <exception>
 #include <algorithm>
 
+// Constructors, destructors and other
+// -------------------------------------------------------------------------------------
 #pragma region Des_Con
 	AM_Database_Datatable::AM_Database_Datatable(AM_Database* DB, AM_Database_TableStruct* TS):
 							_tableStruct(TS),_db(DB){}
@@ -9,6 +11,8 @@
 	AM_Database_Datatable::~AM_Database_Datatable() {}
 #pragma endregion Des_Con
 
+// Overloading
+// -------------------------------------------------------------------------------------
 #pragma region over
 	std::string& AM_Database_Datatable::operator()(int column, int row) 
 	{
@@ -23,6 +27,8 @@
 	}
 #pragma endregion over
 
+// Methods
+// -------------------------------------------------------------------------------------
 #pragma region Methods
 
 	void AM_Database_Datatable::load_data()
@@ -101,6 +107,8 @@
 	}
 #pragma endregion Methods
 
+// Getters and setters
+// -------------------------------------------------------------------------------------
 #pragma region Getters_Setters
 
 	const std::string& AM_Database_Datatable::data(int column, int row)
