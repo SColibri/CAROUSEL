@@ -1,0 +1,3 @@
+[submodule "Code/AMCore/AMTests/lib/Catch2"]
+	path = Code/AMCore/AMTests/lib/Catch2
+	url = https://github.com/catchorg/Catch2.git

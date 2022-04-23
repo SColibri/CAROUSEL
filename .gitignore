@@ -2,6 +2,5 @@ Code/AMCore/out
 Code/AMCore/CMakePresets.json
 Code/AMCore/cpp.hint
 Code/AMCore/.vs
-AMTests/lib
-AMTests/Minimal.runsettings
+Code/AMCore/AMTests/Minimal.runsettings
 Documentation
