@@ -1,0 +1,57 @@
+﻿<Window x:Class="AMFramework.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AMFramework"
+        mc:Ignorable="d"
+        Title="AMFramework" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="1*"   />
+        </Grid.RowDefinitions>
+        
+        <Ribbon Name="MainMenu" SelectedIndex="0" Grid.Row="0">
+            <Ribbon.HelpPaneContent>
+                <RibbonButton Width="25" Height="25" />
+            </Ribbon.HelpPaneContent>
+
+            <Ribbon.QuickAccessToolBar>
+                <RibbonQuickAccessToolBar>
+                    <RibbonSplitButton x:Name ="Undo" >
+                        <RibbonSplitMenuItem Header="Undo 1" />
+                        <RibbonSplitMenuItem Header="Undo 2" />
+                        <RibbonSplitMenuItem Header="Undo 3" />
+                    </RibbonSplitButton>
+                </RibbonQuickAccessToolBar>
+            </Ribbon.QuickAccessToolBar>
+
+            <RibbonTab Header="Home" KeyTip="H" >
+                <!-- Home  group-->
+                <RibbonGroup x:Name="ClipboardGroup" Header="Home">
+                    <RibbonMenuButton  Label="Paste" KeyTip="V">
+                        <RibbonMenuItem  Header="Keep Text Only" KeyTip="T"/>
+                        <RibbonMenuItem  Header="Paste Special..." KeyTip="S"/>
+                    </RibbonMenuButton>
+                    <RibbonButton  Label="Cut" KeyTip="X" />
+                    <RibbonButton  Label="Copy" KeyTip="C" />
+                    <RibbonButton  Label="Format Painter" KeyTip="FP" />
+                </RibbonGroup>
+                <!-- Employee And Payroll group-->
+                <RibbonGroup x:Name="Employee" Header="Employee And Payroll">
+                    <RibbonMenuButton  Label="Employee" KeyTip="V">
+                        <RibbonMenuItem  Header="Keep Text Only" KeyTip="T"/>
+                        <RibbonMenuItem  Header="Paste Special..." KeyTip="S"/>
+                    </RibbonMenuButton>
+                    <RibbonButton  Label="Save" KeyTip="X" />
+                    <RibbonButton  Label="Add" KeyTip="C" />
+                </RibbonGroup>
+            </RibbonTab>
+        </Ribbon>
+
+        <Frame x:Name="Framey" Grid.Row="1" Margin="2" NavigationUIVisibility="Hidden">
+            
+        </Frame>
+    </Grid>
+</Window>
