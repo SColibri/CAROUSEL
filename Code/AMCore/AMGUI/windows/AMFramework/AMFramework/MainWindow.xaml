@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AMFramework"
+        xmlns:local="clr-namespace:AMFramework" 
+        xmlns:local_2="clr-namespace:AMFramework.Components.Charting"
         mc:Ignorable="d"
-        Title="AMFramework" Height="450" Width="800">
+        Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -50,8 +51,18 @@
             </RibbonTab>
         </Ribbon>
 
-        <Frame x:Name="Framey" Grid.Row="1" Margin="2" NavigationUIVisibility="Hidden">
+        <Frame x:Name="Framey" Visibility="Hidden" Grid.Row="1" Margin="2" NavigationUIVisibility="Hidden">
             
         </Frame>
+
+        <Grid Grid.Row="1" Margin="5">
+            <local_2:ChartingWindow 
+                x:Name="Chartingy" 
+                Margin="0" 
+                RenderOptions.BitmapScalingMode="HighQuality" 
+                RenderOptions.EdgeMode="Aliased">
+
+            </local_2:ChartingWindow>
+        </Grid>
     </Grid>
 </Window>
