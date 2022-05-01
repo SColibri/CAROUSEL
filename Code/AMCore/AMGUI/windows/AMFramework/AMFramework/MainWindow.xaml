@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AMFramework" 
-        xmlns:local_2="clr-namespace:AMFramework.Components.Charting"
+        xmlns:local_2="clr-namespace:AMFramework.Components.Charting" xmlns:scripting="clr-namespace:AMFramework.Components.Scripting"
         mc:Ignorable="d"
         Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
     <Grid>
@@ -63,6 +63,8 @@
                 RenderOptions.EdgeMode="Aliased">
 
             </local_2:ChartingWindow>
+
+            <scripting:Scripting_editor/>
         </Grid>
     </Grid>
 </Window>

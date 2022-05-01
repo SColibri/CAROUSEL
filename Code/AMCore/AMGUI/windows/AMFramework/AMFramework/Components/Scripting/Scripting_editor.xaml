@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="AMFramework.Components.Scripting.Scripting_editor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AMFramework.Components.Scripting" xmlns:Scint="clr-namespace:ScintillaNET;assembly=ScintillaNET"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
+    <Grid>
+        <WindowsFormsHost
+                HorizontalAlignment="Left"
+                Height="485"
+                Width="600"
+                Margin="0,10,0,0"
+                VerticalAlignment="Top">
+            <Scint:Scintilla
+                    Enabled="True"
+                    Height="485"
+                    Width="600"
+                    BorderStyle="None"
+                    Text="text"
+                    x:Name="Scripting"
+                    KeyDown="Scripting_KeyDown"
+                    AutoCSelection="Scripting_AutoCSelection"
+                    TextChanged="Scripting_TextChanged"
+                 />
+
+        </WindowsFormsHost>
+    </Grid>
+</UserControl>

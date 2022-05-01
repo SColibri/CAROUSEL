@@ -1,0 +1,4 @@
+﻿for init,max/min value, increment
+do
+   statement(s)
+end
