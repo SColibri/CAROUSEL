@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AMFramework" 
-        xmlns:local_2="clr-namespace:AMFramework.Components.Charting" xmlns:scripting="clr-namespace:AMFramework.Components.Scripting"
         mc:Ignorable="d"
         Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
     <Grid>
@@ -12,6 +11,18 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="1*"   />
         </Grid.RowDefinitions>
+        <Grid.Resources>
+            <LinearGradientBrush x:Key="Color_1" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="white" Offset="0.0"/>
+                <GradientStop Color="SteelBlue" Offset="0.2"/>
+                <GradientStop Color="white" Offset="0.95"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="Color_2" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="white" Offset="0.0"/>
+                <GradientStop Color="Silver" Offset="0.2"/>
+                <GradientStop Color="white" Offset="0.95"/>
+            </LinearGradientBrush>
+        </Grid.Resources>
         
         <Ribbon Name="MainMenu" SelectedIndex="0" Grid.Row="0">
             <Ribbon.HelpPaneContent>
@@ -29,24 +40,29 @@
             </Ribbon.QuickAccessToolBar>
 
             <RibbonTab Header="Home" KeyTip="H" >
-                <!-- Home  group-->
-                <RibbonGroup x:Name="ClipboardGroup" Header="Home">
-                    <RibbonMenuButton  Label="Paste" KeyTip="V">
-                        <RibbonMenuItem  Header="Keep Text Only" KeyTip="T"/>
-                        <RibbonMenuItem  Header="Paste Special..." KeyTip="S"/>
+                <!-- Charting-->
+                <RibbonGroup x:Name="Database" Header="Database">
+                    <RibbonMenuButton  Label="Connection" KeyTip="V">
+                        <RibbonMenuItem  Header="local" KeyTip="T"/>
+                        <RibbonMenuItem  Header="ssh" KeyTip="S"/>
                     </RibbonMenuButton>
-                    <RibbonButton  Label="Cut" KeyTip="X" />
-                    <RibbonButton  Label="Copy" KeyTip="C" />
-                    <RibbonButton  Label="Format Painter" KeyTip="FP" />
+                    <RibbonButton  Label="tables" KeyTip="C" />
                 </RibbonGroup>
-                <!-- Employee And Payroll group-->
-                <RibbonGroup x:Name="Employee" Header="Employee And Payroll">
-                    <RibbonMenuButton  Label="Employee" KeyTip="V">
-                        <RibbonMenuItem  Header="Keep Text Only" KeyTip="T"/>
-                        <RibbonMenuItem  Header="Paste Special..." KeyTip="S"/>
+                
+                <!-- Charting-->
+                <RibbonGroup x:Name="Charting" Header="Charting">
+                    <RibbonButton  Label="New chart" KeyTip="X" />
+                </RibbonGroup>
+                
+                <!-- LUA -->
+                <RibbonGroup x:Name="LUA_options" Header="Scripting">
+                    <RibbonMenuButton  Label="file">
+                        <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click"/>
+                        <RibbonMenuItem  Header="load"/>
+                        <RibbonMenuItem  Header="save" Click="RibbonMenuItem_Click_1"/>
                     </RibbonMenuButton>
-                    <RibbonButton  Label="Save" KeyTip="X" />
-                    <RibbonButton  Label="Add" KeyTip="C" />
+                    <RibbonButton  Label="" KeyTip="X" />
+
                 </RibbonGroup>
             </RibbonTab>
         </Ribbon>
@@ -54,17 +70,108 @@
         <Frame x:Name="Framey" Visibility="Hidden" Grid.Row="1" Margin="2" NavigationUIVisibility="Hidden">
             
         </Frame>
-
+        
         <Grid Grid.Row="1" Margin="5">
-            <local_2:ChartingWindow 
-                x:Name="Chartingy" 
-                Margin="0" 
-                RenderOptions.BitmapScalingMode="HighQuality" 
-                RenderOptions.EdgeMode="Aliased">
+            <TabControl x:Name="MainTabControl">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="20"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Name="Panel" 
+                                                CornerRadius="5,5,0,0"
+                                                Grid.ColumnSpan="2"
+                                                BorderBrush="silver"
+                                                BorderThickness="1">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                    <GradientStop Color="white" Offset="0.0"/>
+                                                    <GradientStop Color="LightBlue" Offset="0.2"/>
+                                                    <GradientStop Color="white" Offset="0.90"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+                                        <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="10,2"/>
+                                        <Border Background="Silver" 
+                                                CornerRadius="10"
+                                                Grid.Column="1"
+                                                Height="10"
+                                                Width="10"
+                                                Opacity="0.9"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                ToolTip="Close tab"
+                                                MouseUp="Border_MouseDown">
+                                            <Border.Effect>
+                                                <DropShadowEffect BlurRadius="1" ShadowDepth="1" />
+                                            </Border.Effect>
+                                            <Border.Triggers>
+                                                <EventTrigger RoutedEvent="Border.MouseEnter">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation 
+                                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
+                                                                To="Red"
+                                                                Duration="0:0:0.25"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
 
-            </local_2:ChartingWindow>
+                                                <EventTrigger RoutedEvent="Border.MouseLeave">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation 
+                                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
+                                                                To="Silver"
+                                                                Duration="0:0:0.25"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
 
-            <scripting:Scripting_editor/>
+
+
+                                            </Border.Triggers>
+                                        </Border>
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Panel" Property="Background" >
+                                                <Setter.Value>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Color="white" Offset="0.0"/>
+                                                        <GradientStop Color="LightBlue" Offset="0.2"/>
+                                                        <GradientStop Color="white" Offset="0.95"/>
+                                                    </LinearGradientBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="False">
+                                            <Setter TargetName="Panel" Property="Background">
+                                                <Setter.Value>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Color="white" Offset="0.0"/>
+                                                        <GradientStop Color="Silver" Offset="0.2"/>
+                                                        <GradientStop Color="white" Offset="0.95"/>
+                                                    </LinearGradientBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Resources>
+            </TabControl>
         </Grid>
     </Grid>
 </Window>

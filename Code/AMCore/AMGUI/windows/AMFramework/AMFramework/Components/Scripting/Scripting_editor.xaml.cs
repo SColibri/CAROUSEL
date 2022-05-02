@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,66 +20,21 @@ namespace AMFramework.Components.Scripting
 {
     /// <summary>
     /// Interaction logic for Scripting_editor.xaml
+    /// Use Scripting_ViewModel as datacontext or call the get_text_editor() method from the viewmodel.
     /// </summary>
     public partial class Scripting_editor : System.Windows.Controls.UserControl
     {
-        private string _autocompleteSelection = "";
-        private List<string> _autocomplete = new List<string>()
-        {
-            "Empty",
-            "for",
-            "while",
-            "repeat_until",
-            "break",
-            "Hello.World"
-        };
-
-        private readonly
-        Dictionary<string, string> dict = new Dictionary<string, string>{ {"if", "end"},
-        {"for", "next"},{"while", "do"},{"do", "end"}, {"else", "end"}, {"elseif __ then", "end"}};
-
         public Scripting_editor()
         {
-            _autocomplete.Sort();
             InitializeComponent();
         }
 
-
-        private void Scripting_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) { e.SuppressKeyPress = true;  e.Handled = true; }
-            else if(e.KeyCode == Keys.Space) { return; }
-
-            var scintilla = sender as Scintilla;
-
-            var pos = scintilla.CurrentPosition;
-
-            var word = scintilla.GetWordFromPosition(pos);
-
-            if (word == string.Empty) return;
-
-            var list = _autocomplete.FindAll(delegate (string item)
-            {
-                return item.StartsWith(word);
-            });
-
-            string TextList = "";
-            foreach (var item in list)
-            {
-                if (TextList.Length != 0) { TextList += scintilla.AutoCSeparator.ToString(); }
-                TextList += item;
-            }
-
-            if (list.Count > 0)
-            {
-                scintilla.AutoCShow(word.Length, TextList);
-            }
-            else
-            {
-                scintilla.AutoCCancel();
-            }
+            setupMain(Scripting);
         }
 
+        #region Initialization
         private void setupMain(Scintilla scintilla)
         {
             // Extracted from the Lua Scintilla lexer and SciTE .properties file
@@ -89,8 +45,8 @@ namespace AMFramework.Components.Scripting
             // Configuring the default style with properties
             // we have common to every lexer style saves time.
             scintilla.StyleResetDefault();
-            scintilla.Styles[ScintillaNET.Style.Default].Font = "Consolas";
-            scintilla.Styles[ScintillaNET.Style.Default].Size = 10;
+            scintilla.Styles[ScintillaNET.Style.Default].Font = "Hack";
+            scintilla.Styles[ScintillaNET.Style.Default].Size = 12;
             scintilla.StyleClearAll();
 
             // Configure the Lua lexer styles
@@ -148,29 +104,99 @@ namespace AMFramework.Components.Scripting
 
             // Enable automatic folding
             scintilla.AutomaticFold = (AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change);
+
+            //Enable Drag drop
+            scintilla.AllowDrop = true;
+            scintilla.DragEnter += ScintillaDragEnter_handle;
+            scintilla.DragDrop += ScintillaDragDrop_handle;
+
+           
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+
+
+
+        private void ScintillaDragEnter_handle(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            setupMain(Scripting);
+            if (e.Data.GetDataPresent(System.Windows.Forms.DataFormats.FileDrop))
+                e.Effect = System.Windows.Forms.DragDropEffects.Copy;
+            else
+                e.Effect = System.Windows.Forms.DragDropEffects.None;
         }
 
-        private void Scripting_AutoCSelection(object sender, AutoCSelectionEventArgs e)
+        private void ScintillaDragDrop_handle(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            _autocompleteSelection = e.Text;
-            int pos = e.Position;
-            Scintilla scintilla = (Scintilla)sender;
-            scintilla.AddText("fortext");
-        }
 
-        private void Scripting_TextChanged(object sender, EventArgs e)
-        {
-            if(_autocompleteSelection.Length > 0)
+            // get file drop
+            if (e.Data.GetDataPresent(System.Windows.Forms.DataFormats.FileDrop))
             {
-                Scintilla scintilla = (Scintilla)sender;
-                scintilla.AppendText("fortext");
-                _autocompleteSelection = "";
+
+                Array a = (Array)e.Data.GetData(System.Windows.Forms.DataFormats.FileDrop);
+                if (a != null)
+                {
+
+                    string path = a.GetValue(0).ToString();
+
+                    ((Scripting_ViewModel)DataContext).load(Scripting, path);
+
+                }
             }
         }
+
+
+        #endregion
+
+        #region Handles
+        private void Scripting_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) { e.SuppressKeyPress = true; e.Handled = true; }
+            else if (e.KeyCode == Keys.Space) { return; }
+
+            var scintilla = sender as Scintilla;
+
+            var pos = scintilla.CurrentPosition;
+
+            var word = scintilla.GetWordFromPosition(pos);
+
+            if (word == string.Empty) return;
+
+            var list = Scripting_ViewModel.Autocomplete.FindAll(delegate (string item)
+            {
+                return item.StartsWith(word);
+            });
+
+            string TextList = "";
+            foreach (var item in list)
+            {
+                if (TextList.Length != 0) { TextList += scintilla.AutoCSeparator.ToString(); }
+                TextList += item;
+            }
+
+            if (list.Count > 0)
+            {
+                scintilla.AutoCShow(word.Length, TextList);
+            }
+            else
+            {
+                scintilla.AutoCCancel();
+            }
+
+            ((Scripting_ViewModel)DataContext).ChangesMade = true;
+        }
+
+
+        private void Scripting_AutoCCompleted(object sender, AutoCSelectionEventArgs e)
+        {
+            if (((Scripting_ViewModel)DataContext).autocompleteSelection.Length > 0)
+            {
+                Scintilla scintilla = (Scintilla)sender;
+                //scintilla.AppendText("fortext");
+                ((Scripting_ViewModel)DataContext).autocompleteSelection = "";
+                scintilla.CurrentPosition += 7;
+            }
+        }
+
+        #endregion
+
     }
 }
