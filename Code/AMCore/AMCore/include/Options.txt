@@ -1,0 +1,3 @@
+Flag:Description:Usage
+-cf: Load/Create configuration file, working directory will change to this location: -cf <filename>
+-h: help, diplays options: -h

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <filesystem>
 #include "AM_FileManagement.h"
 #include "../interfaces/IStrigify.h"
 
@@ -66,6 +67,10 @@ public:
 	
 	void set_workingDirectory_option(AM_FileManagement::FILEPATH newOption);
 	AM_FileManagement::FILEPATH get_workingDirectory_option();
+
+	const std::string& get_api_path();
+	void set_api_path(std::string filename);
+
 #pragma endregion Getters_Setters
 
 	// Interfaces
@@ -90,6 +95,10 @@ private:
 	/// </summary>
 	AM_FileManagement::FILEPATH workingDirectoryOption = AM_FileManagement::FILEPATH::GENERAL;
 
+	/// <summary>
+	/// Library to implementation of IAM_API
+	/// </summary>
+	std::string _apiPath{std::filesystem::current_path().string() + "\\..\\AM_API_lib\\matcalc\\AM_MATCALC_Lib.dll"};
 
 };
 /** @}*/

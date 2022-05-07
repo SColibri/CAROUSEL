@@ -8,6 +8,7 @@
 #pragma region Cons_Des
 	AM_Config::AM_Config()
 	{
+
 	}
 
 	AM_Config::AM_Config(std::string filename)
@@ -17,6 +18,7 @@
 
 	AM_Config::~AM_Config()
 	{
+
 	}
 
 #pragma endregion Cons_Des
@@ -72,6 +74,16 @@
 	{
 		return workingDirectoryOption;
 	}
+
+	const std::string& AM_Config::get_api_path()
+	{
+		return _apiPath;
+	}
+
+	void AM_Config::set_api_path(std::string filename)
+	{
+		_apiPath = filename;
+	}
 #pragma endregion Getters_Setters
 
 // Interfaces
@@ -85,7 +97,8 @@
 		ss << "#*** AMFramework config file ****\n";
 		ss << "*********************************\n";
 		ss << "\n";
-		ss << "Name" << separatorChar << Name;
+		ss << "Name" << separatorChar << Name << std::endl;
+		ss << "_apiPath" << separatorChar << _apiPath << std::endl;
 		ss << "\n";
 		ss << _fileManagement.get_save_string();
 		ss << "\n";
@@ -108,6 +121,9 @@
 				else {
 					if (var.find("Name") != std::string::npos) {
 						Name = var.substr(var.find(separatorChar) + 1);
+					}
+					else if(var.find("_apiPath") != std::string::npos) {
+						_apiPath = var.substr(var.find(separatorChar) + 1);
 					}
 				}
 			}

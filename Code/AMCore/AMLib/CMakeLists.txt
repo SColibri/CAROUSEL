@@ -10,6 +10,6 @@ file(GLOB AMLIB_H "include/*.hpp")
 file(GLOB AMLIB_I "interfaces/*.hpp")
 
 add_subdirectory ("external")
-add_library(AMLib STATIC ${AMLIB_SRC} ${AMLIB_H} ${AMLIB_I} "include/AM_Database.h" "src/AM_Database.cpp" "include/AM_Database_TableStruct.h" "include/AM_Database_Datatable.h" "src/AM_Database_Datatable.cpp" )
-
+add_library(AMLib STATIC ${AMLIB_SRC} ${AMLIB_H} ${AMLIB_I})
+target_link_libraries(AMLib ${CMAKE_CURRENT_SOURCE_DIR}/external/lua542/lua54.lib)
 # TODO: Add tests and install targets if needed.

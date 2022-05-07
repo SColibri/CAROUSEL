@@ -21,3 +21,10 @@ SQLite is a C-language library that implements a small, fast, self-contained, hi
 Public Domain [License](external/sqlite3/LICENSE) or from official [page](https://www.sqlite.org/copyright.html)
 
 https://www.sqlite.org/index.html
+
+### FTXUI
+A simple C++ library for terminal based user interfaces!
+
+MIT [License](external/FTXUI/LICENSE) or from official [page](https://github.com/ArthurSonzogni/FTXUI/blob/master/LICENSE)
+
+https://github.com/ArthurSonzogni/FTXUI

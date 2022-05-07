@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Terminal\" />
     <Folder Include="Model\" />
     <Folder Include="Resources\img\" />
     <Folder Include="Views\Pixel\" />
