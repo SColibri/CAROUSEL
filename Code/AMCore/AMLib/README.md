@@ -23,7 +23,7 @@ Public Domain [License](external/sqlite3/LICENSE) or from official [page](https:
 https://www.sqlite.org/index.html
 
 ### FTXUI
-A simple C++ library for terminal based user interfaces!
+A simple C++ library for terminal based user interfaces!. Special thanks to Arthur Sonzogni for this library and assistance!
 
 MIT [License](external/FTXUI/LICENSE) or from official [page](https://github.com/ArthurSonzogni/FTXUI/blob/master/LICENSE)
 

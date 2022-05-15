@@ -11,9 +11,33 @@ AM_API_Matcalc::~AM_API_Matcalc()
 	//delete _luaFunctions;
 }
 
-typedef void(__cdecl* MYPROC_2)();
-
+#pragma region Implementation
 std::string AM_API_Matcalc::run_script(const std::string& filename)
 {
 	return "not implemented";
 }
+
+std::string AM_API_Matcalc::run_lua_script(const std::string& filename)
+{
+	if (!std::filesystem::exists(filename)) return "file not found!";
+	_luaInterpreter.run_file(filename);
+
+	return "Done!";
+}
+
+std::string AM_API_Matcalc::run_lua_command(const std::string& command)
+{
+	std::string out = _luaInterpreter.run_command(command);
+
+	return out;
+}
+
+std::string AM_API_Matcalc::run_lua_command(const std::string& command, std::vector<std::string> parameters)
+{
+	std::string out = _luaInterpreter.run_command(command, parameters);
+
+	return out;
+}
+
+std::string AM_API_Matcalc::helloApi() { return "From matcalc"; }
+#pragma endregion

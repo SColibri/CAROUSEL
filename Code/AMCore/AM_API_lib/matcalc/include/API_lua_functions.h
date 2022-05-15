@@ -58,17 +58,12 @@ private:
 #pragma endregion
 
 #pragma region helpers
-	static std::string runVectorCommands(std::vector<std::string> parameter)
-	{
-		std::string out{};
-
-		for each (std::string commLine in parameter)
-		{
-			out += _api->MCRCommand(commLine);
-		}
-
-		return out;
-	}
+	/// <summary>
+	/// runs commands contained by a vector, one by one.
+	/// </summary>
+	/// <param name="parameter"></param>
+	/// <returns></returns>
+	static std::string runVectorCommands(std::vector<std::string> parameter);
 #pragma endregion
 
 };
