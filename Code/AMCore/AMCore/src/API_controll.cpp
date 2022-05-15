@@ -2,6 +2,7 @@
 
 API_controll::API_controll(AM_Config& configuration)
 {
+	_configuration = &configuration;
 	load_api(configuration);
 }
 
@@ -23,7 +24,7 @@ IAM_API* API_controll::DLL_get(HINSTANCE hLib) {
 
 	if (NULL != ProcAdd)
 	{
-		IAM_API* Result = ProcAdd();
+		IAM_API* Result = ProcAdd(_configuration);
 		return Result;
 	}
 

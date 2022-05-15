@@ -10,6 +10,7 @@ file(GLOB AM_MATCALC_LIB_H "include/*.h")
 
 add_library(AM_MATCALC_Lib SHARED AM_API_Matcalc.cpp AM_API_Matcalc.h ${AM_MATCALC_LIB_SRC} ${AM_MATCALC_LIB_H})
 target_link_libraries(AM_MATCALC_Lib AMLib)
+# target_link_libraries(AM_MATCALC_Lib "C:/Program Files/MatCalc 6/mc_core.lib")
 
 
 # TODO: Add tests and install targets if needed.

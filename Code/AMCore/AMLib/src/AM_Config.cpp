@@ -84,6 +84,46 @@
 	{
 		_apiPath = filename;
 	}
+
+	const std::string& AM_Config::get_apiExternal_path()
+	{
+		return _apiExternalPath;
+	}
+
+	void AM_Config::set_apiExternal_path(std::string filename)
+	{
+		_apiExternalPath = filename;
+	}
+
+	const std::string& AM_Config::get_ThermodynamicDatabase_path()
+	{
+		return _thermodynamic_database_path;
+	}
+
+	void AM_Config::set_ThermodynamicDatabase_path(std::string filename)
+	{
+		_thermodynamic_database_path = filename;
+	}
+
+	const std::string& AM_Config::get_PhysicalDatabase_path()
+	{
+		return _physical_database_path;
+	}
+
+	void AM_Config::set_PhysicalDatabase_path(std::string filename)
+	{
+		_physical_database_path = filename;
+	}
+
+	const std::string& AM_Config::get_MobilityDatabase_path()
+	{
+		return _mobility_database_path;
+	}
+
+	void AM_Config::set_MobilityDatabase_path(std::string filename)
+	{
+		_mobility_database_path = filename;
+	}
 #pragma endregion Getters_Setters
 
 // Interfaces

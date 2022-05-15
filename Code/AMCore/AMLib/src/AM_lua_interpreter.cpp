@@ -20,3 +20,20 @@ std::string AM_lua_interpreter::run_command(std::string command)
 
 	return out;
 }
+
+std::string AM_lua_interpreter::run_command(std::string command, std::vector<std::string> parameters)
+{
+	lua_getglobal(_state, command.c_str());
+
+	for each (std::string pary in parameters)
+	{
+		lua_pushstring(_state, pary.c_str());
+	}
+
+	lua_call(_state, parameters.size(), 1);
+
+	std::string out(lua_tostring(_state, -1));
+	lua_pop(_state, 1);
+
+	return out;
+}

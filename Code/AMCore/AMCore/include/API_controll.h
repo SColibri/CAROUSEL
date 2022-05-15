@@ -2,6 +2,7 @@
 #include "../../AMLib/include/AM_Config.h"
 #include "../../AMLib/include/AM_lua_interpreter.h"
 #include "../../AMLib/interfaces/IAM_API.h"
+#include <stdexcept>
 #include <Windows.h>
 
 /// <summary>
@@ -19,11 +20,17 @@ public:
 	API_controll(AM_Config& configuration);
 	~API_controll();
 
-	IAM_API* get_implementation() { return _implementation; }
+	IAM_API* get_implementation() {
+		if (_implementation == nullptr)
+			throw std::bad_weak_ptr();
+		else
+			return _implementation; 
+	}
 
 private:
 	HINSTANCE _library{NULL}; // dynamic library instance
-	
+	AM_Config* _configuration{nullptr};
+
 	/// <summary>
 	/// implementation of the IAM_API interface, where
 	/// all CALPHAD, and other calculations are done
@@ -41,7 +48,7 @@ private:
 	/// Defines the function that returns the concrete 
 	/// implementation of IAM_API
 	/// </summary>
-	typedef IAM_API* (__cdecl* MYPROC)();
+	typedef IAM_API* (__cdecl* MYPROC)(AM_Config*);
 
 	/// <summary>
 	/// Pointer to concrete implementation of IAM_API

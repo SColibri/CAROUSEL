@@ -19,7 +19,7 @@
 class AM_API_Matcalc : public IAM_API {
 
 public:
-	AM_API_Matcalc();
+	AM_API_Matcalc(AM_Config* configuration);
 	~AM_API_Matcalc();
 
 	virtual std::string run_script(const std::string& filename) override;
@@ -30,7 +30,14 @@ public:
 
 		return out; 
 	}
+	virtual std::string run_lua_command(const std::string& command, std::vector<std::string> parameters) override
+	{
+		std::string out = _luaInterpreter.run_command(command, parameters);
 
+		return out;
+	}
+
+	// TODO: add to interface a reference to the config file!
 	virtual std::string helloApi() override { return "From matcalc"; }
 };
 
@@ -40,8 +47,8 @@ extern "C"
 	/// Pointer to implementation of interface IAM_API
 	/// </summary>
 	/// <returns></returns>
-	__declspec(dllexport) AM_API_Matcalc* get_API_Controll() {
-		AM_API_Matcalc* ApiControll = new AM_API_Matcalc();
+	__declspec(dllexport) AM_API_Matcalc* get_API_Controll(AM_Config* configuration) {
+		AM_API_Matcalc* ApiControll = new AM_API_Matcalc(configuration);
 		return ApiControll;
 	}
 }

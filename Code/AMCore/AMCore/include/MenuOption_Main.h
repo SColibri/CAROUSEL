@@ -43,9 +43,14 @@ public:
         if (_depth == MenuOption::CONFIGURATIONS) menu_home();
 	}
 
-    void load_available_commands(std::vector<std::vector<std::string>> Listlua)
+    void load_available_commands(std::vector<std::vector<std::string>>& Listlua)
     {
         _luaCommandList = Listlua;
+    }
+
+    void set_output(std::string& newoutput)
+    {
+        _out = newoutput;
     }
 
 
@@ -140,7 +145,7 @@ private:
             if (_out.length() > 0) 
             {
                 children.push_back(
-                    window(text("output"), paragraph(_out) | color(Color::Black)) | color(Color::Yellow3Bis)
+                    window(text("output"), paragraph(_out) | color(Color::Wheat1)) | color(Color::Yellow3Bis)
                 );
             }
             

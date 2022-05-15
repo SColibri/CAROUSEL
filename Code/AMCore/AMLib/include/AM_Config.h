@@ -68,8 +68,20 @@ public:
 	void set_workingDirectory_option(AM_FileManagement::FILEPATH newOption);
 	AM_FileManagement::FILEPATH get_workingDirectory_option();
 
-	const std::string& get_api_path();
-	void set_api_path(std::string filename);
+	const std::string& get_api_path(); // gets AM_API library path
+	void set_api_path(std::string filename); // sets AM_API library path
+
+	const std::string& get_apiExternal_path(); // gets path for external libraries (e.g. matcalc dll)
+	void set_apiExternal_path(std::string filename); // sets path for external libraries (e.g. matcalc dll)
+
+	const std::string& get_ThermodynamicDatabase_path(); // gets path for external libraries (e.g. matcalc dll)
+	void set_ThermodynamicDatabase_path(std::string filename); // sets path for external libraries (e.g. matcalc dll)
+
+	const std::string& get_PhysicalDatabase_path(); // gets path for external libraries (e.g. matcalc dll)
+	void set_PhysicalDatabase_path(std::string filename); // sets path for external libraries (e.g. matcalc dll)
+
+	const std::string& get_MobilityDatabase_path(); // gets path for external libraries (e.g. matcalc dll)
+	void set_MobilityDatabase_path(std::string filename); // sets path for external libraries (e.g. matcalc dll)
 
 #pragma endregion Getters_Setters
 
@@ -88,6 +100,9 @@ private:
 
 	AM_FileManagement _fileManagement{}; // config file management 
 	std::string Name{"New Config"}; // Name of the configuration file
+	std::string _thermodynamic_database_path{};
+	std::string _physical_database_path{};
+	std::string _mobility_database_path{};
 
 	/// <summary>
 	/// The framework uses a defined directory structure on which the config file can be found
@@ -99,6 +114,13 @@ private:
 	/// Library to implementation of IAM_API
 	/// </summary>
 	std::string _apiPath{std::filesystem::current_path().string() + "\\..\\AM_API_lib\\matcalc\\AM_MATCALC_Lib.dll"};
-
+	
+	/// <summary>
+	/// If the software provider gives an api implementation and a dll file use this
+	/// parameter to specify the path. For example, matcalc offers and api library that can be used,
+	/// in this case, the AM_API_lib implements the external api and obtains the path by
+	/// receiving and AM_Config parameter. 
+	/// </summary>
+	std::string _apiExternalPath{};
 };
 /** @}*/

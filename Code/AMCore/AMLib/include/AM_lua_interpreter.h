@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 extern "C" {
 	#include "../external/lua542/include/lua.h"
@@ -29,6 +30,7 @@ public:
 	}
 
 	std::string run_command(std::string command);
+	std::string run_command(std::string command, std::vector<std::string> parameters);
 
 	lua_State* get_state()
 	{

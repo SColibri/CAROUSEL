@@ -48,12 +48,16 @@ extern "C" {
 /// \endcode
 /// </summary>
 /// 
+/// More information: https://www.cs.usfca.edu/~galles/cs420/lecture/LuaLectures/LuaAndC.html
 
 class IAM_lua_functions
 {
 public:
 
-	IAM_lua_functions() { }
+	IAM_lua_functions() {};
+	virtual ~IAM_lua_functions() {
+		std::string stopHere{};
+	};
 
 	/// <summary>
 	/// get list of functions in a table format as follows:

@@ -5,6 +5,7 @@
 #include <map>
 #include <fstream>
 #include <exception>
+#include <iostream>
 
 #include "ftxui/component/captured_mouse.hpp"  // for ftxui
 #include "ftxui/component/component.hpp"       // for Input, Renderer, Vertical
@@ -38,7 +39,7 @@ public:
 		
 		if (_error.length() > 0)
 		{
-			WindowContent.push_back(text("Error: " + _error));
+			WindowContent.push_back(paragraph("Error: " + _error) | color(Color::Red));
 		}
 		load_help_option(WindowContent);
 
@@ -48,7 +49,14 @@ public:
 		screen.Print();
 	}
 
+	void set_error(std::string errorString)
+	{
+		_error = errorString;
+	}
+
 	std::string get_configuration() {return _optionMap["-cf"];}
+	std::string get_luafile() { return _optionMap["-l"]; }
+	std::string get_script() { return _optionMap["-sc"]; }
 	std::string get_help(){ return _optionMap["-h"]; }
 	std::string get_terminal() { return _optionMap["-t"]; }
 	
@@ -59,27 +67,32 @@ private:
 
 	void load_definitions() 
 	{
-		_optionMap.insert({ "-cf","EMPTY" }); // Configuration file ,
+		_optionMap.insert({ "-cf","EMPTY" }); // Configuration file
+		_optionMap.insert({ "-l","EMPTY" }); // lua file script
+		_optionMap.insert({ "-sc","EMPTY" }); // external script run by api
 		_optionMap.insert({ "-h","EMPTY" }); // help
-		_optionMap.insert({ "-t","EMPTY" }); // help
+		_optionMap.insert({ "-t","EMPTY" }); // terminal
 	}
 
 	void set_definitions(int argc, char* argv[])
 	{
+        
 		if (argc == 1) { _optionMap["-t"] = "TRUE"; }
 		else if (argc > 1) 
 		{
-			for (int n1 = 0; n1 < argc; n1++) 
+			for (int n1 = 1; n1 < argc; n1++) 
 			{
-				if(argv[n1] == "-h"){ _optionMap["-h"] = "TRUE"; }
-				else if (argv[n1] == "-t") { _optionMap["-t"] = "TRUE"; }
+				if (strcmp(argv[n1], "-h") == 0) { _optionMap["-h"] = "TRUE"; std::cout << "-h flag" << std::endl; }
+				else if (strcmp(argv[n1], "-t") == 0) { _optionMap["-t"] = "TRUE"; }
 				else if(_optionMap.count(argv[n1]))
 				{
+					std::cout << "option: " << argv[n1] << ", value: " << argv[n1 + 1] << std::endl;
 					_optionMap[argv[n1]] = argv[n1 + 1];
 					n1++;
 				}
 			}
 		}
+
 	}
 
 	std::vector<std::string> load_help_options() 
@@ -144,7 +157,7 @@ private:
 		{
 			if (x[i] == delim)
 			{
-				splitted.push_back(ftxui::text(temp)); //store words in "splitted" vector
+				splitted.push_back(ftxui::paragraph(temp)); //store words in "splitted" vector
 				temp = "";
 				i++;
 			}
