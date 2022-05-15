@@ -53,6 +53,7 @@
 
 	void AM_Config::set_working_directory(std::string mainPath)
 	{
+		_fileManagement.set_workingDirectory(mainPath);
 	}
 
 	const std::string AM_Config::get_working_directory()

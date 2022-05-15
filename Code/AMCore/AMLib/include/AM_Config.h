@@ -103,6 +103,7 @@ private:
 	std::string _thermodynamic_database_path{};
 	std::string _physical_database_path{};
 	std::string _mobility_database_path{};
+	std::string _workingDirectory{};
 
 	/// <summary>
 	/// The framework uses a defined directory structure on which the config file can be found

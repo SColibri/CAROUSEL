@@ -1,7 +1,9 @@
 #pragma once
 
+#include <vector>
 #include "../include/API_lua_functions.h"
 #include "../include/API_matcalc_lib.h"
+#include "../include/API_scripting.h"
 
 API_lua_functions::API_lua_functions(lua_State* state)
 {
@@ -10,6 +12,7 @@ API_lua_functions::API_lua_functions(lua_State* state)
 
 API_lua_functions::API_lua_functions(lua_State* state, AM_Config* configuration)
 {
+	_configuration = configuration;
 	set_library(configuration);
 	add_functions_to_lua(state);
 }
@@ -34,13 +37,16 @@ void API_lua_functions::set_library(AM_Config* configuration) {
 void API_lua_functions::add_functions_to_lua(lua_State* state) 
 {
 	lua_register(state, "hello_world", bind_hello_world);
-	add_to_definition("hello_world","","baby lua script :)");
+	add_to_definition("hello_world","void","baby lua script :)");
 
 	lua_register(state, "run_script", bind_run_script);
 	add_to_definition("run_script", "std::string filename", "filename");
 
 	lua_register(state, "run_command", bind_run_command);
 	add_to_definition("run_command", "std::string filename", "command");
+
+	lua_register(state, "initialize_core", bind_initializeCore_command);
+	add_to_definition("initialize_core", "std::string out", "void");
 }
 
 #pragma region lua_functions
@@ -72,5 +78,27 @@ int API_lua_functions::bind_run_command(lua_State* state)
 	return 1;
 }
 
+int API_lua_functions::bind_initializeCore_command(lua_State* state)
+{
+	if (_configuration == nullptr) return -1;
 
+	std::string out = runVectorCommands(API_Scripting::Script_initialize(_configuration));
+	lua_pushstring(state, out.c_str());
+	return 1;
+}
+
+#pragma endregion
+
+#pragma region helpers
+std::string API_lua_functions::runVectorCommands(std::vector<std::string> parameter)
+{
+	std::string out{};
+
+	for each (std::string commLine in parameter)
+	{
+		out += _api->MCRCommand(commLine);
+	}
+
+	return out;
+}
 #pragma endregion

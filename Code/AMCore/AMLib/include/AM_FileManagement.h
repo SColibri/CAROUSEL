@@ -48,7 +48,7 @@ class AM_FileManagement:IStringify {
 	// -------------------------------------------------------------------------------------
 	#pragma region Getters_Setters
 		
-		
+		void set_workingDirectory(std::string workDirectory);
 
 	#pragma endregion Getters_Setters
 
@@ -66,7 +66,7 @@ class AM_FileManagement:IStringify {
 		/// <summary>
 		/// You can set a main path if you don't want to use the current working directory 
 		/// </summary>
-		const std::string _workingDirectory{""};
+		std::string _workingDirectory{""};
 
 };
 /** @}*/

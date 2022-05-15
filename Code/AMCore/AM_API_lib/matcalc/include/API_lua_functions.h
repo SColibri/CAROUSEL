@@ -16,6 +16,7 @@ public:
 private:
 	inline static API_matcalc_lib* _api{nullptr};
 	inline static std::string _dllPath{};
+	inline static AM_Config* _configuration{nullptr};
 
 	/// <summary>
 	/// Registers the function's signature in lua 
@@ -46,6 +47,28 @@ private:
 	/// <param name="state"></param>
 	/// <returns></returns>
 	static int bind_run_command(lua_State* state);
+
+	/// <summary>
+	/// Initializes matcalc core module, loads databases and all
+	/// for initialization.
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int bind_initializeCore_command(lua_State* state);
+#pragma endregion
+
+#pragma region helpers
+	static std::string runVectorCommands(std::vector<std::string> parameter)
+	{
+		std::string out{};
+
+		for each (std::string commLine in parameter)
+		{
+			out += _api->MCRCommand(commLine);
+		}
+
+		return out;
+	}
 #pragma endregion
 
 };

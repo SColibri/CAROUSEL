@@ -7,13 +7,18 @@
 namespace API_Scripting
 {
 	
-	std::string static Script_initialize(AM_Config* configuration) 
+	std::vector<std::string> static Script_initialize(AM_Config* configuration) 
 	{
-		std::string out = Script_Header() + "\n \
-						  use-module core \n \
+		std::string out2 = "use-module core \n \
 						  set-working-directory " + configuration->get_working_directory() + " \n \
-						  open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path() + "\n \";
+						  open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path() + " \n ";
 
+		std::vector<std::string> out
+		{
+			"use-module core",
+			"set-working-directory " + configuration->get_working_directory(),
+			"open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path()
+		};
 
 
 		return out;
@@ -65,7 +70,7 @@ namespace API_Scripting
 
 	std::string static Script_setTemperature_Celcius(double temperature)
 	{
-		std::string out = "set-temperature-celcius " + std::string(temperature) + "\n";
+		std::string out = "set-temperature-celcius " + std::to_string(temperature) + "\n";
 
 		return out;
 	}
@@ -137,7 +142,7 @@ namespace API_Scripting
 	{
 		std::time_t today = std::time(0);
 		std::string out = "\
-			Script auto generated using AMFramework: " + std::ctime(&today) + " \n \
+			Script auto generated using AMFramework: " + std::string(std::ctime(&today)) + " \n \
 			********************************************************************************************************************************************";
 
 		return out;

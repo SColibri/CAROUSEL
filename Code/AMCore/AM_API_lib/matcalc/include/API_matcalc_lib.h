@@ -62,7 +62,7 @@ private:
 	AM_Config* _configuration{nullptr}; // configuration file
 	bool _mccSokcet_active{false}; // MCR commuincation needs mcc socket communication
 	std::thread _sockThread;
-	int _mccPort{7892};
+	int _mccPort{7890};
 
 	/// <summary>
 	/// call mcc.exe to run mcs scripts

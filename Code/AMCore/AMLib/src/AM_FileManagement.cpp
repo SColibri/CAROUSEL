@@ -54,7 +54,11 @@
 // -------------------------------------------------------------------------------------
 #pragma region Getters_Setters
 
-	
+	void AM_FileManagement::set_workingDirectory(std::string workDirectory)
+	{
+		_workingDirectory = workDirectory;
+		//TODO create directories
+	}
 
 #pragma endregion Getters_Setters
 
