@@ -24,7 +24,7 @@ add_executable (AMCore "AMCore.cpp" "AMCore.h"  ${AMCORE_SRC} ${AMCORE_H} ${AMLI
 
 #target_link_libraries(AMCore matcalc)
 target_link_libraries(AMCore AMLib) 
-target_link_libraries(AMCore sqlite3) 
+# target_link_libraries(AMCore sqlite3) 
 target_link_libraries(AMCore ftxui::component)
 target_link_libraries(AMCore ftxui::screen)
 target_link_libraries(AMCore ftxui::dom)

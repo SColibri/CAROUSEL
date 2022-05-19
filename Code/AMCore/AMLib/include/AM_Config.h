@@ -60,6 +60,7 @@ public:
 	// ---------------------------------------------
 #pragma region Getters_Setters
 	std::string get_filename(); // gets full path of config file
+	std::string get_directory_path(AM_FileManagement::FILEPATH fmanage); // gets full path of config file
 	void set_config_name(std::string newName); // sets a new name for the config file
 
 	const std::string get_working_directory();

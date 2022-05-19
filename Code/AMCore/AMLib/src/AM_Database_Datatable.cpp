@@ -5,7 +5,7 @@
 // Constructors, destructors and other
 // -------------------------------------------------------------------------------------
 #pragma region Des_Con
-	AM_Database_Datatable::AM_Database_Datatable(AM_Database* DB, AM_Database_TableStruct* TS):
+	AM_Database_Datatable::AM_Database_Datatable(IAM_Database* DB, AM_Database_TableStruct* TS):
 							_tableStruct(TS),_db(DB){}
 
 	AM_Database_Datatable::~AM_Database_Datatable() {}

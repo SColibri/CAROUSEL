@@ -2,6 +2,7 @@
 
 #include "../../../AMLib/interfaces/IAM_lua_functions.h"
 #include "../../../AMLib/include/AM_Config.h"
+#include "../../../AMLib/interfaces/IAM_Database.h"
 #include "API_matcalc_lib.h"
 
 class API_lua_functions: public IAM_lua_functions
@@ -15,6 +16,7 @@ public:
 
 private:
 	inline static API_matcalc_lib* _api{nullptr};
+	inline static IAM_Database* _database{nullptr};
 	inline static std::string _dllPath{};
 	inline static AM_Config* _configuration{nullptr};
 

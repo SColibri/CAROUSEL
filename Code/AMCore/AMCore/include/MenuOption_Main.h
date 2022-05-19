@@ -121,11 +121,17 @@ private:
          });
 
         std::vector<Event> keys;
+
         auto renderer = Renderer(component, [&] {
             Elements children;
 
             children.push_back(
                 vbox({
+                    filler(),
+                    paragraphAlignCenter(" +-+ +-+   +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+") | color(Color::Orange1),
+                    paragraphAlignCenter(" |A| |M|   |F| |r| |a| |m| |e| |w| |o| |r| |k|") | color(Color::Orange1),
+                    paragraphAlignCenter(" +-+ +-+   +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+") | color(Color::Orange1),
+                    paragraphAlignCenter("v0.0.55"),
                     filler(),
                     document,
                     filler(),

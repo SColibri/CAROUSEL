@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 // Constructors, destructors and other
 // -------------------------------------------------------------------------------------
@@ -33,17 +34,29 @@
 		switch (option_)
 		{
 		case FILEPATH::GENERAL:
-			response = _workingDirectory;
+			response = _workingDirectory + "/General";
 			break;
 		case FILEPATH::SCRIPTS:
-			response = _workingDirectory;
+			response = _workingDirectory + "/Scripts";
 			break;
 		case FILEPATH::PROJECTS:
-			response = _workingDirectory;
+			response = _workingDirectory + "/Projects";
+			break;
+		case FILEPATH::DATABASE:
+			response = _workingDirectory + "/Database";
 			break;
 		default:
 			response = "";
 			break;
+		}
+
+		if(response.length() > 0)
+		{
+			std::filesystem::path pathName{ response };
+			if(!std::filesystem::exists(pathName))
+			{
+				std::filesystem::create_directory(pathName);
+			}
 		}
 
 		return response;
@@ -72,8 +85,7 @@
 		ss << "#*** AM_FileManagement config file ****\n";
 		ss << "***************************************\n";
 		ss << "\n";
-		ss << "_fileManagement \n";
-
+		ss << "_workingDirectory" << separatorChar << _workingDirectory << std::endl;
 		ss << "END\n";
 
 		return ss.str();
@@ -81,6 +93,17 @@
 
 	void AM_FileManagement::load_string(std::ifstream& save_string)
 	{
-
+		if (save_string.is_open()) {
+			std::string var, var2{ "" };
+			while (!save_string.eof() && save_string.good()) {
+				std::getline(save_string, var);
+				if (var.find("END") != std::string::npos) {
+					break;
+				}
+				else if (var.find("_workingDirectory") != std::string::npos) {
+					_workingDirectory = var.substr(var.find(separatorChar) + 1);
+				}
+			}
+		}
 	}
 #pragma endregion Interfaces

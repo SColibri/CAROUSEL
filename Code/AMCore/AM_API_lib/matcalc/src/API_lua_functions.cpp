@@ -4,6 +4,7 @@
 #include "../include/API_lua_functions.h"
 #include "../include/API_matcalc_lib.h"
 #include "../include/API_scripting.h"
+#include "../../../AMLib/include/Database_implementations/Database_Factory.h"
 
 API_lua_functions::API_lua_functions(lua_State* state)
 {
@@ -15,6 +16,7 @@ API_lua_functions::API_lua_functions(lua_State* state, AM_Config* configuration)
 	_configuration = configuration;
 	set_library(configuration);
 	add_functions_to_lua(state);
+	_database = Database_Factory::get_database(configuration);
 }
 
 API_lua_functions::~API_lua_functions()

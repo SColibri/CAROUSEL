@@ -3,7 +3,7 @@
 #include <vector>
 #include <list>
 #include "../include/AM_Database_TableStruct.h"
-#include "../include/AM_Database.h"
+#include "../interfaces/IAM_Database.h"
 
 /** \addtogroup AMLib
  *  @{
@@ -18,7 +18,7 @@ class AM_Database_Datatable
 public:
 
 #pragma region Des_Con
-	AM_Database_Datatable(AM_Database* DB, AM_Database_TableStruct* TS);
+	AM_Database_Datatable(IAM_Database* DB, AM_Database_TableStruct* TS);
 	~AM_Database_Datatable();
 #pragma endregion Des_Con
 
@@ -66,7 +66,7 @@ public:
 #pragma endregion Methods
 
 private:
-	AM_Database* _db; // connection to database
+	IAM_Database* _db; // connection to database
 	const AM_Database_TableStruct* _tableStruct; // Table structure
 	std::vector<std::vector<std::string>> _data; // Table data
 	int _addedRows{0}; // Rows added to table, not contained in the database.

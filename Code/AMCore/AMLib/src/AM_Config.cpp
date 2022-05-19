@@ -2,6 +2,7 @@
 #include <sstream>
 #include <vector>
 #include <fstream>
+#include "../include/Database_implementations/Database_Factory.h"
 
 // Constructors, destructors and other
 // -------------------------------------------------------------------------------------
@@ -49,6 +50,10 @@
 	std::string AM_Config::get_filename()
 	{
 		return _fileManagement.get_filePath(workingDirectoryOption) + Name + ".config";
+	}
+	std::string AM_Config::get_directory_path(AM_FileManagement::FILEPATH foption)
+	{
+		return _fileManagement.get_filePath(foption);
 	}
 
 	void AM_Config::set_working_directory(std::string mainPath)
@@ -125,6 +130,7 @@
 	{
 		_mobility_database_path = filename;
 	}
+
 #pragma endregion Getters_Setters
 
 // Interfaces
@@ -140,6 +146,10 @@
 		ss << "\n";
 		ss << "Name" << separatorChar << Name << std::endl;
 		ss << "_apiPath" << separatorChar << _apiPath << std::endl;
+		ss << "_thermodynamic_database_path" << separatorChar << _thermodynamic_database_path << std::endl;
+		ss << "_physical_database_path" << separatorChar << _physical_database_path << std::endl;
+		ss << "_mobility_database_path" << separatorChar << _mobility_database_path << std::endl;
+		ss << "_workingDirectory" << separatorChar << _workingDirectory << std::endl;
 		ss << "\n";
 		ss << _fileManagement.get_save_string();
 		ss << "\n";
@@ -158,6 +168,9 @@
 					if (var.find("AM_FileManagement") != std::string::npos) {
 						_fileManagement.load_string(save_string);
 					}
+					else if (var.find("AM_DatabaseFactory") != std::string::npos) {
+						Database_Factory::load_string(save_string);
+					}
 				}
 				else {
 					if (var.find("Name") != std::string::npos) {
@@ -166,6 +179,18 @@
 					else if(var.find("_apiPath") != std::string::npos) {
 						_apiPath = var.substr(var.find(separatorChar) + 1);
 					}
+					else if (var.find("_thermodynamic_database_path") != std::string::npos) {
+						_thermodynamic_database_path = var.substr(var.find(separatorChar) + 1);
+					}
+					else if (var.find("_physical_database_path") != std::string::npos) {
+						_physical_database_path = var.substr(var.find(separatorChar) + 1);
+					}
+					else if (var.find("_mobility_database_path") != std::string::npos) {
+						_mobility_database_path = var.substr(var.find(separatorChar) + 1);
+					}
+					else if (var.find("_workingDirectory") != std::string::npos) {
+						_workingDirectory = var.substr(var.find(separatorChar) + 1);
+					}
 				}
 			}
 		}
@@ -173,3 +198,4 @@
 	}
 
 #pragma endregion Interfaces
+

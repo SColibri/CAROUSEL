@@ -61,12 +61,14 @@ int API_matcalc_lib::run_mcc_executable(std::string script_filename)
 	std::string run_file = "C:/Program Files/MatCalc 6/mcc.exe -x " + script_filename;
 	if (CreateProcessA(0, run_file.data(), 0, 0, 0, 0, 0, 0, &si, &pi))
 	{
+		_mccSokcet_active = true;
 		WaitForSingleObject(pi.hProcess, INFINITE);
 		CloseHandle(pi.hProcess);
 		CloseHandle(pi.hThread);
 		GetExitCodeProcess(pi.hProcess, &exitCode);
 	}
 
+	_mccSokcet_active = false;
 	return exitCode;
 }
 

@@ -10,13 +10,16 @@
 #include "AMCore.h"
 #include "../AMLib/include/AM_Config.h"
 #include "../AMLib/include/AM_FileManagement.h"
-#include "../AMLib/include/AM_Database.h"
+#include "../AMLib/include/Database_implementations/Database_Sqlite3.h"
+#include "../AMLib/interfaces/IAM_Database.h"
+
 
 #include "include/MenuOption_Main.h"
 #include "include/HelpOptions.h"
 #include "../AMLib/interfaces/IAM_API.h"
 #include "include/API_controll.h"
 #include "../AMLib/include/AM_lua_interpreter.h"
+#include "../AMLib/include/AM_Database_Framework.h"
 
 
 using namespace std;
@@ -32,7 +35,7 @@ int main(int argc, char* argv[])
 
 	HelpOptions Options(argc, argv);
 	if (Options.get_help() == "TRUE") { Options.Show_help(); }
-	else if (Options.get_terminal() == "FALSE")
+	else if (Options.get_terminal() == "TRUE")
 	{
 		system("cls");
 		MenuOption_Main menuOptionMain;
@@ -54,7 +57,7 @@ int main(int argc, char* argv[])
 	else if (Options.get_luafile() != "EMPTY")
 	{
 		system("cls");
-		std::string out = "This is some output that the script returned";//api01.get_implementation()->run_lua_script(Options.get_luafile());
+		std::string out = api01.get_implementation()->run_lua_script(Options.get_luafile());
 		MenuOption_Main menuOptionMain;
 		menuOptionMain.set_output(out);
 		menuOptionMain.init();
@@ -80,15 +83,17 @@ int main(int argc, char* argv[])
 	}
 
 	
+	std::string outtest = api01.get_implementation()->run_lua_script("C:/Users/drogo/Desktop/Homless/TestLua.lua");
+
 	std::vector<std::string> vecpar{ "C:/Users/drogo/Desktop/Homless/GM02_main_loop.mcs" };
 	std::vector<std::string> runCom{ "open-thermodyn-database C:/Users/drogo/Documents/MatCalcUserData/database/thermodynamic/ME-Al1.2.tdb" };
 	std::vector<std::string> runCom2{ "exit" };
 	api01.get_implementation()->helloApi();
-	std::string outHere = api01.get_implementation()->run_lua_command("hello_world");
+	//std::string outHere = api01.get_implementation()->run_lua_command("hello_world");
 	std::string outHereother = ""; // api01.get_implementation()->run_lua_command("run_script", vecpar);
-	std::string mcrThing = api01.get_implementation()->run_lua_command("run_command", runCom);
-	std::string mcrThing_2 = api01.get_implementation()->run_lua_command("initialize_core");
-	std::cout << "Lua is doing this: " << outHere << " and this too? " << outHereother << " and mcd: " << mcrThing << endl;
+	//std::string mcrThing = api01.get_implementation()->run_lua_command("run_command", runCom);
+	//std::string mcrThing_2 = api01.get_implementation()->run_lua_command("initialize_core");
+	//std::cout << "Lua is doing this: " << outHere << " and this too? " << outHereother << " and mcd: " << mcrThing << endl;
 
 	std::ofstream class_file;
 	std::string Save01 = config01.get_save_string();
@@ -105,8 +110,10 @@ int main(int argc, char* argv[])
 	char Namey[] = "Test";
 
 
-	AM_Database db01;
-	db01.connect("newTestOk.db");
+	AM_Database_Framework amF(&config01);
+
+	IAM_Database* db01 = (IAM_Database*) new Database_Sqlite3(&config01);
+	db01 -> connect();
 	
 	AM_Database_TableStruct TB01;
 	TB01.tableName = "Compound_01";
@@ -121,9 +128,9 @@ int main(int argc, char* argv[])
 	TB01.columnDataType.push_back("CHAR[150]");
 	TB01.columnDataType.push_back("CHAR[150]");
 
-	db01.add_table(&TB01);
+	db01->add_table(&TB01);
 
-	std::vector<std::string> TBNames = db01.get_tableNames();
+	std::vector<std::string> TBNames = db01->get_tableNames();
 
 	for each (std::string Table in TBNames)
 	{

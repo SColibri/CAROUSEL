@@ -12,6 +12,7 @@ if(BUILD_TESTING)
 	add_subdirectory ("AMTests")
 endif()
 
+
 # Include sub-projects.
 add_subdirectory ("AMCore")
 add_subdirectory ("AMLib")

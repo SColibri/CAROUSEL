@@ -11,8 +11,17 @@
 /// </summary>
 class AM_FileManagement:IStringify {
 	public:
-		enum class FILEPATH{NONE, GENERAL, PROJECTS, SCRIPTS};
-		std::string filepath_names[4] = {"None","General","Projects","Scripts"};
+		enum class FILEPATH{NONE, 
+							GENERAL, 
+							PROJECTS, 
+							SCRIPTS, 
+							DATABASE};
+
+		std::string filepath_names[5] = {"None",
+										"General",
+										"Projects",
+										"Scripts", 
+										"Database"};
 
 	// Constructors, destructors and other
 	// -------------------------------------------------------------------------------------

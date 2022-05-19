@@ -90,6 +90,7 @@ private:
 		{
 			_sockThread = std::thread([this] {this->mcc_socketHandles(); });
 		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(250)); // wait for mcc to finish set-up
 
 	}
 
