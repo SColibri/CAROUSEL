@@ -79,18 +79,27 @@ std::string API_matcalc_lib::MCRCommand(std::string commandLine)
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 	DWORD exitCode = -1;
-	std::string out{"MCRCommand did not output anything"};
+	std::string out{"MCR Command being executed \n"};
 
 	memset(&si, 0, sizeof(si));
 	memset(&pi, 0, sizeof(pi));
+	
+	std::string run_file = "\"C:/Program Files/MatCalc 6/mcr.exe\" " + std::to_string(_mccPort) + " " + commandLine;
+	FILE* mcrEXEC = _popen(run_file.c_str(), "r");
+	char   psBuffer[128]{0};
 
-	std::string run_file = "C:/Program Files/MatCalc 6/mcr.exe " + std::to_string(_mccPort) + " " + commandLine;
-	if (CreateProcessA(0, run_file.data(), 0, 0, 0, 0, 0, 0, &si, &pi))
+	while (fgets(psBuffer, 128, mcrEXEC))
 	{
-		WaitForSingleObject(pi.hProcess, INFINITE);
-		CloseHandle(pi.hProcess);
-		CloseHandle(pi.hThread);
-		GetExitCodeProcess(pi.hProcess, &exitCode);
+		out = std::string(psBuffer) + " "; //puts(psBuffer);
+	}
+
+	if (feof(mcrEXEC))
+	{
+		out += " Exit code: " + std::to_string(_pclose(mcrEXEC)) + " || ";
+	}
+	else
+	{
+		out += " Exit code: Error reading whole buffer! - MCRExec failure ";
 	}
 
 	return out;

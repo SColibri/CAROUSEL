@@ -111,14 +111,14 @@ int Database_Sqlite3::insert_row(const AM_Database_TableStruct* tableName, std::
 	Query += tableName->columnNames[1];
 	for (size_t i = 2; i < tableName->columnNames.size(); i++)
 	{
-		Query += "," + tableName->columnNames[i];
+		Query += ", " + tableName->columnNames[i];
 	}
 	Query += " ) VALUES ( ";
 
-	Query += newData[1];
+	Query += "\'" + newData[1] + "\'";
 	for (size_t i = 2; i < newData.size(); i++)
 	{
-		Query += "," + newData[i];
+		Query += ", \'" + newData[i] + "\'";
 	}
 	Query += " );";
 
@@ -139,5 +139,64 @@ int Database_Sqlite3::update_row(const AM_Database_TableStruct* tableName, std::
 
 	return sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
 }
+
+int Database_Sqlite3::get_last_ID(const AM_Database_TableStruct* tableName)
+{
+	std::string Query = "SELECT ID FROM " + tableName->tableName + " ORDER BY ID DESC LIMIT 1 ";
+	int Response{ -1 };
+	sqlite3_stmt* stmt;
+
+	int exec_result = sqlite3_prepare_v2(db, Query.c_str(), -1, &stmt, 0);
+	if (exec_result == SQLITE_OK) {
+
+		while (sqlite3_step(stmt) == SQLITE_ROW)
+		{
+			std::stringstream ss;
+			std::string TName;
+			ss << sqlite3_column_text(stmt, 0);
+			ss >> TName;
+			Response = std::stoi(TName);
+		}
+
+	}
+
+	return Response;
+}
+
+std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_Database_TableStruct* tableName)
+{
+	std::vector<std::vector<std::string>> out;
+	std::string Query = "SELECT * FROM " + tableName->tableName + " ";
+	sqlite3_stmt* stmt;
+	
+	int exec_result = sqlite3_prepare_v2(db, Query.c_str(), -1, &stmt, 0);
+	if (exec_result == SQLITE_OK) {
+
+		while (sqlite3_step(stmt) == SQLITE_ROW)
+		{
+			out.push_back(get_input_row(tableName, stmt));	
+		}
+	}
+
+	return out;
+}
+
+std::vector<std::string> Database_Sqlite3::get_input_row(const AM_Database_TableStruct* tableName,
+										sqlite3_stmt* stmt)
+{
+	std::stringstream ss;
+	std::string TName;
+
+	int Index{ 0 };
+	std::vector<std::string> rowContent;
+	for each (std::string column in tableName->columnNames)
+	{
+		const unsigned char* testy = sqlite3_column_text(stmt, Index++);
+		rowContent.push_back(std::string((const char*)testy));
+	}
+
+	return rowContent;
+}
+
 
 #pragma endregion Methods

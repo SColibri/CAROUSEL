@@ -80,6 +80,21 @@ public:
 	/// <returns></returns>
 	virtual int update_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData) { return -1; }
 
+	/// <summary>
+	/// gets last ID value
+	/// </summary>
+	/// <param name="tableName"></param>
+	/// <param name="newData"></param>
+	/// <returns></returns>
+	virtual int get_last_ID(const AM_Database_TableStruct* tableName) { return -1; }
+
+	/// <summary>
+	/// getd table row data
+	/// </summary>
+	/// <param name="tableName"></param>
+	/// <returns></returns>
+	virtual std::vector<std::vector<std::string>> get_tableRows(const AM_Database_TableStruct* tableName) { return std::vector<std::vector<std::string>>(); }
+
 protected:
 	AM_Config* _configuration{nullptr}; // configuration file
 

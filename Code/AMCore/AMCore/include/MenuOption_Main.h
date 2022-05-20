@@ -17,6 +17,10 @@
 #include "ftxui/dom/table.hpp" 
 #include "ftxui/component/event.hpp" 
 
+#include "../../AMLib/include/AM_lua_interpreter.h"
+#include "../../AMLib//interfaces/IAM_API.h"
+
+
 using namespace ftxui;
 
 /// <summary>
@@ -36,22 +40,27 @@ public:
     };
 
 	/// <summary>
-	/// Display GUI
+	/// Start display GUI
 	/// </summary>
-	void init() {
-        if(_depth == MenuOption::HOME) menu_home();
-        if (_depth == MenuOption::CONFIGURATIONS) menu_home();
-	}
+    void init();
 
-    void load_available_commands(std::vector<std::vector<std::string>>& Listlua)
-    {
-        _luaCommandList = Listlua;
-    }
+    /// <summary>
+    /// load available lua commands for user reference
+    /// </summary>
+    /// <param name="Listlua"></param>
+    void load_available_commands(std::vector<std::vector<std::string>>& Listlua);
 
-    void set_output(std::string& newoutput)
-    {
-        _out = newoutput;
-    }
+    /// <summary>
+    /// Set output text in window
+    /// </summary>
+    /// <param name="newoutput"></param>
+    void set_output(std::string& newoutput);
+
+    /// <summary>
+    /// set lua interpreter, used for executing commands
+    /// </summary>
+    /// <param name="lua"></param>
+    void set_luaInterpreter(IAM_API* lua);
 
 
 private:
@@ -60,178 +69,79 @@ private:
     std::string _commandPrevious{}; // previous command input
     std::string _parameters{}; // flags or parameters to be used in the command
     std::vector<std::string> _commandsAvail{}; // list of available commands
+    std::vector<std::string> _commandsName{}; // list of available commands
     std::string _out{}; // output console
 
-    /// <summary>
-    /// compares _command with _commandPrevious and updates available commands
-    /// </summary>
-    /// <returns></returns>
-    bool set_commandPrevious() 
-    {   
-        if(_command.compare(_commandPrevious))
-        {
-            _commandPrevious = _command;
-            get_available_commands(_commandPrevious);
-            validateCommand();
-            return true;
-        }
-        return false;
-    }
+    ScreenInteractive _screen = ScreenInteractive::TerminalOutput(); // ftxui screen
+    bool _quit{ false }; // quit terminal AMFramework
+    bool _commandValidated{ false };
+    MenuOption _depth{ MenuOption::HOME }; // Current menu selection
+    IAM_API* _api_lua{ nullptr }; // lua interpreter
 
-    /// <summary>
-    /// gets available commands
-    /// </summary>
-    void get_available_commands(std::string& partialName) 
-    {
-        _commandsAvail.clear();
-        
-        for each (std::vector<std::string> commy in _luaCommandList)
-        {
-            if(commy[0].find(partialName) != std::string::npos)
-            {
-                _commandsAvail.push_back(commy[0] + " || " + 
-                                         commy[1] + " || " + 
-                                         commy[2]);
-            }
-        }
-    }
-
+#pragma region GUI
     /// <summary>
     /// HOME menu design
     /// </summary>
-    void menu_home() 
-    {
-        
-        Element document = hbox({
-          text("Welcome to ") | bold | color(Color::White),
-          text("AMFramework") | bold | color(Color::Orange1),
-        });
-
-        Component options = get_options_menu();
-
-        _command = "";
-        _parameters = "";
-        Component input_command = Input(&_command, "command");
-        Component input_parameters = Input(&_parameters, "parameters");
-
-        auto component = Container::Horizontal({
-          input_command,
-          input_parameters,
-          options,
-         });
-
-        std::vector<Event> keys;
-
-        auto renderer = Renderer(component, [&] {
-            Elements children;
-
-            children.push_back(
-                vbox({
-                    filler(),
-                    paragraphAlignCenter(" +-+ +-+   +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+") | color(Color::Orange1),
-                    paragraphAlignCenter(" |A| |M|   |F| |r| |a| |m| |e| |w| |o| |r| |k|") | color(Color::Orange1),
-                    paragraphAlignCenter(" +-+ +-+   +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+") | color(Color::Orange1),
-                    paragraphAlignCenter("v0.0.55"),
-                    filler(),
-                    document,
-                    filler(),
-                    separatorHeavy(),
-                    hbox({options->Render()}),
-                    filler(),
-                    hbox({
-                           text("  AM >> ") | color(Color::Orange3),
-                           separator(),
-                           hbox(text(" command : "), input_command->Render()),
-                           hbox(text(" "), input_parameters->Render()),
-                    }) | border
-                }));
-
-            children.push_back(component_commandsAvail());
-            
-            if (_out.length() > 0) 
-            {
-                children.push_back(
-                    window(text("output"), paragraph(_out) | color(Color::Wheat1)) | color(Color::Yellow3Bis)
-                );
-            }
-            
-            if (_quit == true)
-            {
-               _screen.ExitLoopClosure();
-            }
-            
-
-            return vbox(std::move(children));
-        });
-
-        
-        
-        Render(_screen, document);
-        _screen.Loop(renderer);
-    }
+    void menu_home();
 
     /// <summary>
     /// GUI for menu options, this allows the user to navigate through the menu options
     /// </summary>
     /// <returns></returns>
-    Component get_options_menu() {
-        Component options = Collapsible("Navigate", Container::Horizontal({
-            Button("Configurations", [&] {_depth = MenuOption::CONFIGURATIONS; }),
-            Button("Quit", _screen.ExitLoopClosure())
-        }));
-
-        return options;
-    }
+    Component get_options_menu();
 
     /// <summary>
     /// HEADER design of the menu
     /// </summary>
     /// <returns></returns>
-    Element get_header_menu() 
-    {
-        Element document = hbox({
-          text("Welcome to ") | bold | color(Color::White),
-          text("AMFramework") | bold | color(Color::Orange1),
-        });
-
-        return document;
-    }
+    Element get_header_menu();
 
     /// <summary>
     /// GUI for showing available commands available
     /// </summary>
     /// <returns></returns>
-    Element component_commandsAvail() {
-        Elements docy;
+    Element component_commandsAvail();
 
+#pragma endregion
 
-        if (set_commandPrevious()) {
+#pragma region Commands
+    /// <summary>
+    /// compares _command with _commandPrevious and updates available commands
+    /// </summary>
+    /// <returns></returns>
+    bool set_commandPrevious();
 
-            docy.push_back(text("Available commands:") | color(Color::Yellow1));
-            docy.push_back(separatorDouble());
-            for each (std::string commAvail in _commandsAvail)
-            {
-                docy.push_back(text(commAvail));
-                docy.push_back(filler());
-            }
-        }
+    /// <summary>
+    /// gets available commands
+    /// </summary>
+    void get_available_commands(std::string& partialName);
 
+    /// <summary>
+    /// Validate entered commands
+    /// </summary>
+    void validateCommand();
 
-        Element document = vbox(
-            std::move(docy)
-        );
-        
-        return document;
-    }
-
+    /// <summary>
+    /// exeecute commands using the lua interpreter
+    /// </summary>
+    void executeCommand();
+#pragma endregion
     
-private:
-    ScreenInteractive _screen = ScreenInteractive::TerminalOutput();
-    bool _quit{ false }; // quit terminal AMFramework
-    MenuOption _depth{ MenuOption::HOME }; // Current menu selection
+#pragma region Handles
+    /// <summary>
+    /// Handle keypress event
+    /// </summary>
+    bool Handle_KeyPress(Event& event);
+#pragma endregion
 
-    void validateCommand() 
-    {
-        
-    }
+#pragma region Helpers
+    /// <summary>
+    /// Split string using a delimiter
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="v"></param>
+    void SplitString(std::string s, std::vector<std::string>& v);
+#pragma endregion
+
+
 };

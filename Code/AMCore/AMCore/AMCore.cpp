@@ -20,9 +20,55 @@
 #include "include/API_controll.h"
 #include "../AMLib/include/AM_lua_interpreter.h"
 #include "../AMLib/include/AM_Database_Framework.h"
+#include "../AMLib/include/Database_implementations/Data_stuctures/DBS_Project.h"
 
 
 using namespace std;
+
+#pragma region testsocket
+#include <stdio.h>
+#define BUFSIZE 4096 
+
+int ChildNode()
+{
+	CHAR chBuf[BUFSIZE];
+	DWORD dwRead, dwWritten;
+	HANDLE hStdin, hStdout;
+	BOOL bSuccess;
+
+	hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	hStdin = GetStdHandle(STD_INPUT_HANDLE);
+	if (
+		(hStdout == INVALID_HANDLE_VALUE) ||
+		(hStdin == INVALID_HANDLE_VALUE)
+		)
+		ExitProcess(1);
+
+	// Send something to this process's stdout using printf.
+	printf("\n ** This is a message from the child process. ** \n");
+
+	// This simple algorithm uses the existence of the pipes to control execution.
+	// It relies on the pipe buffers to ensure that no data is lost.
+	// Larger applications would use more advanced process control.
+
+	for (;;)
+	{
+		// Read from standard input and stop on error or no data.
+		bSuccess = ReadFile(hStdin, chBuf, BUFSIZE, &dwRead, NULL);
+
+		if (!bSuccess || dwRead == 0)
+			break;
+
+		// Write to standard output and stop on error.
+		bSuccess = WriteFile(hStdout, chBuf, dwRead, &dwWritten, NULL);
+
+		if (!bSuccess)
+			break;
+	}
+	return 0;
+}
+
+#pragma endregion
 
 int main(int argc, char* argv[])
 {
@@ -39,6 +85,7 @@ int main(int argc, char* argv[])
 	{
 		system("cls");
 		MenuOption_Main menuOptionMain;
+		menuOptionMain.set_luaInterpreter(api01.get_implementation());
 		menuOptionMain.load_available_commands(api01.get_implementation()->get_declared_functions());
 		menuOptionMain.init();
 	}
@@ -139,6 +186,14 @@ int main(int argc, char* argv[])
 
 	cout << "Save is done " << endl;
 
+	DBS_Project NewDB(db01);
+	NewDB.APIName = "New name";
+	NewDB.Name = "Cool project";
+	NewDB.save();
+
+	AM_Database_TableStruct prj = AMLIB::TN_Projects();
+	std::vector<std::vector<std::string>> testTable = db01->get_tableRows(&prj);
+	bool stopHere{true};
 	//MenuOption_Main MO;
 	//MO.init();
 

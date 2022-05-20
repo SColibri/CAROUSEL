@@ -37,6 +37,9 @@ public:
 	virtual int remove_row(const AM_Database_TableStruct* tableName, std::string whereClause) override;
 	virtual int insert_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData) override;
 	virtual int update_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData) override;
+	virtual int get_last_ID(const AM_Database_TableStruct* tableName) override;
+	virtual std::vector<std::vector<std::string>> get_tableRows(const AM_Database_TableStruct* tableName) override;
+
 #pragma endregion
 
 #pragma region Methods
@@ -53,6 +56,10 @@ private:
 
 private:
 
+#pragma region Methods
+	std::vector<std::string> get_input_row(const AM_Database_TableStruct* tableName,
+											sqlite3_stmt* stmt);
+#pragma endregion
 
 };
 
