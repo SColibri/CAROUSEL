@@ -6,9 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 enable_testing()
 
 set(TEST_SET 
-	AM_Config_Test
-    AM_Database_Test
-    AM_Database_TableStruct_Test
+	
 )
 
 foreach(target ${TEST_SET})
