@@ -57,7 +57,7 @@ namespace AMLIB
 	{
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY");
-		out.add_new("IDProcess", "INTEGER");
+		out.add_new("IDCase", "INTEGER");
 		out.add_new("IDElement", "INTEGER");
 		out.add_new("TypeComposition", "TEXT");
 		out.add_new("Value", "REAL");
@@ -70,11 +70,11 @@ namespace AMLIB
 	{
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY");
-		out.add_new("IDProcess", "INTEGER");
+		out.add_new("IDCase", "INTEGER");
 		out.add_new("StartTemperature", "REAL");
 		out.add_new("EndTemperature", "REAL");
 		out.add_new("StepSize", "REAL");
-		out.add_new("DependentPhase", "REAL");
+		out.add_new("DependentPhase", "INTEGER");
 		out.add_new("Min_Liquid_Fraction", "REAL");
 		out.tableName = "SccheilConfiguration";
 
@@ -100,7 +100,7 @@ namespace AMLIB
 	{
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY");
-		out.add_new("IDProcess", "INTEGER");
+		out.add_new("IDCase", "INTEGER");
 		out.add_new("Name", "TEXT");
 		out.tableName = "CALPHADDatabase";
 

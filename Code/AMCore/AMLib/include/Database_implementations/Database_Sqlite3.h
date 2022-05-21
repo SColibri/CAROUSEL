@@ -39,6 +39,7 @@ public:
 	virtual int update_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData) override;
 	virtual int get_last_ID(const AM_Database_TableStruct* tableName) override;
 	virtual std::vector<std::vector<std::string>> get_tableRows(const AM_Database_TableStruct* tableName) override;
+	virtual std::vector<std::string> get_row(const AM_Database_TableStruct* tableName, std::string Query) override;
 
 #pragma endregion
 

@@ -95,6 +95,15 @@ public:
 	/// <returns></returns>
 	virtual std::vector<std::vector<std::string>> get_tableRows(const AM_Database_TableStruct* tableName) { return std::vector<std::vector<std::string>>(); }
 
+	/// <summary>
+	/// Obtains row data from the database
+	/// </summary>
+	/// <param name="tableName"></param>
+	/// <param name="Query"></param>
+	/// <returns></returns>
+	virtual std::vector<std::string> get_row(const AM_Database_TableStruct* tableName, 
+											 std::string Query) { return std::vector<std::string>(); }
+
 protected:
 	AM_Config* _configuration{nullptr}; // configuration file
 

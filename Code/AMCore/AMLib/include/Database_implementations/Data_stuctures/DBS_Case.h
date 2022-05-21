@@ -1,20 +1,21 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
 /// <summary>
-/// Implements IAM_DBS.h interface, this is a project
+/// Implements IAM_DBS.h interface, this is a phase
 /// object structure.
 /// </summary>
-class DBS_Project: public IAM_DBS
+class DBS_Case : public IAM_DBS
 {
 public:
-	std::string Name{""};
-	std::string APIName{""};
+	int IDProject{ -1 };
+	std::string ScriptName{ "" };
+	std::string Date{ "" };
 
-	DBS_Project(IAM_Database* database, int id): 
+	DBS_Case(IAM_Database* database, int id) :
 		IAM_DBS(database)
 	{
 		_id = id;
-		_tableStructure = AMLIB::TN_Projects();
+		_tableStructure = AMLIB::TN_Case();
 	}
 
 #pragma region implementation
@@ -22,8 +23,9 @@ public:
 	virtual std::vector<std::string> get_input_vector() override
 	{
 		std::vector<std::string> input{ std::to_string(_id),
-										Name,
-										APIName };
+										std::to_string(IDProject),
+										ScriptName,
+										Date};
 		return input;
 	}
 
@@ -35,11 +37,11 @@ public:
 	virtual int load() override
 	{
 		std::vector<std::string> rawData = get_rawData();
-		if (rawData.size() < 3) return 1;
+		if (rawData.size() < 4) return 1;
 
-		Name = rawData[1];
-		APIName = rawData[2];
-
+		IDProject = std::stoi(rawData[1]);
+		ScriptName = rawData[2];
+		Date = RawData[3];
 		return 0;
 	}
 

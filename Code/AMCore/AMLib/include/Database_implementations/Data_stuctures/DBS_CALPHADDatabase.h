@@ -1,20 +1,20 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
 /// <summary>
-/// Implements IAM_DBS.h interface, this is a project
-/// object structure.
+/// Implements IAM_DBS.h interface, this is a CALPHAD database
+/// object structure (only stores name of the database).
 /// </summary>
-class DBS_Project: public IAM_DBS
+class DBS_CALPHADDatabase : public IAM_DBS
 {
 public:
-	std::string Name{""};
-	std::string APIName{""};
+	int IDCase{ -1 };
+	std::string Name{ "" };
 
-	DBS_Project(IAM_Database* database, int id): 
+	DBS_CALPHADDatabase(IAM_Database* database, int id) :
 		IAM_DBS(database)
 	{
 		_id = id;
-		_tableStructure = AMLIB::TN_Projects();
+		_tableStructure = AMLIB::TN_CALPHADDatabase();
 	}
 
 #pragma region implementation
@@ -22,8 +22,8 @@ public:
 	virtual std::vector<std::string> get_input_vector() override
 	{
 		std::vector<std::string> input{ std::to_string(_id),
-										Name,
-										APIName };
+										std::to_string(IDCase),
+										Name };
 		return input;
 	}
 
@@ -35,11 +35,10 @@ public:
 	virtual int load() override
 	{
 		std::vector<std::string> rawData = get_rawData();
-		if (rawData.size() < 3) return 1;
+		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
 
-		Name = rawData[1];
-		APIName = rawData[2];
-
+		IDCase = std::stoi(rawData[1]);
+		Name = rawData[2];
 		return 0;
 	}
 

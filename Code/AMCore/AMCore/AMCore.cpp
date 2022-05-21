@@ -21,6 +21,7 @@
 #include "../AMLib/include/AM_lua_interpreter.h"
 #include "../AMLib/include/AM_Database_Framework.h"
 #include "../AMLib/include/Database_implementations/Data_stuctures/DBS_Project.h"
+#include "../AMLib/include/Database_implementations/Data_stuctures/DBS_Element.h"
 
 
 using namespace std;
@@ -186,10 +187,18 @@ int main(int argc, char* argv[])
 
 	cout << "Save is done " << endl;
 
-	DBS_Project NewDB(db01);
+	DBS_Project NewDB(db01, -1);
 	NewDB.APIName = "New name";
 	NewDB.Name = "Cool project";
 	NewDB.save();
+
+	DBS_Project savedDB(db01, NewDB.id());
+	savedDB.load();
+
+	DBS_Element NewDBE(db01, -1);
+	NewDBE.Name = "Cool project";
+	NewDBE.save();
+	NewDBE.load();
 
 	AM_Database_TableStruct prj = AMLIB::TN_Projects();
 	std::vector<std::vector<std::string>> testTable = db01->get_tableRows(&prj);

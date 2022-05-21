@@ -198,5 +198,24 @@ std::vector<std::string> Database_Sqlite3::get_input_row(const AM_Database_Table
 	return rowContent;
 }
 
+std::vector<std::string> Database_Sqlite3::get_row(const AM_Database_TableStruct* tableName, std::string Query)
+{
+	std::vector<std::string> out;
+	std::string inQuery = "SELECT * FROM " + tableName->tableName + " WHERE " + Query;
+	sqlite3_stmt* stmt;
 
-#pragma endregion Methods
+	int exec_result = sqlite3_prepare_v2(db, inQuery.c_str(), -1, &stmt, 0);
+	if (exec_result == SQLITE_OK) {
+
+		while (sqlite3_step(stmt) == SQLITE_ROW)
+		{
+			out = get_input_row(tableName, stmt);
+			break;
+		}
+	}
+
+	return out;
+}
+
+
+#pragma endregion
