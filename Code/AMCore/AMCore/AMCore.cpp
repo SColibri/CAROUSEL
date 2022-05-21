@@ -22,7 +22,7 @@
 #include "../AMLib/include/AM_Database_Framework.h"
 #include "../AMLib/include/Database_implementations/Data_stuctures/DBS_Project.h"
 #include "../AMLib/include/Database_implementations/Data_stuctures/DBS_Element.h"
-
+#include "../AMLib/include/Database_implementations/Data_stuctures/DBS_ElementComposition.h"
 
 using namespace std;
 
@@ -199,6 +199,15 @@ int main(int argc, char* argv[])
 	NewDBE.Name = "Cool project";
 	NewDBE.save();
 	NewDBE.load();
+
+	DBS_ElementComposition NewEly(db01, -1);
+	NewEly.IDElement = 1;
+	NewEly.Value = 0.5;
+	NewEly.TypeComposition = "weight";
+	NewEly.save();
+
+	DBS_ElementComposition NewElyL(db01, NewEly.id());
+	NewElyL.load();
 
 	AM_Database_TableStruct prj = AMLIB::TN_Projects();
 	std::vector<std::vector<std::string>> testTable = db01->get_tableRows(&prj);

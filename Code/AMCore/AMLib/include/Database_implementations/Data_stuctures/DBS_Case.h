@@ -41,7 +41,7 @@ public:
 
 		IDProject = std::stoi(rawData[1]);
 		ScriptName = rawData[2];
-		Date = RawData[3];
+		Date = rawData[3];
 		return 0;
 	}
 

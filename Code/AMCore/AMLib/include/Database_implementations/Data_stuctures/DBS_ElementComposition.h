@@ -10,7 +10,7 @@ public:
 	int IDCase{ -1 };
 	int IDElement{ -1 };
 	std::string TypeComposition{ "" };
-	std::string Value{ "" };
+	double Value{ -1 };
 
 	DBS_ElementComposition(IAM_Database* database, int id) :
 		IAM_DBS(database)
@@ -27,7 +27,7 @@ public:
 										std::to_string(IDCase),
 										std::to_string(IDElement),
 										TypeComposition,
-										Value };
+										std::to_string(Value) };
 		return input;
 	}
 
@@ -44,7 +44,7 @@ public:
 		IDCase = std::stoi(rawData[1]);
 		IDElement = std::stoi(rawData[2]);
 		TypeComposition = rawData[3];
-		Value = RawData[4];
+		Value = std::stod(rawData[4]);
 		return 0;
 	}
 
