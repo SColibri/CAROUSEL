@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../../../interfaces/IAM_Database.h"
+#include "../../AMLib/interfaces/IAM_Database.h"
 #include "../../AMLib/include/Database_implementations/Database_scheme_content.h"
 #include "../../AMLib/include/AM_Database_Datatable.h"
 #include "../../AMLib/include/AM_Database_TableStruct.h"

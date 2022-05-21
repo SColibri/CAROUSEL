@@ -11,9 +11,14 @@ TEST_CASE("AM_Config", "[classic]")
 		testConfig.save();
 		std::string pathToTest = testConfig.get_filename();
 
+		
+
 		// Loading a config file
 		AM_Config testConfig_Compare(pathToTest);
-		REQUIRE(testConfig_Compare.get_filename() == testConfig.get_filename());
+		std::string test01 = testConfig_Compare.get_filename();
+		std::string test02 = testConfig.get_filename();
+		REQUIRE(std::strcmp(testConfig_Compare.get_filename().c_str(), 
+							testConfig.get_filename().c_str()) == 0);
 	}
 
 	SECTION("Test2")

@@ -49,7 +49,7 @@
 #pragma region Getters_Setters
 	std::string AM_Config::get_filename()
 	{
-		return _fileManagement.get_filePath(workingDirectoryOption) + Name + ".config";
+		return _fileManagement.get_filePath(workingDirectoryOption) + "/" + Name + ".config";
 	}
 	std::string AM_Config::get_directory_path(AM_FileManagement::FILEPATH foption)
 	{

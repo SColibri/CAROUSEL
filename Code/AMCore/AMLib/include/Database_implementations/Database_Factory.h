@@ -43,7 +43,7 @@ public:
 
 	// Interfaces
 	// --------------------------------------------
-#pragma region Interfaces
+#pragma region Implementations
 
 	// IStringify - IMPLEMENTATION
 	static std::string get_save_string() 

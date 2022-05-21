@@ -4,17 +4,17 @@
 /// Implements IAM_DBS.h interface, this is a phase
 /// object structure.
 /// </summary>
-class DBS_ElementComposition : public IAM_DBS
+class DBS_ScheilConfiguration : public IAM_DBS
 {
 public:
 	int IDCase{ -1 };
 	double StartTemperature{ -1 };
 	double EndTemperature{ -1 };
 	double StepSize{ -1 };
-	int DependentPhase{ "" };
+	int DependentPhase{ -1 };
 	double minimumLiquidFraction{ -1 };
 
-	DBS_ElementComposition(IAM_Database* database, int id) :
+	DBS_ScheilConfiguration(IAM_Database* database, int id) :
 		IAM_DBS(database)
 	{
 		_id = id;

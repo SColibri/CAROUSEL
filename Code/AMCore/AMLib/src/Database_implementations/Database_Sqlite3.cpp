@@ -55,9 +55,9 @@ int Database_Sqlite3::add_table(const AM_Database_TableStruct* newTable)
 	if (newTable->columnNames.size() > 0 &&
 		newTable->columnDataType.size() == newTable->columnNames.size())
 	{
-		std::string Query = "CREATE TABLE IF NOT EXISTS " +
+		std::string Query = "CREATE TABLE IF NOT EXISTS \'" +
 			newTable->tableName +
-			"( ";
+			"\' ( ";
 
 		int Index{ 0 };
 		for each (std::string column in newTable->columnNames)
@@ -77,21 +77,21 @@ int Database_Sqlite3::add_table(const AM_Database_TableStruct* newTable)
 
 int Database_Sqlite3::drop_table(const AM_Database_TableStruct* tableName)
 {
-	std::string Query = "DROP TABLE " + tableName->tableName;
+	std::string Query = "DROP TABLE \'" + tableName->tableName + "\'";
 
 	return sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
 }
 
 int Database_Sqlite3::clear_table(const AM_Database_TableStruct* tableName)
 {
-	std::string Query = "DELETE FROM " + tableName->tableName;
+	std::string Query = "DELETE FROM \'" + tableName->tableName + "\'";
 
 	return sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
 }
 
 int Database_Sqlite3::remove_row(const AM_Database_TableStruct* tableName, int ID)
 {
-	std::string Query = "DELETE FROM " + tableName->tableName + " WHERE ID" +
+	std::string Query = "DELETE FROM \'" + tableName->tableName + "\' WHERE ID" +
 		tableName->tableName + " = " + std::to_string(ID);
 
 	return sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
@@ -99,14 +99,14 @@ int Database_Sqlite3::remove_row(const AM_Database_TableStruct* tableName, int I
 
 int Database_Sqlite3::remove_row(const AM_Database_TableStruct* tableName, std::string whereClause)
 {
-	std::string Query = "DELETE FROM " + tableName->tableName + " WHERE " +
+	std::string Query = "DELETE FROM \'" + tableName->tableName + "\' WHERE " +
 		whereClause;
 	return sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
 }
 
 int Database_Sqlite3::insert_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData)
 {
-	std::string Query = "INSERT INTO " + tableName->tableName + " ( ";
+	std::string Query = "INSERT INTO \'" + tableName->tableName + "\' ( ";
 
 	Query += tableName->columnNames[1];
 	for (size_t i = 2; i < tableName->columnNames.size(); i++)
@@ -128,7 +128,7 @@ int Database_Sqlite3::insert_row(const AM_Database_TableStruct* tableName, std::
 
 int Database_Sqlite3::update_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData)
 {
-	std::string Query = "UPDATE " + tableName->tableName + " SET ";
+	std::string Query = "UPDATE \'" + tableName->tableName + "\' SET ";
 
 	Query += tableName->columnNames[1] + " = " + newData[1];
 	for (size_t i = 2; i < tableName->columnNames.size(); i++)
@@ -142,7 +142,7 @@ int Database_Sqlite3::update_row(const AM_Database_TableStruct* tableName, std::
 
 int Database_Sqlite3::get_last_ID(const AM_Database_TableStruct* tableName)
 {
-	std::string Query = "SELECT ID FROM " + tableName->tableName + " ORDER BY ID DESC LIMIT 1 ";
+	std::string Query = "SELECT ID FROM \'" + tableName->tableName + "\' ORDER BY ID DESC LIMIT 1 ";
 	int Response{ -1 };
 	sqlite3_stmt* stmt;
 
@@ -166,7 +166,7 @@ int Database_Sqlite3::get_last_ID(const AM_Database_TableStruct* tableName)
 std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_Database_TableStruct* tableName)
 {
 	std::vector<std::vector<std::string>> out;
-	std::string Query = "SELECT * FROM " + tableName->tableName + " ";
+	std::string Query = "SELECT * FROM \'" + tableName->tableName + "\' ";
 	sqlite3_stmt* stmt;
 	
 	int exec_result = sqlite3_prepare_v2(db, Query.c_str(), -1, &stmt, 0);
@@ -201,7 +201,7 @@ std::vector<std::string> Database_Sqlite3::get_input_row(const AM_Database_Table
 std::vector<std::string> Database_Sqlite3::get_row(const AM_Database_TableStruct* tableName, std::string Query)
 {
 	std::vector<std::string> out;
-	std::string inQuery = "SELECT * FROM " + tableName->tableName + " WHERE " + Query;
+	std::string inQuery = "SELECT * FROM \'" + tableName->tableName + "\' WHERE " + Query;
 	sqlite3_stmt* stmt;
 
 	int exec_result = sqlite3_prepare_v2(db, inQuery.c_str(), -1, &stmt, 0);

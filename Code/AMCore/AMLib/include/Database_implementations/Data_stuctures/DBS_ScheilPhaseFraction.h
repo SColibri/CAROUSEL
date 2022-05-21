@@ -23,11 +23,16 @@ public:
 
 	virtual std::vector<std::string> get_input_vector() override
 	{
+		std::ostringstream decimalString;
+		decimalString << std::fixed;
+		decimalString << std::setprecision(16);
+		decimalString << Value;
+
 		std::vector<std::string> input{ std::to_string(_id),
 										std::to_string(IDScheilConfig),
 										std::to_string(IDPhase),
 										TypeComposition,
-										std::to_string(Value) };
+										decimalString.str()};
 		return input;
 	}
 
