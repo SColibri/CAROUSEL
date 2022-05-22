@@ -38,7 +38,16 @@ public:
 
 #pragma region Methods
 
+	/// <summary>
+	/// load all data in table
+	/// </summary>
 	void load_data();
+
+	/// <summary>
+	/// Loads data as specified on the Query
+	/// </summary>
+	/// <param name="whereQuery"></param>
+	void load_data(std::string whereQuery);
 
 	/// <summary>
 	/// Saves new data and updates all rows flagged by the 
@@ -62,6 +71,19 @@ public:
 	/// <param name="row"></param>
 	/// <returns></returns>
 	const std::string& data(int column, int row);
+
+	/// <summary>
+	/// Obtains row data from a specific column
+	/// </summary>
+	/// <param name="columnNumber"></param>
+	/// <returns></returns>
+	std::vector<std::string> get_column_data(int columnNumber);
+
+	/// <summary>
+	/// get table structure (columnnames and datatype)
+	/// </summary>
+	/// <returns></returns>
+	const AM_Database_TableStruct get_table_structure();
 
 #pragma endregion Methods
 

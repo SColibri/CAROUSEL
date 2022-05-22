@@ -94,6 +94,8 @@ public:
 	/// <param name="tableName"></param>
 	/// <returns></returns>
 	virtual std::vector<std::vector<std::string>> get_tableRows(const AM_Database_TableStruct* tableName) { return std::vector<std::vector<std::string>>(); }
+	virtual std::vector<std::vector<std::string>> get_tableRows(const AM_Database_TableStruct* tableName, 
+																std::string whereQuery) { return std::vector<std::vector<std::string>>(); }
 
 	/// <summary>
 	/// Obtains row data from the database

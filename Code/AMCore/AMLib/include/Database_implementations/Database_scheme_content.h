@@ -45,7 +45,7 @@ namespace AMLIB
 	{
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY");
-		out.add_new("IDProject", "INTEGER");
+		out.add_new("IDCase", "INTEGER");
 		out.add_new("ScriptName", "TEXT");
 		out.add_new("Date", "TEXT");
 		out.tableName = "Case";

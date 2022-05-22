@@ -35,8 +35,14 @@
 	{
 		_addedRows = 0;
 		_modifiedIndexList.clear();
+		_data = _db->get_tableRows(_tableStruct);
+	}
 
-		//TODO: load data to table
+	void AM_Database_Datatable::load_data(std::string whereQuery)
+	{
+		_addedRows = 0;
+		_modifiedIndexList.clear();
+		_data = _db->get_tableRows(_tableStruct, whereQuery);
 	}
 
 	void AM_Database_Datatable::save()
@@ -104,6 +110,20 @@
 		if (row >= _data.size() || column >= _data[0].size()) {
 			throw "out of index";
 		}
+	}
+
+	std::vector<std::string> AM_Database_Datatable::get_column_data(int columnNumber)
+	{
+		std::vector<std::string> out;
+		if(_tableStruct->columnNames.size() > columnNumber)
+		{
+			for each (std::vector<std::string> cell in _data)
+			{
+				out.push_back(cell[columnNumber]);
+			}
+		}
+
+		return out;
 	}
 #pragma endregion Methods
 

@@ -181,6 +181,24 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_D
 	return out;
 }
 
+std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_Database_TableStruct* tableName, std::string whereQuery)
+{
+	std::vector<std::vector<std::string>> out;
+	std::string Query = "SELECT * FROM \'" + tableName->tableName + "\' WHERE " + whereQuery;
+	sqlite3_stmt* stmt;
+
+	int exec_result = sqlite3_prepare_v2(db, Query.c_str(), -1, &stmt, 0);
+	if (exec_result == SQLITE_OK) {
+
+		while (sqlite3_step(stmt) == SQLITE_ROW)
+		{
+			out.push_back(get_input_row(tableName, stmt));
+		}
+	}
+
+	return out;
+}
+
 std::vector<std::string> Database_Sqlite3::get_input_row(const AM_Database_TableStruct* tableName,
 										sqlite3_stmt* stmt)
 {
