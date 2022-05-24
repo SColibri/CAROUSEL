@@ -1,9 +1,11 @@
 ﻿#pragma once
 // AMCore.cpp : Defines the entry point for the application.
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <Windows.h>
 #include <vector>
 
 
@@ -23,6 +25,7 @@
 #include "../AMLib/include/Database_implementations/Data_stuctures/DBS_Project.h"
 #include "../AMLib/include/Database_implementations/Data_stuctures/DBS_Element.h"
 #include "../AMLib/include/Database_implementations/Data_stuctures/DBS_ElementComposition.h"
+#include "../AMLib/include/AM_Server.h"
 
 using namespace std;
 
@@ -82,7 +85,7 @@ int main(int argc, char* argv[])
 
 	HelpOptions Options(argc, argv);
 	if (Options.get_help() == "TRUE") { Options.Show_help(); }
-	else if (Options.get_terminal() == "TRUE")
+	else if (Options.get_terminal() == "FALSE")
 	{
 		system("cls");
 		MenuOption_Main menuOptionMain;
@@ -129,8 +132,12 @@ int main(int argc, char* argv[])
 		}
 		
 	}
+	else if (Options.get_socket() == "EMPTY")
+	{
+		AM_Server servy(api01.get_implementation());
+		servy.init();
+	}
 
-	
 	std::string outtest = api01.get_implementation()->run_lua_script("C:/Users/drogo/Desktop/Homless/TestLua.lua");
 
 	std::vector<std::string> vecpar{ "C:/Users/drogo/Desktop/Homless/GM02_main_loop.mcs" };

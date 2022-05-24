@@ -10,6 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="1*"   />
+            <RowDefinition Height="auto" MaxHeight="50"  />
         </Grid.RowDefinitions>
         <Grid.Resources>
             <LinearGradientBrush x:Key="Color_1" StartPoint="0,0" EndPoint="0,1">
@@ -43,7 +44,7 @@
                 <!-- Charting-->
                 <RibbonGroup x:Name="Database" Header="Database">
                     <RibbonMenuButton  Label="Connection" KeyTip="V">
-                        <RibbonMenuItem  Header="local" KeyTip="T"/>
+                        <RibbonMenuItem  Header="local" KeyTip="T" Click="RibbonMenuItem_Click_2"/>
                         <RibbonMenuItem  Header="ssh" KeyTip="S"/>
                     </RibbonMenuButton>
                     <RibbonButton  Label="tables" KeyTip="C" />
@@ -172,6 +173,15 @@
                     </Style>
                 </TabControl.Resources>
             </TabControl>
+        </Grid>
+        
+        <Grid Grid.Row="2" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="AMFramework: " Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Path=CoreOutput}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         </Grid>
     </Grid>
 </Window>

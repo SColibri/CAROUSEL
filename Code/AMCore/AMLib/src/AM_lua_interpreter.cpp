@@ -12,10 +12,20 @@ AM_lua_interpreter::~AM_lua_interpreter()
 
 std::string AM_lua_interpreter::run_command(std::string command)
 {
-	lua_getglobal(_state, command.c_str());
+	int c_out = lua_getglobal(_state, command.c_str());
+
 	lua_call(_state, 0, 1);
 
-	std::string out(lua_tostring(_state, -1));
+	std::string out;
+	try
+	{
+		out = lua_tostring(_state, -1);
+	}
+	catch (const std::exception&)
+	{
+		out = "Command not recognized!";
+	}
+
 	lua_pop(_state, 1);
 
 	return out;

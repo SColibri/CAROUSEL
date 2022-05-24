@@ -76,6 +76,7 @@ public:
 	std::string get_script() { return _optionMap["-sc"]; }
 	std::string get_help(){ return _optionMap["-h"]; }
 	std::string get_terminal() { return _optionMap["-t"]; }
+	std::string get_socket() { return _optionMap["-s"]; }
 #pragma endregion
 
 private:
@@ -92,6 +93,7 @@ private:
 		_optionMap.insert({ "-sc","EMPTY" }); // external script run by api
 		_optionMap.insert({ "-h","EMPTY" }); // help
 		_optionMap.insert({ "-t","EMPTY" }); // terminal
+		_optionMap.insert({ "-s","EMPTY" }); // socket
 	}
 
 	/// <summary>

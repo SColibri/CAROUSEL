@@ -10,10 +10,18 @@ namespace AMFramework
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Controller.Controller_AMCore _controllerAMCore = new();
+        public Controller.Controller_AMCore ControllerAMCore { get { return _controllerAMCore; } }
+
+        private string _outputCore = "Welcome!";
+        public string OutputCore { get { return _outputCore; } set { _outputCore = value; } }
+
+        private AMFramework.Core.AMCore_Socket Sock = new AMFramework.Core.AMCore_Socket();
         private MainWindow_ViewModel viewModel = new();
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = ControllerAMCore;
             Framey.Navigate(new Views.Config.Configuration());
 
 
@@ -30,6 +38,8 @@ namespace AMFramework
         private void RibbonMenuItem_Click(object sender, RoutedEventArgs e)
         {
             MainTabControl.Items.Add(viewModel.get_new_lua_script());
+            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+
         }
 
         #endregion
@@ -55,6 +65,12 @@ namespace AMFramework
             {
                 ((Interfaces.ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).save();
             }
+        }
+
+        private void RibbonMenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            ControllerAMCore.CoreOutput = Sock.send_receive("initialize_core");
+           bool stopHere = false;
         }
     }
 }
