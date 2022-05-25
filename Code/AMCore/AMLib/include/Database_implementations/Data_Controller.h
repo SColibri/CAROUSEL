@@ -3,11 +3,19 @@
 #include "../../interfaces/IAM_Database.h"
 #include "../../include/Database_implementations/Database_scheme_content.h"
 #include "../../include/AM_Database_Datatable.h"
+#include "../../include/AM_Database_Framework.h"
 #include "../AM_Config.h"
 #include <filesystem>
 #include <vector>
 #include <string>
 
+/// <summary>
+/// Data controller class handles all database interactions for the 
+/// graphical user interface. This specifies how the data should be loaded.
+/// 
+/// The user is allowed to search data by Element, phases, and other
+/// making it easier for comparing between results.
+/// </summary>
 class Data_Controller
 {
 public:

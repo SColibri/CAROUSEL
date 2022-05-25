@@ -6,22 +6,23 @@
 #include "../include/API_scripting.h"
 #include "../../../AMLib/include/Database_implementations/Database_Factory.h"
 
-API_lua_functions::API_lua_functions(lua_State* state)
+API_lua_functions::API_lua_functions(lua_State* state) : IAM_lua_functions(state)
 {
 	add_functions_to_lua(state);
 }
 
-API_lua_functions::API_lua_functions(lua_State* state, AM_Config* configuration)
+API_lua_functions::API_lua_functions(lua_State* state, AM_Config* configuration) : IAM_lua_functions(state)
 {
 	_configuration = configuration;
 	set_library(configuration);
 	add_functions_to_lua(state);
-	_database = Database_Factory::get_database(configuration);
+	_dbFramework = new AM_Database_Framework(configuration);
 }
 
 API_lua_functions::~API_lua_functions()
 {
 	delete _api;
+	delete _dbFramework;
 }
 
 void API_lua_functions::set_library(AM_Config* configuration) {
@@ -38,17 +39,10 @@ void API_lua_functions::set_library(AM_Config* configuration) {
 
 void API_lua_functions::add_functions_to_lua(lua_State* state) 
 {
-	lua_register(state, "hello_world", bind_hello_world);
-	add_to_definition("hello_world","void","baby lua script :)");
-
-	lua_register(state, "run_script", bind_run_script);
-	add_to_definition("run_script", "std::string filename", "filename");
-
-	lua_register(state, "run_command", bind_run_command);
-	add_to_definition("run_command", "std::string filename", "command");
-
-	lua_register(state, "initialize_core", bind_initializeCore_command);
-	add_to_definition("initialize_core", "std::string out", "void");
+	add_new_function(state, "hello_world", "void", "baby lua script :)", bind_hello_world);
+	add_new_function(state, "run_script", "std::string filename", "filename", bind_run_script);
+	add_new_function(state, "run_command", "std::string filename", "command", bind_run_command);
+	add_new_function(state, "initialize_core", "std::string out", "void", bind_initializeCore_command);
 }
 
 #pragma region lua_functions

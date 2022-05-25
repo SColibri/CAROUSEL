@@ -65,7 +65,7 @@ private:
 
 	int get_available_slot()
 	{
-		for (size_t i = 0; i < _openPorts.size(); i++)
+		for (int i = 0; i < _openPorts.size(); i++)
 		{
 			if (_openPorts[i].length() == 0) return i;
 		}
@@ -197,7 +197,7 @@ private:
 		while (sendMessage.length() - 1 > sendIndex)
 		{
 			reset_buffer(sendBuffer, sendBuffer_len);
-			for (size_t i = sendIndex; i < sendMessage.length(); i++)
+			for (int i = sendIndex; i < sendMessage.length(); i++)
 			{
 				if (i - sendIndex == sendBuffer_len || i == sendMessage.length() -1)
 				{
@@ -221,6 +221,34 @@ private:
 		printf("Bytes sent -END-: %d\n", iSendResult);
 		return iSendResult;
 	}
+
+	std::vector<std::string> split_commands(std::string& stringCommand)
+	{
+		std::istringstream ss(stringCommand);
+		std::string token;
+
+		std::vector<std::string> commandInput;
+		while (std::getline(ss, token, ',')) {
+			commandInput.push_back(token);
+		}
+
+		return commandInput;
+	}
+
+	std::vector<std::string> get_parameters(std::vector<std::string>& commandInput)
+	{
+		std::vector<std::string> out;
+
+		if(commandInput.size() > 0)
+		{
+			for(int n1 = 1; n1 < commandInput.size(); n1++)
+			{
+				out.push_back(commandInput[n1]);
+			}
+		}
+
+		return out;
+	}
 	
 
 	void initialize(std::string port)
@@ -241,7 +269,18 @@ private:
 			if (_serverStatus > 0) {
 				printf("Bytes received: %d\n", _serverStatus);
 				
-				std::string out = _implementation->run_lua_command(std::string(recvbuf));// std::string(recvbuf));
+				std::vector<std::string> splitCommand = split_commands(std::string(recvbuf));
+				std::string out;
+
+				if(splitCommand.size() == 1)
+				{
+					out = _implementation->run_lua_command(splitCommand[0]);
+				}
+				else 
+				{
+					out = _implementation->run_lua_command(splitCommand[0], get_parameters(splitCommand));
+				}
+
 				if (send_buffer(out) == SOCKET_ERROR) return;
 				
 			}

@@ -20,7 +20,10 @@ public:
 	~AM_Database_Framework(){};
 
 #pragma region Database_Tables
-
+	IAM_Database* get_database()
+	{
+		return _database;
+	}
 #pragma endregion
 
 private:

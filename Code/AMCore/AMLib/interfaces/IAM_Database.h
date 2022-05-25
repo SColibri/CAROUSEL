@@ -11,6 +11,8 @@ class IAM_Database
 {
 
 public:
+	inline static const std::string Delimiter{" "}; //csv delimiter
+
 	IAM_Database(AM_Config* configuration) { _configuration = configuration; }
 	~IAM_Database() {}
 
@@ -26,6 +28,25 @@ public:
 	/// </summary>
 	/// <returns>List of table names</returns>
 	virtual std::vector<std::string> get_tableNames() { return std::vector<std::string>(); }
+
+	/// <summary>
+	/// Obtains a list of column names from table
+	/// </summary>
+	/// <returns>List of table names</returns>
+	virtual std::vector<std::string> get_columnNames(std::string& tableName) { return std::vector<std::string>(); }
+
+	/// <summary>
+	/// Obtains a list of column names from table
+	/// </summary>
+	/// <returns>List of table names</returns>
+	virtual std::vector<std::string> get_columnDatatype(std::string& tableName) { return std::vector<std::string>(); }
+
+	/// <summary>
+	/// Returns a table struct from table name
+	/// </summary>
+	/// <param name="tableName"></param>
+	/// <returns></returns>
+	virtual AM_Database_TableStruct get_tableStruct(std::string& tableName) { return AM_Database_TableStruct(); }
 
 	/// <summary>
 	/// Adds a new table to the database
@@ -98,6 +119,15 @@ public:
 																std::string whereQuery) { return std::vector<std::vector<std::string>>(); }
 
 	/// <summary>
+	/// get table content in csv format
+	/// </summary>
+	/// <param name="tableName"></param>
+	/// <returns></returns>
+	virtual std::string get_tableRows(std::string& tableName) { return std::string("Not implemented"); }
+	virtual std::string get_tableRows(std::string& tableName, std::string& whereQuery) { return std::string("Not implemented"); }
+
+
+	/// <summary>
 	/// Obtains row data from the database
 	/// </summary>
 	/// <param name="tableName"></param>
@@ -109,4 +139,34 @@ public:
 protected:
 	AM_Config* _configuration{nullptr}; // configuration file
 
+	/// <summary>
+	/// from row vector we extract a csv formatted string
+	/// </summary>
+	/// <param name="tableData"></param>
+	/// <returns></returns>
+	std::string get_csv(std::vector<std::vector<std::string>> tableData)
+	{
+		std::string out{ "" };
+
+		for each (std::vector<std::string> rowItem in tableData)
+		{
+			out += csv_join_row(rowItem, Delimiter) + "\n";
+		}
+
+		return out;
+	}
+
+	/// <summary>
+	/// join vector data into one string
+	/// </summary>
+	/// <param name="strings"></param>
+	/// <param name="delim"></param>
+	/// <returns></returns>
+	std::string csv_join_row(std::vector<std::string> const& strings, std::string delim)
+	{
+		std::stringstream ss;
+		std::copy(strings.begin(), strings.end(),
+			std::ostream_iterator<std::string>(ss, delim.c_str()));
+		return ss.str();
+	}
 };

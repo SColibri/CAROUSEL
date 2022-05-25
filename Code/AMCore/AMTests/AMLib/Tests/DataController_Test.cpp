@@ -11,7 +11,7 @@ TEST_CASE("Data controller", "[classic]")
 	{
 		AM_Config configuration;
 		Database_Sqlite3 _db(&configuration);
-		Data_Controller DC((IAM_Database*) & _db, &configuration, -1);
+		//Data_Controller DC((IAM_Database*) & _db, &configuration, -1);
 	}
 
 }

@@ -16,10 +16,7 @@ public:
 
 private:
 	inline static API_matcalc_lib* _api{nullptr};
-	inline static IAM_Database* _database{nullptr};
-	inline static std::string _dllPath{};
-	inline static AM_Config* _configuration{nullptr};
-
+	
 	/// <summary>
 	/// Registers the function's signature in lua 
 	/// </summary>

@@ -46,6 +46,58 @@ std::vector<std::string> Database_Sqlite3::get_tableNames()
 	return Response;
 }
 
+std::vector<std::string> Database_Sqlite3::get_columnNames(std::string& tableName)
+{
+	std::vector<std::string> Response;
+	std::string Query = "SELECT * FROM " + tableName + " LIMIT 1";
+	sqlite3_stmt* stmt;
+
+	int exec_result = sqlite3_prepare_v2(db, Query.c_str(), -1, &stmt, 0);
+	if (exec_result == SQLITE_OK) {
+
+		int columns = sqlite3_column_count(stmt);
+		for (int i = 0; i < columns; i++)
+			Response.push_back(sqlite3_column_name(stmt, i));
+
+	}
+
+	return Response;
+}
+
+std::vector<std::string> Database_Sqlite3::get_columnDatatype(std::string& tableName)
+{
+	std::vector<std::string> Response;
+	std::string Query = "PRAGMA table_xinfo(" + tableName + ")";
+	sqlite3_stmt* stmt;
+
+	int exec_result = sqlite3_prepare_v2(db, Query.c_str(), -1, &stmt, 0);
+	if (exec_result == SQLITE_OK) {
+		
+		while (sqlite3_step(stmt) == SQLITE_ROW)
+		{
+			std::stringstream ss;
+			std::string TName;
+			ss << sqlite3_column_text(stmt, 2);
+			ss >> TName;
+			Response.push_back(TName);
+		}
+
+	}
+
+	return Response;
+}
+
+AM_Database_TableStruct Database_Sqlite3::get_tableStruct(std::string& tableName)
+{
+	AM_Database_TableStruct newStr;
+	newStr.tableName = tableName;
+	
+	newStr.columnDataType = get_columnDatatype(tableName);
+	newStr.columnNames = get_columnNames(tableName);
+
+	return newStr;
+}
+
 
 
 int Database_Sqlite3::add_table(const AM_Database_TableStruct* newTable)
@@ -196,6 +248,30 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_D
 		}
 	}
 
+	return out;
+}
+
+std::string Database_Sqlite3::get_tableRows(std::string& tableName)
+{
+	std::string Query = "SELECT * FROM \'" + tableName + "\' ";
+	sqlite3_stmt* stmt;
+	AM_Database_TableStruct dataStruct = get_tableStruct(tableName);
+
+	std::vector<std::vector<std::string>> outRows = get_tableRows(&dataStruct);
+	
+	std::string out = get_csv(outRows);
+	return out;
+}
+
+std::string Database_Sqlite3::get_tableRows(std::string& tableName, std::string& whereQuery)
+{
+	std::string Query = "SELECT * FROM \'" + tableName + "\' WHERE " + whereQuery;
+	sqlite3_stmt* stmt;
+	AM_Database_TableStruct dataStruct = get_tableStruct(tableName);
+
+	std::vector<std::vector<std::string>> outRows = get_tableRows(&dataStruct, whereQuery);
+
+	std::string out = get_csv(outRows);
 	return out;
 }
 

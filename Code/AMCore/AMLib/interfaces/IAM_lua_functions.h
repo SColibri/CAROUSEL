@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "../interfaces/IAM_Database.h"
+#include "../include/AM_Database_Framework.h"
 
 extern "C" {
 #include "../external/lua542/include/lua.h"
@@ -54,7 +56,11 @@ class IAM_lua_functions
 {
 public:
 
-	IAM_lua_functions() {};
+	IAM_lua_functions(lua_State* state) 
+	{
+		add_base_functions(state);
+	};
+	
 	virtual ~IAM_lua_functions() {
 		std::string stopHere{};
 	};
@@ -79,7 +85,30 @@ public:
 		return Result;
 	};
 	
+	/// <summary>
+	/// Add new funtion to lua
+	/// </summary>
+	/// <param name="state">lua State pointer</param>
+	/// <param name="function_name"> name of new function </param>
+	/// <param name="output"> output type </param>
+	/// <param name="usage"> specify how to use </param>
+	/// <param name="newFunction"> ONLY static function pointer </param>
+	void add_new_function(lua_State* state,
+		std::string function_name,
+		std::string output,
+		std::string usage,
+		int (*newFunction)(lua_State*))
+	{
+		lua_register(state, function_name.c_str(), newFunction);
+		add_to_definition(function_name, output, usage);
+	}
+
 protected:
+	inline static AM_Database_Framework* _dbFramework{ nullptr };
+	//inline static IAM_Database* _database{ nullptr };
+	inline static std::string _dllPath{};
+	inline static AM_Config* _configuration{ nullptr };
+
 	std::vector<std::string> _functionNames; // Function names
 	std::vector<std::string> _functionParameters; // Parameters as input
 	std::vector<std::string> _functionDescription; // Description
@@ -90,20 +119,55 @@ protected:
 	/// <param name="state"></param>
 	virtual void add_functions_to_lua(lua_State* state) = 0;
 
+	
+
+private:
+
 	/// <summary>
 	/// Adds to list of defined functions in lua
 	/// </summary>
 	/// <param name="fName"></param>
 	/// <param name="fParameters"></param>
 	/// <param name="fDescription"></param>
-	void add_to_definition(std::string fName, 
-						   std::string fParameters,
-						   std::string fDescription) 
+	void add_to_definition(std::string fName,
+		std::string fParameters,
+		std::string fDescription)
 	{
 		_functionNames.push_back(fName);
 		_functionParameters.push_back(fParameters);
 		_functionDescription.push_back(fDescription);
 	}
 
+	void add_base_functions(lua_State* state) 
+	{
+		add_new_function(state, "database_tableQuery", "string, csv fromat, delimiter space char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
+	}
+
+#pragma region helpers
+
+#pragma endregion
+
+#pragma region BASE_FUNCTIONS
+	static int baseBind_DatabaseQuery(lua_State* state)
+	{
+		std::string out{""};
+		int noParameters = lua_gettop(state);
+		std::string parameter = lua_tostring(state, 1);
+
+		if(noParameters == 1)
+		{
+			out = _dbFramework->get_database()->get_tableRows(parameter);
+		}
+		else if (noParameters == 2)
+		{
+			std::string parameter_2 = lua_tostring(state, 2);
+			out = _dbFramework->get_database()->get_tableRows(parameter, parameter_2);
+		}
+		
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+#pragma endregion
 
 };

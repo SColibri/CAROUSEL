@@ -30,6 +30,9 @@ public:
 #pragma region Implementation
 	virtual int connect() override;
 	virtual std::vector<std::string> get_tableNames() override;
+	virtual std::vector<std::string> get_columnNames(std::string& tableName) override;
+	virtual std::vector<std::string> get_columnDatatype(std::string& tableName) override;
+	virtual AM_Database_TableStruct get_tableStruct(std::string& tableName) override;
 	virtual int add_table(const AM_Database_TableStruct* newTable) override;
 	virtual int drop_table(const AM_Database_TableStruct* tableName) override;
 	virtual int clear_table(const AM_Database_TableStruct* tableName) override;
@@ -41,6 +44,8 @@ public:
 	virtual std::vector<std::vector<std::string>> get_tableRows(const AM_Database_TableStruct* tableName) override;
 	virtual std::vector<std::vector<std::string>> get_tableRows(const AM_Database_TableStruct* tableName, std::string whereQuery) override;
 	virtual std::vector<std::string> get_row(const AM_Database_TableStruct* tableName, std::string Query) override;
+	virtual std::string get_tableRows(std::string& tableName) override;
+	virtual std::string get_tableRows(std::string& tableName, std::string& whereQuery) override;
 
 #pragma endregion
 
