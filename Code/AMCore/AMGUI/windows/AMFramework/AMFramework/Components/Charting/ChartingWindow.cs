@@ -88,6 +88,7 @@ namespace AMFramework.Components.Charting
             Rectangle Background = new();
             this.Children.Add(Background);
             Background.Fill = Brushes.White;
+            this.SizeChanged += HandleTab;
         }
 
         #region Methods
@@ -346,6 +347,7 @@ namespace AMFramework.Components.Charting
         {
             _mouseDown = false;
             UpdateImage();
+            
         }
 
         private void HandleMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -376,9 +378,15 @@ namespace AMFramework.Components.Charting
             }
         }
 
+        private void HandleTab(object sender, SizeChangedEventArgs e)
+        {
+            this.UpdateImage();
+        }
         #endregion
 
         #region override
+
+
 
 
         #endregion

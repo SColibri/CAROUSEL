@@ -85,6 +85,12 @@ public:
 	/// <returns></returns>
 	const AM_Database_TableStruct get_table_structure();
 
+	std::string get_csv()
+	{
+		std::string out = IAM_Database::get_csv(_data);
+		return out;
+	}
+
 #pragma endregion Methods
 
 private:

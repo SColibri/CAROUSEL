@@ -136,15 +136,12 @@ public:
 	virtual std::vector<std::string> get_row(const AM_Database_TableStruct* tableName, 
 											 std::string Query) { return std::vector<std::string>(); }
 
-protected:
-	AM_Config* _configuration{nullptr}; // configuration file
-
 	/// <summary>
 	/// from row vector we extract a csv formatted string
 	/// </summary>
 	/// <param name="tableData"></param>
 	/// <returns></returns>
-	std::string get_csv(std::vector<std::vector<std::string>> tableData)
+	static std::string get_csv(std::vector<std::vector<std::string>> tableData)
 	{
 		std::string out{ "" };
 
@@ -162,11 +159,16 @@ protected:
 	/// <param name="strings"></param>
 	/// <param name="delim"></param>
 	/// <returns></returns>
-	std::string csv_join_row(std::vector<std::string> const& strings, std::string delim)
+	static std::string csv_join_row(std::vector<std::string> const& strings, std::string delim)
 	{
 		std::stringstream ss;
 		std::copy(strings.begin(), strings.end(),
 			std::ostream_iterator<std::string>(ss, delim.c_str()));
 		return ss.str();
 	}
+
+protected:
+	AM_Config* _configuration{nullptr}; // configuration file
+
+	
 };

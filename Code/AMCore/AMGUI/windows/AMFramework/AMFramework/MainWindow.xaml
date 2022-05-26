@@ -52,7 +52,7 @@
                 
                 <!-- Charting-->
                 <RibbonGroup x:Name="Charting" Header="Charting">
-                    <RibbonButton  Label="New chart" KeyTip="X" />
+                    <RibbonButton  Label="New chart" KeyTip="X" Click="RibbonButton_Click" />
                 </RibbonGroup>
                 
                 <!-- LUA -->
@@ -73,7 +73,18 @@
         </Frame>
         
         <Grid Grid.Row="1" Margin="5">
-            <TabControl x:Name="MainTabControl">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="4*" />
+            </Grid.ColumnDefinitions>
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+            <TreeView x:Name="databaseView">
+                <TreeViewItem Header="Project">
+                    <TreeViewItem Header="Case"></TreeViewItem>
+                </TreeViewItem>
+            </TreeView>
+            <TabControl x:Name="MainTabControl" Grid.Column="2">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">

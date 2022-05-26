@@ -3,7 +3,6 @@
 #include "../../interfaces/IAM_Database.h"
 #include "../../include/Database_implementations/Database_scheme_content.h"
 #include "../../include/AM_Database_Datatable.h"
-#include "../../include/AM_Database_Framework.h"
 #include "../AM_Config.h"
 #include <filesystem>
 #include <vector>
@@ -19,6 +18,18 @@
 class Data_Controller
 {
 public:
+
+	enum DATATABLES
+	{
+		PROJECTS,
+		CASES,
+		ELEMENTS,
+		PHASES,
+		ELEMENTS_COMPOSITION,
+		SCHEIL_PHASE_FRACTIONS,
+		CALPHAD
+	};
+
 	Data_Controller(IAM_Database* db, 
 					AM_Config* configuration,
 					int ID) :
@@ -29,11 +40,96 @@ public:
 		load_data();
 	}
 
+#pragma region Project
+	void set_project_ID(int ID)
+	{
+		if(_project->id() != ID)
+		{
+			delete _project;
+			_project = new DBS_Project(_db, ID);
+		}
+	}
+
 	void set_project_name(std::string Name)
 	{
 		_project->Name = Name;
 		_project->APIName = std::filesystem::path(_configuration->get_api_path()).filename().string();
 		_project->save();
+	}
+#pragma endregion
+
+#pragma region Case
+	/// <summary>
+	/// Select a Case ID
+	/// </summary>
+	/// <param name="ID"></param>
+	void select_case(int ID)
+	{
+		clear_temp_data();
+		_temp_case = new DBS_Case(_db, ID);
+	}
+
+	/// <summary>
+	/// set_caseScript content
+	/// </summary>
+	/// <param name="scriptContent"></param>
+	void set_caseScript(std::string scriptContent)
+	{
+		if (_temp_case == nullptr) select_case(-1);
+		_temp_case->ScriptName = scriptContent;
+	}
+
+	std::string run_case()
+	{
+		std::string out{""};
+		if (_temp_case == nullptr) 
+		{
+			out += "Please add a script to run! \n";
+		}
+		
+		if (_temp_case->ScriptName.length() == 0) 
+		{
+			out += "Please add a script to run! \n";
+		}
+
+		if (_project->id() == -1) _project->save();
+		
+
+		return out;
+
+	}
+#pragma endregion
+
+	std::string get_csv(DATATABLES selOption)
+	{
+		switch (selOption)
+		{
+		case Data_Controller::PROJECTS:
+			if (_datatable_projects != nullptr) return _datatable_projects->get_csv();
+			break;
+		case Data_Controller::CASES:
+			if (_datatable_cases != nullptr) return _datatable_cases->get_csv();
+			break;
+		case Data_Controller::ELEMENTS:
+			if (_datatable_elements != nullptr) return _datatable_elements->get_csv();
+			break;
+		case Data_Controller::PHASES:
+			if (_datatable_phases != nullptr) return _datatable_phases->get_csv();
+			break;
+		case Data_Controller::ELEMENTS_COMPOSITION:
+			if (_datatable_elements_composition != nullptr) return _datatable_elements_composition->get_csv();
+			break;
+		case Data_Controller::SCHEIL_PHASE_FRACTIONS:
+			if (_datatable_scheil_configurations != nullptr) return _datatable_scheil_configurations->get_csv();
+			break;
+		case Data_Controller::CALPHAD:
+			if (_datatable_CALPHADDB != nullptr) return _datatable_CALPHADDB->get_csv();
+			break;
+		default:
+			break;
+		}
+
+		return "No data available";
 	}
 
 private:
@@ -42,6 +138,7 @@ private:
 	DBS_Project* _project{ nullptr };
 
 #pragma region DataTables
+	AM_Database_Datatable* _datatable_projects{ nullptr };
 	AM_Database_Datatable* _datatable_cases{ nullptr };
 	AM_Database_Datatable* _datatable_elements{ nullptr };
 	AM_Database_Datatable* _datatable_phases{ nullptr };
@@ -122,12 +219,7 @@ private:
 		_datatable_scheil_phase_fractions->load_data(queryBuild);
 	}
 
-	void select_case(int ID)
-	{
-		clear_temp_data();
-		_temp_case = new DBS_Case(_db, ID);
-
-	}
+	
 
 	void clear_temp_data()
 	{

@@ -51,6 +51,39 @@ namespace AMFramework
 
             return result;
         }
+
+        public TabItem get_new_plot(string plotName = "")
+        {
+            TabItem result = new TabItem();
+
+            string headerTitle = plotName;
+            Uri ImageUri = null; //TODO add lua Icon here
+            if (headerTitle.Length == 0)
+            {
+                result.Header = get_TabHeader("New Plot", ImageUri);
+            }
+            else
+            {
+                result.Header = get_TabHeader(headerTitle, ImageUri);
+            }
+
+            Components.Charting.ChartingWindow charty = new();
+            Components.Charting.Axes Testy = new Components.Charting.Axes("Test");
+            Testy.MinValue = 0;
+            Testy.MaxValue = 10;
+
+            charty.Add_Axe(Testy);
+            charty.Add_Axe(new Components.Charting.Axes("Test"));
+            charty.Add_Axe(new Components.Charting.Axes("Test"));
+            charty.Add_Axe(new Components.Charting.Axes("Test"));
+            charty.UpdateImage();
+
+            result.Content = charty;
+            result.Tag = new Components.Charting.Charting_ViewModel();
+
+            return result;
+        }
+
         #endregion
 
         #region Formatting

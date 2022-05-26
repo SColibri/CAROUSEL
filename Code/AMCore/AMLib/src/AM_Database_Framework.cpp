@@ -8,3 +8,9 @@ AM_Database_Framework::AM_Database_Framework(AM_Config* configuration):
 	_database = Database_Factory::get_database(configuration);
 	create_database();
 }
+
+AM_Database_Framework::~AM_Database_Framework()
+{
+	if (_database != nullptr) delete _database;
+	if (_dataController != nullptr) delete _dataController;
+}

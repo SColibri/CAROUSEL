@@ -8,6 +8,7 @@
 #include "../include/Database_implementations/Database_Factory.h"
 #include "../include/Database_implementations/Database_scheme_content.h"
 #include "../include/AM_Database_TableStruct.h"
+#include "../include/Database_implementations/Data_Controller.h"
 
 /// <summary>
 /// This class handles all interactions between the database and the framework.
@@ -17,20 +18,26 @@ class AM_Database_Framework
 {
 public:
 	AM_Database_Framework(AM_Config* configuration);
-	~AM_Database_Framework(){};
+	~AM_Database_Framework();
 
 #pragma region Database_Tables
 	IAM_Database* get_database()
 	{
 		return _database;
 	}
+
+	Data_Controller* get_dataController()
+	{
+		return _dataController;
+	}
 #pragma endregion
 
 private:
 	inline const static std::string _dbName{"AMDatabase"}; // Name of the database
-	const AM_Config* _configuration;
+	const AM_Config* _configuration{ nullptr };
 	AM_FileManagement _fileManagement;
-	IAM_Database* _database;
+	IAM_Database* _database{ nullptr };
+	Data_Controller* _dataController{ nullptr };
 
 
 #pragma region Database

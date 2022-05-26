@@ -140,7 +140,14 @@ private:
 
 	void add_base_functions(lua_State* state) 
 	{
-		add_new_function(state, "database_tableQuery", "string, csv fromat, delimiter space char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
+		add_new_function(state, "database_tableQuery", "string, csv format, delimiter space char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
+		add_new_function(state, "database_tableList", "string, csv format, delimiter space char", "database_tableList", baseBind_DatabaseQuery);
+
+		add_new_function(state, "dataController_selectProjectID", "string", "dataController_selectProjectID <int>", Bind_dataController_selectProjectID);
+		add_new_function(state, "dataController_setProjectName", "string", "dataController_setProjectName <string>", Bind_dataController_setProjectName);
+		add_new_function(state, "dataController_selectCase", "string", "dataController_selectCase <ID>", Bind_dataController_selectCase);
+		add_new_function(state, "dataController_csv", "string, csv format, delimiter space char", "dataController_csv <enum::DATATABLES>", Bind_dataController_csv);
+		//add_new_function(state, "", "", "", baseBind_DatabaseQuery);
 	}
 
 #pragma region helpers
@@ -168,6 +175,66 @@ private:
 		lua_pushstring(state, out.c_str());
 		return 1;
 	}
+
+	static int baseBind_DatabaseTableList(lua_State* state)
+	{
+		std::string out{ "" };
+		int noParameters = lua_gettop(state);
+		std::string parameter = lua_tostring(state, 1);
+
+		out = IAM_Database::csv_join_row(_dbFramework->get_database()->get_tableNames(), IAM_Database::Delimiter);
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+#pragma region Data_controller
+	static int Bind_dataController_selectProjectID(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		std::string out{ "" };
+		std::string parameter = lua_tostring(state, 1);
+		_dbFramework->get_dataController()->set_project_ID(std::stoi(parameter));
+
+		lua_pushstring(state, "Project ID changed");
+		return 1;
+	}
+
+	static int Bind_dataController_setProjectName(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		std::string out{ "" };
+		std::string parameter = lua_tostring(state, 1);
+		_dbFramework->get_dataController()->set_project_name(parameter);
+
+		lua_pushstring(state, "Project name changed");
+		return 1;
+	}
+
+	static int Bind_dataController_selectCase(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		std::string out{ "" };
+		std::string parameter = lua_tostring(state, 1);
+		_dbFramework->get_dataController()->select_case(std::stoi(parameter));
+
+		lua_pushstring(state, "Case selected");
+		return 1;
+	}
+
+	static int Bind_dataController_csv(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		std::string parameter = lua_tostring(state, 1);
+		std::string out = _dbFramework->get_dataController()->get_csv((Data_Controller::DATATABLES)std::stoi(parameter));
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	
+
+#pragma endregion
 #pragma endregion
 
 };

@@ -72,5 +72,12 @@ namespace AMFramework
             ControllerAMCore.CoreOutput = Sock.send_receive("initialize_core");
            bool stopHere = false;
         }
+
+        private void RibbonButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainTabControl.Items.Add(viewModel.get_new_plot());
+            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+            
+        }
     }
 }
