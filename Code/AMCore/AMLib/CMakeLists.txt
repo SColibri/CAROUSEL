@@ -10,9 +10,10 @@ file(GLOB AMLIB_H "include/*.h")
 file(GLOB AMLIB_I "interfaces/*.h")
 file(GLOB AMLIB_DBH "include/Database_implementations/*.h")
 file(GLOB AMLIB_DBSRC "src/Database_implementations/*.cpp")
+file(GLOB AMLIB_HELP "x_Helpers/*.h")
 
 add_subdirectory ("external")
-add_library(AMLib STATIC ${AMLIB_SRC} ${AMLIB_H} ${AMLIB_I} ${AMLIB_DBSRC} ${AMLIB_DBH})
+add_library(AMLib STATIC ${AMLIB_SRC} ${AMLIB_H} ${AMLIB_I} ${AMLIB_DBSRC} ${AMLIB_DBH} ${AMLIB_HELP})
 target_link_libraries(AMLib ${CMAKE_CURRENT_SOURCE_DIR}/external/lua542/lua54.lib)
 target_link_libraries(AMLib sqlite3) 
 # TODO: Add tests and install targets if needed.

@@ -6,8 +6,11 @@
 #include "../include/API_scripting.h"
 #include "../../../AMLib/include/Database_implementations/Database_Factory.h"
 
+
 API_lua_functions::API_lua_functions(lua_State* state) : IAM_lua_functions(state)
 {
+	//AMBaseFunctions::add_base_functions(state, this);
+	add_base_functions(state);
 	add_functions_to_lua(state);
 }
 
@@ -16,7 +19,9 @@ API_lua_functions::API_lua_functions(lua_State* state, AM_Config* configuration)
 	_configuration = configuration;
 	set_library(configuration);
 	add_functions_to_lua(state);
+	add_base_functions(state);
 	_dbFramework = new AM_Database_Framework(configuration);
+	//AMBaseFunctions::_dbFramework = _dbFramework;
 }
 
 API_lua_functions::~API_lua_functions()
@@ -39,13 +44,16 @@ void API_lua_functions::set_library(AM_Config* configuration) {
 
 void API_lua_functions::add_functions_to_lua(lua_State* state) 
 {
+	
 	add_new_function(state, "hello_world", "void", "baby lua script :)", bind_hello_world);
 	add_new_function(state, "run_script", "std::string filename", "filename", bind_run_script);
 	add_new_function(state, "run_command", "std::string filename", "command", bind_run_command);
 	add_new_function(state, "initialize_core", "std::string out", "void", bind_initializeCore_command);
+	//add_new_function(state, "database_tableList", "std::string out", "void", AMBaseFunctions::baseBind_DatabaseTableList);
 }
 
 #pragma region lua_functions
+
 
 int API_lua_functions::bind_hello_world(lua_State* state)
 {

@@ -8,7 +8,7 @@ using System.Net;
 
 namespace AMFramework.Core
 {
-    internal class AMCore_Socket
+    public class AMCore_Socket
     {
         private Socket s = new Socket(AddressFamily.InterNetwork,
                 SocketType.Stream,

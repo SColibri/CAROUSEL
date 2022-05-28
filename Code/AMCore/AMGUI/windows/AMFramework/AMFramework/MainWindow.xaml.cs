@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using ScintillaNET;
@@ -10,23 +11,12 @@ namespace AMFramework
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Controller.Controller_AMCore _controllerAMCore = new();
-        public Controller.Controller_AMCore ControllerAMCore { get { return _controllerAMCore; } }
-
-        private string _outputCore = "Welcome!";
-        public string OutputCore { get { return _outputCore; } set { _outputCore = value; } }
-
-        private AMFramework.Core.AMCore_Socket Sock = new AMFramework.Core.AMCore_Socket();
         private MainWindow_ViewModel viewModel = new();
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = ControllerAMCore;
-            Framey.Navigate(new Views.Config.Configuration());
-
-
-
-            
+            DataContext = new Controller.Controller_MainWindow();
+            databaseView.DataContext = DataContext;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -53,6 +43,12 @@ namespace AMFramework
                 {
                     ((Border)sender).Triggers.Clear();
                     ((TabItem)MainTabControl.SelectedItem).Visibility = Visibility.Collapsed;
+
+                    if(((TabItem)MainTabControl.SelectedItem).Tag.GetType().Equals(typeof(Interfaces.ViewModel_Interface))) 
+                    {
+                        ((Interfaces.ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).close();
+                    }
+
                     MainTabControl.Items.RemoveAt(MainTabControl.SelectedIndex);
                 }
             }    
@@ -69,8 +65,7 @@ namespace AMFramework
 
         private void RibbonMenuItem_Click_2(object sender, RoutedEventArgs e)
         {
-            ControllerAMCore.CoreOutput = Sock.send_receive("initialize_core");
-           bool stopHere = false;
+            //ControllerAMCore.CoreOutput = Sock.send_receive("initialize_core");
         }
 
         private void RibbonButton_Click(object sender, RoutedEventArgs e)
@@ -78,6 +73,62 @@ namespace AMFramework
             MainTabControl.Items.Add(viewModel.get_new_plot());
             MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
             
+        }
+
+        private void RibbonMenuItem_Click_3()
+        {
+
+        }
+
+        private void RibbonMenuItem_Click_4()
+        {
+
+        }
+
+        private void RibbonMenuItem_Click_loadApi(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
+            ofd.Multiselect = false;
+
+            if(ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) 
+            { 
+                if(File.Exists(ofd.FileName) == true) 
+                {
+                    MainTabControl.Items.Add(viewModel.get_new_lua_script(ofd.FileName));
+                    MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+                }
+                else 
+                {
+                    System.Windows.Forms.MessageBox.Show("Ups, where did the file go?","Script file",System.Windows.Forms.MessageBoxButtons.OK);
+                }
+            }
+
+        }
+
+        private void RibbonButton_Click_newProject(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RibbonButton_Click_1(object sender)
+        {
+
+        }
+
+        private void RibbonButton_Click_NewProject(object sender, RoutedEventArgs e)
+        {
+            Popup.Visibility = Visibility.Visible;
+
+            Controller.Controller_MainWindow controller_MainWindow = (Controller.Controller_MainWindow)DataContext;
+            Components.Windows.AM_popupWindow Pw = controller_MainWindow.popupProject(-1);
+            Pw.PopupWindowClosed += ClosePopup;
+
+            PopupFrame.Navigate(Pw);
+        }
+
+        private void ClosePopup(object sender, System.EventArgs e)
+        { 
+            Popup.Visibility=Visibility.Collapsed;
         }
     }
 }

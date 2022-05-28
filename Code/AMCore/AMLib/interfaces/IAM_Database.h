@@ -11,7 +11,7 @@ class IAM_Database
 {
 
 public:
-	inline static const std::string Delimiter{" "}; //csv delimiter
+	inline static const std::string Delimiter{","}; //csv delimiter
 
 	IAM_Database(AM_Config* configuration) { _configuration = configuration; }
 	~IAM_Database() {}

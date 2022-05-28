@@ -34,6 +34,13 @@ namespace AMFramework.Components.Scripting
             setupMain(Scripting);
         }
 
+        public void loadFile(string filename) 
+        {
+            if (File.Exists(filename)) 
+            {
+                ((Scripting_ViewModel)DataContext).load(Scripting, filename);
+            }
+        }
         #region Initialization
         private void setupMain(Scintilla scintilla)
         {
@@ -150,6 +157,12 @@ namespace AMFramework.Components.Scripting
         private void Scripting_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) { e.SuppressKeyPress = true; e.Handled = true; }
+            else if(e.Modifiers == Keys.Control && e.KeyCode == Keys.S) 
+            { 
+                e.SuppressKeyPress = true; 
+                e.Handled = true;
+                ((Components.Scripting.Scripting_ViewModel)DataContext).save();
+            }
             else if (e.KeyCode == Keys.Space) { return; }
 
             var scintilla = sender as Scintilla;
@@ -195,6 +208,10 @@ namespace AMFramework.Components.Scripting
                 scintilla.CurrentPosition += 7;
             }
         }
+
+        #endregion
+
+        #region events
 
         #endregion
 

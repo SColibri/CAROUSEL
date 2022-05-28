@@ -70,6 +70,9 @@ namespace AMLIB
 		out.add_new("IDCase", "INTEGER");
 		out.add_new("ScriptName", "TEXT");
 		out.add_new("Date", "TEXT");
+		out.add_new("PosX", "REAL");
+		out.add_new("PosY", "REAL");
+		out.add_new("PosZ", "REAL");
 		out.tableName = "Case";
 
 		return out;

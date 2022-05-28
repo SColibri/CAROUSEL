@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AMFramework" 
+        xmlns:local2="clr-namespace:AMFramework.Components.Database_treeview"
+        xmlns:AMWindow="clr-namespace:AMFramework.Components.Windows"
         mc:Ignorable="d"
         Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
     <Grid>
@@ -42,6 +44,13 @@
 
             <RibbonTab Header="Home" KeyTip="H" >
                 <!-- Charting-->
+                <RibbonGroup x:Name="Project" Header="Project">
+                    <RibbonButton  Label="new" Click="RibbonButton_Click_NewProject" />
+                    <RibbonButton  Label="open"  />
+                    
+                </RibbonGroup>
+                
+                <!-- Database-->
                 <RibbonGroup x:Name="Database" Header="Database">
                     <RibbonMenuButton  Label="Connection" KeyTip="V">
                         <RibbonMenuItem  Header="local" KeyTip="T" Click="RibbonMenuItem_Click_2"/>
@@ -57,10 +66,17 @@
                 
                 <!-- LUA -->
                 <RibbonGroup x:Name="LUA_options" Header="Scripting">
-                    <RibbonMenuButton  Label="file">
+                    <RibbonMenuButton  Label="lua_script">
                         <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click"/>
                         <RibbonMenuItem  Header="load"/>
                         <RibbonMenuItem  Header="save" Click="RibbonMenuItem_Click_1"/>
+                    </RibbonMenuButton>
+                    <RibbonMenuButton  Label="api_script">
+                        <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click"/>
+                        <RibbonMenuItem  Header="load" Click="RibbonMenuItem_Click_loadApi"/>
+                        <RibbonMenuItem  Header="save" Click="RibbonMenuItem_Click_1"/>
+                    </RibbonMenuButton>
+                    <RibbonMenuButton  Label="run">
                     </RibbonMenuButton>
                     <RibbonButton  Label="" KeyTip="X" />
 
@@ -68,10 +84,6 @@
             </RibbonTab>
         </Ribbon>
 
-        <Frame x:Name="Framey" Visibility="Hidden" Grid.Row="1" Margin="2" NavigationUIVisibility="Hidden">
-            
-        </Frame>
-        
         <Grid Grid.Row="1" Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
@@ -79,11 +91,9 @@
                 <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-            <TreeView x:Name="databaseView">
-                <TreeViewItem Header="Project">
-                    <TreeViewItem Header="Case"></TreeViewItem>
-                </TreeViewItem>
-            </TreeView>
+            <local2:Database_treeview x:Name="databaseView">
+                
+            </local2:Database_treeview>
             <TabControl x:Name="MainTabControl" Grid.Column="2">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
@@ -194,5 +204,13 @@
             <TextBlock Text="AMFramework: " Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <TextBlock Text="{Binding Path=CoreOutput}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         </Grid>
+
+        <Grid x:Name="Popup" Visibility="Collapsed" Grid.RowSpan="5">
+            <Grid Background="Black" Opacity="0.7"/>
+            <Frame x:Name="PopupFrame" Grid.RowSpan="5" Margin="50" NavigationUIVisibility="Hidden">
+
+            </Frame>
+        </Grid>
+        
     </Grid>
 </Window>

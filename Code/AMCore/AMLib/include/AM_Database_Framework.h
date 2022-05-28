@@ -30,11 +30,16 @@ public:
 	{
 		return _dataController;
 	}
+
+	const std::string get_apiExternalPath()
+	{
+		return _configuration->get_apiExternal_path();
+	}
 #pragma endregion
 
 private:
 	inline const static std::string _dbName{"AMDatabase"}; // Name of the database
-	const AM_Config* _configuration{ nullptr };
+	AM_Config* _configuration{ nullptr };
 	AM_FileManagement _fileManagement;
 	IAM_Database* _database{ nullptr };
 	Data_Controller* _dataController{ nullptr };

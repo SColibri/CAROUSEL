@@ -6,7 +6,13 @@
 // -------------------------------------------------------------------------------------
 #pragma region Des_Con
 	AM_Database_Datatable::AM_Database_Datatable(IAM_Database* DB, AM_Database_TableStruct* TS):
-							_tableStruct(TS),_db(DB){}
+						   _db(DB)
+	{
+		_tableStruct.tableName = TS->tableName;
+		_tableStruct.columnNames = TS->columnNames;
+		_tableStruct.columnDataType = TS->columnDataType;
+
+	}
 
 	AM_Database_Datatable::~AM_Database_Datatable() {}
 #pragma endregion Des_Con
@@ -35,14 +41,14 @@
 	{
 		_addedRows = 0;
 		_modifiedIndexList.clear();
-		_data = _db->get_tableRows(_tableStruct);
+		_data = _db->get_tableRows(&_tableStruct);
 	}
 
 	void AM_Database_Datatable::load_data(std::string whereQuery)
 	{
 		_addedRows = 0;
 		_modifiedIndexList.clear();
-		_data = _db->get_tableRows(_tableStruct, whereQuery);
+		_data = _db->get_tableRows(&_tableStruct, whereQuery);
 	}
 
 	void AM_Database_Datatable::save()
@@ -59,7 +65,7 @@
 
 			for (size_t i = start_index; i < end_index; i++)
 			{
-				_db->insert_row(_tableStruct, _data[i]);
+				_db->insert_row(&_tableStruct, _data[i]);
 			}
 
 			_addedRows = 0;
@@ -75,7 +81,7 @@
 
 			for (size_t i = start_index; i < end_index; i++)
 			{
-				_db->update_row(_tableStruct, _data[i]);
+				_db->update_row(&_tableStruct, _data[i]);
 			}
 
 			_modifiedIndexList.clear();
@@ -84,10 +90,10 @@
 
 	int AM_Database_Datatable::add_row(std::vector<std::string> Data)
 	{
-		if(Data.size() <= _tableStruct->columnNames.size())
+		if(Data.size() <= _tableStruct.columnNames.size())
 		{
 			std::vector<std::string> newData(
-				_tableStruct->columnNames.size(), "-1");
+				_tableStruct.columnNames.size(), "-1");
 
 			for (size_t i = 1; i < Data.size(); i++)
 			{
@@ -115,7 +121,7 @@
 	std::vector<std::string> AM_Database_Datatable::get_column_data(int columnNumber)
 	{
 		std::vector<std::string> out;
-		if(_tableStruct->columnNames.size() > columnNumber)
+		if(_tableStruct.columnNames.size() > columnNumber)
 		{
 			for each (std::vector<std::string> cell in _data)
 			{

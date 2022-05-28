@@ -6,6 +6,8 @@ AM_Database_Framework::AM_Database_Framework(AM_Config* configuration):
 	_configuration(configuration)
 {
 	_database = Database_Factory::get_database(configuration);
+	_database->connect();
+	_dataController = new Data_Controller(_database, configuration, -1);
 	create_database();
 }
 

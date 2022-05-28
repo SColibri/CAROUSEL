@@ -228,7 +228,7 @@ private:
 		std::string token;
 
 		std::vector<std::string> commandInput;
-		while (std::getline(ss, token, ',')) {
+		while (std::getline(ss, token, ' ')) {
 			commandInput.push_back(token);
 		}
 

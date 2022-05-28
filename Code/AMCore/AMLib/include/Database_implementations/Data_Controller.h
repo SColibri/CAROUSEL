@@ -35,18 +35,27 @@ public:
 					int ID) :
 		_db(db)
 	{
-		_project = new DBS_Project(_db, ID);
 		_configuration = configuration;
+		_project = new DBS_Project(_db, ID);
+		set_project_default();
+		create_tables();
 		load_data();
 	}
 
 #pragma region Project
+	void set_project_default()
+	{
+		if (_project == nullptr) return;
+		_project->Name = "New project";
+		_project->APIName = _configuration->get_api_path();
+	}
 	void set_project_ID(int ID)
 	{
 		if(_project->id() != ID)
 		{
 			delete _project;
 			_project = new DBS_Project(_db, ID);
+			set_project_default();
 		}
 	}
 
@@ -182,14 +191,17 @@ private:
 		if (_datatable_scheil_phase_fractions == nullptr)
 			_datatable_scheil_phase_fractions = new AM_Database_Datatable(_db, &AMLIB::TN_ScheilPhaseFraction());
 
+		if (_datatable_projects == nullptr)
+			_datatable_projects = new AM_Database_Datatable(_db, &AMLIB::TN_Projects());
+
 	}
 
 	void load_data()
 	{
+		_datatable_projects->load_data();
 		if (_project->id() == -1) { _project->save(); return; }
 		create_tables();
-
-
+		
 		_datatable_cases->load_data(AMLIB::TN_Case().columnNames[1] +  " = \'" + std::to_string(_project->id()) + "\'");
 		_datatable_elements->load_data();
 		_datatable_phases->load_data();

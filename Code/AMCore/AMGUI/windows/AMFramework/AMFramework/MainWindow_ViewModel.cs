@@ -45,9 +45,11 @@ namespace AMFramework
                 result.Header = get_TabHeader(headerTitle, ImageUri);
             }
 
-            _openScripts.Add(new Components.Scripting.Scripting_ViewModel());
+            _openScripts.Add(new Components.Scripting.Scripting_ViewModel() { Filename=filename });
             result.Content = _openScripts[^1].get_text_editor();
             result.Tag = _openScripts[^1];
+
+            if (System.IO.File.Exists(filename)) ((Components.Scripting.Scripting_editor)result.Content).loadFile(filename);
 
             return result;
         }

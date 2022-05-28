@@ -52,6 +52,15 @@ public:
 		return -1;
 	}
 
+	/// <summary>
+	/// Load from available data
+	/// </summary>
+	/// <returns></returns>
+	virtual int load(std::vector<std::string>& rawData)
+	{
+		return -1;
+	}
+
 #pragma endregion
 
 #pragma region Methods
@@ -64,7 +73,7 @@ public:
 		std::vector<std::string> input = get_input_vector();
 		if (std::strcmp(input[0].c_str(), "-1") == 0)
 		{
-			_db->insert_row(&_tableStructure, input);
+			int insertC = _db->insert_row(&_tableStructure, input);
 			_id = _db->get_last_ID(&_tableStructure);
 		}
 		else
@@ -80,6 +89,7 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	const int& id() { return _id; }
+	void set_id(int newID) { _id = newID; }
 
 #pragma endregion
 

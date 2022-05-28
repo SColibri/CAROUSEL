@@ -174,8 +174,8 @@ int Database_Sqlite3::insert_row(const AM_Database_TableStruct* tableName, std::
 	}
 	Query += " );";
 
-
-	return sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
+	int result = sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
+	return result;
 }
 
 int Database_Sqlite3::update_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData)

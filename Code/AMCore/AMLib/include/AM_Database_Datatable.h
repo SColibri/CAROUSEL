@@ -15,6 +15,13 @@
 /// </summary>
 class AM_Database_Datatable
 {
+private:
+	IAM_Database* _db; // connection to database
+	AM_Database_TableStruct _tableStruct; // Table structure
+	std::vector<std::vector<std::string>> _data; // Table data
+	int _addedRows{ 0 }; // Rows added to table, not contained in the database.
+	std::list<int> _modifiedIndexList; // rows that have been called by the operator ()
+
 public:
 
 #pragma region Des_Con
@@ -93,12 +100,6 @@ public:
 
 #pragma endregion Methods
 
-private:
-	IAM_Database* _db; // connection to database
-	const AM_Database_TableStruct* _tableStruct; // Table structure
-	std::vector<std::vector<std::string>> _data; // Table data
-	int _addedRows{0}; // Rows added to table, not contained in the database.
-	std::list<int> _modifiedIndexList; // rows that have been called by the operator ()
 
 private:
 	/// <summary>

@@ -16,10 +16,21 @@ namespace AMFramework.Components.Scripting
     internal class Scripting_ViewModel : Interfaces.ViewModel_Interface
     {
         private bool _changesMade = false; 
-        public bool ChangesMade { get { return _changesMade; } set { _changesMade = value; } } // returns true if changes have been made to the document
+        public bool ChangesMade { get { return _changesMade; } 
+            set 
+            { 
+                _changesMade = value; 
+            } 
+        } // returns true if changes have been made to the document
 
         private string _filename = "";
-        public string Filename { get { return _filename; } set { _filename = value; } } // path to file
+        public string Filename { 
+            get { return _filename; } 
+            set 
+            {
+                _filename = value; 
+            } 
+        } // path to file
 
         private string _autocompleteSelection = "";
         public string autocompleteSelection { get { return _autocompleteSelection; } set { _autocompleteSelection = value; } } // current autocomplete selection
@@ -65,7 +76,7 @@ namespace AMFramework.Components.Scripting
                 }
                 else if (dialogResult == DialogResult.Cancel)
                 {
-                    Result = true;
+                    Result = false;
                 }
             }
 
@@ -122,9 +133,9 @@ namespace AMFramework.Components.Scripting
         {
             if (before_closing(scintilla))
             {
-                if (File.Exists(path) && path.Contains(".lua") == true)
+                if (File.Exists(path))
                 {
-                    _filename = System.IO.Path.GetFileName(path);
+                    //_filename = System.IO.Path.GetFileName(path);
                     scintilla.Text = File.ReadAllText(path);
                 }
                 else
@@ -215,6 +226,7 @@ namespace AMFramework.Components.Scripting
 
 
 
+
         #endregion
 
         #region Interface
@@ -222,7 +234,11 @@ namespace AMFramework.Components.Scripting
         {
             if(_scriptingEditor != null)
             {
-                if(save(_scriptingEditor.Scripting) == 0) { return true; }
+                if(save(_scriptingEditor.Scripting) == 0) 
+                { 
+                    _changesMade = false; 
+                    return true; 
+                }
                 return false;
             }
             else { return false; }
