@@ -91,7 +91,8 @@
                         <RibbonMenuItem  Header="save" Click="RibbonMenuItem_Click_1"/>
                     </RibbonMenuButton>
                     <RibbonMenuButton  Label="run"
-                                       SmallImageSource="Resources/Icons/tablerIcons/player-play.png">
+                                       ItemsSource="{Binding Path=OpenScripts}"
+                                   SmallImageSource="Resources/Icons/tablerIcons/player-play.png">
                     </RibbonMenuButton>
                     <RibbonButton  Label="" KeyTip="X" />
 

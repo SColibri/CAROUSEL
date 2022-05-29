@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Windows.Controls;
 
 namespace AMFramework.Controller
 {
     public class Controller_MainWindow : INotifyPropertyChanged
     {
-        private MainWindow_ViewModel viewModel = new();
+        
         private Controller.Controller_AMCore _AMCore;
         private Controller.Controller_DBS_Projects _DBSProjects;
         private Core.AMCore_Socket _coreSocket = new Core.AMCore_Socket();
@@ -101,6 +102,31 @@ namespace AMFramework.Controller
             Pw.add_button(nbutt);
             return Pw;
         }
+        #endregion
+
+        #region Scripting
+        private MainWindow_ViewModel _scriptModel = new();
+        public MainWindow_ViewModel ScriptView => _scriptModel;
+        public List<Components.Scripting.Scripting_ViewModel> OpenScripts
+        {
+            get { return _scriptModel.OpenScripts; }
+        }
+
+        public System.Windows.Controls.TabItem scriptView_new_lua_script(string filename = "") 
+        {
+            System.Windows.Controls.TabItem Tabby = ScriptView.get_new_lua_script(filename);
+            OnPropertyChanged("OpenScripts");
+            return Tabby;
+        }
+        #endregion
+
+        #region Plotting
+        public TabItem get_new_plot(string plotName = "")
+        {
+            TabItem result = ScriptView.get_new_plot();
+            return result;
+        }
+
         #endregion
 
     }

@@ -13,7 +13,7 @@ namespace AMFramework.Components.Scripting
     /// <summary>
     /// Scripting viewmodel
     /// </summary>
-    internal class Scripting_ViewModel : Interfaces.ViewModel_Interface
+    public class Scripting_ViewModel : Interfaces.ViewModel_Interface
     {
         private bool _changesMade = false; 
         public bool ChangesMade { get { return _changesMade; } 

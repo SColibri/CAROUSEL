@@ -25,9 +25,9 @@ add_executable (AMCore "AMCore.cpp" "AMCore.h"  ${AMCORE_SRC} ${AMCORE_H} ${AMLI
 #target_link_libraries(AMCore matcalc)
 target_link_libraries(AMCore AMLib) 
 # target_link_libraries(AMCore sqlite3) 
-target_link_libraries(AMCore ftxui::component)
-target_link_libraries(AMCore ftxui::screen)
-target_link_libraries(AMCore ftxui::dom)
+# target_link_libraries(AMCore ftxui::component)
+# target_link_libraries(AMCore ftxui::screen)
+# target_link_libraries(AMCore ftxui::dom)
 # target_link_libraries(AMCore ${CMAKE_CURRENT_SOURCE_DIR}/../AMLib/external/lua542/lua54.lib)
 
 # TODO: Add tests and install targets if needed.

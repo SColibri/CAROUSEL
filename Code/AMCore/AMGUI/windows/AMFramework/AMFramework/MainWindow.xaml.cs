@@ -142,6 +142,10 @@ namespace AMFramework
             Popup.Visibility=Visibility.Collapsed;
         }
 
+        private void RibbonButton_Click_RunScript(object sender, RoutedEventArgs e)
+        {
+           // if(((TabItem)MainTabControl.SelectedItem).Content.GetType().Equals(typeof()))
+        }
 
         #region GLOBAL
         public static System.Windows.Forms.NotifyIcon notify = new()
@@ -149,6 +153,7 @@ namespace AMFramework
             Icon = new System.Drawing.Icon("Resources/Icons/Logo.ico"),
             Visible = true
         };
+
         #endregion
 
         

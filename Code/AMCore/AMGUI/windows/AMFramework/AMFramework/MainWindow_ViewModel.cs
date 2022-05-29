@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace AMFramework
 {
-    internal class MainWindow_ViewModel:Interfaces.ViewModel_Interface
+    public class MainWindow_ViewModel:Interfaces.ViewModel_Interface
     {
         private List<Components.Scripting.Scripting_ViewModel> _openScripts = new List<Components.Scripting.Scripting_ViewModel>();
         public List<Components.Scripting.Scripting_ViewModel> OpenScripts { get { return _openScripts; } }
@@ -46,6 +46,7 @@ namespace AMFramework
             }
 
             _openScripts.Add(new Components.Scripting.Scripting_ViewModel() { Filename=filename });
+            
             result.Content = _openScripts[^1].get_text_editor();
             result.Tag = _openScripts[^1];
 
