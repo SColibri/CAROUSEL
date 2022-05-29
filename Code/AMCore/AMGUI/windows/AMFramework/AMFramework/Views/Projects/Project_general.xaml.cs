@@ -31,11 +31,12 @@ namespace AMFramework.Views.Projects
             _dbs = dbs;
             DataContext = dbs.DataModel(ID);
             InitializeComponent();
+            Pname.Focus();
         }
 
         public void save() 
         {
-            _dbs.save_DataModel((Model.Model_Projects)DataContext);
+          _dbs.save_DataModel((Model.Model_Projects)DataContext);
         }
 
         public void saveClickHandle(object sender, EventArgs e) { save(); }

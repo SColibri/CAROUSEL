@@ -7,21 +7,44 @@
              xmlns:AMButton="clr-namespace:AMFramework.Components.Button"
              xmlns:local="clr-namespace:AMFramework.Components.Windows"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+             d:DesignHeight="450" 
+             d:DesignWidth="800"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Center">
+    <Grid Name="MainGrid">
+        <Grid.Triggers>
+            <EventTrigger RoutedEvent="Grid.Loaded">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="MainGrid" 
+                                         Storyboard.TargetProperty="MaxHeight" 
+                                         From="0" 
+                                         To="1500" 
+                                         Duration="0:0:0.6"
+                                         AccelerationRatio="0.5"/>
+                        <DoubleAnimation Storyboard.TargetName="MainGrid" 
+                                         Storyboard.TargetProperty="Opacity" 
+                                         From="0.0" 
+                                         To="1.0" 
+                                         Duration="0:0:0.6"
+                                         AccelerationRatio="0.5"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Grid.Triggers>
         <Grid.RowDefinitions>
             <RowDefinition Height="2"/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
-        <Border Background="White" Grid.RowSpan="4" CornerRadius="25">
+        <Border Background="Silver" Grid.RowSpan="4" CornerRadius="25">
             <Border.Effect>
                 <DropShadowEffect />
             </Border.Effect>
         </Border>
         <Border Grid.RowSpan="2" 
-                CornerRadius="5,5,0,0" 
+                CornerRadius="15,15,0,0" 
                 BorderBrush="Silver" 
                 BorderThickness="1"
                 Background="Gainsboro">
@@ -34,15 +57,15 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Title" 
+            <TextBlock Text="{Binding Path=Title}" 
                        HorizontalAlignment="Center" 
                        VerticalAlignment="Center"
                        FontSize="18"
                        FontWeight="Bold">
                 
             </TextBlock>
-            <StackPanel x:Name="ButtonsPanel" Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Column="1">
-                <AMButton:AM_button IconName="Close" ForegroundIcon="White" Margin="5" GradientColor_2="Red" ToolTip="Close" ClickButton="AM_button_ClickButton"/>
+            <StackPanel x:Name="ButtonsPanel" Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Column="1" Margin="6">
+                <AMButton:AM_button IconName="Close" ForegroundIcon="White" CornerRadius="20" Margin="5" GradientColor_2="Red" ToolTip="Close" ClickButton="AM_button_ClickButton"/>
             </StackPanel>
         </Grid>
 

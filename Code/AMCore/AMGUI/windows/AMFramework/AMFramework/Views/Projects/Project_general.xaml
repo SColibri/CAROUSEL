@@ -5,7 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AMFramework.Views.Projects"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" 
+             d:DesignWidth="800"
+             MinWidth="500">
     <Grid>
         <StackPanel>
 
@@ -14,26 +16,56 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="ID:" FontSize="20" Margin="3" VerticalAlignment="Bottom"/>
-                <TextBlock Text="{Binding Path=ID}" Grid.Column="1" FontSize="20" Margin="3" VerticalAlignment="Bottom" Foreground="Red"/>
+                <TextBlock Text="ID:" FontSize="9" Margin="3" VerticalAlignment="Bottom"/>
+                <TextBlock Text="{Binding Path=ID}" Grid.Column="1" FontSize="9" Margin="3" VerticalAlignment="Bottom" Foreground="Red"/>
             </Grid>
             
             <Grid Height="auto" Margin="5">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="Name" FontSize="20" Margin="3" VerticalAlignment="Bottom"/>
-                <TextBox Grid.Row="1" Margin="3,0,3,5" Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Text="Project name:" FontWeight="Bold" FontSize="12" Margin="3,3,3,3" VerticalAlignment="Bottom"/>
+                <TextBox Grid.Row="1" 
+                         x:Name="Pname"
+                         Margin="3,0,3,5" 
+                         FontSize="18" 
+                         Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         TextAlignment="Left"
+                         TextWrapping="WrapWithOverflow"
+                         VerticalContentAlignment="Center"
+                         Padding="15,0,0,0"
+                         MinHeight="50"
+                         Height="auto">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="10"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
             </Grid>
             
             <Grid Height="auto" Margin="5">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="35"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="API type" FontSize="20" Margin="3" VerticalAlignment="Bottom"/>
-                <TextBox Grid.Row="1" Margin="3,0,3,5" IsEnabled="false" Text="{Binding Path=APIName, Mode=TwoWay}"/>
+                <TextBlock Text="API type" FontWeight="Bold" FontSize="12" Margin="3" VerticalAlignment="Bottom"/>
+                <TextBox Grid.Row="1" 
+                         Margin="3,0,3,5" 
+                         FontSize="18" IsEnabled="false" 
+                         Text="{Binding Path=APIName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         TextAlignment="Left"
+                         TextWrapping="WrapWithOverflow"
+                         VerticalContentAlignment="Center"
+                         Padding="15,0,0,0"
+                         MinHeight="50">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="10"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
             </Grid>
         </StackPanel>
 

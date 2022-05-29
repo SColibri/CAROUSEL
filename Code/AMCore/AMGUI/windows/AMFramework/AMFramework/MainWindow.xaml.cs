@@ -126,9 +126,31 @@ namespace AMFramework
             PopupFrame.Navigate(Pw);
         }
 
+        private void RibbonButton_Click_2(object sender, RoutedEventArgs e)
+        {
+            Popup.Visibility = Visibility.Visible;
+
+            Controller.Controller_MainWindow controller_MainWindow = (Controller.Controller_MainWindow)DataContext;
+            Components.Windows.AM_popupWindow Pw = controller_MainWindow.popupProjectList(-1);
+            Pw.PopupWindowClosed += ClosePopup;
+
+            PopupFrame.Navigate(Pw);
+        }
+
         private void ClosePopup(object sender, System.EventArgs e)
         { 
             Popup.Visibility=Visibility.Collapsed;
         }
+
+
+        #region GLOBAL
+        public static System.Windows.Forms.NotifyIcon notify = new()
+        {
+            Icon = new System.Drawing.Icon("Resources/Icons/Logo.ico"),
+            Visible = true
+        };
+        #endregion
+
+        
     }
 }

@@ -278,7 +278,7 @@ protected:
 		newP.load(splitContent);
 		newP.save();
 
-		lua_pushstring(state, "OK");
+		lua_pushstring(state, std::to_string(newP.id()).c_str());
 		return 1;
 	}
 

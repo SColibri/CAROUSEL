@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="25" d:DesignWidth="25">
     <Grid>
-        <Border CornerRadius="10">
+        <Border CornerRadius="{Binding Path=CornerRadius}">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <GradientStop x:Name="Color_1" Color="{Binding Path=GradientColor_1}" Offset="0"/>
@@ -16,7 +16,7 @@
                 </LinearGradientBrush>
             </Border.Background>
             <Border.Effect>
-                <DropShadowEffect BlurRadius="2" ShadowDepth="3">
+                <DropShadowEffect BlurRadius="2" ShadowDepth="1">
                     
                 </DropShadowEffect>
             </Border.Effect>
@@ -33,7 +33,7 @@
                     <EventTrigger.Actions>
                         <BeginStoryboard>
                             <Storyboard>
-                                <ColorAnimation To="DarkRed"
+                                <ColorAnimation To="{Binding Path=GradientTransition}"
                                                         Duration="0:0:0.3"
                                                         Storyboard.TargetName="Color_1"
                                                         Storyboard.TargetProperty="Color"/>
@@ -50,7 +50,7 @@
                     <EventTrigger.Actions>
                         <BeginStoryboard>
                             <Storyboard>
-                                <ColorAnimation To="White"
+                                <ColorAnimation To="{Binding Path=GradientColor_1}"
                                                         Duration="0:0:0.50"
                                                         Storyboard.TargetName="Color_1"
                                                         Storyboard.TargetProperty="Color"/>

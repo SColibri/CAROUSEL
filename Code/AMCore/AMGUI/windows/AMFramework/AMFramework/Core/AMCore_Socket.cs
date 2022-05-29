@@ -55,9 +55,11 @@ namespace AMFramework.Core
                 {
                     while (byteCount > 0)
                     {
-                        byteCount = s.Receive(bytes, 0, bytes.Length, 0);
+                        SocketError sE;
+                        byteCount = s.Receive(bytes, 0, bytes.Length, 0, out sE);
                         tempBuild = System.Text.ASCIIEncoding.ASCII.GetString(bytes, 0, byteCount);
 
+                        if (sE != SocketError.Success) break;
                         if (tempBuild.CompareTo("END") != 0)
                         {
                             strBuild = strBuild + tempBuild.Trim('\0');

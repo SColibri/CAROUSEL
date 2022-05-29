@@ -66,6 +66,30 @@ namespace AMFramework.Components.Button
             }
         }
 
+        private string _gradientTransition = "DarkRed";
+        public string GradientTransition
+        {
+            get { return _gradientTransition; }
+            set
+            {
+                _gradientTransition = value;
+                OnPropertyChanged("GradientTransition");
+            }
+        }
+
+        private string _cornerRadius = "10";
+
+        public string CornerRadius
+        {
+            get { return _cornerRadius; }
+            set 
+            { 
+                _cornerRadius = value;
+                OnPropertyChanged("CornerRadius");
+            }
+        }
+
+
 
 
         public AM_button()

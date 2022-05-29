@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AMFramework" 
         xmlns:local2="clr-namespace:AMFramework.Components.Database_treeview"
+        xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
         xmlns:AMWindow="clr-namespace:AMFramework.Components.Windows"
         mc:Ignorable="d"
         Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
@@ -45,38 +46,52 @@
             <RibbonTab Header="Home" KeyTip="H" >
                 <!-- Charting-->
                 <RibbonGroup x:Name="Project" Header="Project">
-                    <RibbonButton  Label="new" Click="RibbonButton_Click_NewProject" />
-                    <RibbonButton  Label="open"  />
-                    
+                    <RibbonButton  Label="new" 
+                                   Click="RibbonButton_Click_NewProject" 
+                                   SmallImageSource="Resources/Icons/tablerIcons/layout-grid-add.png"/>
+                    <RibbonButton  Label="open" 
+                                   Click="RibbonButton_Click_2"
+                                   SmallImageSource="Resources/Icons/tablerIcons/file-search.png"/>
+
                 </RibbonGroup>
                 
                 <!-- Database-->
                 <RibbonGroup x:Name="Database" Header="Database">
-                    <RibbonMenuButton  Label="Connection" KeyTip="V">
+                    <RibbonMenuButton  Label="Connection" 
+                                       KeyTip="V"
+                                       SmallImageSource="Resources/Icons/tablerIcons/server.png">
                         <RibbonMenuItem  Header="local" KeyTip="T" Click="RibbonMenuItem_Click_2"/>
                         <RibbonMenuItem  Header="ssh" KeyTip="S"/>
                     </RibbonMenuButton>
-                    <RibbonButton  Label="tables" KeyTip="C" />
+                    <RibbonButton  Label="tables" 
+                                   KeyTip="C"
+                                   SmallImageSource="Resources/Icons/tablerIcons/table.png"/>
                 </RibbonGroup>
                 
                 <!-- Charting-->
                 <RibbonGroup x:Name="Charting" Header="Charting">
-                    <RibbonButton  Label="New chart" KeyTip="X" Click="RibbonButton_Click" />
+                    <RibbonButton  Label="New chart" 
+                                   KeyTip="X" 
+                                   Click="RibbonButton_Click" 
+                                   SmallImageSource="Resources/Icons/tablerIcons/chart-radar.png"/>
                 </RibbonGroup>
                 
                 <!-- LUA -->
                 <RibbonGroup x:Name="LUA_options" Header="Scripting">
-                    <RibbonMenuButton  Label="lua_script">
+                    <RibbonMenuButton  Label="lua_script"
+                                       SmallImageSource="Resources/Icons/tablerIcons/file-typography.png">
                         <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click"/>
                         <RibbonMenuItem  Header="load"/>
                         <RibbonMenuItem  Header="save" Click="RibbonMenuItem_Click_1"/>
                     </RibbonMenuButton>
-                    <RibbonMenuButton  Label="api_script">
+                    <RibbonMenuButton  Label="api_script"
+                                       SmallImageSource="Resources/Icons/tablerIcons/file-symlink.png">
                         <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click"/>
                         <RibbonMenuItem  Header="load" Click="RibbonMenuItem_Click_loadApi"/>
                         <RibbonMenuItem  Header="save" Click="RibbonMenuItem_Click_1"/>
                     </RibbonMenuButton>
-                    <RibbonMenuButton  Label="run">
+                    <RibbonMenuButton  Label="run"
+                                       SmallImageSource="Resources/Icons/tablerIcons/player-play.png">
                     </RibbonMenuButton>
                     <RibbonButton  Label="" KeyTip="X" />
 

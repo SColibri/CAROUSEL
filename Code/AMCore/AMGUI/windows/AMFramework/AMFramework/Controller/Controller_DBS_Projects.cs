@@ -28,14 +28,15 @@ namespace AMFramework.Controller
 
         #region Methods
 
-        private List<string> _DB_projects = new();
-        public List<string> DB_projects
+        private List<Model.Model_Projects> _DB_projects = new();
+        public List<Model.Model_Projects> DB_projects
         {
             get
             {
                 return _DB_projects;
             }
         }
+
         public string DB_projects_reload()
         {
             string outy = _AMCore_Socket.send_receive("dataController_csv 0");
@@ -45,7 +46,17 @@ namespace AMFramework.Controller
             foreach (string item in rowItems)
             {
                 List<string> columnItems = item.Split(",").ToList();
-                if (columnItems.Count > 1) _DB_projects.Add(columnItems[1]);
+                
+
+                if (columnItems.Count > 2) 
+                {
+                    Model.Model_Projects model = new Model.Model_Projects();
+                    model.ID = Convert.ToInt32(columnItems[0]);
+                    model.Name = columnItems[1];
+                    model.APIName = columnItems[2];
+
+                    _DB_projects.Add(model);
+                }
             }
 
             OnPropertyChanged("DB_projects");
@@ -58,6 +69,22 @@ namespace AMFramework.Controller
             string outy = _AMCore_Socket.send_receive(buildString);
             DB_projects_reload();
             return outy;
+        }
+
+        private Model.Model_Projects _selectedProject;
+
+        public Model.Model_Projects SelectedProject
+        {
+            get { return _selectedProject; }
+            set 
+            { 
+                _selectedProject = value;
+                OnPropertyChanged("SelectedProject");
+            }
+        }
+        public void SelectProject(int ID) 
+        { 
+        
         }
 
         public Model.Model_Projects DataModel(int ID) 
@@ -73,12 +100,19 @@ namespace AMFramework.Controller
 
         public int save_DataModel(Model.Model_Projects model) 
         {
-            int result = 1;
+            int result = 0;
 
-            //dataController_saveProjectData
             string csvFormat = model.get_csv();
             string outy = _AMCore_Socket.send_receive("dataController_saveProjectData " + csvFormat);
+            if (outy.Contains("Error")) 
+            {
+                MainWindow.notify.ShowBalloonTip(5000, "AMCore Error", outy, System.Windows.Forms.ToolTipIcon.Error);
+                return 1; 
+            }
 
+            model.ID = Convert.ToInt32(outy);
+            DB_projects_reload();
+            MainWindow.notify.ShowBalloonTip(5000, "Project Saved", "Successful", System.Windows.Forms.ToolTipIcon.Info);
             return result;
         }
 

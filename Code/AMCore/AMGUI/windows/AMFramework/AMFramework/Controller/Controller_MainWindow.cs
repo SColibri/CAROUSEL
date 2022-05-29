@@ -9,7 +9,7 @@ namespace AMFramework.Controller
 {
     public class Controller_MainWindow : INotifyPropertyChanged
     {
-
+        private MainWindow_ViewModel viewModel = new();
         private Controller.Controller_AMCore _AMCore;
         private Controller.Controller_DBS_Projects _DBSProjects;
         private Core.AMCore_Socket _coreSocket = new Core.AMCore_Socket();
@@ -45,8 +45,8 @@ namespace AMFramework.Controller
         #endregion
 
         #region Projects
-        private List<string> _projects = new List<string>();
-        public List<string> Projects { 
+        private List<Model.Model_Projects> _projects = new();
+        public List<Model.Model_Projects> Projects { 
             get => _projects; 
             set 
             {
@@ -72,9 +72,31 @@ namespace AMFramework.Controller
             
             Components.Button.AM_button nbutt = new() 
             { 
-                IconName = "Save" 
+                IconName = "Save",
+                Margin = new System.Windows.Thickness(3),
+                CornerRadius = "20",
+                GradientTransition = "DodgerBlue"
             };
             nbutt.ClickButton += Pg.saveClickHandle;
+
+            Pw.add_button(nbutt);
+            return Pw;
+        }
+
+        public Components.Windows.AM_popupWindow popupProjectList(int ID)
+        {
+            Views.Projects.Project_list Pg = new(_DBSProjects);
+            Components.Windows.AM_popupWindow Pw = new() { Title = "Open" };
+            Pw.ContentPage.Children.Add(Pg);
+
+            Components.Button.AM_button nbutt = new()
+            {
+                IconName = FontAwesome.WPF.FontAwesomeIcon.Upload.ToString(),
+                Margin = new System.Windows.Thickness(3),
+                CornerRadius = "20",
+                GradientTransition = "DodgerBlue"
+            };
+            //nbutt.ClickButton += Pg.saveClickHandle;
 
             Pw.add_button(nbutt);
             return Pw;
