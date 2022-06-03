@@ -85,7 +85,7 @@ public:
 	void set_caseScript(std::string scriptContent)
 	{
 		if (_temp_case == nullptr) select_case(-1);
-		_temp_case->ScriptName = scriptContent;
+		_temp_case->Script = scriptContent;
 	}
 
 	std::string run_case()
@@ -96,7 +96,7 @@ public:
 			out += "Please add a script to run! \n";
 		}
 		
-		if (_temp_case->ScriptName.length() == 0) 
+		if (_temp_case->Script.length() == 0) 
 		{
 			out += "Please add a script to run! \n";
 		}

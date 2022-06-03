@@ -52,5 +52,13 @@ namespace AMFramework.Controller
             }
         }
         #endregion
+
+        #region Commands
+            public string Run_command(string commy) 
+            {
+                CoreOutput = _AMCore_Socket.send_receive(commy);
+                return CoreOutput;
+            }
+        #endregion
     }
 }

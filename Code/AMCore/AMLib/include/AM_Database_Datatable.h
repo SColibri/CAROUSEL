@@ -98,6 +98,22 @@ public:
 		return out;
 	}
 
+	int row_count()
+	{
+		return _data.size();
+	}
+
+	int column_count()
+	{
+		return _tableStruct.columnNames.size();
+	}
+
+	std::vector<std::string>& get_row_data(int row_index)
+	{
+		if (row_index > row_count() - 1) throw "Index out of bounds";
+		return _data[row_index];
+	}
+
 #pragma endregion Methods
 
 

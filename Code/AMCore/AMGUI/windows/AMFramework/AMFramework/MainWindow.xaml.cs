@@ -25,7 +25,7 @@ namespace AMFramework
         }
 
         #region HandlesRibbon
-        private void RibbonMenuItem_Click(object sender, RoutedEventArgs e)
+        private void RibbonMenuItem_Click_new_luaFile(object sender, RoutedEventArgs e)
         {
             MainTabControl.Items.Add(viewModel.get_new_lua_script());
             MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
@@ -55,11 +55,30 @@ namespace AMFramework
         }
         #endregion
 
-        private void RibbonMenuItem_Click_1(object sender, RoutedEventArgs e)
+        private void RibbonMenuItem_Click_save_luaFile(object sender, RoutedEventArgs e)
         {
             if(MainTabControl.SelectedItem != null)
             {
                 ((Interfaces.ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).save();
+            }
+        }
+        private void RibbonMenuItem_Click_LoadLuaFile(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
+            ofd.Filter = " lua script | *.lua";
+            ofd.Multiselect = false;
+
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (File.Exists(ofd.FileName) == true)
+                {
+                    MainTabControl.Items.Add(((Controller.Controller_MainWindow)DataContext).scriptView_new_lua_script(ofd.FileName));
+                    MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Ups, where did the file go?", "Script file", System.Windows.Forms.MessageBoxButtons.OK);
+                }
             }
         }
 
@@ -94,7 +113,7 @@ namespace AMFramework
             { 
                 if(File.Exists(ofd.FileName) == true) 
                 {
-                    MainTabControl.Items.Add(viewModel.get_new_lua_script(ofd.FileName));
+                    MainTabControl.Items.Add(((Controller.Controller_MainWindow)DataContext).scriptView_new_lua_script(ofd.FileName));
                     MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
                 }
                 else 
@@ -154,8 +173,9 @@ namespace AMFramework
             Visible = true
         };
 
+
         #endregion
 
-        
+
     }
 }

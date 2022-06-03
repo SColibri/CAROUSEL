@@ -1,20 +1,17 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
 
-/// <summary>
-/// Implements IAM_DBS.h interface, this is a Element
-/// object structure.
-/// </summary>
-class DBS_Element : public IAM_DBS
+class DBS_SelectedPhases : public IAM_DBS 
 {
 public:
-	std::string Name{ "" };
+	int IDCase{ -1 };
+	int IDPhase{ -1 };
 
-	DBS_Element(IAM_Database* database, int id) :
+	DBS_Phase(IAM_Database* database, int id) :
 		IAM_DBS(database)
 	{
 		_id = id;
-		_tableStructure = AMLIB::TN_Element();
+		_tableStructure = AMLIB::TN_SelectedPhases();
 	}
 
 #pragma region implementation
@@ -22,7 +19,8 @@ public:
 	virtual std::vector<std::string> get_input_vector() override
 	{
 		std::vector<std::string> input{ std::to_string(_id),
-										Name };
+										std::to_string(IDCase),
+										std::to_string(IDPhase) };
 		return input;
 	}
 
@@ -30,7 +28,6 @@ public:
 	{
 		return std::string(" ID = \'" + std::to_string(_id) + " \' ");
 	}
-
 
 	virtual int load() override
 	{
@@ -42,12 +39,12 @@ public:
 	{
 		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
 
-		Name = rawData[1];
+		set_id(std::stoi(rawData[0]));
+		IDCase = std::stoi(rawData[1]);
+		IDPhase = std::stoi(rawData[2]);
 		return 0;
 	}
 
 #pragma endregion
-
-private:
 
 };

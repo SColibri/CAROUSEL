@@ -5,6 +5,10 @@
 #include "../../../AMLib/interfaces/IAM_Database.h"
 #include "API_matcalc_lib.h"
 
+/** \addtogroup AM_API_lib
+  *  @{
+  */
+
 class API_lua_functions: public IAM_lua_functions
 {
 public:
@@ -54,6 +58,16 @@ private:
 	/// <param name="state"></param>
 	/// <returns></returns>
 	static int bind_initializeCore_command(lua_State* state);
+
+	static int bind_setValueNPC_command(lua_State* state);
+	static int bind_selectThermodynamicDatabase_command(lua_State* state);
+	static int bind_selectPhysicalDatabase_command(lua_State* state);
+	static int bind_selectMobilityDatabase_command(lua_State* state);
+
+	static int bind_selectElements_command(lua_State* state);
+	static int bind_selectPhases_command(lua_State* state);
+	static int bind_calculateEquilibrium_command(lua_State* state);
+
 #pragma endregion
 
 #pragma region helpers
@@ -66,3 +80,4 @@ private:
 #pragma endregion
 
 };
+/** @}*/

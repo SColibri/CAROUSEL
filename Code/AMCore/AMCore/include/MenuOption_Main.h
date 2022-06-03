@@ -21,6 +21,10 @@
 #include "../../AMLib//interfaces/IAM_API.h"
 
 
+/** \addtogroup AMCore
+  *  @{
+  */
+
 using namespace ftxui;
 
 /// <summary>
@@ -145,3 +149,4 @@ private:
 
 
 };
+/** @}*/

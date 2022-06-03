@@ -35,23 +35,15 @@ public:
 	virtual int load() override
 	{
 		std::vector<std::string> rawData = get_rawData();
-		
 		return load(rawData);
 	}
 
 	virtual int load(std::vector<std::string>& rawData) override
 	{
-		try
-		{
-			if (rawData.size() < 3) return 1;
-			set_id(std::stoi(rawData[0]));
-			Name = rawData[1];
-			APIName = rawData[2];
-		}
-		catch (const std::exception&)
-		{
-			return 1;
-		}
+		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
+		set_id(std::stoi(rawData[0]));
+		Name = rawData[1];
+		APIName = rawData[2];
 		
 		return 0;
 	}

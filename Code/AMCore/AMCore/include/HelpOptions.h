@@ -17,6 +17,10 @@
 #include "ftxui/dom/table.hpp" 
 #include "ftxui/component/event.hpp" 
 
+/** \addtogroup AMCore
+  *  @{
+  */
+
 /// <summary>
 /// Gets and displays all available options.
 /// To add a ne option you have to declare a new getter,
@@ -210,3 +214,4 @@ private:
 	}
 
 };
+/** @}*/

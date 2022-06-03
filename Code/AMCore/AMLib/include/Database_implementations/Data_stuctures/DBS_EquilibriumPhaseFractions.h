@@ -1,23 +1,22 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
 /// <summary>
-/// Implements IAM_DBS.h interface, this is a phase
+/// Implements IAM_DBS.h interface, this is a Equilibrium Phase fraction
 /// object structure.
 /// </summary>
-class DBS_ScheilPhaseFraction : public IAM_DBS
+class DBS_EquilibriumPhaseFraction : public IAM_DBS
 {
 public:
-	int IDScheilConfig{ -1 };
+	int IDEquilibConfig{ -1 };
 	int IDPhase{ -1 };
-	std::string TypeComposition{ "" };
-	double Temperature {0.0};
+	double Temperature{ 0.0 };
 	double Value{ -1.0 };
 
-	DBS_ScheilPhaseFraction(IAM_Database* database, int id) :
+	DBS_EquilibriumPhaseFraction(IAM_Database* database, int id) :
 		IAM_DBS(database)
 	{
 		_id = id;
-		_tableStructure = AMLIB::TN_ScheilPhaseFraction();
+		_tableStructure = AMLIB::TN_EquilibriumPhaseFractions();
 	}
 
 #pragma region implementation
@@ -30,10 +29,9 @@ public:
 		decimalString << Value;
 
 		std::vector<std::string> input{ std::to_string(_id),
-										std::to_string(IDScheilConfig),
+										std::to_string(IDEquilibConfig),
 										std::to_string(IDPhase),
-										TypeComposition,
-										std::to_string(Temperature),
+										std::to_string(Temperature), 
 										decimalString.str()};
 		return input;
 	}
@@ -51,14 +49,12 @@ public:
 
 	virtual int load(std::vector<std::string>& rawData) override
 	{
-		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
+		if (rawData.size() <= _tableStructure.columnNames.size()) return 1;
 
-		set_id(std::stoi(rawData[0]));
-		IDScheilConfig = std::stoi(rawData[1]);
+		IDEquilibConfig = std::stoi(rawData[1]);
 		IDPhase = std::stod(rawData[2]);
-		TypeComposition = rawData[3];
-		Temperature = std::stod(rawData[4]);
-		Value = std::stod(rawData[5]);
+		Temperature = std::stod(rawData[3]);
+		Value = std::stod(rawData[4]);
 		return 0;
 	}
 

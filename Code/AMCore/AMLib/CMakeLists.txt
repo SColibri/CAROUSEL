@@ -13,7 +13,7 @@ file(GLOB AMLIB_DBSRC "src/Database_implementations/*.cpp")
 file(GLOB AMLIB_HELP "x_Helpers/*.h")
 
 add_subdirectory ("external")
-add_library(AMLib STATIC ${AMLIB_SRC} ${AMLIB_H} ${AMLIB_I} ${AMLIB_DBSRC} ${AMLIB_DBH} ${AMLIB_HELP})
+add_library(AMLib STATIC ${AMLIB_SRC} ${AMLIB_H} ${AMLIB_I} ${AMLIB_DBSRC} ${AMLIB_DBH} ${AMLIB_HELP} "include/Database_implementations/Data_stuctures/DBS_SelectedPhases.h" "include/Database_implementations/Data_stuctures/DBS_SelectedElements.h" "include/AM_pixel_object.h")
 target_link_libraries(AMLib ${CMAKE_CURRENT_SOURCE_DIR}/external/lua542/lua54.lib)
 target_link_libraries(AMLib sqlite3) 
 target_link_libraries(AMLib ftxui::component)

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Controls;
+using System.Windows.Controls.Ribbon;
 
 namespace AMFramework.Controller
 {
@@ -19,8 +20,18 @@ namespace AMFramework.Controller
             _coreSocket.init();
             _AMCore = new(_coreSocket);
             _DBSProjects = new(_coreSocket);
+            _AMCore.PropertyChanged += Core_output_changed_Handle;
 
             reloadProjects();
+        }
+
+        private void Core_output_changed_Handle(object sender, PropertyChangedEventArgs e) 
+        {
+            if (e is null) return;
+            if (e.PropertyName.CompareTo("CoreOutput") == 0) 
+            {
+                CoreOut = _AMCore.CoreOutput;
+            }
         }
 
         #region Interfaces
@@ -107,9 +118,30 @@ namespace AMFramework.Controller
         #region Scripting
         private MainWindow_ViewModel _scriptModel = new();
         public MainWindow_ViewModel ScriptView => _scriptModel;
-        public List<Components.Scripting.Scripting_ViewModel> OpenScripts
+        public List<RibbonMenuItem> OpenScripts
         {
-            get { return _scriptModel.OpenScripts; }
+            get 
+            {   
+                List<RibbonMenuItem> menu = new List<RibbonMenuItem>();
+                foreach (Components.Scripting.Scripting_ViewModel item in _scriptModel.OpenScripts)
+                {
+                    RibbonMenuItem itemy = new()
+                    {
+                        Header = item.Filename,
+                        Tag = item.Filename
+                    };
+
+                    itemy.Click += run_script;
+                    menu.Add(itemy);
+                }
+                return menu; 
+            }
+        }
+
+        private void run_script(object sender, EventArgs e) 
+        {
+            RibbonMenuItem itemy = (RibbonMenuItem)sender;
+            _AMCore.Run_command("run_lua_script " + itemy.Tag);
         }
 
         public System.Windows.Controls.TabItem scriptView_new_lua_script(string filename = "") 

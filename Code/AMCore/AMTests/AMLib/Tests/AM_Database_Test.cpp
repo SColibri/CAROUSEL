@@ -39,23 +39,23 @@ TEST_CASE("Database", "[classic]")
 		REQUIRE(CalDB.id() > -1);
 
 		DBS_CALPHADDatabase CalDBL(db01, CalDB.id());
-		CalDBL.load();
+		((IAM_DBS)CalDBL).load();
 		REQUIRE(CalDBL.id() > -1);
 		REQUIRE(CalDBL.IDCase == CalDB.IDCase);
 		REQUIRE(std::strcmp(CalDBL.Name.c_str(), CalDB.Name.c_str()) == 0);
 
 		DBS_Case CaseDB(db01, -1);
 		CaseDB.IDProject = 5;
-		CaseDB.ScriptName = "SomeScript.name";
+		CaseDB.Script = "SomeScript.name";
 		CaseDB.Date = "DD.MM.YYYY HH:mm:ss";
 		CaseDB.save();
 		REQUIRE(CaseDB.id() > -1);
 
 		DBS_Case CaseDBL(db01, CaseDB.id());
-		CaseDBL.load();
+		((IAM_DBS)CaseDBL).load();
 		REQUIRE(CaseDBL.id() > -1);
 		REQUIRE(CaseDBL.IDProject == CaseDB.IDProject);
-		REQUIRE(std::strcmp(CaseDBL.ScriptName.c_str(), CaseDB.ScriptName.c_str()) == 0);
+		REQUIRE(std::strcmp(CaseDBL.Script.c_str(), CaseDB.Script.c_str()) == 0);
 		REQUIRE(std::strcmp(CaseDBL.Date.c_str(), CaseDB.Date.c_str()) == 0);
 
 		DBS_Element ElemDB(db01, -1);

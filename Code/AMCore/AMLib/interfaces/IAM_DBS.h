@@ -49,7 +49,8 @@ public:
 	/// <returns></returns>
 	virtual int load()
 	{
-		return -1;
+		std::vector<std::string> rawData = get_rawData();
+		return load(rawData);
 	}
 
 	/// <summary>

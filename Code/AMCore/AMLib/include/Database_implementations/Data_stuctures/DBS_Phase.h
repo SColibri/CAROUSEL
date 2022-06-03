@@ -33,6 +33,11 @@ public:
 	virtual int load() override
 	{
 		std::vector<std::string> rawData = get_rawData();
+		return load(rawData);
+	}
+
+	virtual int load(std::vector<std::string>& rawData) override
+	{
 		if (rawData.size() < 2) return 1;
 
 		Name = rawData[1];

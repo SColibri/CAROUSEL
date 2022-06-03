@@ -9,6 +9,10 @@
 #include "../../../AMLib/include/AM_Config.h"
 #include "API_matcalc_definitions.h"
 
+/** \addtogroup AM_API_lib
+  *  @{
+  */
+
 #pragma region FunctionTypes
 typedef int(__cdecl* AM_CONSTCHAR_FUNC)(const char*);
 typedef int(__cdecl* AM_CHAR_FUNC)(char*);
@@ -128,7 +132,6 @@ private:
 		}
 	}
 };
-
-
+/** @}*/
 
 

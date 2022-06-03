@@ -35,8 +35,14 @@ public:
 	virtual int load() override
 	{
 		std::vector<std::string> rawData = get_rawData();
+		return load(rawData);
+	}
+
+	virtual int load(std::vector<std::string>& rawData) override
+	{
 		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
 
+		set_id(std::stoi(rawData[0]));
 		IDCase = std::stoi(rawData[1]);
 		Name = rawData[2];
 		return 0;

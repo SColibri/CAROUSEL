@@ -4,6 +4,10 @@
 #include "mc_types.h"
 #include "shared_types.h"
 
+/** \addtogroup AM_API_lib
+  *  @{
+  */
+
 #pragma region FunctionTypes
 
 typedef bool(__cdecl* AM_CIB_B_FUNC)(char*, int, bool);
@@ -166,3 +170,4 @@ extern "C" static void AM_MCC_LIB_LOAD_ALL(HINSTANCE hLib)
 
 }
 #pragma endregion
+/** @}*/

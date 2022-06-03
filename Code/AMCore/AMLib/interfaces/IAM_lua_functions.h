@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <fstream>
+#include <iostream>
 #include "../interfaces/IAM_Database.h"
 #include "../include/AM_Database_Framework.h"
 #include "../x_Helpers/string_manipulators.h"
@@ -59,6 +61,7 @@ public:
 
 	IAM_lua_functions(lua_State* state) 
 	{
+		functionsList_clear();
 		//add_base_functions(state);
 	};
 	
@@ -111,7 +114,6 @@ public:
 
 protected:
 	inline static AM_Database_Framework* _dbFramework{ nullptr };
-	//inline static IAM_Database* _database{ nullptr };
 	inline static std::string _dllPath{};
 	inline static AM_Config* _configuration{ nullptr };
 
@@ -127,6 +129,11 @@ protected:
 
 	void add_base_functions(lua_State* state)
 	{
+		// LUA
+		add_new_function(state, "get_functionList", "string, csv format, delimiter comma char", "get_functionList", baseBind_get_functionList);
+		add_new_function(state, "run_lua_script", "string output", "run_lua_script <filename>", baseBind_run_lua_script);
+
+		// Database
 		add_new_function(state, "database_tableQuery", "string, csv format, delimiter comma char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
 		add_new_function(state, "database_tableList", "string, csv format, delimiter comma char", "database_tableList", baseBind_DatabaseTableList);
 
@@ -156,12 +163,29 @@ protected:
 		_functionNames.push_back(fName);
 		_functionParameters.push_back(fParameters);
 		_functionDescription.push_back(fDescription);
+
+		functionsList_addEntry(std::vector<std::string>{fName, 
+														fParameters, 
+														fDescription });
 	}
 
 	
 
 #pragma region helpers
+	void functionsList_clear()
+	{
+		std::ofstream ofs;
+		ofs.open("lua_functions.txt", std::ofstream::out | std::ofstream::trunc);
+		ofs.close();
+	}
 
+	void functionsList_addEntry(std::vector<std::string> newEntry)
+	{
+		std::ofstream ofs;
+		ofs.open("lua_functions.txt", std::ofstream::out | std::ofstream::app);
+		ofs << IAM_Database::csv_join_row(newEntry, IAM_Database::Delimiter) + "\n";
+		ofs.close();
+	}
 #pragma endregion
 
 #pragma region BASE_FUNCTIONS
@@ -194,6 +218,24 @@ protected:
 		out = IAM_Database::csv_join_row(_dbFramework->get_database()->get_tableNames(), IAM_Database::Delimiter);
 
 		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	static int baseBind_get_functionList(lua_State* state)
+	{
+		std::ifstream ifs("lua_functions.txt");
+		std::string out((std::istreambuf_iterator<char>(ifs)),
+						(std::istreambuf_iterator<char>()));
+		ifs.close();
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	static int baseBind_run_lua_script(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		std::string parameter = lua_tostring(state, 1);
+		bool outy = luaL_dofile(state ,parameter.c_str());
 		return 1;
 	}
 

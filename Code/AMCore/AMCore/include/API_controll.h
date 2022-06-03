@@ -5,6 +5,10 @@
 #include <stdexcept>
 #include <Windows.h>
 
+/** \addtogroup AMCore
+  *  @{
+  */
+
 /// <summary>
 /// Handles communication with the dynamic library that
 /// contains the implementation of the IAM_API interface
@@ -59,3 +63,4 @@ private:
 #pragma endregion
 
 };
+/** @}*/
