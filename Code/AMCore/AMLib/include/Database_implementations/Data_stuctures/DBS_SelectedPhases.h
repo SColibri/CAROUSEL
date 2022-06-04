@@ -7,7 +7,7 @@ public:
 	int IDCase{ -1 };
 	int IDPhase{ -1 };
 
-	DBS_Phase(IAM_Database* database, int id) :
+	DBS_SelectedPhases(IAM_Database* database, int id) :
 		IAM_DBS(database)
 	{
 		_id = id;

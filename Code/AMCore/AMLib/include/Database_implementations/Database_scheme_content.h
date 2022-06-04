@@ -75,6 +75,7 @@ namespace AMLIB
 		out.add_new("ID", "INTEGER PRIMARY KEY"); // Auto increment ID
 		out.add_new("IDProject", "INTEGER"); // ID of project
 		out.add_new("IDGroup", "INTEGER"); // Group ID, cases are grouped by this input. By default IDCase = 0 is single pixel case group (not for objects)
+		out.add_new("Name", "TEXT"); // Name of the case
 		out.add_new("Script", "TEXT"); // Script content or script name
 		out.add_new("Date", "TEXT"); // Date of creation
 		out.add_new("PosX", "REAL"); // x position
@@ -192,7 +193,7 @@ namespace AMLIB
 		out.add_new("StepSize", "REAL");
 		out.add_new("DependentPhase", "INTEGER");
 		out.add_new("Min_Liquid_Fraction", "REAL");
-		out.tableName = "SccheilConfiguration";
+		out.tableName = "ScheilConfiguration";
 
 		return out;
 	}
@@ -207,7 +208,7 @@ namespace AMLIB
 	{
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
-		out.add_new("IDScheilConfig", "INTEGER");
+		out.add_new("IDCase", "INTEGER");
 		out.add_new("IDPhase", "INTEGER");
 		out.add_new("TypeComposition", "TEXT");
 		out.add_new("Temperature", "REAL");

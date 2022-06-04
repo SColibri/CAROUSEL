@@ -6,6 +6,9 @@
 /// </summary>
 class DBS_Phase : public IAM_DBS
 {
+private:
+	std::string _loadString{ "" };
+
 public:
 	std::string Name{ "" };
 
@@ -15,6 +18,22 @@ public:
 		_id = id;
 		_tableStructure = AMLIB::TN_Phase();
 	}
+
+#pragma region methods
+	void load_by_name(std::string phaseName)
+	{
+		_loadString = " " + _tableStructure.columnNames[1] + " = \'" + phaseName + "\' ";
+		load();
+	}
+
+	bool element_exists(std::string phaseName)
+	{
+		DBS_Phase testElement(_db, -1);
+		testElement.load_by_name(phaseName);
+		if (testElement.id() == -1) return false;
+		return true;
+	}
+#pragma endregion
 
 #pragma region implementation
 
@@ -27,7 +46,8 @@ public:
 
 	virtual std::string get_load_string() override
 	{
-		return std::string(" ID = \'" + std::to_string(_id) + " \' ");
+		if (_loadString.length() == 0) _loadString = " ID = \'" + std::to_string(_id) + " \' ";
+		return _loadString;
 	}
 
 	virtual int load() override
@@ -39,8 +59,16 @@ public:
 	virtual int load(std::vector<std::string>& rawData) override
 	{
 		if (rawData.size() < 2) return 1;
-
+		set_id(std::stoi(rawData[0]));
 		Name = rawData[1];
+		return 0;
+	}
+
+	virtual int check_before_save() override
+	{
+		if (Name.length() == 0) return 1;
+		if (element_exists(Name) == true) return 1;
+
 		return 0;
 	}
 

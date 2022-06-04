@@ -74,6 +74,7 @@ public:
 		std::vector<std::string> input = get_input_vector();
 		if (std::strcmp(input[0].c_str(), "-1") == 0)
 		{
+			if (check_before_save() != 0) return 1;
 			int insertC = _db->insert_row(&_tableStructure, input);
 			_id = _db->get_last_ID(&_tableStructure);
 		}
@@ -109,4 +110,6 @@ protected:
 	{
 		return _db->get_row(&_tableStructure, get_load_string());
 	}
+
+	virtual int check_before_save() { return 0; }
 };

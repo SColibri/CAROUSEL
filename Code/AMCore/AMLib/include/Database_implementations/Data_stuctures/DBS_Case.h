@@ -9,6 +9,7 @@ class DBS_Case : public IAM_DBS
 public:
 	int IDProject{ -1 };
 	int IDGroup{ 0 };
+	std::string Name{ "" };
 	std::string Script{ "" };
 	std::string Date{ "" };
 	double PosX{ 0 };
@@ -29,6 +30,7 @@ public:
 		std::vector<std::string> input{ std::to_string(_id),
 										std::to_string(IDProject),
 										std::to_string(IDGroup),
+										Name,
 										Script,
 										Date,
 										std::to_string(PosX),
@@ -51,14 +53,15 @@ public:
 	virtual int load(std::vector<std::string>& rawData) override
 	{
 		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
-
+		set_id(std::stoi(rawData[0]));
 		IDProject = std::stoi(rawData[1]);
 		IDGroup = std::stoi(rawData[2]);
-		Script = rawData[3];
-		Date = rawData[4];
-		PosX = std::stold(rawData[5]);
-		PosY = std::stold(rawData[6]);
-		PosZ = std::stold(rawData[7]);
+		Name = rawData[3];
+		Script = rawData[4];
+		Date = rawData[5];
+		PosX = std::stold(rawData[6]);
+		PosY = std::stold(rawData[7]);
+		PosZ = std::stold(rawData[8]);
 		return 0;
 	}
 

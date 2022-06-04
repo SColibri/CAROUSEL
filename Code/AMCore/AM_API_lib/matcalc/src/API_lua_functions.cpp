@@ -5,6 +5,7 @@
 #include "../include/API_matcalc_lib.h"
 #include "../include/API_scripting.h"
 #include "../../../AMLib/include/Database_implementations/Database_Factory.h"
+#include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
 
 
 API_lua_functions::API_lua_functions(lua_State* state) : IAM_lua_functions(state)
@@ -49,6 +50,9 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 	add_new_function(state, "run_script", "std::string filename", "filename", bind_run_script);
 	add_new_function(state, "run_command", "std::string filename", "command", bind_run_command);
 	add_new_function(state, "initialize_core", "std::string out", "void", bind_initializeCore_command);
+
+	add_new_function(state, "get_elementNames", "std::string out", "void", bind_getElementNames_command);
+	add_new_function(state, "get_phaseNames", "std::string out", "void", bind_getPhaseNames_command);
 	//add_new_function(state, "database_tableList", "std::string out", "void", AMBaseFunctions::baseBind_DatabaseTableList);
 }
 
@@ -87,6 +91,65 @@ int API_lua_functions::bind_initializeCore_command(lua_State* state)
 	if (_configuration == nullptr) return -1;
 
 	std::string out = runVectorCommands(API_Scripting::Script_initialize(_configuration));
+	lua_pushstring(state, out.c_str());
+	return 1;
+}
+
+int API_lua_functions::bind_getElementNames_command(lua_State* state)
+{
+	if (_configuration == nullptr) return -1;
+	std::string commOut = runVectorCommands(API_Scripting::script_get_thermodynamic_database(_configuration));
+	size_t IndexElements = string_manipulators::find_index_of_keyword(commOut, "# of elements in database");
+	size_t IndexPhases = string_manipulators::find_index_of_keyword(commOut, "# of phases in database");
+
+	std::string out;
+	if (IndexPhases == std::string::npos || IndexElements == std::string::npos) out = "Error, data was not found!";
+	else 
+	{
+		out = commOut.substr(IndexElements, IndexPhases - IndexElements);
+		std::vector<std::string> outSplit = string_manipulators::split_text(out, "\n");
+
+		for (size_t n1 = 1; n1 < outSplit.size() - 1 ; n1++)
+		{
+			if (outSplit[n1].length() > 0)
+			{
+				DBS_Element newElement(_dbFramework->get_database(), -1);
+				newElement.Name = string_manipulators::trim_whiteSpace(outSplit[n1]);
+				newElement.save();
+			}
+		}
+	}
+	
+	lua_pushstring(state, out.c_str());
+	return 1;
+}
+
+int API_lua_functions::bind_getPhaseNames_command(lua_State* state)
+{
+	if (_configuration == nullptr) return -1;
+	std::string commOut = runVectorCommands(API_Scripting::script_get_thermodynamic_database(_configuration));
+	size_t IndexPhases = string_manipulators::find_index_of_keyword(commOut, "# of phases in database");
+	size_t IndexExitCode = string_manipulators::find_index_of_keyword(commOut, "Exit code");
+
+	std::string out;
+	if (IndexPhases == std::string::npos || IndexExitCode == std::string::npos) out = "Error, data was not found!";
+	else 
+	{ 
+		out = commOut.substr(IndexPhases, IndexExitCode - IndexPhases);
+		std::vector<std::string> outSplit = string_manipulators::split_text(out, "\n");
+
+		for(size_t n1 = 1; n1 < outSplit.size() - 1 ; n1++)
+		{
+			if(outSplit[n1].length() > 0)
+			{
+				DBS_Phase newPhase(_dbFramework->get_database(), -1);
+				newPhase.Name = string_manipulators::trim_whiteSpace(outSplit[n1]);
+				newPhase.save();
+			}
+		}
+	}
+	
+	
 	lua_pushstring(state, out.c_str());
 	return 1;
 }

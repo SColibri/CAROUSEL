@@ -31,4 +31,22 @@ struct AM_Database_TableStruct
 			this->columnDataType.push_back(columnDataType);
 		}
 	}
+
+	static AM_Database_TableStruct join(AM_Database_TableStruct& Table1,
+								 AM_Database_TableStruct& Table2)
+	{
+		AM_Database_TableStruct newStruct;
+
+		for (int i = 0; i < Table1.columnNames.size(); i++)
+		{
+			newStruct.add_new(Table1.columnNames[i], Table1.columnDataType[i]);
+		}
+
+		for (int i = 0; i < Table2.columnNames.size(); i++)
+		{
+			newStruct.add_new(Table2.columnNames[i], Table2.columnDataType[i]);
+		}
+
+		return newStruct;
+	}
 };

@@ -45,7 +45,7 @@ public:
 	virtual int load(std::vector<std::string>& rawData) override
 	{
 		if (rawData.size() < 5) return 1;
-
+		set_id(std::stoi(rawData[0]));
 		IDCase = std::stoi(rawData[1]);
 		IDElement = std::stoi(rawData[2]);
 		TypeComposition = rawData[3];

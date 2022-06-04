@@ -39,7 +39,7 @@ TEST_CASE("Database", "[classic]")
 		REQUIRE(CalDB.id() > -1);
 
 		DBS_CALPHADDatabase CalDBL(db01, CalDB.id());
-		((IAM_DBS)CalDBL).load();
+		CalDBL.load();
 		REQUIRE(CalDBL.id() > -1);
 		REQUIRE(CalDBL.IDCase == CalDB.IDCase);
 		REQUIRE(std::strcmp(CalDBL.Name.c_str(), CalDB.Name.c_str()) == 0);
@@ -52,7 +52,7 @@ TEST_CASE("Database", "[classic]")
 		REQUIRE(CaseDB.id() > -1);
 
 		DBS_Case CaseDBL(db01, CaseDB.id());
-		((IAM_DBS)CaseDBL).load();
+		CaseDBL.load();
 		REQUIRE(CaseDBL.id() > -1);
 		REQUIRE(CaseDBL.IDProject == CaseDB.IDProject);
 		REQUIRE(std::strcmp(CaseDBL.Script.c_str(), CaseDB.Script.c_str()) == 0);
@@ -128,7 +128,7 @@ TEST_CASE("Database", "[classic]")
 
 		DBS_ScheilPhaseFraction ScheilFracDB(db01, -1);
 		ScheilFracDB.IDPhase = 1;
-		ScheilFracDB.IDScheilConfig = 1;
+		ScheilFracDB.IDCase = 1;
 		ScheilFracDB.Value = 0.000000001;
 		ScheilFracDB.TypeComposition = "weight";
 		ScheilFracDB.save();
@@ -140,7 +140,7 @@ TEST_CASE("Database", "[classic]")
 		REQUIRE(std::strcmp(ScheilFracDB.TypeComposition.c_str(),
 			ScheilFracDBL.TypeComposition.c_str()) == 0);
 		REQUIRE(ScheilFracDBL.IDPhase == ScheilFracDB.IDPhase);
-		REQUIRE(ScheilFracDBL.IDScheilConfig == ScheilFracDB.IDScheilConfig);
+		REQUIRE(ScheilFracDBL.IDCase == ScheilFracDB.IDCase);
 		REQUIRE(ScheilFracDBL.Value == ScheilFracDB.Value);
 
 

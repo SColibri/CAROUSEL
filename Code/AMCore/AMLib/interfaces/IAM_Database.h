@@ -119,6 +119,21 @@ public:
 																std::string whereQuery) { return std::vector<std::vector<std::string>>(); }
 
 	/// <summary>
+	/// Joins two tables into one based on the column names and using a where clause
+	/// </summary>
+	/// <param name="tableName1">Base table</param>
+	/// <param name="tableName2">Table to join</param>
+	/// <param name="columnName1">Column to compare from tableName 1</param>
+	/// <param name="columnName2">Column to compare from tableName 2</param>
+	/// <param name="whereQuery">optional add where query or data limit</param>
+	/// <returns></returns>
+	virtual std::vector<std::vector<std::string>> get_tableRows_joint(const AM_Database_TableStruct* tableName1,
+																	  const AM_Database_TableStruct* tableName2,
+																	  std::string columnName1, 
+																	  std::string columnName2,
+																	  std::string whereQuery) {return std::vector<std::vector<std::string>>();}
+
+	/// <summary>
 	/// get table content in csv format
 	/// </summary>
 	/// <param name="tableName"></param>

@@ -7,7 +7,7 @@
 class DBS_ScheilPhaseFraction : public IAM_DBS
 {
 public:
-	int IDScheilConfig{ -1 };
+	int IDCase{ -1 };
 	int IDPhase{ -1 };
 	std::string TypeComposition{ "" };
 	double Temperature {0.0};
@@ -30,7 +30,7 @@ public:
 		decimalString << Value;
 
 		std::vector<std::string> input{ std::to_string(_id),
-										std::to_string(IDScheilConfig),
+										std::to_string(IDCase),
 										std::to_string(IDPhase),
 										TypeComposition,
 										std::to_string(Temperature),
@@ -54,7 +54,7 @@ public:
 		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
 
 		set_id(std::stoi(rawData[0]));
-		IDScheilConfig = std::stoi(rawData[1]);
+		IDCase = std::stoi(rawData[1]);
 		IDPhase = std::stod(rawData[2]);
 		TypeComposition = rawData[3];
 		Temperature = std::stod(rawData[4]);

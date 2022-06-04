@@ -90,7 +90,7 @@ std::string API_matcalc_lib::MCRCommand(std::string commandLine)
 
 	while (fgets(psBuffer, 128, mcrEXEC))
 	{
-		out = std::string(psBuffer) + " "; //puts(psBuffer);
+		out += std::string(psBuffer) + " "; //puts(psBuffer);
 	}
 
 	if (feof(mcrEXEC))

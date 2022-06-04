@@ -43,6 +43,8 @@ public:
 	virtual int get_last_ID(const AM_Database_TableStruct* tableName) override;
 	virtual std::vector<std::vector<std::string>> get_tableRows(const AM_Database_TableStruct* tableName) override;
 	virtual std::vector<std::vector<std::string>> get_tableRows(const AM_Database_TableStruct* tableName, std::string whereQuery) override;
+	virtual std::vector<std::vector<std::string>> get_tableRows_joint(const AM_Database_TableStruct* tableName1,
+		const AM_Database_TableStruct* tableName2, std::string columnName1, std::string columnName2, std::string whereQuery) override;
 	virtual std::vector<std::string> get_row(const AM_Database_TableStruct* tableName, std::string Query) override;
 	virtual std::string get_tableRows(std::string& tableName) override;
 	virtual std::string get_tableRows(std::string& tableName, std::string& whereQuery) override;

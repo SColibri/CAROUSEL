@@ -3,8 +3,10 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include "../interfaces/IAM_Database.h"
 #include "../include/AM_Database_Framework.h"
+#include "../include/AM_Project.h"
 #include "../x_Helpers/string_manipulators.h"
 
 extern "C" {
@@ -114,6 +116,7 @@ public:
 
 protected:
 	inline static AM_Database_Framework* _dbFramework{ nullptr };
+	inline static AM_Project* _openProject{nullptr};
 	inline static std::string _dllPath{};
 	inline static AM_Config* _configuration{ nullptr };
 
@@ -137,11 +140,11 @@ protected:
 		add_new_function(state, "database_tableQuery", "string, csv format, delimiter comma char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
 		add_new_function(state, "database_tableList", "string, csv format, delimiter comma char", "database_tableList", baseBind_DatabaseTableList);
 
+		//Project
 		add_new_function(state, "dataController_selectProjectID", "string", "dataController_selectProjectID <int>", Bind_dataController_selectProjectID);
 		add_new_function(state, "dataController_setProjectName", "string", "dataController_setProjectName <new name>", Bind_dataController_setProjectName);
-		add_new_function(state, "dataController_createProject", "string", "dataController_createProject <name>", Bind_dataController_createProject);
 		add_new_function(state, "dataController_getProjectData", "string csv format", "dataController_getProjectData <int ID>", Bind_dataController_getProjectData);
-		add_new_function(state, "dataController_saveProjectData", "string status", "dataController_saveProjectData <string csv format>", Bind_dataController_saveProjectData);
+
 
 		add_new_function(state, "dataController_selectCase", "string", "dataController_selectCase <ID>", Bind_dataController_selectCase);
 		add_new_function(state, "dataController_csv", "string, csv format, delimiter comma char", "dataController_csv <enum::DATATABLES>", Bind_dataController_csv);
@@ -260,7 +263,8 @@ protected:
 		int noParameters = lua_gettop(state);
 		std::string out{ "" };
 		std::string parameter = lua_tostring(state, 1);
-		_dbFramework->get_dataController()->set_project_ID(std::stoi(parameter));
+		if (_openProject != nullptr) delete _openProject;
+		_openProject = new AM_Project(_dbFramework->get_database(), std::stoi(parameter));
 
 		lua_pushstring(state, "Project ID changed");
 		return 1;
@@ -268,40 +272,22 @@ protected:
 
 	static int Bind_dataController_setProjectName(lua_State* state)
 	{
+		if (_openProject == nullptr) _openProject = new AM_Project(_dbFramework->get_database(), -1);
 		int noParameters = lua_gettop(state);
 		std::string out{ "" };
 		std::string parameter = lua_tostring(state, 1);
-		_dbFramework->get_dataController()->set_project_name(parameter);
-
+		std::replace(parameter.begin(), parameter.end(), '#', ' ');
+		_openProject->set_project_name(parameter, _dbFramework->get_apiExternalPath());
+		
 		lua_pushstring(state, "Project name changed");
-		return 1;
-	}
-
-	static int Bind_dataController_createProject(lua_State* state)
-	{
-		int noParameters = lua_gettop(state);
-		std::string parameter = lua_tostring(state, 1);
-
-		DBS_Project newP(_dbFramework->get_database(), -1);
-		newP.Name = parameter;
-		newP.APIName = _configuration->get_api_path();
-		newP.save();
-
-		lua_pushstring(state, "project saved!");
 		return 1;
 	}
 
 	static int Bind_dataController_getProjectData(lua_State* state)
 	{
+		if (_openProject == nullptr) _openProject = new AM_Project(_dbFramework->get_database(), -1);
 		int noParameters = lua_gettop(state);
-		std::string out{ "" };
-		std::string parameter = lua_tostring(state, 1);
-
-		DBS_Project newP(_dbFramework->get_database(), std::stoi(parameter));
-		newP.Name = parameter;
-		newP.APIName = _configuration->get_api_path();
-		newP.save();
-		std::string outy = IAM_Database::csv_join_row(newP.get_input_vector(), IAM_Database::Delimiter);
+		std::string outy = _openProject->get_project_data_csv();
 
 		lua_pushstring(state, outy.c_str());
 		return 1;
@@ -334,7 +320,7 @@ protected:
 		int noParameters = lua_gettop(state);
 		std::string out{ "" };
 		std::string parameter = lua_tostring(state, 1);
-		_dbFramework->get_dataController()->select_case(std::stoi(parameter));
+		// _dbFramework->get_dataController()->select_case(std::stoi(parameter));
 
 		lua_pushstring(state, "Case selected");
 		return 1;

@@ -50,7 +50,7 @@ public:
 	virtual int load(std::vector<std::string>& rawData) override
 	{
 		if (rawData.size() <= _tableStructure.columnNames.size()) return 1;
-
+		set_id(std::stoi(rawData[0]));
 		IDEquilibConfig = std::stoi(rawData[1]);
 		IDPhase = std::stod(rawData[2]);
 		Temperature = std::stod(rawData[3]);

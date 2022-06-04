@@ -24,6 +24,14 @@ namespace API_Scripting
 		return out;
 	}
 
+	std::vector<std::string> static script_get_thermodynamic_database(AM_Config* configuration)
+	{
+		std::vector<std::string> out; //= Script_initialize(configuration);
+		out.push_back("open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path());
+		out.push_back("list-database-contents equi-database-contents");
+		return out;
+	}
+
 	std::string static Script_selectElements(std::vector<std::string> Elements) 
 	{
 		std::string out = "select-elements ";

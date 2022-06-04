@@ -251,6 +251,29 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_D
 	return out;
 }
 
+std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows_joint(const AM_Database_TableStruct* tableName1,
+	const AM_Database_TableStruct* tableName2, std::string columnName1, std::string columnName2, std::string whereQuery)
+{
+	std::vector<std::vector<std::string>> out;
+	std::string Query = "SELECT * FROM \'" + tableName1->tableName + "\' INNER JOIN \'" + tableName2->tableName + "\' ON \'" + 
+		tableName1->tableName + "." + columnName1 + "\' = \' " + tableName2->tableName + "." + columnName2 + "\' ";
+	if (whereQuery.length() > 0) { Query += " WHERE " + whereQuery; }
+
+	sqlite3_stmt* stmt;
+
+	int exec_result = sqlite3_prepare_v2(db, Query.c_str(), -1, &stmt, 0);
+	if (exec_result == SQLITE_OK) {
+
+		while (sqlite3_step(stmt) == SQLITE_ROW)
+		{
+			// TODO check ti query
+			out.push_back(get_input_row(tableName1, stmt));
+		}
+	}
+
+	return out;
+}
+
 std::string Database_Sqlite3::get_tableRows(std::string& tableName)
 {
 	std::string Query = "SELECT * FROM \'" + tableName + "\' ";

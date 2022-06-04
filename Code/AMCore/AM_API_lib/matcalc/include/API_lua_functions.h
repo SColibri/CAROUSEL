@@ -59,6 +59,20 @@ private:
 	/// <returns></returns>
 	static int bind_initializeCore_command(lua_State* state);
 
+	/// <summary>
+	/// Obtains the elements available on a database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int bind_getElementNames_command(lua_State* state);
+
+	/// <summary>
+	/// Obtains the elements available on a database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int bind_getPhaseNames_command(lua_State* state);
+
 	static int bind_setValueNPC_command(lua_State* state);
 	static int bind_selectThermodynamicDatabase_command(lua_State* state);
 	static int bind_selectPhysicalDatabase_command(lua_State* state);
