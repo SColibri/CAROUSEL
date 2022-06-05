@@ -131,7 +131,7 @@ namespace AMLIB
 		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
 		out.add_new("IDProject", "INTEGER"); // Selection corresponding to project
 		out.add_new("IDElement", "INTEGER"); // ID of element
-		out.tableName = "SelectedPhases";
+		out.tableName = "SelectedElements";
 
 		return out;
 	}
@@ -165,7 +165,7 @@ namespace AMLIB
 	{
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
-		out.add_new("IDEquilibConfig", "INTEGER"); // ID to Equilibrium configuration
+		out.add_new("IDCase", "INTEGER"); // ID to Equilibrium configuration
 		out.add_new("IDPhase", "INTEGER"); // Equilibrium at temperature
 		out.add_new("Temperature", "REAL"); // Equilibrium at temperature
 		out.add_new("Value", "REAL"); // Defines if in Celsius or Kelvin
@@ -228,7 +228,9 @@ namespace AMLIB
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY");
 		out.add_new("IDCase", "INTEGER");
-		out.add_new("Name", "TEXT");
+		out.add_new("Thermodynamic", "TEXT");
+		out.add_new("Physical", "TEXT");
+		out.add_new("Mobility", "TEXT");
 		out.tableName = "CALPHADDatabase";
 
 		return out;

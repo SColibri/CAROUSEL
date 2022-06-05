@@ -8,7 +8,9 @@ class DBS_CALPHADDatabase : public IAM_DBS
 {
 public:
 	int IDCase{ -1 };
-	std::string Name{ "" };
+	std::string Thermodynamic{ "" };
+	std::string Physical{ "" };
+	std::string Mobility{ "" };
 
 	DBS_CALPHADDatabase(IAM_Database* database, int id) :
 		IAM_DBS(database)
@@ -23,7 +25,9 @@ public:
 	{
 		std::vector<std::string> input{ std::to_string(_id),
 										std::to_string(IDCase),
-										Name };
+										Thermodynamic,
+										Physical,
+										Mobility };
 		return input;
 	}
 
@@ -44,7 +48,10 @@ public:
 
 		set_id(std::stoi(rawData[0]));
 		IDCase = std::stoi(rawData[1]);
-		Name = rawData[2];
+		Thermodynamic = rawData[2];
+		Physical = rawData[3];
+		Mobility = rawData[4];
+
 		return 0;
 	}
 

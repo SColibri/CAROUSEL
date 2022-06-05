@@ -28,6 +28,16 @@ namespace string_manipulators
         return index;
     }
 
+    static void replace_token_from_socketString(std::string& replaceThis)
+    {
+        std::replace(replaceThis.begin(), replaceThis.end(), '#',' ');
+    }
+
+    static void toCaps(std::string& replaceThis) 
+    {
+        std::transform(replaceThis.begin(), replaceThis.end(), replaceThis.begin(), ::toupper);
+    }
+
 #pragma region trim
     static const std::string WHITESPACE = " \n\r\t\f\v";
 

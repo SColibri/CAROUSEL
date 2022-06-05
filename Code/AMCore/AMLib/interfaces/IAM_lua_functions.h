@@ -139,16 +139,32 @@ protected:
 		// Database
 		add_new_function(state, "database_tableQuery", "string, csv format, delimiter comma char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
 		add_new_function(state, "database_tableList", "string, csv format, delimiter comma char", "database_tableList", baseBind_DatabaseTableList);
+		
+		//Data controller
+		add_new_function(state, "dataController_csv", "string, csv format, delimiter comma char", "dataController_csv <enum::DATATABLES>", Bind_dataController_csv);
 
 		//Project
-		add_new_function(state, "dataController_selectProjectID", "string", "dataController_selectProjectID <int>", Bind_dataController_selectProjectID);
-		add_new_function(state, "dataController_setProjectName", "string", "dataController_setProjectName <new name>", Bind_dataController_setProjectName);
-		add_new_function(state, "dataController_getProjectData", "string csv format", "dataController_getProjectData <int ID>", Bind_dataController_getProjectData);
+		add_new_function(state, "project_selectID", "string", "project_selectID <int>", Bind_project_selectID);
+		add_new_function(state, "projet_setName", "string", "projet_setName <new name>", Bind_project_setName);
+		add_new_function(state, "project_getData", "string csv format", "project_getData <int ID>", Bind_project_getData);
+		add_new_function(state, "project_setData", "string csv format", "project_setData <int ID>,<string Name>", Bind_project_setData);
+		add_new_function(state, "project_SelectElements", "string csv format", "project_SelectElements <string element1> (add all alements as parameters sepparated by a space char)", Bind_project_SelectElements);
+
+		//AMConfig
+		add_new_function(state, "configuration_getAPI_path", "string", "configuration_getAPI_path (gets path to AMFramework dll)", Bind_configuration_getAPIpath);
+		add_new_function(state, "configuration_setAPI_path", "string status", "configuration_setAPI_path <string Filename> (set path to AMFramework dll)", Bind_configuration_setAPIpath);
+		add_new_function(state, "configuration_getExternalAPI_path", "string", "configuration_getExternalAPI_path (gets directory of external API e.g. matcalc)", Bind_configuration_getExternalAPIpath);
+		add_new_function(state, "configuration_setExternalAPI_path", "string status", "configuration_setAPI_path <string Filename> (set path to external dll e.g. matcalc)", Bind_configuration_setExternalAPIpath);
+		add_new_function(state, "configuration_get_working_directory", "string", "configuration_get_working_directory", Bind_configuration_getWorkingDirectory);
+		add_new_function(state, "configuration_set_working_directory", "string", "configuration_set_working_directory <string Directory>", Bind_configuration_getWorkingDirectory);
+		add_new_function(state, "configuration_get_thermodynamic_database_path", "string", "configuration_get_thermodynamic_database_path", Bind_configuration_setWorkingDirectory);
+		add_new_function(state, "configuration_set_thermodynamic_database_path", "string", "configuration_set_thermodynamic_database_path <string filename>", Bind_configuration_getThermodynamicDatabasePath);
+		add_new_function(state, "configuration_get_physical_database_path", "string", "configuration_get_physical_database_path", Bind_configuration_getPhysicalDatabasePath);
+		add_new_function(state, "configuration_set_physical_database_path", "string", "configuration_set_physical_database_path <string filename>", Bind_configuration_setPhysicalDatabasePath);
+		add_new_function(state, "configuration_get_mobility_database_path", "string", "configuration_get_mobility_database_path", Bind_configuration_getMobilityDatabasePath);
+		add_new_function(state, "configuration_set_mobility_database_path", "string", "configuration_set_mobility_database_path <string filename>", Bind_configuration_setMobilityDatabasePath);
 
 
-		add_new_function(state, "dataController_selectCase", "string", "dataController_selectCase <ID>", Bind_dataController_selectCase);
-		add_new_function(state, "dataController_csv", "string, csv format, delimiter comma char", "dataController_csv <enum::DATATABLES>", Bind_dataController_csv);
-		//add_new_function(state, "", "", "", baseBind_DatabaseQuery);
 	}
 
 protected:
@@ -244,35 +260,277 @@ protected:
 
 
 #pragma region Configuration
+	/// <summary>
+	/// returns the directory where the library of the implementation for IAM_API can be found.
+	/// e.g. For matcalc the corresponding library is called AM_API_Matcalc.dll
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
 	static int Bind_configuration_getAPIpath(lua_State* state)
 	{
 		int noParameters = lua_gettop(state);
-		std::string parameter = lua_tostring(state, 1);
-		std::string out = _dbFramework->get_dataController()->get_csv((Data_Controller::DATATABLES)std::stoi(parameter));
+		std::string out = _configuration->get_api_path();
 
 		lua_pushstring(state, out.c_str());
 		return 1;
 	}
+
+	/// <summary>
+	/// Changes the directory where to search the AMFramework API path
+	/// corresponding to the implementation for the IAM_API (not the external API)
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_setAPIpath(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		if(noParameters > 0)
+		{
+			std::string parameter = lua_tostring(state, 1);
+			_configuration->set_api_path(parameter);
+
+			lua_pushstring(state, "OK");
+		}
+		else
+		{
+			lua_pushstring(state, "Error; no parameters");
+		}
+		
+		return 1;
+	}
+
+	/// <summary>
+	/// Returns the directory where the library of the external API can be found.
+	/// e.g. matcalc.dll
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_getExternalAPIpath(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		std::string out = _configuration->get_apiExternal_path();
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Changes the directory where to search the external API
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_setExternalAPIpath(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		if (noParameters > 0)
+		{
+			std::string parameter = lua_tostring(state, 1);
+			_configuration->set_apiExternal_path(parameter);
+
+			lua_pushstring(state, "OK");
+		}
+		else
+		{
+			lua_pushstring(state, "Error; no parameters");
+		}
+
+		return 1;
+	}
+
+	/// <summary>
+	/// Get session working directory.
+	/// Note: If you run a script, the working directory changes automatically to the 
+	/// directory of that file, you can override this behaviour by setting the 
+	/// working directory on the script.
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_getWorkingDirectory(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		std::string out = _configuration->get_working_directory();
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Changes the working directory
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_setWorkingDirectory(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+
+		if(noParameters > 0)
+		{
+			std::string parameter = lua_tostring(state, 1);
+			_configuration->set_working_directory(parameter);
+
+			lua_pushstring(state, "OK");
+		}
+		else
+		{
+			lua_pushstring(state, "Error; no parameters");
+		}
+		
+		return 1;
+	}
+
+	/// <summary>
+	/// Returns the path to the thermodynamic database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_getThermodynamicDatabasePath(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		std::string out = _configuration->get_ThermodynamicDatabase_path();
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Set the path of the thermodynamic database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_setThermodynamicDatabasePath(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+
+		if (noParameters > 0)
+		{
+			std::string parameter = lua_tostring(state, 1);
+			_configuration->set_ThermodynamicDatabase_path(parameter);
+
+			lua_pushstring(state, "OK");
+		}
+		else
+		{
+			lua_pushstring(state, "Error; no parameters");
+		}
+
+		return 1;
+	}
+
+	/// <summary>
+	/// Returns the path to the physical database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_getPhysicalDatabasePath(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		std::string out = _configuration->get_PhysicalDatabase_path();
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Set the path of the physical database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_setPhysicalDatabasePath(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+
+		if (noParameters > 0)
+		{
+			std::string parameter = lua_tostring(state, 1);
+			_configuration->set_PhysicalDatabase_path(parameter);
+
+			lua_pushstring(state, "OK");
+		}
+		else
+		{
+			lua_pushstring(state, "Error; no parameters");
+		}
+
+		return 1;
+	}
+
+	/// <summary>
+	/// Returns the path to the mobility database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_getMobilityDatabasePath(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		std::string out = _configuration->get_MobilityDatabase_path();
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Set the path of the mobility database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_setMobilityDatabasePath(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+
+		if (noParameters > 0)
+		{
+			std::string parameter = lua_tostring(state, 1);
+			_configuration->set_MobilityDatabase_path(parameter);
+
+			lua_pushstring(state, "OK");
+		}
+		else
+		{
+			lua_pushstring(state, "Error; no parameters");
+		}
+
+		return 1;
+	}
+
 #pragma endregion
+
 
 #pragma region Data_controller
 
 #pragma region Project
-	static int Bind_dataController_selectProjectID(lua_State* state)
+	/// <summary>
+	/// Select project by ID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_selectID(lua_State* state)
 	{
 		int noParameters = lua_gettop(state);
+		if(noParameters == 0)
+		{
+			lua_pushstring(state, "Ups... what id should we use?");
+			return 1;
+		}
+
 		std::string out{ "" };
 		std::string parameter = lua_tostring(state, 1);
 		if (_openProject != nullptr) delete _openProject;
-		_openProject = new AM_Project(_dbFramework->get_database(), std::stoi(parameter));
+		_openProject = new AM_Project(_dbFramework->get_database(), _configuration, std::stoi(parameter));
 
-		lua_pushstring(state, "Project ID changed");
+		if(_openProject->get_project_ID() == -1) lua_pushstring(state, "Project with this ID does not exist, sorry!");
+		else lua_pushstring(state, "Project ID changed");
+
 		return 1;
 	}
 
-	static int Bind_dataController_setProjectName(lua_State* state)
+	/// <summary>
+	/// Set project name
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_setName(lua_State* state)
 	{
-		if (_openProject == nullptr) _openProject = new AM_Project(_dbFramework->get_database(), -1);
+		if (_openProject == nullptr) _openProject = new AM_Project(_dbFramework->get_database(), _configuration, -1);
 		int noParameters = lua_gettop(state);
 		std::string out{ "" };
 		std::string parameter = lua_tostring(state, 1);
@@ -283,9 +541,14 @@ protected:
 		return 1;
 	}
 
-	static int Bind_dataController_getProjectData(lua_State* state)
+	/// <summary>
+	/// Returns project data structure in a csv structure
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_getData(lua_State* state)
 	{
-		if (_openProject == nullptr) _openProject = new AM_Project(_dbFramework->get_database(), -1);
+		if (_openProject == nullptr) _openProject = new AM_Project(_dbFramework->get_database(), _configuration, -1);
 		int noParameters = lua_gettop(state);
 		std::string outy = _openProject->get_project_data_csv();
 
@@ -293,11 +556,18 @@ protected:
 		return 1;
 	}
 
-	static int Bind_dataController_saveProjectData(lua_State* state)
+	/// <summary>
+	/// set project data in csv form ID,Name,APIPath(optional)
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_setData(lua_State* state)
 	{
 		int noParameters = lua_gettop(state);
 		std::string out{ "" };
 		std::string parameter = lua_tostring(state, 1);
+		string_manipulators::replace_token_from_socketString(parameter);
+
 		std::vector<std::string> splitContent = string_manipulators::split_text(parameter, ",");
 		if (splitContent.size() == 2) { splitContent.push_back(_dbFramework->get_apiExternalPath()); }
 
@@ -310,21 +580,71 @@ protected:
 		return 1;
 	}
 
+	/// <summary>
+	/// Selects a new set of elements, this will remove all existing data since
+	/// modifying the selection would also mean a different project.
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_SelectElements(lua_State* state)
+	{
+		// first check if there is a project open
+		if(_openProject == nullptr)
+		{
+			lua_pushstring(state, "Ups... there is no open project!");
+			return 1;
+		}
+
+		// check for parameters
+		int noParameters = lua_gettop(state);
+		if(noParameters == 0)
+		{
+			lua_pushstring(state, "Ups... you did not add any elements, lua is sad about this :'( ");
+			return 1;
+		}
+
+		// check if elements exist
+		std::string outy{ "" };
+		std::vector<int> IdElements;
+		for (int n1 = 1; n1 <= noParameters; n1++)
+		{
+			std::string parameter = lua_tostring(state, n1);
+			string_manipulators::toCaps(parameter);
+			DBS_Element DBSFind(_dbFramework->get_database(), -1);
+			DBSFind.load_by_name(parameter);
+
+			// add non repreted elements!
+			if(std::find(IdElements.begin(), IdElements.end(), DBSFind.id()) == IdElements.end()) IdElements.push_back(DBSFind.id());
+
+			// check if element is not part of the database
+			if (DBSFind.id() == -1)
+			{
+				std::string strBuild = "Error: The element " + parameter + " was not found in the database! ";
+				lua_pushstring(state, strBuild.c_str());
+				return 1;
+			}
+		}
+
+		//Remove all data related to the project
+		DBS_Project::remove_project_data(_dbFramework->get_database(), _openProject->get_project_ID());
+
+		//Add all selected elements
+		for each (int IDElement in IdElements)
+		{
+			DBS_SelectedElements newElem(_dbFramework->get_database(), -1);
+			newElem.IDElement = IDElement;
+			newElem.IDProject = _openProject->get_project_ID();
+			newElem.save();
+			outy += "Element ID: " + std::to_string(IDElement) + " selected || ";
+		}
+
+		lua_pushstring(state, outy.c_str());
+		return 1;
+	}
 
 #pragma endregion
 
 
-
-	static int Bind_dataController_selectCase(lua_State* state)
-	{
-		int noParameters = lua_gettop(state);
-		std::string out{ "" };
-		std::string parameter = lua_tostring(state, 1);
-		// _dbFramework->get_dataController()->select_case(std::stoi(parameter));
-
-		lua_pushstring(state, "Case selected");
-		return 1;
-	}
 
 	static int Bind_dataController_csv(lua_State* state)
 	{

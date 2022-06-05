@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
+#include <filesystem>
 #include "AM_pixel_parameters.h"
 #include "../interfaces/IAM_Database.h"
+#include "../interfaces/IAM_lua_functions.h"
 #include "Database_implementations/Database_scheme_content.h"
 #include "AM_Database_Datatable.h"
 
@@ -11,10 +13,12 @@
 class AM_Project 
 {
 public:
-	AM_Project(IAM_Database* database, int id)
+	AM_Project(IAM_Database* database, AM_Config* configuration, int id)
 	{
-		_db = database;
+		_db = database; 
+		_configuration = configuration;
 		_project = new DBS_Project(database, id);
+		if (_project->load() != 0) _project->set_id(-1);
 	}
 
 	~AM_Project()
@@ -25,7 +29,7 @@ public:
 	void set_project_name(std::string newName, std::string apiPath)
 	{
 		_project->Name = newName;
-		_project->APIName = apiPath;
+		_project->APIName = std::filesystem::path(apiPath).filename().string();
 		_project->save();
 	}
 
@@ -37,6 +41,11 @@ public:
 	const std::string& get_project_APIName()
 	{
 		return _project->APIName;
+	}
+
+	const int& get_project_ID()
+	{
+		return _project->id();
 	}
 
 	std::string get_project_data_csv()
@@ -110,6 +119,14 @@ public:
 		newCase.Name = newName;
 		newCase.IDGroup = 0;
 		newCase.save();
+
+		DBS_CALPHADDatabase newCAL(_db, -1);
+		newCAL.IDCase = newCase.id();
+		newCAL.Thermodynamic = std::filesystem::path(_configuration->get_ThermodynamicDatabase_path()).filename().string();
+		newCAL.Physical = std::filesystem::path(_configuration->get_PhysicalDatabase_path()).filename().string();
+		newCAL.Mobility = std::filesystem::path(_configuration->get_MobilityDatabase_path()).filename().string();
+		newCAL.save();
+
 		_singlePixel_cases.push_back(AM_pixel_parameters(_db, _project, newCase.id()));
 		return 0;
 	}
@@ -118,6 +135,7 @@ public:
 
 private:
 	IAM_Database* _db;
+	AM_Config* _configuration;
 	DBS_Project* _project{nullptr};
 	std::vector<AM_pixel_parameters> _singlePixel_cases;
 	std::vector<DBS_SelectedElements> _selectedElements;

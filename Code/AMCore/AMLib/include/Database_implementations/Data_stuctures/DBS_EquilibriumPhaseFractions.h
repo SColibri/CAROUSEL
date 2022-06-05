@@ -7,7 +7,7 @@
 class DBS_EquilibriumPhaseFraction : public IAM_DBS
 {
 public:
-	int IDEquilibConfig{ -1 };
+	int IDCase{ -1 };
 	int IDPhase{ -1 };
 	double Temperature{ 0.0 };
 	double Value{ -1.0 };
@@ -17,6 +17,14 @@ public:
 	{
 		_id = id;
 		_tableStructure = AMLIB::TN_EquilibriumPhaseFractions();
+	}
+
+	static int remove_scheil_data(IAM_Database* database, int CaseID)
+	{
+		std::string query = AMLIB::TN_ScheilPhaseFraction().columnNames[0] +
+			" = " + std::to_string(CaseID);
+
+		return database->remove_row(&AMLIB::TN_ScheilPhaseFraction(), query);
 	}
 
 #pragma region implementation
@@ -29,7 +37,7 @@ public:
 		decimalString << Value;
 
 		std::vector<std::string> input{ std::to_string(_id),
-										std::to_string(IDEquilibConfig),
+										std::to_string(IDCase),
 										std::to_string(IDPhase),
 										std::to_string(Temperature), 
 										decimalString.str()};
@@ -51,7 +59,7 @@ public:
 	{
 		if (rawData.size() <= _tableStructure.columnNames.size()) return 1;
 		set_id(std::stoi(rawData[0]));
-		IDEquilibConfig = std::stoi(rawData[1]);
+		IDCase = std::stoi(rawData[1]);
 		IDPhase = std::stod(rawData[2]);
 		Temperature = std::stod(rawData[3]);
 		Value = std::stod(rawData[4]);

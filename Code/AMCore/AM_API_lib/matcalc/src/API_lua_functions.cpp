@@ -89,8 +89,14 @@ int API_lua_functions::bind_run_command(lua_State* state)
 int API_lua_functions::bind_initializeCore_command(lua_State* state)
 {
 	if (_configuration == nullptr) return -1;
-
 	std::string out = runVectorCommands(API_Scripting::Script_initialize(_configuration));
+
+	// Load database elements and phases each time this function is called
+	bind_getElementNames_command(state); // Elements
+	out += lua_tostring(state, -1); lua_pop(state, 1);
+	bind_getPhaseNames_command(state); // Phases
+	out += lua_tostring(state, -1); lua_pop(state, 1);
+	
 	lua_pushstring(state, out.c_str());
 	return 1;
 }
@@ -154,6 +160,42 @@ int API_lua_functions::bind_getPhaseNames_command(lua_State* state)
 	return 1;
 }
 
+int API_lua_functions::bind_setValueNPC_command(lua_State* state)
+{
+	std::string parameter = lua_tostring(state, 1);
+	if (parameter.compare("-1") == 0) { parameter = "25"; } // set to default value if -1
+
+	std::string out = _api->MCRCommand(API_Scripting::Script_set_number_of_precipitate_classes(std::stoi(parameter)));
+	lua_pushstring(state, out.c_str());
+	return 1;
+}
+
+int API_lua_functions::bind_selectThermodynamicDatabase_command(lua_State* state)
+{
+	std::string parameter = lua_tostring(state, 1);
+
+	std::string out = _api->MCRCommand(API_Scripting::script_set_thermodynamic_database(parameter));
+	lua_pushstring(state, out.c_str());
+	return 1;
+}
+
+int API_lua_functions::bind_selectPhysicalDatabase_command(lua_State* state)
+{
+	std::string parameter = lua_tostring(state, 1);
+
+	std::string out = _api->MCRCommand(API_Scripting::script_set_physical_database(parameter));
+	lua_pushstring(state, out.c_str());
+	return 1;
+}
+
+int API_lua_functions::bind_selectMobilityDatabase_command(lua_State* state)
+{
+	std::string parameter = lua_tostring(state, 1);
+
+	std::string out = _api->MCRCommand(API_Scripting::script_set_mobility_database(parameter));
+	lua_pushstring(state, out.c_str());
+	return 1;
+}
 #pragma endregion
 
 #pragma region helpers

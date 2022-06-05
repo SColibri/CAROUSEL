@@ -14,6 +14,14 @@ public:
 		_tableStructure = AMLIB::TN_SelectedPhases();
 	}
 
+	static int remove_selection_data(IAM_Database* database, int CaseID)
+	{
+		std::string query = AMLIB::TN_SelectedPhases().columnNames[0] +
+			" = " + std::to_string(CaseID);
+
+		return database->remove_row(&AMLIB::TN_SelectedPhases(), query);
+	}
+
 #pragma region implementation
 
 	virtual std::vector<std::string> get_input_vector() override

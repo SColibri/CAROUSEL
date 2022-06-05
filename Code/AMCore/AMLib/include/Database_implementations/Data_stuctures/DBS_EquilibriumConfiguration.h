@@ -21,6 +21,13 @@ public:
 		_tableStructure = AMLIB::TN_EquilibriumConfiguration();
 	}
 
+	static int remove_equilibrium_data(IAM_Database* database, int CaseID)
+	{
+		std::string query = AMLIB::TN_EquilibriumPhaseFractions().columnNames[0] +
+			" = " + std::to_string(CaseID);
+
+		return database->remove_row(&AMLIB::TN_EquilibriumPhaseFractions(),query);
+	}
 #pragma region implementation
 
 	virtual std::vector<std::string> get_input_vector() override

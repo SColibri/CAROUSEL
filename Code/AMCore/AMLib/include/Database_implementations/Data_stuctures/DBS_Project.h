@@ -17,6 +17,24 @@ public:
 		_tableStructure = AMLIB::TN_Projects();
 	}
 
+	static int remove_project_data(IAM_Database* database, int projectID)
+	{
+		std::string query = AMLIB::TN_SelectedElements().columnNames[1] +
+			" = " + std::to_string(projectID);
+
+		std::string queryCase = AMLIB::TN_Case().columnNames[1] +
+			" = " + std::to_string(projectID);
+		AM_Database_Datatable caseList(database, &AMLIB::TN_Case());
+		caseList.load_data(queryCase);
+
+		for(int n1 = 0; n1 < caseList.row_count(); n1++)
+		{
+			DBS_Case::remove_case_data(database, std::stoi(caseList(0,n1)));
+		}
+
+		return database->remove_row(&AMLIB::TN_SelectedElements(), query);
+	}
+
 #pragma region implementation
 
 	virtual std::vector<std::string> get_input_vector() override

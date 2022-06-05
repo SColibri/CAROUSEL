@@ -143,8 +143,8 @@ int Database_Sqlite3::clear_table(const AM_Database_TableStruct* tableName)
 
 int Database_Sqlite3::remove_row(const AM_Database_TableStruct* tableName, int ID)
 {
-	std::string Query = "DELETE FROM \'" + tableName->tableName + "\' WHERE ID" +
-		tableName->tableName + " = " + std::to_string(ID);
+	std::string Query = "DELETE FROM \'" + tableName->tableName + "\' WHERE " +
+		tableName->columnNames[0] + " = " + std::to_string(ID);
 
 	return sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
 }
@@ -182,12 +182,12 @@ int Database_Sqlite3::update_row(const AM_Database_TableStruct* tableName, std::
 {
 	std::string Query = "UPDATE \'" + tableName->tableName + "\' SET ";
 
-	Query += tableName->columnNames[1] + " = " + newData[1];
+	Query += tableName->columnNames[1] + " = \'" + newData[1] + "\'";
 	for (size_t i = 2; i < tableName->columnNames.size(); i++)
 	{
-		Query += "," + tableName->columnNames[i] + " = " + newData[i];
+		Query += "," + tableName->columnNames[i] + " = \'" + newData[i] + "\'";
 	}
-	Query += " WHERE ID" + tableName->tableName + " = " + newData[0];
+	Query += " WHERE " + tableName->columnNames[0] + " = " + newData[0];
 
 	return sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
 }

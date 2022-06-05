@@ -56,6 +56,7 @@ public:
 	/// <summary>
 	/// Load from available data
 	/// </summary>
+	/// 
 	/// <returns></returns>
 	virtual int load(std::vector<std::string>& rawData)
 	{

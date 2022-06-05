@@ -17,7 +17,8 @@ namespace API_Scripting
 		{
 			"use-module core",
 			"set-working-directory " + configuration->get_working_directory(),
-			"open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path()
+			"open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path(),
+			"set-variable-value npc 25"
 		};
 
 
@@ -30,6 +31,21 @@ namespace API_Scripting
 		out.push_back("open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path());
 		out.push_back("list-database-contents equi-database-contents");
 		return out;
+	}
+
+	std::string static script_set_thermodynamic_database(std::string parameters)
+	{
+		return "open-thermodyn-database " + parameters;
+	}
+
+	std::string static script_set_physical_database(std::string parameters)
+	{
+		return "read-mobility-database " + parameters;
+	}
+
+	std::string static script_set_mobility_database(std::string parameters)
+	{
+		return "read-physical-database " + parameters;
 	}
 
 	std::string static Script_selectElements(std::vector<std::string> Elements) 
@@ -129,21 +145,31 @@ namespace API_Scripting
 	std::string static Script_readThermodynamicDatabase()
 	{
 		std::string out = "read-thermodyn-database \n";
+		return out;
 	}
 	
 	std::string static Script_readThermodynamicDatabase(AM_Config* configuration)
 	{
 		std::string out = "read-thermodyn-database " + configuration->get_ThermodynamicDatabase_path() + "\n";
+		return out;
 	}
 
 	std::string static Script_readMobilityDatabase(AM_Config* configuration)
 	{
 		std::string out = "read-thermodyn-database " + configuration->get_MobilityDatabase_path() + "\n";
+		return out;
 	}
 
 	std::string static Script_readPhysicalDatabase(AM_Config* configuration)
 	{
 		std::string out = "read-thermodyn-database " + configuration->get_PhysicalDatabase_path() + "\n";
+		return out;
+	}
+
+	std::string static Script_set_number_of_precipitate_classes(int precipClasses)
+	{
+		std::string out = "set-variable-value npc " + std::to_string(precipClasses) + "\n";
+		return out;
 	}
 
 	std::string static Script_Header()

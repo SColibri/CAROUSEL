@@ -53,7 +53,9 @@ private:
 
 	/// <summary>
 	/// Initializes matcalc core module, loads databases and all
-	/// for initialization.
+	/// for initialization. This function also loads into the
+	/// database all elements and phases, ref: bind_getElementNames_command
+	/// and bind_getPhaseNames_command
 	/// </summary>
 	/// <param name="state"></param>
 	/// <returns></returns>
@@ -73,12 +75,35 @@ private:
 	/// <returns></returns>
 	static int bind_getPhaseNames_command(lua_State* state);
 
+	/// <summary>
+	/// set the number of precipitation classes, 
+	/// by default this is set to 25.
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
 	static int bind_setValueNPC_command(lua_State* state);
+
+	/// <summary>
+	/// set path to thermodynamic database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
 	static int bind_selectThermodynamicDatabase_command(lua_State* state);
+
+	/// <summary>
+	/// set path to physical database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
 	static int bind_selectPhysicalDatabase_command(lua_State* state);
+
+	/// <summary>
+	/// set path to mobility database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
 	static int bind_selectMobilityDatabase_command(lua_State* state);
 
-	static int bind_selectElements_command(lua_State* state);
 	static int bind_selectPhases_command(lua_State* state);
 	static int bind_calculateEquilibrium_command(lua_State* state);
 
