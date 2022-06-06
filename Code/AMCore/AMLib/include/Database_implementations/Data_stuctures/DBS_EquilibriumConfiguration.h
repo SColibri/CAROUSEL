@@ -8,9 +8,9 @@ class DBS_EquilibriumConfiguration : public IAM_DBS
 {
 public:
 	int IDCase{ -1 };
-	double Temperatre{ 0.0 };
-	double StartTemperature{ 0.0 };
-	double EndTemperature{ 0.0 };
+	double Temperature{ 700 };
+	double StartTemperature{ 700 };
+	double EndTemperature{ 700 };
 	std::string TemperatureType{"C"};
 	double Pressure{ 101325 };
 
@@ -34,7 +34,7 @@ public:
 	{
 		std::vector<std::string> input{ std::to_string(_id),
 										std::to_string(IDCase),
-										std::to_string(Temperatre),
+										std::to_string(Temperature),
 										std::to_string(StartTemperature),
 										std::to_string(EndTemperature),
 										TemperatureType,
@@ -58,7 +58,7 @@ public:
 		if (rawData.size() <= _tableStructure.columnNames.size()) return 1;
 		set_id(std::stoi(rawData[0]));
 		IDCase = std::stoi(rawData[1]);
-		Temperatre = std::stod(rawData[2]);
+		Temperature = std::stod(rawData[2]);
 		StartTemperature = std::stod(rawData[3]);
 		EndTemperature = std::stod(rawData[4]);
 		TemperatureType = rawData[5];

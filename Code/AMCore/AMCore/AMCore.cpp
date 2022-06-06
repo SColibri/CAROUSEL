@@ -35,7 +35,7 @@ using namespace std;
 
 int ChildNode()
 {
-	CHAR chBuf[BUFSIZE];
+	CHAR chBuf[BUFSIZE]{'\0'};
 	DWORD dwRead, dwWritten;
 	HANDLE hStdin, hStdout;
 	BOOL bSuccess;

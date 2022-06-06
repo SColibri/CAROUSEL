@@ -3,9 +3,8 @@
 #include <vector>
 #include "../include/API_lua_functions.h"
 #include "../include/API_matcalc_lib.h"
-#include "../include/API_scripting.h"
 #include "../../../AMLib/include/Database_implementations/Database_Factory.h"
-#include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+
 
 
 API_lua_functions::API_lua_functions(lua_State* state) : IAM_lua_functions(state)
@@ -53,6 +52,11 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 
 	add_new_function(state, "get_elementNames", "std::string out", "void", bind_getElementNames_command);
 	add_new_function(state, "get_phaseNames", "std::string out", "void", bind_getPhaseNames_command);
+
+	//
+	add_new_function(state, "pixelCase_StepEquilibrium_IDProject", "std::string out", "<int IDProject> <int IDCase>", Bind_SPC_StepEquilibrium_ByProjectID);
+	add_new_function(state, "pixelCase_StepEquilibrium", "std::string out", "<int IDCase>", Bind_SPC_StepEquilibrium);
+
 	//add_new_function(state, "database_tableList", "std::string out", "void", AMBaseFunctions::baseBind_DatabaseTableList);
 }
 
@@ -97,6 +101,7 @@ int API_lua_functions::bind_initializeCore_command(lua_State* state)
 	bind_getPhaseNames_command(state); // Phases
 	out += lua_tostring(state, -1); lua_pop(state, 1);
 	
+
 	lua_pushstring(state, out.c_str());
 	return 1;
 }
@@ -196,6 +201,9 @@ int API_lua_functions::bind_selectMobilityDatabase_command(lua_State* state)
 	lua_pushstring(state, out.c_str());
 	return 1;
 }
+
+
+
 #pragma endregion
 
 #pragma region helpers

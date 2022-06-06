@@ -8,17 +8,25 @@ class DBS_ScheilConfiguration : public IAM_DBS
 {
 public:
 	int IDCase{ -1 };
-	double StartTemperature{ -1 };
-	double EndTemperature{ -1 };
-	double StepSize{ -1 };
+	double StartTemperature{ 700 };
+	double EndTemperature{ 700 };
+	double StepSize{ -25 };
 	int DependentPhase{ -1 };
-	double minimumLiquidFraction{ -1 };
+	double minimumLiquidFraction{ 0.01 };
 
 	DBS_ScheilConfiguration(IAM_Database* database, int id) :
 		IAM_DBS(database)
 	{
 		_id = id;
 		_tableStructure = AMLIB::TN_ScheilConfiguration();
+	}
+
+	static int remove_scheil_data(IAM_Database* database, int CaseID)
+	{
+		std::string query = AMLIB::TN_ScheilConfiguration().columnNames[0] +
+			" = " + std::to_string(CaseID);
+
+		return database->remove_row(&AMLIB::TN_ScheilConfiguration(), query);
 	}
 
 #pragma region implementation

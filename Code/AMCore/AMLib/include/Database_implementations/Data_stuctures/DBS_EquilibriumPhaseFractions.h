@@ -60,7 +60,7 @@ public:
 		if (rawData.size() <= _tableStructure.columnNames.size()) return 1;
 		set_id(std::stoi(rawData[0]));
 		IDCase = std::stoi(rawData[1]);
-		IDPhase = std::stod(rawData[2]);
+		IDPhase = std::stoi(rawData[2]);
 		Temperature = std::stod(rawData[3]);
 		Value = std::stod(rawData[4]);
 		return 0;

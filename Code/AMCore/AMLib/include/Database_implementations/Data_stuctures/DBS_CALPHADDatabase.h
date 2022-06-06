@@ -19,6 +19,16 @@ public:
 		_tableStructure = AMLIB::TN_CALPHADDatabase();
 	}
 
+	DBS_CALPHADDatabase(const DBS_CALPHADDatabase& toCopy): 
+		IAM_DBS(toCopy._db)
+	{
+		_tableStructure = toCopy._tableStructure;
+		IDCase = toCopy.IDCase;
+		Thermodynamic = toCopy.Thermodynamic;
+		Physical = toCopy.Physical;
+		Mobility = toCopy.Mobility;
+	}
+
 #pragma region implementation
 
 	virtual std::vector<std::string> get_input_vector() override

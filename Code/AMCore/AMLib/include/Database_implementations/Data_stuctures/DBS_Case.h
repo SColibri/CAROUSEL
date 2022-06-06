@@ -23,6 +23,20 @@ public:
 		_tableStructure = AMLIB::TN_Case();
 	}
 
+	DBS_Case(const DBS_Case& toCopy):
+		IAM_DBS(toCopy._db)
+	{
+		_tableStructure = toCopy._tableStructure;
+		IDProject = toCopy.IDProject;
+		IDGroup = toCopy.IDGroup;
+		Name = toCopy.Name;
+		Script = toCopy.Script;
+		Date = toCopy.Date;
+		PosX = toCopy.PosX;
+		PosY = toCopy.PosY;
+		PosZ = toCopy.PosZ;
+	}
+
 	static int remove_case_data(IAM_Database* database, int CaseID)
 	{
 		std::string query = AMLIB::TN_SelectedElements().columnNames[0] +

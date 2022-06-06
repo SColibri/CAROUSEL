@@ -19,6 +19,15 @@ public:
 		_tableStructure = AMLIB::TN_ElementComposition();
 	}
 
+	DBS_ElementComposition(const DBS_ElementComposition& toCopy):
+		IAM_DBS(toCopy._db)
+	{
+		IDCase = toCopy.IDCase;
+		IDElement = toCopy.IDElement;
+		TypeComposition = toCopy.TypeComposition;
+		Value = toCopy.Value;
+	}
+
 #pragma region implementation
 
 	virtual std::vector<std::string> get_input_vector() override
@@ -49,7 +58,7 @@ public:
 		IDCase = std::stoi(rawData[1]);
 		IDElement = std::stoi(rawData[2]);
 		TypeComposition = rawData[3];
-		Value = std::stod(rawData[4]);
+		Value = std::stold(rawData[4]);
 		return 0;
 	}
 

@@ -3,6 +3,7 @@
 #include <ctime>
 #include <vector>
 #include "../../../AMLib/include/AM_Config.h"
+#include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
 
 namespace API_Scripting
 {
@@ -181,5 +182,38 @@ namespace API_Scripting
 
 		return out;
 	}
+
+#pragma region Equilibrium
+	std::vector<std::string> static Script_run_stepEquilibrium(AM_Config* configuration, 
+																double startTemperature,
+																double endTemperature,
+																std::vector<std::string>& Elements, 
+																std::vector<std::string>& Compositions, 
+																std::vector<std::string>& Phases)
+	{
+		std::vector<std::string> out = Script_initialize(configuration);
+		out.push_back("select-elements " + IAM_Database::csv_join_row(Elements, " "));
+		out.push_back("select-phases " + IAM_Database::csv_join_row(Phases, " "));
+		out.push_back("read-thermodyn-database ");
+		out.push_back("read-mobility-database " + configuration->get_MobilityDatabase_path());
+		out.push_back("read-physical-database " + configuration->get_PhysicalDatabase_path());
+		out.push_back("set-reference-element " + Elements[0]); // TODO let the user select the reference element, here default Index == 0
+		out.push_back("set_step-option type=temperature"); // TODO add this parameter to eConfig
+		out.push_back("set-step-option temperature-in-celsius=yes"); // TODO this should be based on eConfig
+		out.push_back("set-step-option range start=" + std::to_string(startTemperature) + 
+					  " stop=" + std::to_string(endTemperature) + " scale=lin step-width=-25");
+
+		// Build string for composition, we omit the first element because this si the reference element
+		std::string buildComp{ "" };
+		for(int n1 = 1; n1 < Elements.size(); n1++)
+		{
+			buildComp += Elements[n1] + "=" + Compositions[n1] + " ";
+		}
+		out.push_back("enter-composition type=weight-percent composition=\"" + buildComp + "\""); //TODO let user define the composition type
+		out.push_back("step-equilibrium");
+
+		return out;
+	}
+#pragma endregion
 
 }

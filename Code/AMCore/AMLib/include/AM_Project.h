@@ -21,9 +21,20 @@ public:
 		if (_project->load() != 0) _project->set_id(-1);
 	}
 
+	AM_Project(IAM_Database* database, AM_Config* configuration, std::string projectName)
+	{
+		_db = database;
+		_configuration = configuration;
+		_project = new DBS_Project(database, -1);
+		_project->load_ByName(projectName);
+
+		if (_project->load() != 0) _project->set_id(-1);
+	}
+
 	~AM_Project()
 	{
 		if (_project != nullptr) delete _project;
+		if (_tempPixel != nullptr) delete _tempPixel;
 	}
 
 	void set_project_name(std::string newName, std::string apiPath)
@@ -63,6 +74,30 @@ public:
 		load_singlePixel_Cases();
 		load_DBS_selectedElements();
 	}
+
+	std::vector<std::string> get_selected_elements_ByName() 
+	{
+		std::vector<std::string> out;
+
+		for each (DBS_SelectedElements var in _selectedElements)
+		{
+			DBS_Element tempElement(_db, var.IDElement);
+			tempElement.load();
+			out.push_back(tempElement.Name);
+		}
+
+		return out;
+	}
+
+	bool project_is_valid() 
+	{
+		if (_project = nullptr) return false;
+		if (_project->id() == -1) _project->save();
+		if (_project->id() == -1) return false;
+
+		return true;
+	}
+
 #pragma region Project
 	std::string csv_list_cases_singlePixel() 
 	{
@@ -84,14 +119,21 @@ public:
 	{
 		AM_Database_Datatable dataT(_db, &AMLIB::TN_SelectedElements());
 		dataT.load_data(AMLIB::TN_SelectedElements().columnNames[1] + " = \'" + std::to_string(_project->id()) + "\'");
-		return dataT.get_csv();
+		return IAM_Database::csv_join_row(dataT.get_column_data(2), IAM_Database::Delimiter);
+	}
+
+	std::vector<std::string> static csv_list_SelectedElements(IAM_Database* db, int projectID)
+	{
+		AM_Database_Datatable dataT(db, &AMLIB::TN_SelectedElements());
+		dataT.load_data(AMLIB::TN_SelectedElements().columnNames[1] + " = \'" + std::to_string(projectID) + "\'");
+		return dataT.get_column_data(2);
 	}
 
 	std::string csv_list_selectedPhases(int IDCase)
 	{
 		AM_Database_Datatable dataT(_db, &AMLIB::TN_SelectedPhases());
 		dataT.load_data(AMLIB::TN_SelectedPhases().columnNames[1] + " = \'" + std::to_string(IDCase) + "\'");
-		return dataT.get_csv();
+		return IAM_Database::csv_join_row(dataT.get_column_data(2), IAM_Database::Delimiter);
 	}
 
 	std::string csv_list_equilibriumConfiguration(int IDCase)
@@ -113,23 +155,47 @@ public:
 #pragma region SinglePixel_Cases
 	int new_singlePixel_Case(std::string newName)
 	{
-		if (_project == nullptr) return 1;
-		DBS_Case newCase(_db, -1);
-		newCase.IDProject = _project->id();
-		newCase.Name = newName;
-		newCase.IDGroup = 0;
-		newCase.save();
+		if (!project_is_valid()) return 1;
 
-		DBS_CALPHADDatabase newCAL(_db, -1);
-		newCAL.IDCase = newCase.id();
-		newCAL.Thermodynamic = std::filesystem::path(_configuration->get_ThermodynamicDatabase_path()).filename().string();
-		newCAL.Physical = std::filesystem::path(_configuration->get_PhysicalDatabase_path()).filename().string();
-		newCAL.Mobility = std::filesystem::path(_configuration->get_MobilityDatabase_path()).filename().string();
-		newCAL.save();
-
-		_singlePixel_cases.push_back(AM_pixel_parameters(_db, _project, newCase.id()));
+		int newIDCase = AM_pixel_parameters::create_new_pixel(_db, _configuration, _project->id(), newName);
+		_singlePixel_cases.push_back(AM_pixel_parameters(_db, _project, newIDCase));
 		return 0;
 	}
+#pragma endregion
+
+#pragma region Cases
+	AM_pixel_parameters* get_pixelCase(int IDCase)
+	{
+		AM_pixel_parameters* out{ nullptr };
+
+		//find in singlePixels
+		auto SPC_it = std::find_if(_singlePixel_cases.begin(), _singlePixel_cases.end(), [&IDCase](AM_pixel_parameters& obj) {return obj.get_caseID() == IDCase; });
+		if(SPC_it != _singlePixel_cases.end())
+		{
+			auto SPC_index = std::distance(_singlePixel_cases.begin(), SPC_it);
+			out = &_singlePixel_cases[SPC_index];
+		}
+
+		//TODO: add search pattern when adding objects and layers in the project
+		if(out == nullptr)
+		{
+			// search on the object list
+		}
+
+		return out;
+	}
+
+	void create_case_template() 
+	{
+		if (_tempPixel != nullptr) delete _tempPixel;
+		_tempPixel = new AM_pixel_parameters(_db, _project, -1);
+	}
+
+	AM_pixel_parameters* get_case_template()
+	{
+		return _tempPixel;
+	}
+	
 #pragma endregion
 
 
@@ -137,6 +203,7 @@ private:
 	IAM_Database* _db;
 	AM_Config* _configuration;
 	DBS_Project* _project{nullptr};
+	AM_pixel_parameters* _tempPixel {nullptr};
 	std::vector<AM_pixel_parameters> _singlePixel_cases;
 	std::vector<DBS_SelectedElements> _selectedElements;
 

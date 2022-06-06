@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include "../include/API_scripting.h"
+#include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
 #include "../../../AMLib/interfaces/IAM_lua_functions.h"
 #include "../../../AMLib/include/AM_Config.h"
 #include "../../../AMLib/interfaces/IAM_Database.h"
@@ -106,6 +109,102 @@ private:
 
 	static int bind_selectPhases_command(lua_State* state);
 	static int bind_calculateEquilibrium_command(lua_State* state);
+
+#pragma region PixelCase
+	/// <summary>
+	/// Creates a new instance of AM_Project, thus it does not depend on the
+	/// current open project. Be aware that loading a AM_Project might have
+	/// a big overhead, use for single operations.
+	/// Input Parameters: INT <IDProject> INT <IDCase>
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_SPC_StepEquilibrium_ByProjectID(lua_State* state)
+	{
+
+		int noParameters = lua_gettop(state);
+		if (noParameters < 2)
+		{
+			lua_pushstring(state, "usage: <INT project ID> <INT Case ID> ");
+			return 1;
+		}
+
+
+		std::string idCase = lua_tostring(state, 2);
+		std::string idProject = lua_tostring(state, 1);
+		DBS_Project tempP(_dbFramework->get_database(), _openProject->get_project_ID());
+
+		// Load the project, if id is -1, the project does not exist.
+		AM_Project projectTemp(_dbFramework->get_database(), _configuration, std::stoi(idProject));
+		if(projectTemp.get_project_ID() == -1)
+		{
+			lua_pushstring(state, "Selected IDProject does not exist!");
+			return 1;
+		}
+
+		// If pixel_parameters is a null pointer, that means that either the case does not exist or
+		// it corresponds to another project ID
+		AM_pixel_parameters* pixel_parameters = projectTemp.get_pixelCase(std::stoi(idCase));
+		if(pixel_parameters == nullptr)
+		{
+			lua_pushstring(state, "IDCase does not belong to the project or it does not exist!");
+			return 1;
+		}
+
+		std::string outCommand_1 = runVectorCommands(API_Scripting::Script_run_stepEquilibrium(_configuration, 
+																								pixel_parameters->get_EquilibriumConfiguration()->StartTemperature,
+																								pixel_parameters->get_EquilibriumConfiguration()->EndTemperature,
+																								projectTemp.get_selected_elements_ByName(),
+																								pixel_parameters->get_composition_string(),
+																								pixel_parameters->get_selected_phases_ByName() ));
+
+		lua_pushstring(state, outCommand_1.c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Based on the current openProject, runs a stepped equilibrium calculation
+	/// input Parameters: INT <IDCase>
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_SPC_StepEquilibrium(lua_State* state)
+	{
+		if(_openProject == nullptr)
+		{
+			lua_pushstring(state, "No open project is available, please create a new project or open an existing one ");
+			return 1;
+		}
+
+		int noParameters = lua_gettop(state);
+		if (noParameters < 1)
+		{
+			lua_pushstring(state, "usage: <INT Case ID> ");
+			return 1;
+		}
+
+		std::string idCase = lua_tostring(state, 1);
+		
+		// If pixel_parameters is a null pointer, that means that either the case does not exist or
+		// it corresponds to another project ID
+		AM_pixel_parameters* pixel_parameters = _openProject->get_pixelCase(std::stoi(idCase));
+		if (pixel_parameters == nullptr)
+		{
+			lua_pushstring(state, "IDCase does not belong to the project or it does not exist!");
+			return 1;
+		}
+
+		std::string outCommand_1 = runVectorCommands(API_Scripting::Script_run_stepEquilibrium(_configuration,
+			pixel_parameters->get_EquilibriumConfiguration()->StartTemperature,
+			pixel_parameters->get_EquilibriumConfiguration()->EndTemperature,
+			_openProject->get_selected_elements_ByName(),
+			pixel_parameters->get_composition_string(),
+			pixel_parameters->get_selected_phases_ByName()));
+
+		lua_pushstring(state, outCommand_1.c_str());
+		return 1;
+	}
+#pragma endregion
 
 #pragma endregion
 

@@ -17,6 +17,18 @@ public:
 		_tableStructure = AMLIB::TN_Projects();
 	}
 
+	int load_ByName(std::string name) 
+	{
+		AM_Database_Datatable tempData(_db, &_tableStructure);
+		tempData.load_data(_tableStructure.columnNames[1] + " = \'" + name + "\'");
+
+		if (tempData.row_count() != 1) return 1; // No unique value was found!
+		_id = std::stoi(tempData(0, 0));
+		load();
+
+		return 0;
+	}
+
 	static int remove_project_data(IAM_Database* database, int projectID)
 	{
 		std::string query = AMLIB::TN_SelectedElements().columnNames[1] +
