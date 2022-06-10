@@ -42,7 +42,7 @@ public:
 		std::string query = AMLIB::TN_SelectedElements().columnNames[0] +
 			" = " + std::to_string(CaseID);
 
-		int results[7];
+		int results[8];
 		results[0] = database->remove_row(&AMLIB::TN_EquilibriumConfiguration(), 
 						AMLIB::TN_EquilibriumConfiguration().columnNames[1] +
 						" = " + std::to_string(CaseID));

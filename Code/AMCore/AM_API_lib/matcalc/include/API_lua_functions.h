@@ -201,7 +201,87 @@ private:
 			pixel_parameters->get_composition_string(),
 			pixel_parameters->get_selected_phases_ByName()));
 
+		std::string outCommand_2 = _api->MCRCommand(API_Scripting::script_buffer_listContent());
+		int index_start_buffer = string_manipulators::find_index_of_keyword(outCommand_2, "Index");
+		int index_end_buffer = string_manipulators::find_index_of_keyword(outCommand_2, "Exit");
+		std::string buffer_raw = outCommand_2.substr(index_start_buffer, index_end_buffer - index_start_buffer -2);
+		std::vector<std::string> bufferRowEntries = string_manipulators::split_text(buffer_raw, "\n");
+
+		std::vector<DBS_EquilibriumPhaseFraction> tempPhaseFraction;
+		std::vector<std::string> selectedPhases = pixel_parameters->get_selected_phases_ByName();
+		std::vector<int> selectedPhases_id = pixel_parameters->get_selected_phases_ByID();
+		for(int n1 = 0; n1 < selectedPhases.size(); n1++)
+		{
+			for (int n2 = 1; n2 < bufferRowEntries.size(); n2++) // start at 1 because off headers
+			{
+				std::vector<std::string> bufferCells = string_manipulators::split_text(bufferRowEntries[n2], " ");
+				tempPhaseFraction.push_back(DBS_EquilibriumPhaseFraction(_dbFramework->get_database(), -1));
+				tempPhaseFraction.back().IDCase = pixel_parameters->get_caseID();
+				tempPhaseFraction.back().IDPhase = selectedPhases_id[n1];
+
+				if (bufferCells.size() < 2) continue;
+				tempPhaseFraction.back().Temperature = std::stold(bufferCells[1]);
+
+				std::string outCommand_loadState = _api->MCRCommand(API_Scripting::script_buffer_loadState(n2-1));
+				std::string outCommand_statusPhase = _api->MCRCommand(API_Scripting::script_buffer_getPhaseStatus(selectedPhases[n1]));
+				
+				int tokenPhase = string_manipulators::find_index_of_keyword(outCommand_statusPhase, "mole-fraction in system:");
+				std::string bufferPhase_raw = outCommand_statusPhase.substr(tokenPhase);
+				std::vector<std::string> splitRaw = string_manipulators::split_text(bufferPhase_raw, ":");
+				if (splitRaw.size() < 2) continue;
+				std::vector<std::string> splitRaw_value = string_manipulators::split_text(splitRaw[1], "\n");
+				tempPhaseFraction.back().Value = std::stold(splitRaw_value[0]);
+				tempPhaseFraction.back().save();
+			}
+		}
+		
+
 		lua_pushstring(state, outCommand_1.c_str());
+		return 1;
+	}
+
+
+	static int Bind_SPC_StepScheil(lua_State* state)
+	{
+		
+
+		lua_pushstring(state, "Not implemented");
+		return 1;
+	}
+
+	/// <summary>
+	/// This will run all pending cases in current project
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_SPC_run_cases(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 0,
+			" No input required ",
+			parameters) != 0) return 1;
+		
+		// we have to run all configurations
+		std::vector<std::string> out;
+		for (int n1 = 0; n1 < _openProject->get_singlePixel_Cases().size(); n1++)
+		{
+			// TODO: do this a nicer way if you get the chance, I noticed you don't sleep
+			// and now you are taling to a machine.
+			// do step equilibrium
+			lua_getglobal(state, "pixelcase_stepEquilibrium");
+			lua_pushstring(state, std::to_string(_openProject->get_singlePixel_Cases()[n1]->get_caseID()).c_str());
+			lua_pcall(state, 1, 1, 0);
+			out.push_back(lua_tostring(state,-1));
+			lua_pop(state, 1);
+
+			lua_getglobal(state, "pixelcase_stepScheil");
+			lua_pushstring(state, std::to_string(_openProject->get_singlePixel_Cases()[n1]->get_caseID()).c_str());
+			lua_pcall(state, 1, 1, 0);
+			out.push_back(lua_tostring(state, -1));
+			lua_pop(state, 1);
+		}
+
+		lua_pushstring(state, "OK");
 		return 1;
 	}
 #pragma endregion

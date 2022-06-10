@@ -11,14 +11,14 @@ namespace API_Scripting
 	std::vector<std::string> static Script_initialize(AM_Config* configuration) 
 	{
 		std::string out2 = "use-module core \n \
-						  set-working-directory " + configuration->get_working_directory() + " \n \
-						  open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path() + " \n ";
+						  set-working-directory \'" + configuration->get_working_directory() + "\' \n \
+						  open-thermodyn-database \'" + configuration->get_ThermodynamicDatabase_path() + "\' \n ";
 
 		std::vector<std::string> out
 		{
 			"use-module core",
-			"set-working-directory " + configuration->get_working_directory(),
-			"open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path(),
+			"set-working-directory \'" + configuration->get_working_directory() + "\'",
+			"open-thermodyn-database \'" + configuration->get_ThermodynamicDatabase_path() + "\'",
 			"set-variable-value npc 25"
 		};
 
@@ -29,7 +29,7 @@ namespace API_Scripting
 	std::vector<std::string> static script_get_thermodynamic_database(AM_Config* configuration)
 	{
 		std::vector<std::string> out; //= Script_initialize(configuration);
-		out.push_back("open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path());
+		out.push_back("open-thermodyn-database \'" + configuration->get_ThermodynamicDatabase_path() + "\'");
 		out.push_back("list-database-contents equi-database-contents");
 		return out;
 	}
@@ -151,19 +151,19 @@ namespace API_Scripting
 	
 	std::string static Script_readThermodynamicDatabase(AM_Config* configuration)
 	{
-		std::string out = "read-thermodyn-database " + configuration->get_ThermodynamicDatabase_path() + "\n";
+		std::string out = "read-thermodyn-database \'" + configuration->get_ThermodynamicDatabase_path() + "\'"  + "\n";
 		return out;
 	}
 
 	std::string static Script_readMobilityDatabase(AM_Config* configuration)
 	{
-		std::string out = "read-thermodyn-database " + configuration->get_MobilityDatabase_path() + "\n";
+		std::string out = "read-thermodyn-database \'" + configuration->get_MobilityDatabase_path() + "\'" + "\n";
 		return out;
 	}
 
 	std::string static Script_readPhysicalDatabase(AM_Config* configuration)
 	{
-		std::string out = "read-thermodyn-database " + configuration->get_PhysicalDatabase_path() + "\n";
+		std::string out = "read-thermodyn-database \'" + configuration->get_PhysicalDatabase_path() + "\'" + "\n";
 		return out;
 	}
 
@@ -194,9 +194,9 @@ namespace API_Scripting
 		std::vector<std::string> out = Script_initialize(configuration);
 		out.push_back("select-elements " + IAM_Database::csv_join_row(Elements, " "));
 		out.push_back("select-phases " + IAM_Database::csv_join_row(Phases, " "));
-		out.push_back("read-thermodyn-database ");
-		out.push_back("read-mobility-database " + configuration->get_MobilityDatabase_path());
-		out.push_back("read-physical-database " + configuration->get_PhysicalDatabase_path());
+		out.push_back("read-thermodyn-database \'" + configuration->get_ThermodynamicDatabase_path() + "\'");
+		out.push_back("read-mobility-database \'" + configuration->get_MobilityDatabase_path() + "\'");
+		out.push_back("read-physical-database \'" + configuration->get_PhysicalDatabase_path() + "\'");
 		out.push_back("set-reference-element " + Elements[0]); // TODO let the user select the reference element, here default Index == 0
 		out.push_back("set_step-option type=temperature"); // TODO add this parameter to eConfig
 		out.push_back("set-step-option temperature-in-celsius=yes"); // TODO this should be based on eConfig
@@ -215,5 +215,21 @@ namespace API_Scripting
 		return out;
 	}
 #pragma endregion
+#pragma region MatcalcBUFFER
+	std::string static script_buffer_listContent() 
+	{
+		return "list-buffer-contents";
+	}
 
+	std::string static script_buffer_loadState(int stateNumber)
+	{
+		return "load-buffer-state line-index=" + std::to_string(stateNumber);
+	}
+
+	std::string static script_buffer_getPhaseStatus(std::string phaseName)
+	{
+		string_manipulators::toCaps(phaseName);
+		return "list-phase-status phase=" + phaseName;
+	}
+#pragma endregion
 }

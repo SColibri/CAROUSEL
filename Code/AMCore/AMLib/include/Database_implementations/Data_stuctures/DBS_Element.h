@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
+#include "../../../x_Helpers/string_manipulators.h"
 
 /// <summary>
 /// Implements IAM_DBS.h interface, this is a Element
@@ -23,6 +24,7 @@ public:
 #pragma region methods
 	void load_by_name(std::string elementName)
 	{
+		string_manipulators::toCaps(elementName);
 		_loadString = " " + _tableStructure.columnNames[1] + " = \'" + elementName + "\' ";
 		load();
 	}

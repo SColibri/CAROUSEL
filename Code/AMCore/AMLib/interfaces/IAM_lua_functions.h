@@ -120,9 +120,9 @@ protected:
 	inline static std::string _dllPath{};
 	inline static AM_Config* _configuration{ nullptr };
 
-	std::vector<std::string> _functionNames; // Function names
-	std::vector<std::string> _functionParameters; // Parameters as input
-	std::vector<std::string> _functionDescription; // Description
+	inline static std::vector<std::string> _functionNames; // Function names
+	inline static std::vector<std::string> _functionParameters; // Parameters as input
+	inline static std::vector<std::string> _functionDescription; // Description
 
 	/// <summary>
 	/// Adds all functions defines on the implementation
@@ -135,6 +135,7 @@ protected:
 		// LUA
 		add_new_function(state, "get_functionList", "string, csv format, delimiter comma char", "get_functionList", baseBind_get_functionList);
 		add_new_function(state, "run_lua_script", "string output", "run_lua_script <filename>", baseBind_run_lua_script);
+		add_new_function(state, "add_function_to_framework", "string output", "add_function_to_framework <function name, output, usage>", Bind_add_function_to_framework);
 
 		// Database
 		add_new_function(state, "database_tableQuery", "string, csv format, delimiter comma char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
@@ -144,12 +145,36 @@ protected:
 		add_new_function(state, "dataController_csv", "string, csv format, delimiter comma char", "dataController_csv <enum::DATATABLES>", Bind_dataController_csv);
 
 		//Project
-		add_new_function(state, "project_selectID", "string", "project_selectID <int>", Bind_project_selectID);
-		add_new_function(state, "projet_setName", "string", "projet_setName <new name>", Bind_project_setName);
+		//------- Binded to open project
+		add_new_function(state, "project_loadID", "string", "project_selectID <int>", Bind_project_loadID);
+		add_new_function(state, "project_loadName", "string", "project_loadName <string>", Bind_project_loadName);
+		add_new_function(state, "project_setName", "string", "projet_setName <new name>", Bind_project_setName);
 		add_new_function(state, "project_getData", "string csv format", "project_getData <int ID>", Bind_project_getData);
 		add_new_function(state, "project_setData", "string csv format", "project_setData <int ID>,<string Name>", Bind_project_setData);
 		add_new_function(state, "project_selectElements", "string csv format", "project_SelectElements <string element1> (add all alements as parameters sepparated by a space char)", Bind_project_SelectElements);
 		add_new_function(state, "project_getSelectedElements", "string csv format", "project_getSelectedElements", Bind_project_getSelectedElements);
+		add_new_function(state, "project_clear_content", "string", "project_getSelectedElements <optional INT IDproject>", Bind_project_clearContent);
+		add_new_function(state, "project_setReferenceElement", "string", "project_setReferenceElement <string>", Bind_project_setReferenceElement);
+		add_new_function(state, "project_getReferenceElement", "string", "project_getReferenceElement", Bind_project_getReferenceElement);
+
+		//###-> Pixel Case
+		add_new_function(state, "template_pixelcase_new", "string", "template_pixelcase_new", Bind_PCTemplate_createNew);
+		add_new_function(state, "template_pixelcase_concentrationVariant", "string", 
+								"template_pixelcase_concentrationVariant <string Element Name> <double stepSize> <int steps>", Bind_PCTemplate_createConcentrationVariant);
+		add_new_function(state, "template_pixelcase_setComposition", "string", "template_pixelcase_setComposition <string> <double> (input in pairs, not limited to one pair)", Bind_PCTemplate_setComposition);
+		add_new_function(state, "template_pixelcase_getComposition", "string", "template_pixelcase_getComposition", Bind_PCTemplate_getComposition);
+		add_new_function(state, "template_pixelcase_selectPhases", "string", "template_pixelcase_selectPhases <string>", Bind_PCTemplate_selectPhases);
+
+		add_new_function(state, "template_pixelcase_setEquilibriumTemperatureRange", "string", "template_pixelcase_getComposition", Bind_PCTemplate_setEquilibrimTemperatureRange);
+
+		add_new_function(state, "template_pixelcase_setScheilTemperatureRange", "string", "template_pixelcase_setScheilTemperatureRange <double start> <double end>", Bind_PCTemplate_setScheilTemperatureRange);
+		add_new_function(state, "template_pixelcase_setScheilLiquidFraction", "string", "template_pixelcase_setScheilLiquidFraction <double>", Bind_PCTemplate_setScheilLiquidFraction);
+		add_new_function(state, "template_pixelcase_setScheilDependentPhase", "string", "template_pixelcase_setScheilDependentPhase <string>", Bind_PCTemplate_setScheilDependentPhase);
+		add_new_function(state, "template_pixelcase_setScheilStepSize", "string", "template_pixelcase_setScheilStepSize <double>", Bind_PCTemplate_setScheilStepSize);
+
+
+		//------- Generic (needs project ID)
+
 
 		//AMConfig
 		add_new_function(state, "configuration_getAPI_path", "string", "configuration_getAPI_path (gets path to AMFramework dll)", Bind_configuration_getAPIpath);
@@ -176,7 +201,7 @@ protected:
 	/// <param name="fName"></param>
 	/// <param name="fParameters"></param>
 	/// <param name="fDescription"></param>
-	void add_to_definition(std::string fName,
+	static void add_to_definition(std::string fName,
 		std::string fParameters,
 		std::string fDescription)
 	{
@@ -199,7 +224,7 @@ protected:
 		ofs.close();
 	}
 
-	void functionsList_addEntry(std::vector<std::string> newEntry)
+	static void functionsList_addEntry(std::vector<std::string> newEntry)
 	{
 		std::ofstream ofs;
 		ofs.open("lua_functions.txt", std::ofstream::out | std::ofstream::app);
@@ -246,7 +271,7 @@ protected:
 
 		for(int n1 = 1; n1 <= noParameters; n1++)
 		{
-			outParameters.push_back(lua_tostring(state, 1));
+			outParameters.push_back(lua_tostring(state, n1));
 			string_manipulators::replace_token_from_socketString(outParameters[n1-1]);
 		}
 
@@ -255,6 +280,26 @@ protected:
 #pragma endregion
 
 #pragma region BASE_FUNCTIONS
+
+#pragma region LUA
+	static int Bind_add_function_to_framework(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		if (noParameters < 3)
+		{
+			lua_pushstring(state, "Ups... what name should we use?");
+			return 1;
+		}
+
+		std::vector<std::string> parameters = get_parameters(state);
+		add_to_definition(parameters[0], parameters[0], parameters[0]);
+
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+#pragma endregion
+	
 	static int baseBind_DatabaseQuery(lua_State* state)
 	{
 		std::string out{""};
@@ -301,7 +346,7 @@ protected:
 	{
 		int noParameters = lua_gettop(state);
 		std::string parameter = lua_tostring(state, 1);
-		bool outy = luaL_dofile(state ,parameter.c_str());
+		bool outy = luaL_dofile(state, "C:/Users/drogo/Desktop/Homless/TestLua.lua");// parameter.c_str());
 		return 1;
 	}
 
@@ -550,7 +595,7 @@ protected:
 	/// </summary>
 	/// <param name="state"></param>
 	/// <returns></returns>
-	static int Bind_project_selectID(lua_State* state)
+	static int Bind_project_loadID(lua_State* state)
 	{
 		int noParameters = lua_gettop(state);
 		if(noParameters == 0)
@@ -567,6 +612,37 @@ protected:
 		if(_openProject->get_project_ID() == -1) lua_pushstring(state, "Project with this ID does not exist, sorry!");
 		else lua_pushstring(state, "Project ID changed");
 
+		return 1;
+	}
+
+	/// <summary>
+	/// Select project by Name
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_loadName(lua_State* state)
+	{
+		int noParameters = lua_gettop(state);
+		if (noParameters == 0)
+		{
+			lua_pushstring(state, "Ups... what name should we use?");
+			return 1;
+		}
+
+		std::string parameters = IAM_Database::csv_join_row(get_parameters(state)," ");
+		parameters = string_manipulators::trim_whiteSpace(parameters);
+
+		if (_openProject != nullptr) delete _openProject;
+		_openProject = new AM_Project(_dbFramework->get_database(), _configuration, parameters);
+
+		if(_openProject->get_project_ID() == -1)
+		{
+			lua_pushstring(state, "Project does not exist");
+			return 1;
+		}
+
+
+		lua_pushstring(state, "OK");
 		return 1;
 	}
 
@@ -635,57 +711,12 @@ protected:
 	/// <returns></returns>
 	static int Bind_project_SelectElements(lua_State* state)
 	{
-		// first check if there is a project open
-		if(_openProject == nullptr)
-		{
-			lua_pushstring(state, "Ups... there is no open project!");
-			return 1;
-		}
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 1,
+			" Please add atleast one valid Element ",
+			parameters) != 0) return 1;
 
-		// check for parameters
-		int noParameters = lua_gettop(state);
-		if(noParameters == 0)
-		{
-			lua_pushstring(state, "Ups... you did not add any elements, lua is sad about this :'( ");
-			return 1;
-		}
-
-		// check if elements exist
-		std::string outy{ "" };
-		std::vector<int> IdElements;
-		for (int n1 = 1; n1 <= noParameters; n1++)
-		{
-			std::string parameter = lua_tostring(state, n1);
-			string_manipulators::toCaps(parameter);
-			DBS_Element DBSFind(_dbFramework->get_database(), -1);
-			DBSFind.load_by_name(parameter);
-
-			// add non repreted elements!
-			if(std::find(IdElements.begin(), IdElements.end(), DBSFind.id()) == IdElements.end()) IdElements.push_back(DBSFind.id());
-
-			// check if element is not part of the database
-			if (DBSFind.id() == -1)
-			{
-				std::string strBuild = "Error: The element " + parameter + " was not found in the database! ";
-				lua_pushstring(state, strBuild.c_str());
-				return 1;
-			}
-		}
-
-		//Remove all data related to the project
-		DBS_Project::remove_project_data(_dbFramework->get_database(), _openProject->get_project_ID());
-
-		//Add all selected elements
-		for each (int IDElement in IdElements)
-		{
-			DBS_SelectedElements newElem(_dbFramework->get_database(), -1);
-			newElem.IDElement = IDElement;
-			newElem.IDProject = _openProject->get_project_ID();
-			newElem.save();
-			outy += "Element ID: " + std::to_string(IDElement) + " selected || ";
-		}
-
-		lua_pushstring(state, outy.c_str());
+		lua_pushstring(state, _openProject->set_selected_elements_ByName(parameters).c_str());
 		return 1;
 	}
 
@@ -706,7 +737,87 @@ protected:
 		return 1;
 	}
 
+	/// <summary>
+	/// Removes all cases and related data. If ID is not specified it will remove data from
+	/// the current open project
+	/// Input: optional IDProject
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_clearContent(lua_State* state)
+	{
+		std::vector<std::string> outParameters = get_parameters(state);
+		if (_openProject == nullptr && outParameters.size() == 0)
+		{
+			lua_pushstring(state, "Bind_project_clearContent: No selected project!, select or create a project first :)");
+			return 1;
+		}
+		
+		if(outParameters.size() > 0)
+		{
+			if (string_manipulators::isNumber(outParameters[0]))
+			{
+				DBS_Project::remove_project_data(_dbFramework->get_database(), std::stoi(outParameters[0]));
+				lua_pushstring(state, "Bind_project_clearContent: All data has been removed");
+				return 1;
+			}
+			lua_pushstring(state, "Bind_project_clearContent: Input parameter is not an integer for ID project.");
+			return 1;
+		}
+		
+		if(_openProject != nullptr)
+		{
+			_openProject->clear_project_data();
+			lua_pushstring(state, "Removed data");
+			return 1;
+		}
 
+
+		lua_pushstring(state, "Bind_project_clearContent: Error -> undefined! ups, lets debug");
+		return 1;
+	}
+
+	/// <summary>
+	/// set reference element, this action does not modify the existing cases, it only
+	/// sets the reference element for further operations.
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_setReferenceElement(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 1,
+			" plese set a valid element ",
+			parameters) != 0) return 1;
+
+		if (_openProject->set_reference_element(parameters[0]) != 0)
+		{
+			//TDOD: notify the user about the error, be more specific
+			lua_pushstring(state, "Something went wrong with the given input, Element might not be selected or template is not created");
+			return 1;
+		}
+
+		lua_pushstring(state, "Done");
+		return 1;
+	}
+
+	/// <summary>
+	/// returns reference element by name
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_getReferenceElement(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 0,
+			" plese set a valid element ",
+			parameters) != 0) return 1;
+
+		lua_pushstring(state, _openProject->get_reference_element_ByName().c_str());
+		return 1;
+	}
+
+	
 #pragma region SinglePixelCase
 	
 	static int Bind_project_new_SPC(lua_State* state)
@@ -736,7 +847,6 @@ protected:
 #pragma endregion
 
 #pragma region PixelCase
-
 	static int Bind_PC_createConcentrationVariant(lua_State* state)
 	{
 		std::vector<std::string> parameters;
@@ -752,7 +862,20 @@ protected:
 		return 1;
 	}
 
-	static int Bind_PC_createConcentrationVariant_fromTemplate(lua_State* state)
+	static int Bind_PCTemplate_createNew(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 1,
+			" Please set a temperature value ",
+			parameters) != 0) return 1;
+
+
+		_openProject->create_case_template(parameters[0]);
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	static int Bind_PCTemplate_createConcentrationVariant(lua_State* state)
 	{
 		std::vector<std::string> parameters;
 		if (check_global_using_openProject(state, lua_gettop(state), 3,
@@ -778,7 +901,7 @@ protected:
 		std::vector<int> ElementsID;
 		std::vector<double> stepSize;
 		std::vector<double> steps;
-		for (int n1 = 0; n1 < parameters.size(); n1++)
+		for (int n1 = 0; n1 < parameters.size(); n1 = n1 + 3)
 		{
 			//TODO check for user input, this might lead to an error! need to hurry the demo that is why this is sloppy :(
 			// but I promisse that I'll be back!
@@ -792,8 +915,207 @@ protected:
 
 		pointerPixel->create_cases_vary_concentration(ElementsID, stepSize, steps, pointerPixel->get_composition_double(), 0);
 		lua_pushstring(state, "OK");
+		_openProject->refresh_data();
 		return 1;
 	}
+
+	static int Bind_PCTemplate_getComposition(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 0,
+			" Please set a temperature value ",
+			parameters) != 0) return 1;
+
+		// You have to create a template where you do al the configurations you want to run.
+		AM_pixel_parameters* pointerPixel = _openProject->get_case_template();
+		if (pointerPixel == nullptr)
+		{
+			lua_pushstring(state, "No template created, please create a template!");
+			return 1;
+		}
+
+		
+		lua_pushstring(state, pointerPixel->csv_composition_ByName().c_str());
+		return 1;
+	}
+
+	static int Bind_PCTemplate_setComposition(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 2,
+			" Please set a temperature value ",
+			parameters) != 0) return 1;
+
+		// You have to create a template where you do al the configurations you want to run.
+		AM_pixel_parameters* pointerPixel = _openProject->get_case_template();
+		if (pointerPixel == nullptr)
+		{
+			lua_pushstring(state, "No template created, please create a template!");
+			return 1;
+		}
+
+		// input parameters have to be set in three component input
+		if (parameters.size() % 2 != 0)
+		{
+			lua_pushstring(state, "Input has to specify two components for each varying element as; Element name - step size - steps, e.g: AL 0.5 10");
+			return 1;
+		}
+
+		for (int n1 = 0; n1 < parameters.size(); n1 = n1 + 2)
+		{
+			if(pointerPixel->set_composition(parameters[n1], std::stold(parameters[n1+1])) != 0)
+			{
+				lua_pushstring(state, "Ups.. an error ocurred when assigning the concentration, are all the elements selected?");
+				return 1;
+			}
+		}
+
+		lua_pushstring(state, pointerPixel->csv_composition_ByName().c_str());
+		return 1;
+	}
+
+	static int Bind_PCTemplate_selectPhases(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 1,
+			" Please set a temperature value ",
+			parameters) != 0) return 1;
+
+		// You have to create a template where you do al the configurations you want to run.
+		AM_pixel_parameters* pointerPixel = _openProject->get_case_template();
+		if (pointerPixel == nullptr)
+		{
+			lua_pushstring(state, "No template created, please create a template!");
+			return 1;
+		}
+
+		if(pointerPixel->select_phases(parameters) != 0) 
+		{
+			lua_pushstring(state, "Phase does not exist");
+			return 1;
+		}
+
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	// Equilibrium config
+	static int Bind_PCTemplate_setEquilibrimTemperatureRange(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 2,
+			" Input has to specify two components Start Temperature and End Temperature ",
+			parameters) != 0) return 1;
+
+		// You have to create a template where you do al the configurations you want to run.
+		AM_pixel_parameters* pointerPixel = _openProject->get_case_template();
+		if (pointerPixel == nullptr)
+		{
+			lua_pushstring(state, "No template created, please create a template!");
+			return 1;
+		}
+
+		pointerPixel->set_equilibrium_config_startTemperature(std::stold(parameters[0]));
+		pointerPixel->set_equilibrium_config_endTemperature(std::stold(parameters[1]));
+
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+
+	// Scheil config
+	static int Bind_PCTemplate_setScheilTemperatureRange(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 2,
+			" Input has to specify two components Start Temperature and End Temperature ",
+			parameters) != 0) return 1;
+
+		// You have to create a template where you do al the configurations you want to run.
+		AM_pixel_parameters* pointerPixel = _openProject->get_case_template();
+		if (pointerPixel == nullptr)
+		{
+			lua_pushstring(state, "No template created, please create a template!");
+			return 1;
+		}
+
+		pointerPixel->set_scheil_config_startTemperature(std::stold(parameters[0]));
+		pointerPixel->set_scheil_config_endTemperature(std::stold(parameters[1]));
+
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	static int Bind_PCTemplate_setScheilLiquidFraction(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 1,
+			" Input has to specify two components Start Temperature and End Temperature ",
+			parameters) != 0) return 1;
+
+		// You have to create a template where you do al the configurations you want to run.
+		AM_pixel_parameters* pointerPixel = _openProject->get_case_template();
+		if (pointerPixel == nullptr)
+		{
+			lua_pushstring(state, "No template created, please create a template!");
+			return 1;
+		}
+
+		pointerPixel->set_scheil_config_minimumLiquidFraction(std::stold(parameters[0]));
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	static int Bind_PCTemplate_setScheilDependentPhase(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 1,
+			" Input has to specify the name of the phase ",
+			parameters) != 0) return 1;
+
+		// You have to create a template where you do al the configurations you want to run.
+		AM_pixel_parameters* pointerPixel = _openProject->get_case_template();
+		if (pointerPixel == nullptr)
+		{
+			lua_pushstring(state, "No template created, please create a template!");
+			return 1;
+		}
+
+		DBS_Phase tempPhase(_dbFramework->get_database(), -1);
+		tempPhase.load_by_name(parameters[0]);
+
+		if(tempPhase.id() == -1)
+		{
+			lua_pushstring(state, "Phase was not found");
+			return 1;
+		}
+
+		pointerPixel->set_scheil_config_dependentPhase(tempPhase.id());
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	static int Bind_PCTemplate_setScheilStepSize(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 1,
+			" Input has to specify the step size ",
+			parameters) != 0) return 1;
+
+		// You have to create a template where you do al the configurations you want to run.
+		AM_pixel_parameters* pointerPixel = _openProject->get_case_template();
+		if (pointerPixel == nullptr)
+		{
+			lua_pushstring(state, "No template created, please create a template!");
+			return 1;
+		}
+
+		pointerPixel->set_scheil_config_stepSize(std::stold(parameters[0]));
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	
 
 #pragma region Equilibrium
 	static int Bind_PC_equilibrium_setStartTemperature(lua_State* state)
@@ -835,7 +1157,7 @@ protected:
 	// maybe we should think on a way to do function calls for specific, but first lets make it
 	// wor andd the optmize ;) - note from myself to myself
 
-	static int Bind_PC_equilibrium_setStartTemperature(lua_State* state)
+	static int Bind_PC_scheil_setStartTemperature(lua_State* state)
 	{
 		std::vector<std::string> parameters;
 		if (check_global_using_openProject(state, lua_gettop(state), 2,
@@ -850,7 +1172,7 @@ protected:
 		return 1;
 	}
 
-	static int Bind_PC_equilibrium_setEndTemperature(lua_State* state)
+	static int Bind_PC_scheil_setEndTemperature(lua_State* state)
 	{
 		std::vector<std::string> parameters;
 		if (check_global_using_openProject(state, lua_gettop(state), 2,
@@ -865,7 +1187,7 @@ protected:
 		return 1;
 	}
 
-	static int Bind_PC_equilibrium_setStepSize(lua_State* state)
+	static int Bind_PC_scheil_setStepSize(lua_State* state)
 	{
 		std::vector<std::string> parameters;
 		if (check_global_using_openProject(state, lua_gettop(state), 2,
@@ -880,7 +1202,7 @@ protected:
 		return 1;
 	}
 
-	static int Bind_PC_equilibrium_setDependentPhase_ByID(lua_State* state)
+	static int Bind_PC_scheil_setDependentPhase_ByID(lua_State* state)
 	{
 		std::vector<std::string> parameters;
 		if (check_global_using_openProject(state, lua_gettop(state), 2,
@@ -895,7 +1217,7 @@ protected:
 		return 1;
 	}
 
-	static int Bind_PC_equilibrium_setDependentPhase_ByName(lua_State* state)
+	static int Bind_PC_scheil_setDependentPhase_ByName(lua_State* state)
 	{
 		std::vector<std::string> parameters;
 		if (check_global_using_openProject(state, lua_gettop(state), 2,
@@ -916,7 +1238,7 @@ protected:
 		return 1;
 	}
 
-	static int Bind_PC_equilibrium_setMinimumLiquidFraction(lua_State* state)
+	static int Bind_PC_scheil_setMinimumLiquidFraction(lua_State* state)
 	{
 		std::vector<std::string> parameters;
 		if (check_global_using_openProject(state, lua_gettop(state), 2,

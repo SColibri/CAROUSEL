@@ -26,6 +26,7 @@ public:
 		{
 		case Database_Factory::TYPE::SQLITE3:
 			out = (IAM_Database*)new Database_Sqlite3(configuration);
+			out->connect();
 			break;
 		default:
 			break;
@@ -38,6 +39,11 @@ public:
 	static const std::string& get_schema()
 	{
 		return _dbSchema;
+	}
+
+	static void set_schema(const std::string& newName) 
+	{
+		_dbSchema = newName;
 	}
 #pragma endregion
 

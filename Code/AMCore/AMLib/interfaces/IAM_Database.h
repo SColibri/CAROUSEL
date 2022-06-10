@@ -24,6 +24,12 @@ public:
 	virtual int connect() { return -1; }
 
 	/// <summary>
+	/// Closes the cconnection to the database
+	/// </summary>
+	/// <returns></returns>
+	virtual int disconnect() { return -1;  };
+
+	/// <summary>
 	/// Obtains a list of tables that the database contains
 	/// </summary>
 	/// <returns>List of table names</returns>

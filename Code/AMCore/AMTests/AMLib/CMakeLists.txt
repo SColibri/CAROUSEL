@@ -10,6 +10,7 @@ set(TEST_SET
     AM_Database_Test
     AM_Database_TableStruct_Test
     DataController_Test
+    AM_project_Test
 )
 
 foreach(target ${TEST_SET})

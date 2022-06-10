@@ -6,6 +6,7 @@ class DBS_SelectedElements : public IAM_DBS
 public:
 	int IDProject{ -1 };
 	int IDElement{ -1 };
+	int isReferenceElement{ 0 }; // 0 - false || 1 - True
 
 	DBS_SelectedElements(IAM_Database* database, int id) :
 		IAM_DBS(database)
@@ -20,7 +21,8 @@ public:
 	{
 		std::vector<std::string> input{ std::to_string(_id),
 										std::to_string(IDProject),
-										std::to_string(IDElement) };
+										std::to_string(IDElement),
+										std::to_string(isReferenceElement)};
 		return input;
 	}
 
@@ -42,6 +44,7 @@ public:
 		set_id(std::stoi(rawData[0]));
 		IDProject = std::stoi(rawData[1]);
 		IDElement = std::stoi(rawData[2]);
+		isReferenceElement = std::stoi(rawData[3]);
 		return 0;
 	}
 

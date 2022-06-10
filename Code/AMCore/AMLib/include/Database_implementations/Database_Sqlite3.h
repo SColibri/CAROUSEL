@@ -29,6 +29,7 @@ public:
 
 #pragma region Implementation
 	virtual int connect() override;
+	virtual int disconnect() override;
 	virtual std::vector<std::string> get_tableNames() override;
 	virtual std::vector<std::string> get_columnNames(std::string& tableName) override;
 	virtual std::vector<std::string> get_columnDatatype(std::string& tableName) override;

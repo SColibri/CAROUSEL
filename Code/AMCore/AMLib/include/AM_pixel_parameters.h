@@ -12,6 +12,7 @@
 #include "Database_implementations/Data_stuctures/DBS_EquilibriumConfiguration.h"
 #include "Database_implementations/Data_stuctures/DBS_EquilibriumPhaseFractions.h"
 #include "Database_implementations/Data_stuctures/DBS_SelectedElements.h"
+#include "Database_implementations/Data_Controller.h"
 
 /** \addtogroup AMLib
  *  @{
@@ -30,6 +31,7 @@ public:
 		_db = database;
 		_project = project;
 		_case = new DBS_Case(database, IDCase);
+		_case->IDProject = _project->id();
 		_case->load();
 
 		_CALPHAD_DB = new DBS_CALPHADDatabase(_db, -1);
@@ -42,27 +44,30 @@ public:
 	{
 		_db = toCopy._db;
 		_project = toCopy._project;
-		_case = new DBS_Case(*toCopy._case); _case->save();
+		_case = new DBS_Case(*toCopy._case);
 
 		_CALPHAD_DB = new DBS_CALPHADDatabase(*toCopy._CALPHAD_DB);
 		_CALPHAD_DB->IDCase = _case->id();
-		_CALPHAD_DB->save();
 
 		_scheilConfiguration = new DBS_ScheilConfiguration(*toCopy._scheilConfiguration);
 		_scheilConfiguration->IDCase = _case->id();
-		_scheilConfiguration->save();
 
 		_equilibriumConfiguration = new DBS_EquilibriumConfiguration(*toCopy._equilibriumConfiguration);
 		_equilibriumConfiguration->IDCase = _case->id();
-		_equilibriumConfiguration->save();
 		
-		for each (DBS_ElementComposition composition in _elementComposition)
+		for(int n1 = 0; n1 < toCopy._elementComposition.size(); n1 ++)
 		{
-			DBS_ElementComposition tempComposition(composition);
-			tempComposition.IDCase = _case->id();
-			tempComposition.save();
+			_elementComposition.push_back(new DBS_ElementComposition(*toCopy._elementComposition[n1]));
+			_elementComposition.back()->IDCase = _case->id();
 		}
-		//Since we created a new object, we do not call load_all, no sense in that :p
+
+		for (int n1 = 0; n1 < toCopy._selectedPhases.size(); n1++)
+		{
+			_selectedPhases.push_back(new DBS_SelectedPhases(*toCopy._selectedPhases[n1]));
+			_selectedPhases.back()->IDCase = _case->id();
+		}
+
+
 	}
 
 	void load_all()
@@ -131,9 +136,8 @@ public:
 			for(int n1 = 0 ; n1 < DTable.row_count(); n1 ++)
 			{
 				std::vector<std::string> rowData = DTable.get_row_data(n1);
-				DBS_EquilibriumPhaseFraction newEquib(_db, -1);
-				newEquib.load(rowData);
-				_equilibriumPhaseFractions.push_back(newEquib);
+				_equilibriumPhaseFractions.push_back(new DBS_EquilibriumPhaseFraction(_db, -1));
+				_equilibriumPhaseFractions.back()->load(rowData);
 			}
 			std::vector<std::string> rowData = DTable.get_row_data(0); // we only expect one value to match for this, all others will be ignored
 			_equilibriumConfiguration->load(rowData);
@@ -153,18 +157,25 @@ public:
 			for (int n1 = 0; n1 < DTable.row_count(); n1++)
 			{
 				std::vector<std::string> rowData = DTable.get_row_data(n1);
-				DBS_ScheilPhaseFraction newEquib(_db, -1);
-				newEquib.load(rowData);
-				_scheilPhaseFractions.push_back(newEquib);
+				_scheilPhaseFractions.push_back(new DBS_ScheilPhaseFraction(_db, -1));
+				_scheilPhaseFractions.back()->load(rowData);
 			}
 		}
 	}
 
 	void load_DBS_elementComposition()
 	{
+		// null pointer, in theory this will never happen
 		if (_case == nullptr) return;
-		_elementComposition.clear();
+		// Template case
+		if (_case->id() == -1) 
+		{
+			template_element_compositions();
+			return;
+		}
 
+		// Existing case found, load data.
+		_elementComposition.clear();
 		AM_Database_Datatable DTable(_db, &AMLIB::TN_ElementComposition());
 		DTable.load_data(AMLIB::TN_ElementComposition().columnNames[1] + " = \'" + std::to_string(_case->id()) + "\'");
 
@@ -173,10 +184,23 @@ public:
 			for (int n1 = 0; n1 < DTable.row_count(); n1++)
 			{
 				std::vector<std::string> rowData = DTable.get_row_data(n1);
-				DBS_ElementComposition newEquib(_db, -1);
-				newEquib.load(rowData);
-				_elementComposition.push_back(newEquib);
+				_elementComposition.push_back(new DBS_ElementComposition(_db,-1));
+				_elementComposition.back()->load(rowData);
 			}
+		}
+	}
+	
+	void template_element_compositions() 
+	{
+		for (auto* obj : _elementComposition) delete obj;
+		_elementComposition.clear();
+
+		//create all composition entries
+		std::vector<std::string> projectElementsID = Data_Controller::csv_list_SelectedElements(_db, _project->id());
+		for (std::string &IDstr : projectElementsID)
+		{
+			_elementComposition.push_back(new DBS_ElementComposition(_db, -1));
+			_elementComposition.back()->IDElement = std::stoi(IDstr);
 		}
 	}
 
@@ -193,19 +217,67 @@ public:
 			for (int n1 = 0; n1 < DTable.row_count(); n1++)
 			{
 				std::vector<std::string> rowData = DTable.get_row_data(n1);
-				DBS_SelectedPhases newEquib(_db, -1);
-				newEquib.load(rowData);
-				_selectedPhases.push_back(newEquib);
+				_selectedPhases.push_back(new DBS_SelectedPhases(_db, -1));
+				_selectedPhases.back()->load(rowData);
 			}
 		}
 	}
 
 	void save()
 	{
-		_CALPHAD_DB->IDCase = 1;
+		if (!_allowSave) return;
+		_case->save();
+
+		_CALPHAD_DB->IDCase = _case->id();
 		_CALPHAD_DB->save();
+
+		_scheilConfiguration->IDCase = _case->id();
 		_scheilConfiguration->save();
+
+		_equilibriumConfiguration->IDCase = _case->id();
 		_equilibriumConfiguration->save();
+
+		//TODO this would look nice if we declare a function as a template, for now, lets not optimize
+		for (int n1 = 0; n1 < _equilibriumPhaseFractions.size(); n1++)
+		{
+			_equilibriumPhaseFractions[n1]->IDCase = _case->id();
+			_equilibriumPhaseFractions[n1]->save();
+		}
+
+		for (int n1 = 0; n1 < _scheilPhaseFractions.size(); n1++)
+		{
+			_scheilPhaseFractions[n1]->IDCase = _case->id();
+			_scheilPhaseFractions[n1]->save();
+		}
+
+		for(int n1 = 0; n1 < _elementComposition.size(); n1++)
+		{
+			_elementComposition[n1]->IDCase = _case->id();
+			_elementComposition[n1]->save();
+		}
+
+		for (int n1 = 0; n1 < _selectedPhases.size(); n1++)
+		{
+			_selectedPhases[n1]->IDCase = _case->id();
+			_selectedPhases[n1]->save();
+		}
+
+	}
+
+	std::string csv_composition_ByName() 
+	{
+		std::string out{ "" };
+
+		std::vector<std::vector<std::string>> entries;
+		for (DBS_ElementComposition* comp : _elementComposition)
+		{
+			DBS_Element tempElement(_db, comp->IDElement);
+			tempElement.load();
+
+			entries.push_back(std::vector<std::string> { tempElement.Name, std::to_string(comp->Value) });
+		}
+
+		return IAM_Database::get_csv(entries);
 	}
 
 	int static create_new_pixel(IAM_Database* db, AM_Config* configuration, int projectID, std::string newName)
@@ -238,8 +310,8 @@ public:
 		newEquilib.save();
 
 		//create all composition entries
-		std::vector<std::string> projectElementsID = AM_Project::csv_list_SelectedElements(db, projectID);
-		for each (std::string IDstr in projectElementsID)
+		std::vector<std::string> projectElementsID = Data_Controller::csv_list_SelectedElements(db, projectID);
+		for (std::string &IDstr : projectElementsID)
 		{
 			DBS_ElementComposition tempComp(db, -1);
 			tempComp.IDCase = newCase.id();
@@ -290,7 +362,7 @@ public:
 				AM_pixel_parameters tempPixel(*this);
 				for(int n2 = 0; n2 < elementID.size(); n2++)
 				{
-					tempPixel.set_composition(elementID[n2], currentValues[n2]);
+					tempPixel.set_composition(elementID[n2], newVector[n2]);
 				}
 				tempPixel.save();
 
@@ -304,6 +376,20 @@ public:
 	const int& get_caseID()
 	{
 		return _case->id();
+	}
+
+	const std::string& get_CaseName() 
+	{
+		return _case->Name;
+	}
+	void set_CaseName(std::string newName)
+	{
+		_case->Name = newName;
+	}
+
+	void set_AllowSave(bool allowsave) 
+	{
+		_allowSave = allowsave;
 	}
 
 #pragma region Equilibrium
@@ -320,6 +406,11 @@ public:
 	void set_equilibrium_config_endTemperature(double newvalue)
 	{
 		_equilibriumConfiguration->EndTemperature = newvalue;
+	}
+
+	void set_equilibrium_config_stepSize(double newvalue)
+	{
+		//TODO implement missing step size into the database
 	}
 #pragma endregion
 
@@ -352,7 +443,7 @@ public:
 	bool check_if_phase_is_selected(int idPhase)
 	{
 		// check if the phase was selected for this case, otherwise notify the user.
-		auto selPhaseIterator = find_if(_selectedPhases.begin(), _selectedPhases.end(), [&idPhase](DBS_Phase& obj) {return obj.id() == idPhase; });
+		auto selPhaseIterator = find_if(_selectedPhases.begin(), _selectedPhases.end(), [&idPhase](DBS_SelectedPhases* obj) {return obj->id() == idPhase; });
 		if (selPhaseIterator == _selectedPhases.end()) return false;
 		return true;
 	}
@@ -401,9 +492,9 @@ public:
 	{
 		std::vector<std::string> out;
 
-		for each (DBS_ElementComposition var in _elementComposition)
+		for (DBS_ElementComposition* &var : _elementComposition)
 		{
-			out.push_back(std::to_string(var.Value));
+			out.push_back(std::to_string(var->Value));
 		}
 
 		return out;
@@ -413,9 +504,9 @@ public:
 	{
 		std::vector<double> out;
 
-		for each (DBS_ElementComposition var in _elementComposition)
+		for (DBS_ElementComposition* &var : _elementComposition)
 		{
-			out.push_back(var.Value);
+			out.push_back(var->Value);
 		}
 
 		return out;
@@ -424,25 +515,34 @@ public:
 	int set_composition(int IDElement, double newValue)
 	{
 		auto elementIterator = find_if(_elementComposition.begin(), _elementComposition.end(),
-			[&IDElement](const DBS_ElementComposition& obj) {return obj.IDElement == IDElement; });
+			[&IDElement](const DBS_ElementComposition* obj) {return obj->IDElement == IDElement; });
 
 			if(elementIterator != _elementComposition.end())
 			{
 				auto index = std::distance(_elementComposition.begin(), elementIterator);
-				_elementComposition[index].Value = newValue;
+				_elementComposition[index]->Value = newValue;
 				return 0;
 			}
 
 			return 1;
 	}
 
+	int set_composition(std::string ElementName, double newValue)
+	{
+		DBS_Element tempElement(_db, -1);
+		tempElement.load_by_name(ElementName);
+		if (tempElement.id() == -1) return 1;
+
+		return set_composition(tempElement.id(), newValue);
+	}
+
 	std::vector<std::string> get_selected_phases_ByName()
 	{
 		std::vector<std::string> out;
-
-		for each (DBS_SelectedPhases var in _selectedPhases)
+		
+		for(int n1 = 0; n1 < _selectedPhases.size(); n1++)
 		{
-			DBS_Phase tempPhase(_db, var.IDPhase);
+			DBS_Phase tempPhase(_db, _selectedPhases[n1]->IDPhase);
 			tempPhase.load();
 
 			out.push_back(tempPhase.Name);
@@ -451,6 +551,92 @@ public:
 		return out;
 	}
 
+	std::vector<int> get_selected_phases_ByID()
+	{
+		std::vector<int> out;
+
+		for (int n1 = 0; n1 < _selectedPhases.size(); n1++)
+		{
+			out.push_back(_selectedPhases[n1]->IDPhase);
+		}
+
+		return out;
+	}
+
+	int add_selectedPhase(std::string phaseName)
+	{
+		// check if phase exists
+		DBS_Phase tempPhase(_db, -1);
+		tempPhase.load_by_name(phaseName);
+		if (tempPhase.id() == -1) return 1;
+
+		// check if phase is already selected
+		auto selPhaseIterator = find_if(_selectedPhases.begin(), _selectedPhases.end(), 
+			[&tempPhase](DBS_SelectedPhases* obj)
+			{
+				return obj->id() == tempPhase.id();
+			}
+		);
+		if (selPhaseIterator != _selectedPhases.end()) return 2;
+
+		// add phase to list
+		_selectedPhases.push_back(new DBS_SelectedPhases(_db, -1));
+		_selectedPhases.back()->IDCase = _case->id();
+		_selectedPhases.back()->IDPhase = tempPhase.id();
+
+		return 0;
+	}
+
+	int remove_selectedPhase(std::string phaseName) 
+	{
+		// get phase id
+		DBS_Phase tempPhase(_db, -1);
+		tempPhase.load_by_name(phaseName);
+		if (tempPhase.id() == -1) return 1;
+
+		// check if phase is already selected
+		auto selPhaseIterator = find_if(_selectedPhases.begin(), _selectedPhases.end(),
+			[&tempPhase](DBS_SelectedPhases* obj)
+			{
+				return obj->id() == tempPhase.id();
+			}
+		);
+		
+		if (selPhaseIterator != _selectedPhases.end())
+		{
+			auto index = std::distance(_selectedPhases.begin(), selPhaseIterator);
+			_selectedPhases[index]->remove();
+			_selectedPhases.erase(_selectedPhases.begin() + index);
+
+			return 0;
+		}
+
+
+		return 1;
+	}
+
+	int select_phases(std::vector<std::string> phasesSelect)
+	{
+		remove_all_seleccted_phase();
+		for(auto &namePhase : phasesSelect)
+		{
+			string_manipulators::toCaps(namePhase);
+			if (add_selectedPhase(namePhase) != 0) return 1;
+		}
+
+		return 0;
+	}
+
+	void remove_all_seleccted_phase() 
+	{
+		if (_selectedPhases.empty()) return;
+		for (int n1 = 0; n1 < _selectedPhases.size(); n1++)
+		{
+			_selectedPhases[n1]->remove();
+			delete _selectedPhases[n1];
+		}
+		_selectedPhases.clear();
+	}
 #pragma endregion
 
 #pragma region Methods
@@ -473,6 +659,8 @@ public:
 
 #pragma endregion
 private:
+	//Flags
+	bool _allowSave{ true };
 
 	//Models
 	IAM_Database* _db;
@@ -482,10 +670,10 @@ private:
 	DBS_ScheilConfiguration* _scheilConfiguration;
 	DBS_EquilibriumConfiguration* _equilibriumConfiguration;
 
-	std::vector<DBS_EquilibriumPhaseFraction> _equilibriumPhaseFractions;
-	std::vector<DBS_ScheilPhaseFraction> _scheilPhaseFractions;
-	std::vector<DBS_ElementComposition> _elementComposition;
-	std::vector<DBS_SelectedPhases> _selectedPhases;
+	std::vector<DBS_EquilibriumPhaseFraction*> _equilibriumPhaseFractions;
+	std::vector<DBS_ScheilPhaseFraction*> _scheilPhaseFractions;
+	std::vector<DBS_ElementComposition*> _elementComposition;
+	std::vector<DBS_SelectedPhases*> _selectedPhases;
 
 
 

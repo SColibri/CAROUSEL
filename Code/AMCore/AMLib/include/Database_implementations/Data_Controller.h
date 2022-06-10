@@ -65,6 +65,13 @@ public:
 		_project->APIName = std::filesystem::path(_configuration->get_api_path()).filename().string();
 		_project->save();
 	}
+
+	std::vector<std::string> static csv_list_SelectedElements(IAM_Database* db, int projectID)
+	{
+		AM_Database_Datatable dataT(db, &AMLIB::TN_SelectedElements());
+		dataT.load_data(AMLIB::TN_SelectedElements().columnNames[1] + " = \'" + std::to_string(projectID) + "\'");
+		return dataT.get_column_data(2);
+	}
 #pragma endregion
 
 #pragma region Case

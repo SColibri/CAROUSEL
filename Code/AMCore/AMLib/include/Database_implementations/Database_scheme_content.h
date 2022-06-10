@@ -131,6 +131,7 @@ namespace AMLIB
 		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
 		out.add_new("IDProject", "INTEGER"); // Selection corresponding to project
 		out.add_new("IDElement", "INTEGER"); // ID of element
+		out.add_new("isReferenceElement", "INTEGER"); // reference element
 		out.tableName = "SelectedElements";
 
 		return out;

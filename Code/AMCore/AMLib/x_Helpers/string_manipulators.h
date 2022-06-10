@@ -38,6 +38,14 @@ namespace string_manipulators
         std::transform(replaceThis.begin(), replaceThis.end(), replaceThis.begin(), ::toupper);
     }
 
+    static bool isNumber(const std::string& str)
+    {
+        for (char const& c : str) {
+            if (std::isdigit(c) == 0) return false;
+        }
+        return true;
+    }
+
 #pragma region trim
     static const std::string WHITESPACE = " \n\r\t\f\v";
 

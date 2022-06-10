@@ -219,6 +219,7 @@ void MenuOption_Main::executeCommand()
             _out = _api_lua->run_lua_command(_commandsName[0]);
         }
 
+        load_available_commands(_api_lua->get_declared_functions());
         _command = "*";
         _parameters = "";
     }

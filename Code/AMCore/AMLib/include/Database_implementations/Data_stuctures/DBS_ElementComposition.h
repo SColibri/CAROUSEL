@@ -22,6 +22,7 @@ public:
 	DBS_ElementComposition(const DBS_ElementComposition& toCopy):
 		IAM_DBS(toCopy._db)
 	{
+		_tableStructure = toCopy._tableStructure;
 		IDCase = toCopy.IDCase;
 		IDElement = toCopy.IDElement;
 		TypeComposition = toCopy.TypeComposition;
@@ -36,7 +37,7 @@ public:
 										std::to_string(IDCase),
 										std::to_string(IDElement),
 										TypeComposition,
-										std::to_string(Value) };
+										std::to_string(Value)};
 		return input;
 	}
 
@@ -53,7 +54,7 @@ public:
 
 	virtual int load(std::vector<std::string>& rawData) override
 	{
-		if (rawData.size() < 5) return 1;
+		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
 		set_id(std::stoi(rawData[0]));
 		IDCase = std::stoi(rawData[1]);
 		IDElement = std::stoi(rawData[2]);

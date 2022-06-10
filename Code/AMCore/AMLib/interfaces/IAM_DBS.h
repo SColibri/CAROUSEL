@@ -81,10 +81,16 @@ public:
 		}
 		else
 		{
-			_db->update_row(&_tableStructure, input);
+			return _db->update_row(&_tableStructure, input);
 		}
 
 		return 0;
+	}
+
+	virtual int remove() 
+	{
+		if (_id == -1) return 1;
+		return _db->remove_row(&_tableStructure, _tableStructure.columnNames[0] + " = \'" + std::to_string(_id) + "\'");
 	}
 
 	/// <summary>

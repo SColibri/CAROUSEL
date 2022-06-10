@@ -21,6 +21,18 @@ public:
 		_tableStructure = AMLIB::TN_EquilibriumConfiguration();
 	}
 
+	DBS_EquilibriumConfiguration(DBS_EquilibriumConfiguration &toCopy) :
+		IAM_DBS(toCopy._db)
+	{
+		_tableStructure = toCopy._tableStructure;
+		IDCase = toCopy.IDCase;
+		Temperature = toCopy.Temperature;
+		StartTemperature = toCopy.StartTemperature;
+		EndTemperature = toCopy.EndTemperature;
+		TemperatureType = toCopy.TemperatureType;
+		Pressure = toCopy.Pressure;
+	}
+
 	static int remove_equilibrium_data(IAM_Database* database, int CaseID)
 	{
 		std::string query = AMLIB::TN_EquilibriumPhaseFractions().columnNames[0] +

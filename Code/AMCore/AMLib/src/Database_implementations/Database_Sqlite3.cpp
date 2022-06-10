@@ -11,6 +11,8 @@ Database_Sqlite3::~Database_Sqlite3() {
 #pragma region Implementation
 int Database_Sqlite3::connect()
 {
+	if (_connectionOpen) return 0;
+
 	std::string filename = _configuration->get_directory_path(AM_FileManagement::FILEPATH::DATABASE) + "/" + 
 							Database_Factory::get_schema() + ".db";
 
@@ -20,6 +22,16 @@ int Database_Sqlite3::connect()
 	}
 
 	_connectionOpen = true;
+	return 0;
+}
+
+int Database_Sqlite3::disconnect()
+{
+	if (!_connectionOpen) return 0;
+
+	sqlite3_close(db);
+	_connectionOpen = false;
+
 	return 0;
 }
 
