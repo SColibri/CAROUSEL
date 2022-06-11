@@ -202,7 +202,7 @@ std::string AM_pixel_parameters::create_cases_vary_concentration(std::vector<int
 bool AM_pixel_parameters::check_if_phase_is_selected(int idPhase)
 {
 	// check if the phase was selected for this case, otherwise notify the user.
-	auto selPhaseIterator = find_if(_selectedPhases.begin(), _selectedPhases.end(), [&idPhase](DBS_SelectedPhases* obj) {return obj->id() == idPhase; });
+	auto selPhaseIterator = find_if(_selectedPhases.begin(), _selectedPhases.end(), [&idPhase](DBS_SelectedPhases* obj) {return obj->IDPhase == idPhase; });
 	if (selPhaseIterator == _selectedPhases.end()) return false;
 	return true;
 }
@@ -332,7 +332,7 @@ int AM_pixel_parameters::add_selectedPhase(std::string phaseName)
 	auto selPhaseIterator = find_if(_selectedPhases.begin(), _selectedPhases.end(),
 		[&tempPhase](DBS_SelectedPhases* obj)
 		{
-			return obj->id() == tempPhase.id();
+			return obj->IDPhase == tempPhase.id();
 		}
 	);
 	if (selPhaseIterator != _selectedPhases.end()) return 2;
@@ -356,7 +356,7 @@ int AM_pixel_parameters::remove_selectedPhase(std::string phaseName)
 	auto selPhaseIterator = find_if(_selectedPhases.begin(), _selectedPhases.end(),
 		[&tempPhase](DBS_SelectedPhases* obj)
 		{
-			return obj->id() == tempPhase.id();
+			return obj->IDPhase == tempPhase.id();
 		}
 	);
 
@@ -571,14 +571,29 @@ void AM_pixel_parameters::set_equilibrium_config_startTemperature(double newvalu
 	_equilibriumConfiguration->StartTemperature = newvalue;
 }
 
+double AM_pixel_parameters::get_equilibrium_config_startTemperature()
+{
+	return _equilibriumConfiguration->StartTemperature;
+}
+
 void AM_pixel_parameters::set_equilibrium_config_endTemperature(double newvalue)
 {
 	_equilibriumConfiguration->EndTemperature = newvalue;
 }
 
+double AM_pixel_parameters::get_equilibrium_config_endTemperature()
+{
+	return _equilibriumConfiguration->EndTemperature;
+}
+
 void AM_pixel_parameters::set_equilibrium_config_stepSize(double newvalue)
 {
 	//TODO implement missing step size into the database
+}
+
+double AM_pixel_parameters::get_equilibrium_config_stepSize()
+{
+	return -1; // TODO implement Step size
 }
 #pragma endregion
 

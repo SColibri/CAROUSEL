@@ -1,6 +1,4 @@
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/reporters/catch_reporter_event_listener.hpp>
-#include <catch2/reporters/catch_reporter_registrars.hpp>
 
 #include "../../../AMLib/include/AM_Project.h"
 #include "../../../AMLib/include/AM_Config.h"

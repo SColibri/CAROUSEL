@@ -261,16 +261,35 @@ public:
 	void set_equilibrium_config_startTemperature(double newvalue);
 
 	/// <summary>
+	/// returns start temperature for equilibrium configuration
+	/// </summary>
+	/// <param name="newvalue"></param>
+	double get_equilibrium_config_startTemperature();
+
+
+	/// <summary>
 	/// set end temperature for step calculations
 	/// </summary>
 	/// <param name="newvalue"></param>
 	void set_equilibrium_config_endTemperature(double newvalue);
 
 	/// <summary>
+	/// returns end temperature for equilibrium step calculations
+	/// </summary>
+	/// <returns></returns>
+	double get_equilibrium_config_endTemperature();
+
+	/// <summary>
 	/// set step size for step calculations
 	/// </summary>
 	/// <param name="newvalue"></param>
 	void set_equilibrium_config_stepSize(double newvalue);
+
+	/// <summary>
+	/// returns step size for equilibrium step calculations
+	/// </summary>
+	/// <returns></returns>
+	double get_equilibrium_config_stepSize();
 #pragma endregion
 
 #pragma region Scheil
@@ -354,6 +373,33 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	double get_scheil_config_minimumLiquidFraction();
+#pragma endregion
+
+#pragma region CALPHAD
+	DBS_CALPHADDatabase* get_calphad() 
+	{
+		return _CALPHAD_DB;
+	}
+
+	const int& get_calphad_id()
+	{
+		return _CALPHAD_DB->id();
+	}
+
+	const std::string& get_calphad_thermodynamic_database()
+	{
+		return _CALPHAD_DB->Thermodynamic;
+	}
+	
+	const std::string& get_calphad_mobility_database()
+	{
+		return _CALPHAD_DB->Mobility;
+	}
+
+	const std::string& get_calphad_physical_database()
+	{
+		return _CALPHAD_DB->Physical;
+	}
 #pragma endregion
 
 #pragma endregion

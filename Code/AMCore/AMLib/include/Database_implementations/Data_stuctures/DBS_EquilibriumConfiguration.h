@@ -67,7 +67,7 @@ public:
 
 	virtual int load(std::vector<std::string>& rawData) override
 	{
-		if (rawData.size() <= _tableStructure.columnNames.size()) return 1;
+		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
 		set_id(std::stoi(rawData[0]));
 		IDCase = std::stoi(rawData[1]);
 		Temperature = std::stod(rawData[2]);

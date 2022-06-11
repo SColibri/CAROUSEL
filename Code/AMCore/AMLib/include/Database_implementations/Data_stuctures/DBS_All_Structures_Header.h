@@ -5,6 +5,8 @@
 #include "DBS_Case.h"
 #include "DBS_Element.h"
 #include "DBS_ElementComposition.h"
+#include "DBS_EquilibriumConfiguration.h"
+#include "DBS_EquilibriumPhaseFractions.h"
 #include "DBS_Phase.h"
 #include "DBS_Project.h"
 #include "DBS_ScheilConfiguration.h"
