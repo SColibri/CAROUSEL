@@ -157,6 +157,7 @@ protected:
 		add_new_function(state, "project_clear_content", "string", "project_getSelectedElements <optional INT IDproject>", Bind_project_clearContent);
 		add_new_function(state, "project_setReferenceElement", "string", "project_setReferenceElement <string>", Bind_project_setReferenceElement);
 		add_new_function(state, "project_getReferenceElement", "string", "project_getReferenceElement", Bind_project_getReferenceElement);
+		add_new_function(state, "project_getDataTableCases", "string", "project_getDataTableCases", Bind_project_getDataTableCases);
 
 		//###-> Pixel Case
 		add_new_function(state, "template_pixelcase_new", "string", "template_pixelcase_new", Bind_PCTemplate_createNew);
@@ -165,6 +166,7 @@ protected:
 		add_new_function(state, "template_pixelcase_setComposition", "string", "template_pixelcase_setComposition <string> <double> (input in pairs, not limited to one pair)", Bind_PCTemplate_setComposition);
 		add_new_function(state, "template_pixelcase_getComposition", "string", "template_pixelcase_getComposition", Bind_PCTemplate_getComposition);
 		add_new_function(state, "template_pixelcase_selectPhases", "string", "template_pixelcase_selectPhases <string>", Bind_PCTemplate_selectPhases);
+		add_new_function(state, "template_pixelcase_getSelectPhases", "string", "template_pixelcase_getSelectPhases", Bind_PCTemplate_getSelectPhases);
 
 		add_new_function(state, "template_pixelcase_setEquilibriumTemperatureRange", "string", "template_pixelcase_getComposition", Bind_PCTemplate_setEquilibrimTemperatureRange);
 
@@ -833,6 +835,22 @@ protected:
 		return 1;
 	}
 
+	/// <summary>
+	/// returns list of cases that the project holds
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_getDataTableCases(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 0,
+			" you are golden! ",
+			parameters) != 0) return 1;
+
+		lua_pushstring(state, _openProject->csv_list_cases_singlePixel().c_str());
+		return 1;
+	}
+
 	
 #pragma region SinglePixelCase
 	
@@ -1012,6 +1030,25 @@ protected:
 		}
 
 		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	static int Bind_PCTemplate_getSelectPhases(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 0,
+			" you are golden! ",
+			parameters) != 0) return 1;
+
+		// You have to create a template where you do al the configurations you want to run.
+		AM_pixel_parameters* pointerPixel = _openProject->get_case_template();
+		if (pointerPixel == nullptr)
+		{
+			lua_pushstring(state, "No template created, please create a template!");
+			return 1;
+		}
+
+		lua_pushstring(state, IAM_Database::csv_join_row(pointerPixel->get_selected_phases_ByName(),IAM_Database::Delimiter).c_str());
 		return 1;
 	}
 

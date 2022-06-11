@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 enable_testing()
 
 set(TEST_SET 
-	API_lua_functions_Tests.cpp
+	API_lua_functions_Test
 )
 
 foreach(target ${TEST_SET})
@@ -15,6 +15,7 @@ foreach(target ${TEST_SET})
     target_compile_features(${target} PUBLIC cxx_std_17)
     target_compile_options(${target} PRIVATE ${DEFAULT_COMPILER_OPTIONS_AND_WARNINGS})
     target_link_libraries(${target} PRIVATE AMLib Catch2::Catch2WithMain sqlite3)
+    target_link_libraries(${target} PRIVATE AM_MATCALC_Lib)
 
     add_test(NAME ${target} COMMAND ${target})
 endforeach()

@@ -1,6 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+#include "../../../AMLib/include/Database_implementations/Database_scheme_content.h"
+
 #include "../../../AMLib/include/AM_Project.h"
 #include "../../../AMLib/include/AM_Config.h"
 #include "../../../AMLib/include/AM_Database_Framework.h"
@@ -65,6 +67,15 @@ namespace main_setup
 		tempElement.set_id(-1);
 		tempElement.Name = "ZR";
 		tempElement.save();
+
+		//add phases
+		DBS_Phase tempPhase(_db, -1);
+		tempPhase.Name = "LIQUID";
+		tempPhase.save();
+
+		tempPhase.set_id(-1);
+		tempPhase.Name = "FCC";
+		tempPhase.save();
 	}
 
 	
@@ -234,6 +245,108 @@ TEST_CASE("IAM_lua_functions")
 #pragma endregion
 
 #pragma region TemplateTesting
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_new",
+			std::vector<std::string> {""}), "OK") != std::string::npos);
+
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_setComposition",
+			std::vector<std::string> {"AL", "0.90"}), "0.90") != std::string::npos);
+
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_getComposition",
+			std::vector<std::string> {""}), "AL") != std::string::npos);
+
+		// select non existing phase
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_selectPhases",
+			std::vector<std::string> {"NONEXIST"}), "Phase does not exis") != std::string::npos);
+
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_selectPhases",
+			std::vector<std::string> {"LIQUID"}), "OK") != std::string::npos);
+
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_selectPhases",
+			std::vector<std::string> {"LIQUID", "FCC"}), "OK") != std::string::npos);
+
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_getSelectPhases",
+			std::vector<std::string> {"LIQUID", "FCC"}), "LIQUID") != std::string::npos);
+
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_getSelectPhases",
+			std::vector<std::string> {"LIQUID", "FCC"}), "FCC") != std::string::npos);
+
+
+		// Equilibrium
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_setEquilibriumTemperatureRange",
+			std::vector<std::string> {"100", "600"}), "OK") != std::string::npos);
+
+
+		//Scheil
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_setScheilTemperatureRange",
+			std::vector<std::string> {"100", "600"}), "OK") != std::string::npos);
+
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_setScheilLiquidFraction",
+			std::vector<std::string> {"0.02"}), "OK") != std::string::npos);
+
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_setScheilDependentPhase",
+			std::vector<std::string> {"FCC"}), "OK") != std::string::npos);
+
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_setScheilStepSize",
+			std::vector<std::string> {"25"}), "OK") != std::string::npos);
+
+		// Create cases from template
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_concentrationVariant",
+			std::vector<std::string> {"AL", "10", "10", "ZR", "10"}), "Input has to specify three components") != std::string::npos);
+
+		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::interpreter->run_command("template_pixelcase_concentrationVariant",
+			std::vector<std::string> {"AL", "10", "10", "ZR", "10", "2"}), "OK") != std::string::npos);
+
+		// check data in database---------------------------
+		std::string CasesTable = main_setup::interpreter->run_command("project_getDataTableCases",
+									std::vector<std::string> {""});
+
+		AM_Database_Datatable tempTable(main_setup::_db, &AMLIB::TN_Case());
+		tempTable.load_data(" IDProject = 2 ");
+		REQUIRE(tempTable.row_count() == 20);
+		REQUIRE(tempTable(1, 0).compare("2") == 0);
+
+		for (int n1 = 0 ; n1 < tempTable.row_count(); n1 ++)
+		{
+#pragma region Equilibrium_config
+			AM_Database_Datatable tempTable_2(main_setup::_db, &AMLIB::TN_EquilibriumConfiguration());
+			tempTable_2.load_data(" IDCase = " + tempTable( 0, n1 ));
+			REQUIRE(tempTable_2.row_count() == 1);
+			REQUIRE(tempTable_2(1, 0).compare(tempTable(0, n1)) == 0);
+			REQUIRE(tempTable_2(2, 0).compare("700.0") == 0);
+			REQUIRE(tempTable_2(3, 0).compare("100.0") == 0);
+			REQUIRE(tempTable_2(4, 0).compare("600.0") == 0);
 #pragma endregion
+
+#pragma region Scheil_config
+			AM_Database_Datatable tempTable_3(main_setup::_db, &AMLIB::TN_ScheilConfiguration());
+			tempTable_3.load_data(" IDCase = " + tempTable(0, n1));
+			REQUIRE(tempTable_3.row_count() == 1);
+			REQUIRE(tempTable_2(1, 0).compare(tempTable(0, n1)) == 0);
+			REQUIRE(tempTable_3(2, 0).compare("100.0") == 0);
+			REQUIRE(tempTable_3(3, 0).compare("600.0") == 0);
+			REQUIRE(tempTable_3(4, 0).compare("25.0") == 0);
+			REQUIRE(tempTable_3(5, 0).compare("2") == 0);
+			REQUIRE(tempTable_3(6, 0).compare("0.02") == 0);
+#pragma endregion
+
+#pragma region CALPHAD
+			AM_Database_Datatable tempTable_4(main_setup::_db, &AMLIB::TN_CALPHADDatabase());
+			tempTable_4.load_data(" IDCase = " + tempTable(0, n1));
+			REQUIRE(tempTable_4.row_count() == 1);
+			// NOTE: CALPHAD database if filled when the case configuration is ran
+			// thus testing for CALPHAD here is not needed.
+			//REQUIRE(tempTable_4(1, 0).compare(std::filesystem::path(main_setup::configuration.get_ThermodynamicDatabase_path()).filename().string()) == 0);
+			//REQUIRE(tempTable_4(2, 0).compare(std::filesystem::path(main_setup::configuration.get_PhysicalDatabase_path()).filename().string()) == 0);
+			//REQUIRE(tempTable_4(3, 0).compare(std::filesystem::path(main_setup::configuration.get_MobilityDatabase_path()).filename().string()) == 0);
+#pragma endregion
+
+		}
+
+
+		
+
+#pragma endregion
+
+
 	}
 }
