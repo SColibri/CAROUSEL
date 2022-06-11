@@ -12,6 +12,7 @@ set(TEST_SET
     DataController_Test
     AM_project_Test
     AM_pixel_parameters_Test
+    AM_lua_Test
 )
 
 foreach(target ${TEST_SET})

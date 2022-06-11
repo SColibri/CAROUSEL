@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 enable_testing()
 
 set(TEST_SET 
-	none
+	API_lua_functions_Tests.cpp
 )
 
 foreach(target ${TEST_SET})

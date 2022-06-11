@@ -148,6 +148,7 @@ protected:
 		//------- Binded to open project
 		add_new_function(state, "project_loadID", "string", "project_selectID <int>", Bind_project_loadID);
 		add_new_function(state, "project_loadName", "string", "project_loadName <string>", Bind_project_loadName);
+		add_new_function(state, "project_new", "string", "project_new <string Name>", Bind_project_new);
 		add_new_function(state, "project_setName", "string", "projet_setName <new name>", Bind_project_setName);
 		add_new_function(state, "project_getData", "string csv format", "project_getData <int ID>", Bind_project_getData);
 		add_new_function(state, "project_setData", "string csv format", "project_setData <int ID>,<string Name>", Bind_project_setData);
@@ -610,7 +611,7 @@ protected:
 		_openProject = new AM_Project(_dbFramework->get_database(), _configuration, std::stoi(parameter));
 
 		if(_openProject->get_project_ID() == -1) lua_pushstring(state, "Project with this ID does not exist, sorry!");
-		else lua_pushstring(state, "Project ID changed");
+		else lua_pushstring(state, "OK");
 
 		return 1;
 	}
@@ -660,7 +661,30 @@ protected:
 		std::replace(parameter.begin(), parameter.end(), '#', ' ');
 		_openProject->set_project_name(parameter, _dbFramework->get_apiExternalPath());
 		
-		lua_pushstring(state, "Project name changed");
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	/// <summary>
+	/// creates a new project
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_project_new(lua_State* state)
+	{
+		if (_openProject != nullptr) delete _openProject;
+		_openProject = new AM_Project(_dbFramework->get_database(), _configuration, "Empty project");
+
+		std::vector<std::string> parameters = get_parameters(state);
+		if(parameters.size() == 0)
+		{
+			lua_pushstring(state, "Bind_project_new: Error, missing input");
+			return 1;
+		}
+
+		_openProject->set_project_name(parameters[0], _dbFramework->get_apiExternalPath());
+
+		lua_pushstring(state, "OK");
 		return 1;
 	}
 
@@ -671,10 +695,12 @@ protected:
 	/// <returns></returns>
 	static int Bind_project_getData(lua_State* state)
 	{
-		if (_openProject == nullptr) _openProject = new AM_Project(_dbFramework->get_database(), _configuration, -1);
-		int noParameters = lua_gettop(state);
-		std::string outy = _openProject->get_project_data_csv();
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 0,
+			" you are golden! ",
+			parameters) != 0) return 1;
 
+		std::string outy = _openProject->get_project_data_csv();
 		lua_pushstring(state, outy.c_str());
 		return 1;
 	}
@@ -686,18 +712,18 @@ protected:
 	/// <returns></returns>
 	static int Bind_project_setData(lua_State* state)
 	{
-		int noParameters = lua_gettop(state);
-		std::string out{ "" };
-		std::string parameter = lua_tostring(state, 1);
-		string_manipulators::replace_token_from_socketString(parameter);
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 2,
+			" you are golden! ",
+			parameters) != 0) return 1;
 
-		std::vector<std::string> splitContent = string_manipulators::split_text(parameter, ",");
-		if (splitContent.size() == 2) { splitContent.push_back(_dbFramework->get_apiExternalPath()); }
+		// user can set the API name optionally but by default we use the configuration file
+		if (parameters.size() == 2) { parameters.push_back(_dbFramework->get_apiExternalPath()); }
 
-
-		DBS_Project newP(_dbFramework->get_database(), std::stoi(splitContent[0]));
-		newP.load(splitContent);
+		DBS_Project newP(_dbFramework->get_database(), std::stoi(parameters[0]));
+		newP.load(parameters);
 		newP.save();
+		_openProject->refresh_data();
 
 		lua_pushstring(state, std::to_string(newP.id()).c_str());
 		return 1;
@@ -727,11 +753,10 @@ protected:
 	/// <returns></returns>
 	static int Bind_project_getSelectedElements(lua_State* state)
 	{
-		if(_openProject == nullptr) 
-		{
-			lua_pushstring(state, "No selected project!, select or create a project first :)");
-			return 1;
-		}
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 0,
+			" you are golden! ",
+			parameters) != 0) return 1;
 
 		lua_pushstring(state, _openProject->csv_list_SelectedElements().c_str());
 		return 1;
@@ -746,18 +771,16 @@ protected:
 	/// <returns></returns>
 	static int Bind_project_clearContent(lua_State* state)
 	{
-		std::vector<std::string> outParameters = get_parameters(state);
-		if (_openProject == nullptr && outParameters.size() == 0)
-		{
-			lua_pushstring(state, "Bind_project_clearContent: No selected project!, select or create a project first :)");
-			return 1;
-		}
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 0,
+			" you are golden! ",
+			parameters) != 0) return 1;
 		
-		if(outParameters.size() > 0)
+		if(parameters.size() > 0)
 		{
-			if (string_manipulators::isNumber(outParameters[0]))
+			if (string_manipulators::isNumber(parameters[0]))
 			{
-				DBS_Project::remove_project_data(_dbFramework->get_database(), std::stoi(outParameters[0]));
+				DBS_Project::remove_project_data(_dbFramework->get_database(), std::stoi(parameters[0]));
 				lua_pushstring(state, "Bind_project_clearContent: All data has been removed");
 				return 1;
 			}
@@ -765,15 +788,8 @@ protected:
 			return 1;
 		}
 		
-		if(_openProject != nullptr)
-		{
-			_openProject->clear_project_data();
-			lua_pushstring(state, "Removed data");
-			return 1;
-		}
-
-
-		lua_pushstring(state, "Bind_project_clearContent: Error -> undefined! ups, lets debug");
+		_openProject->clear_project_data();
+		lua_pushstring(state, "OK");
 		return 1;
 	}
 
@@ -797,7 +813,7 @@ protected:
 			return 1;
 		}
 
-		lua_pushstring(state, "Done");
+		lua_pushstring(state, "OK");
 		return 1;
 	}
 
@@ -810,7 +826,7 @@ protected:
 	{
 		std::vector<std::string> parameters;
 		if (check_global_using_openProject(state, lua_gettop(state), 0,
-			" plese set a valid element ",
+			" you are golden! ",
 			parameters) != 0) return 1;
 
 		lua_pushstring(state, _openProject->get_reference_element_ByName().c_str());
@@ -847,21 +863,6 @@ protected:
 #pragma endregion
 
 #pragma region PixelCase
-	static int Bind_PC_createConcentrationVariant(lua_State* state)
-	{
-		std::vector<std::string> parameters;
-		if (check_global_using_openProject(state, lua_gettop(state), 2,
-			" Please set a temperature value ",
-			parameters) != 0) return 1;
-
-
-		AM_pixel_parameters* pointerPixel = _openProject->get_pixelCase(std::stoi(parameters[0]));
-		pointerPixel->set_equilibrium_config_endTemperature(std::stold(parameters[1]));
-
-		lua_pushstring(state, "OK");
-		return 1;
-	}
-
 	static int Bind_PCTemplate_createNew(lua_State* state)
 	{
 		std::vector<std::string> parameters;
@@ -871,6 +872,21 @@ protected:
 
 
 		_openProject->create_case_template(parameters[0]);
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	static int Bind_PC_createConcentrationVariant(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 2,
+			" you are golden ",
+			parameters) != 0) return 1;
+
+
+		AM_pixel_parameters* pointerPixel = _openProject->get_pixelCase(std::stoi(parameters[0]));
+		pointerPixel->set_equilibrium_config_endTemperature(std::stold(parameters[1]));
+
 		lua_pushstring(state, "OK");
 		return 1;
 	}

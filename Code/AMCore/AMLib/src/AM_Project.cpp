@@ -177,6 +177,11 @@ void AM_Project::clear_project_data()
 
 void AM_Project::refresh_data()
 {
+	int tempId = _project->id();
+	delete _project;
+	_project = new DBS_Project(_db, tempId);
+	_project->load(); // TODO: put this in a function
+
 	load_singlePixel_Cases();
 	load_DBS_selectedElements();
 }
@@ -278,7 +283,9 @@ std::string AM_Project::create_cases_vary_concentration(std::vector<int>& elemen
 	std::vector<double>& steps,
 	std::vector<double>& currentValues)
 {
-	std::string out = _tempPixel->create_cases_vary_concentration(elementID, stepSize, steps, currentValues);
+	if (_tempPixel == nullptr) return "No template selected";
+	std::string out{""};
+	out = _tempPixel->create_cases_vary_concentration(elementID, stepSize, steps, currentValues);
 	load_singlePixel_Cases();
 	return out;
 }
