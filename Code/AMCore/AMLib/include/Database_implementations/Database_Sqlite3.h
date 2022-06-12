@@ -23,7 +23,7 @@ public:
 	// Constructors, destructors and other
 	// ---------------------------------------------
 #pragma region Cons_Des
-	Database_Sqlite3(AM_Config* configuration) :IAM_Database(configuration) {}
+	Database_Sqlite3(AM_Config* configuration) :IAM_Database(configuration) { }
 	~Database_Sqlite3();
 #pragma endregion Cons_Des
 

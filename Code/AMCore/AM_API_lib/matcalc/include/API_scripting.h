@@ -4,21 +4,24 @@
 #include <vector>
 #include "../../../AMLib/include/AM_Config.h"
 #include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+#include "../../../AMLib/x_Helpers/string_manipulators.h"
 
 namespace API_Scripting
 {
 	
 	std::vector<std::string> static Script_initialize(AM_Config* configuration) 
 	{
-		std::string out2 = "use-module core \n \
-						  set-working-directory \'" + configuration->get_working_directory() + "\' \n \
-						  open-thermodyn-database \'" + configuration->get_ThermodynamicDatabase_path() + "\' \n ";
+		
+		std::string Oldval = " ";
+		std::string Newval = " ";
+
+		std::string ThermoPath = configuration->get_ThermodynamicDatabase_path();
 
 		std::vector<std::string> out
 		{
 			"use-module core",
-			"set-working-directory \'" + configuration->get_working_directory() + "\'",
-			"open-thermodyn-database \'" + configuration->get_ThermodynamicDatabase_path() + "\'",
+			"set-working-directory \"" + configuration->get_working_directory() + "\"",
+			"open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path() + "",
 			"set-variable-value npc 25"
 		};
 
@@ -29,7 +32,7 @@ namespace API_Scripting
 	std::vector<std::string> static script_get_thermodynamic_database(AM_Config* configuration)
 	{
 		std::vector<std::string> out; //= Script_initialize(configuration);
-		out.push_back("open-thermodyn-database \'" + configuration->get_ThermodynamicDatabase_path() + "\'");
+		out.push_back("open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path() + "");
 		out.push_back("list-database-contents equi-database-contents");
 		return out;
 	}

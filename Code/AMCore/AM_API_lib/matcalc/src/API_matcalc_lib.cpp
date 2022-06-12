@@ -84,7 +84,7 @@ std::string API_matcalc_lib::MCRCommand(std::string commandLine)
 	memset(&si, 0, sizeof(si));
 	memset(&pi, 0, sizeof(pi));
 	
-	std::string run_file = "\"C:/Program Files/MatCalc 6/mcr.exe\" " + std::to_string(_mccPort) + " " + commandLine;
+	std::string run_file = "\"\"C:/Program Files/MatCalc 6/mcr.exe\" " + std::to_string(_mccPort) + " " + commandLine + "\"";
 	FILE* mcrEXEC = _popen(run_file.c_str(), "r");
 	char   psBuffer[128]{0};
 

@@ -33,6 +33,14 @@ namespace string_manipulators
         std::replace(replaceThis.begin(), replaceThis.end(), '#',' ');
     }
 
+    static void replace_token(std::string& replaceThis, std::string Oldvalue, std::string Newvalue)
+    {   
+        int index{ 0 };
+        while ((index = replaceThis.find(Oldvalue)) != std::string::npos) {    //for each location where Hello is found
+            replaceThis.replace(index, Newvalue.length(), Newvalue); //remove and replace from that position
+        }
+    }
+
     static void toCaps(std::string& replaceThis) 
     {
         std::transform(replaceThis.begin(), replaceThis.end(), replaceThis.begin(), ::toupper);

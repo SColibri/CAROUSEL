@@ -185,8 +185,8 @@ protected:
 		add_new_function(state, "configuration_getExternalAPI_path", "string", "configuration_getExternalAPI_path (gets directory of external API e.g. matcalc)", Bind_configuration_getExternalAPIpath);
 		add_new_function(state, "configuration_setExternalAPI_path", "string status", "configuration_setAPI_path <string Filename> (set path to external dll e.g. matcalc)", Bind_configuration_setExternalAPIpath);
 		add_new_function(state, "configuration_get_working_directory", "string", "configuration_get_working_directory", Bind_configuration_getWorkingDirectory);
-		add_new_function(state, "configuration_set_working_directory", "string", "configuration_set_working_directory <string Directory>", Bind_configuration_getWorkingDirectory);
-		add_new_function(state, "configuration_get_thermodynamic_database_path", "string", "configuration_get_thermodynamic_database_path", Bind_configuration_setWorkingDirectory);
+		add_new_function(state, "configuration_set_working_directory", "string", "configuration_set_working_directory <string Directory>", Bind_configuration_setWorkingDirectory);
+		add_new_function(state, "configuration_get_thermodynamic_database_path", "string", "configuration_get_thermodynamic_database_path", Bind_configuration_setThermodynamicDatabasePath);
 		add_new_function(state, "configuration_set_thermodynamic_database_path", "string", "configuration_set_thermodynamic_database_path <string filename>", Bind_configuration_getThermodynamicDatabasePath);
 		add_new_function(state, "configuration_get_physical_database_path", "string", "configuration_get_physical_database_path", Bind_configuration_getPhysicalDatabasePath);
 		add_new_function(state, "configuration_set_physical_database_path", "string", "configuration_set_physical_database_path <string filename>", Bind_configuration_setPhysicalDatabasePath);
@@ -494,11 +494,11 @@ protected:
 	/// <returns></returns>
 	static int Bind_configuration_setThermodynamicDatabasePath(lua_State* state)
 	{
-		int noParameters = lua_gettop(state);
+		std::vector<std::string> parameters = get_parameters(state);
 
-		if (noParameters > 0)
+		if (parameters.size() > 0)
 		{
-			std::string parameter = lua_tostring(state, 1);
+			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
 			_configuration->set_ThermodynamicDatabase_path(parameter);
 
 			lua_pushstring(state, "OK");
@@ -532,11 +532,11 @@ protected:
 	/// <returns></returns>
 	static int Bind_configuration_setPhysicalDatabasePath(lua_State* state)
 	{
-		int noParameters = lua_gettop(state);
+		std::vector<std::string> parameters = get_parameters(state);
 
-		if (noParameters > 0)
+		if (parameters.size() > 0)
 		{
-			std::string parameter = lua_tostring(state, 1);
+			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
 			_configuration->set_PhysicalDatabase_path(parameter);
 
 			lua_pushstring(state, "OK");
@@ -570,11 +570,11 @@ protected:
 	/// <returns></returns>
 	static int Bind_configuration_setMobilityDatabasePath(lua_State* state)
 	{
-		int noParameters = lua_gettop(state);
+		std::vector<std::string> parameters = get_parameters(state);
 
-		if (noParameters > 0)
+		if (parameters.size() > 0)
 		{
-			std::string parameter = lua_tostring(state, 1);
+			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
 			_configuration->set_MobilityDatabase_path(parameter);
 
 			lua_pushstring(state, "OK");

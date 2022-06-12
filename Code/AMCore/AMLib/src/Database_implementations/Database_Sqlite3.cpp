@@ -21,6 +21,7 @@ int Database_Sqlite3::connect()
 		return 1;
 	}
 
+	int timeoutSetup = sqlite3_busy_timeout(db, 1000);
 	_connectionOpen = true;
 	return 0;
 }
@@ -55,6 +56,7 @@ std::vector<std::string> Database_Sqlite3::get_tableNames()
 
 	}
 
+	sqlite3_finalize(stmt);
 	return Response;
 }
 
@@ -73,6 +75,7 @@ std::vector<std::string> Database_Sqlite3::get_columnNames(std::string& tableNam
 
 	}
 
+	sqlite3_finalize(stmt);
 	return Response;
 }
 
@@ -96,6 +99,7 @@ std::vector<std::string> Database_Sqlite3::get_columnDatatype(std::string& table
 
 	}
 
+	sqlite3_finalize(stmt);
 	return Response;
 }
 
@@ -224,6 +228,7 @@ int Database_Sqlite3::get_last_ID(const AM_Database_TableStruct* tableName)
 
 	}
 
+	sqlite3_finalize(stmt);
 	return Response;
 }
 
@@ -242,6 +247,7 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_D
 		}
 	}
 
+	sqlite3_finalize(stmt);
 	return out;
 }
 
@@ -260,6 +266,7 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_D
 		}
 	}
 
+	sqlite3_finalize(stmt);
 	return out;
 }
 
@@ -283,6 +290,7 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows_joint(cons
 		}
 	}
 
+	sqlite3_finalize(stmt);
 	return out;
 }
 
@@ -295,6 +303,7 @@ std::string Database_Sqlite3::get_tableRows(std::string& tableName)
 	std::vector<std::vector<std::string>> outRows = get_tableRows(&dataStruct);
 	
 	std::string out = get_csv(outRows);
+	sqlite3_finalize(stmt);
 	return out;
 }
 
@@ -307,6 +316,7 @@ std::string Database_Sqlite3::get_tableRows(std::string& tableName, std::string&
 	std::vector<std::vector<std::string>> outRows = get_tableRows(&dataStruct, whereQuery);
 
 	std::string out = get_csv(outRows);
+	sqlite3_finalize(stmt);
 	return out;
 }
 
@@ -343,6 +353,7 @@ std::vector<std::string> Database_Sqlite3::get_row(const AM_Database_TableStruct
 		}
 	}
 
+	sqlite3_finalize(stmt);
 	return out;
 }
 

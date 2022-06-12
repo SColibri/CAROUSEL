@@ -63,7 +63,6 @@ public:
 	{
 		_project->Name = Name;
 		_project->APIName = std::filesystem::path(_configuration->get_api_path()).filename().string();
-		_project->save();
 	}
 
 	std::vector<std::string> static csv_list_SelectedElements(IAM_Database* db, int projectID)
@@ -108,7 +107,7 @@ public:
 			out += "Please add a script to run! \n";
 		}
 
-		if (_project->id() == -1) _project->save();
+		// if (_project->id() == -1) _project->save();
 		
 
 		return out;
@@ -206,7 +205,7 @@ private:
 	void load_data()
 	{
 		_datatable_projects->load_data();
-		if (_project->id() == -1) { _project->save(); return; }
+		if (_project->id() == -1) { return; }
 		create_tables();
 		
 		_datatable_cases->load_data(AMLIB::TN_Case().columnNames[1] +  " = \'" + std::to_string(_project->id()) + "\'");

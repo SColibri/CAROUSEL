@@ -7,6 +7,7 @@
 #include <iostream>
 #include <thread>
 #include "../../../AMLib/include/AM_Config.h"
+#include "../../../AMLib/x_Helpers/string_manipulators.h"
 #include "API_matcalc_definitions.h"
 
 /** \addtogroup AM_API_lib
@@ -89,12 +90,13 @@ private:
 		memset(&pi, 0, sizeof(pi));
 
 		std::filesystem::path mccPath(_configuration->get_apiExternal_path());
-		std::string run_file = mccPath.parent_path().string() + "/mcc.exe -o " + std::to_string(_mccPort);
+		std::string run_file =  mccPath.string() + "/mcc.exe -o " + std::to_string(_mccPort);
+
 		if (CreateProcessA(0, run_file.data(), 0, 0, 0, CREATE_NO_WINDOW, 0, 0, &si, &pi))
 		{
 			_sockThread = std::thread([this] {this->mcc_socketHandles(); });
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(250)); // wait for mcc to finish set-up
+		std::this_thread::sleep_for(std::chrono::milliseconds(500)); // wait for mcc to finish set-up
 
 	}
 
