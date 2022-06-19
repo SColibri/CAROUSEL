@@ -152,6 +152,19 @@ int AM_Project::set_reference_element(std::string ElementName)
 
 std::string AM_Project::get_reference_element_ByName()
 {
+	int refID = get_reference_element_ByID();
+	if (refID > -1)
+	{
+		DBS_Element tempElement(_db, refID);
+		tempElement.load();
+		return tempElement.Name;
+	}
+
+	return "Not found!";
+}
+
+int AM_Project::get_reference_element_ByID()
+{
 	for (DBS_SelectedElements* selEl : _selectedElements)
 	{
 		if (selEl->isReferenceElement == 1)
@@ -159,11 +172,11 @@ std::string AM_Project::get_reference_element_ByName()
 			DBS_Element tempElement(_db, selEl->IDElement);
 			tempElement.load();
 
-			return tempElement.Name;
+			return tempElement.id();
 		}
 	}
 
-	return "Not found!";
+	return -1;
 }
 
 #pragma endregion

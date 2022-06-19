@@ -152,6 +152,7 @@ namespace AMLIB
 		out.add_new("StartTemperature", "REAL");
 		out.add_new("EndTemperature", "REAL");
 		out.add_new("TemperatureType", "TEXT"); // Defines if in Celsius or Kelvin
+		out.add_new("StepSize", "REAL"); // step size for step calculations
 		out.add_new("Pressure", "REAL"); // Pressure for equilibrium calculation
 		out.tableName = "EquilibriumConfiguration";
 
@@ -170,10 +171,11 @@ namespace AMLIB
 		out.add_new("IDPhase", "INTEGER"); // Equilibrium at temperature
 		out.add_new("Temperature", "REAL"); // Equilibrium at temperature
 		out.add_new("Value", "REAL"); // Defines if in Celsius or Kelvin
-		out.tableName = "EquilibriumPhaseFracction";
+		out.tableName = "EquilibriumPhaseFraction";
 
 		return out;
 	}
+
 
 #pragma endregion
 
@@ -218,6 +220,24 @@ namespace AMLIB
 
 		return out;
 	}
+
+	/// <summary>
+	/// Equilibrium cumulative phase fraction with respect to the scheil equilibrium configuration
+	/// </summary>
+	/// <returns></returns>
+	static AM_Database_TableStruct TN_ScheilCumulativeFraction()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
+		out.add_new("IDCase", "INTEGER"); // ID to Equilibrium configuration
+		out.add_new("IDPhase", "INTEGER"); // Equilibrium at temperature
+		out.add_new("TypeComposition", "TEXT");
+		out.add_new("Temperature", "REAL"); // Equilibrium at temperature
+		out.add_new("Value", "REAL"); // Defines if in Celsius or Kelvin
+		out.tableName = "ScheilCumulativePhaseFraction";
+
+		return out;
+	}
 #pragma endregion
 
 	/// <summary>
@@ -259,6 +279,7 @@ namespace AMLIB
 		out.push_back(TN_ElementComposition());
 		out.push_back(TN_ScheilConfiguration());
 		out.push_back(TN_ScheilPhaseFraction());
+		out.push_back(TN_ScheilCumulativeFraction());
 		out.push_back(TN_CALPHADDatabase());
 
 		return out;

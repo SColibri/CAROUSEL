@@ -86,6 +86,13 @@ public:
 	/// <returns></returns>
 	std::string get_reference_element_ByName();
 
+
+	/// <summary>
+	/// returns reference element by ID
+	/// </summary>
+	/// <returns></returns>
+	int get_reference_element_ByID();
+
 #pragma endregion
 
 #pragma region Project_data

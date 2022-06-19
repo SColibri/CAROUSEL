@@ -8,6 +8,7 @@
 #include <thread>
 #include "../../../AMLib/include/AM_Config.h"
 #include "../../../AMLib/x_Helpers/string_manipulators.h"
+#include "../../../AMLib/x_Helpers/IPC_winapi.h"
 #include "API_matcalc_definitions.h"
 
 /** \addtogroup AM_API_lib
@@ -61,12 +62,16 @@ public:
 	/// <param name="commandLine"></param>
 	/// <returns></returns>
 	std::string MCRCommand(std::string commandLine);
+	std::string APIcommand(std::string commandLine);
 
 private:
 	HINSTANCE _library{NULL}; // Matcalc library
 	AM_Config* _configuration{nullptr}; // configuration file
+	IPC_winapi _mcc_subprocess;
+
 	bool _mccSokcet_active{false}; // MCR commuincation needs mcc socket communication
-	std::thread _sockThread;
+	std::thread _mcc_sockThread;
+	std::thread _mcr_sockThread;
 	int _mccPort{7890};
 
 	/// <summary>
@@ -86,35 +91,45 @@ private:
 		if (_mccSokcet_active) return;
 		_mccSokcet_active = true;
 
-		memset(&si, 0, sizeof(si));
-		memset(&pi, 0, sizeof(pi));
+		memset(&mcc_si, 0, sizeof(mcc_si));
+		memset(&mcc_pi, 0, sizeof(mcc_pi));
 
 		std::filesystem::path mccPath(_configuration->get_apiExternal_path());
 		std::string run_file =  mccPath.string() + "/mcc.exe -o " + std::to_string(_mccPort);
 
-		if (CreateProcessA(0, run_file.data(), 0, 0, 0, CREATE_NO_WINDOW, 0, 0, &si, &pi))
+		if (CreateProcessA(0, run_file.data(), 0, 0, 0, CREATE_NO_WINDOW, 0, 0, &mcc_si, &mcc_pi))
 		{
-			_sockThread = std::thread([this] {this->mcc_socketHandles(); });
+			_mcc_sockThread = std::thread([this] {this->mcc_socketHandles(); });
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(500)); // wait for mcc to finish set-up
 
 	}
 
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-	DWORD exitCode = -1;
+	STARTUPINFO mcc_si;
+	PROCESS_INFORMATION mcc_pi;
+	DWORD mcc_exitCode = -1;
 	/// <summary>
 	/// set-up socket communication with mcc defined on port=_mccPort
 	/// </summary>
 	/// <param name="portNumber"></param>
 	void mcc_socketHandles()
 	{
-		WaitForSingleObject(pi.hProcess, INFINITE);
-		CloseHandle(pi.hProcess);
-		CloseHandle(pi.hThread);
-		GetExitCodeProcess(pi.hProcess, &exitCode);
+		WaitForSingleObject(mcc_pi.hProcess, INFINITE);
+		CloseHandle(mcc_pi.hProcess);
+		CloseHandle(mcc_pi.hThread);
+		GetExitCodeProcess(mcc_pi.hProcess, &mcc_exitCode);
 		_mccSokcet_active = false;
 	}
+
+	bool _mcrSocket_active{ false };
+	STARTUPINFO mcr_si;
+	PROCESS_INFORMATION mcr_pi;
+	DWORD mcr_exitCode = -1;
+	FILE* mcrEXEC{ nullptr };
+	/// <summary>
+	/// initializes interactive mcr
+	/// </summary>
+	void MCR_initialize_interactive();
 
 	/// <summary>
 	/// closes socket and waits for the console thread to finish.
@@ -130,8 +145,10 @@ private:
 				MCRCommand("exit");
 			}
 			
-			_sockThread.join();
+			_mcc_sockThread.join();
 		}
+
+		if (_mcc_subprocess.isRunning()) _mcc_subprocess.send_command("exit");
 	}
 };
 /** @}*/

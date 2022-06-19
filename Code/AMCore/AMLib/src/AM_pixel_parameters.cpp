@@ -170,9 +170,10 @@ std::string AM_pixel_parameters::create_cases_vary_concentration(std::vector<int
 			{
 				newVector[n2] = currentValues[n2];
 			}
-			newVector[rIndex] = newVector[rIndex] + stepSize[rIndex] * n1;
+			int index_EL = get_element_index(elementID[rIndex]);
+			newVector[index_EL] = newVector[index_EL] + stepSize[rIndex] * n1;
 
-			create_cases_vary_concentration(elementID, stepSize, steps, currentValues, rIndex + 1);
+			create_cases_vary_concentration(elementID, stepSize, steps, newVector, rIndex + 1);
 		}
 	}
 	else
@@ -184,12 +185,13 @@ std::string AM_pixel_parameters::create_cases_vary_concentration(std::vector<int
 			{
 				newVector[n2] = currentValues[n2];
 			}
-			newVector[rIndex] = newVector[rIndex] + stepSize[rIndex] * n1;
+			int index_EL = get_element_index(elementID[rIndex]);
+			newVector[index_EL] = newVector[index_EL] + stepSize[rIndex] * n1;
 
 			AM_pixel_parameters tempPixel(*this);
-			for (int n2 = 0; n2 < elementID.size(); n2++)
+			for (int n2 = 0; n2 < _elementComposition.size(); n2++)
 			{
-				tempPixel.set_composition(elementID[n2], newVector[n2]);
+				tempPixel.set_composition(_elementComposition[n2]->IDElement, newVector[n2]);
 			}
 			tempPixel.save();
 
@@ -205,6 +207,34 @@ bool AM_pixel_parameters::check_if_phase_is_selected(int idPhase)
 	auto selPhaseIterator = find_if(_selectedPhases.begin(), _selectedPhases.end(), [&idPhase](DBS_SelectedPhases* obj) {return obj->IDPhase == idPhase; });
 	if (selPhaseIterator == _selectedPhases.end()) return false;
 	return true;
+}
+
+int AM_pixel_parameters::get_element_index(int IDElement)
+{
+	auto componentIterator = find_if(_elementComposition.begin(), _elementComposition.end(), [&IDElement](DBS_ElementComposition* obj) {return obj->IDElement == IDElement; });
+	if (componentIterator != _elementComposition.end())
+	{
+		auto index = std::distance(_elementComposition.begin(), componentIterator);
+		return index;
+	}
+
+	return -1;
+}
+
+
+int AM_pixel_parameters::get_element_index(std::string ElementName)
+{
+	DBS_Element tempElement(_db, -1);
+	tempElement.load_by_name(ElementName);
+	if (tempElement.id() == -1) return -1;
+
+	return get_element_index(tempElement.id());
+}
+
+int AM_pixel_parameters::get_reference_elementID()
+{
+	size_t IDElement = Data_Controller::get_reference_element_ByID(_db, _project->id());
+	return IDElement;
 }
 
 void AM_pixel_parameters::reset_equilibrium()
@@ -279,6 +309,7 @@ int AM_pixel_parameters::set_composition(int IDElement, double newValue)
 	{
 		auto index = std::distance(_elementComposition.begin(), elementIterator);
 		_elementComposition[index]->Value = newValue;
+		update_referenceComposition();
 		return 0;
 	}
 
@@ -290,8 +321,47 @@ int AM_pixel_parameters::set_composition(std::string ElementName, double newValu
 	DBS_Element tempElement(_db, -1);
 	tempElement.load_by_name(ElementName);
 	if (tempElement.id() == -1) return 1;
+	if (ElementName.compare("VA") == 0) newValue = 0.0;
+	update_referenceComposition();
 
 	return set_composition(tempElement.id(), newValue);
+}
+
+void AM_pixel_parameters::update_referenceComposition()
+{
+	AM_Database_Datatable dT(_db, &AMLIB::TN_SelectedElements());
+	dT.load_data("IDProject = " + std::to_string(_project->id()) + " AND " + 
+				 "isReferenceElement = 1 ");
+
+	if (dT.row_count() == 0) return; // no elements set as reference
+	int IDElement = std::stoi(dT(2, 0));
+	auto selIterator = find_if(_elementComposition.begin(), _elementComposition.end(), 
+		[&IDElement](DBS_ElementComposition* obj) {return obj->IDElement == IDElement;});
+
+	if (selIterator == _elementComposition.end()) return; // no element found, error?
+	auto index = std::distance(_elementComposition.begin(), selIterator);
+	double totalSum{ 0 };
+
+	// sum up all values from the table
+	for(int n1 = 0 ; n1 < _elementComposition.size(); n1 ++)
+	{
+		if (n1 != index) { totalSum += _elementComposition[n1]->Value; }
+	}
+
+	_elementComposition[index]->Value = 100 - totalSum; //TODO: this is only for weight percentage
+}
+
+bool AM_pixel_parameters::check_composition() 
+{
+	double sumTot{ 0 };
+
+	for (int n1 = 0; n1 < _elementComposition.size(); n1++)
+	{
+		sumTot += _elementComposition[n1]->Value;
+	}
+	if (sumTot == 100) return true;
+
+	return false;
 }
 
 std::vector<std::string> AM_pixel_parameters::get_selected_phases_ByName()
@@ -588,12 +658,12 @@ double AM_pixel_parameters::get_equilibrium_config_endTemperature()
 
 void AM_pixel_parameters::set_equilibrium_config_stepSize(double newvalue)
 {
-	//TODO implement missing step size into the database
+	_equilibriumConfiguration->StepSize = newvalue;
 }
 
 double AM_pixel_parameters::get_equilibrium_config_stepSize()
 {
-	return -1; // TODO implement Step size
+	return _equilibriumConfiguration->StepSize;
 }
 #pragma endregion
 

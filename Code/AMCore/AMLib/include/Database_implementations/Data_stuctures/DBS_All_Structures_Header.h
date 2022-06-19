@@ -11,5 +11,6 @@
 #include "DBS_Project.h"
 #include "DBS_ScheilConfiguration.h"
 #include "DBS_ScheilPhaseFraction.h"
+#include "DBS_ScheilCumulativeFraction.h"
 #include "DBS_SelectedElements.h"
 #include "DBS_SelectedPhases.h"

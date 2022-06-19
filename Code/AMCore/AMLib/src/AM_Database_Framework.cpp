@@ -6,12 +6,12 @@ AM_Database_Framework::AM_Database_Framework(AM_Config* configuration):
 	_configuration(configuration)
 {
 	_database = Database_Factory::get_database(configuration);
-	_dataController = new Data_Controller(_database, configuration, -1);
+	//_dataController = new Data_Controller(_database, configuration, -1);
 	create_database();
 }
 
 AM_Database_Framework::~AM_Database_Framework()
 {
 	if (_database != nullptr) delete _database;
-	if (_dataController != nullptr) delete _dataController;
+	//if (_dataController != nullptr) delete _dataController;
 }

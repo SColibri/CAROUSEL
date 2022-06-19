@@ -71,6 +71,17 @@ public:
 		dataT.load_data(AMLIB::TN_SelectedElements().columnNames[1] + " = \'" + std::to_string(projectID) + "\'");
 		return dataT.get_column_data(2);
 	}
+
+	size_t static get_reference_element_ByID(IAM_Database* db, int projectID)
+	{
+		AM_Database_Datatable dataT(db, &AMLIB::TN_SelectedElements());
+		dataT.load_data(AMLIB::TN_SelectedElements().columnNames[1] + " = \'" + std::to_string(projectID) + "\' AND " +
+						AMLIB::TN_SelectedElements().columnNames[3] + " = " + std::to_string(1) + " ");
+		
+		size_t out;
+		sscanf(dataT(2, 0).c_str(), "%zu", &out);
+		return out;
+	}
 #pragma endregion
 
 #pragma region Case

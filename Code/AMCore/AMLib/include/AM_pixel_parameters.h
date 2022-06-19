@@ -81,6 +81,26 @@ public:
 	bool check_if_phase_is_selected(int idPhase);
 
 	/// <summary>
+	/// If contained it returns the index position of the elements composition ByID
+	/// </summary>
+	/// <param name="IDElement"></param>
+	/// <returns></returns>
+	int get_element_index(int IDElement);
+
+	/// <summary>
+	/// If contained it returns the index position of the elements composition ByName
+	/// </summary>
+	/// <param name="ElementName"></param>
+	/// <returns></returns>
+	int get_element_index(std::string ElementName);
+
+	/// <summary>
+	/// If specified, returns the reference element ID
+	/// </summary>
+	/// <returns></returns>
+	int get_reference_elementID();
+
+	/// <summary>
 	/// removes all equilibrium phase fractions
 	/// </summary>
 	void reset_equilibrium();
@@ -145,6 +165,17 @@ public:
 	/// <param name="newValue"></param>
 	/// <returns></returns>
 	int set_composition(std::string ElementName, double newValue);
+
+	/// <summary>
+	/// update reference composition.
+	/// </summary>
+	void update_referenceComposition();
+
+	/// <summary>
+	/// checks if composition is valid, in this case weight percent
+	/// </summary>
+	/// <returns></returns>
+	bool check_composition();
 
 	/// <summary>
 	/// retunrs vector with names of all selected phases

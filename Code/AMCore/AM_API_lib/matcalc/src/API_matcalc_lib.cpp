@@ -54,9 +54,10 @@ int API_matcalc_lib::run_mcc_executable(std::string script_filename)
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 	DWORD exitCode = -1;
-
+	
 	memset(&si, 0, sizeof(si));
 	memset(&pi, 0, sizeof(pi));
+	
 
 	std::string run_file = "C:/Program Files/MatCalc 6/mcc.exe -x " + script_filename;
 	if (CreateProcessA(0, run_file.data(), 0, 0, 0, 0, 0, 0, &si, &pi))
@@ -70,6 +71,17 @@ int API_matcalc_lib::run_mcc_executable(std::string script_filename)
 
 	_mccSokcet_active = false;
 	return exitCode;
+}
+
+void API_matcalc_lib::MCR_initialize_interactive()
+{
+	if (!_mccSokcet_active) start_mcc_socket_async();
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	DWORD exitCode = -1;
+	std::string out{ "MCR Command being executed \n" };
+
+
 }
 
 std::string API_matcalc_lib::MCRCommand(std::string commandLine)
@@ -103,6 +115,18 @@ std::string API_matcalc_lib::MCRCommand(std::string commandLine)
 	}
 
 	return out;
+}
+
+std::string API_matcalc_lib::APIcommand(std::string commandLine)
+{
+	//flush the pipe before another command:
+	if (!_mcc_subprocess.isRunning()) 
+	{
+		_mcc_subprocess.initialize(L"C:/Program Files/MatCalc 6/mcc.exe");
+		_mcc_subprocess.set_endflag("MC:");
+	}
+	std::string outResult = _mcc_subprocess.send_command(commandLine + "\r\n");
+	return outResult;
 }
 #pragma endregion
 

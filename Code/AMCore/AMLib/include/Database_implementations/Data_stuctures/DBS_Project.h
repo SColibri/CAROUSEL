@@ -59,7 +59,7 @@ public:
 
 	virtual std::string get_load_string() override
 	{
-		return std::string(" ID = \'" + std::to_string(_id) + " \' ");
+		return std::string(" ID = " + std::to_string(_id) + " ");
 	}
 
 	virtual int load() override

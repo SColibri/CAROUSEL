@@ -34,7 +34,7 @@
 		switch (option_)
 		{
 		case FILEPATH::GENERAL:
-			response = _workingDirectory + "/General";
+			response = _workingDirectory;
 			break;
 		case FILEPATH::SCRIPTS:
 			response = _workingDirectory + "/Scripts";

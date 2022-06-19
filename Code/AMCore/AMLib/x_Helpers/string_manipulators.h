@@ -54,8 +54,54 @@ namespace string_manipulators
         return true;
     }
 
+    static std::string get_numeric_value(std::string& stringy) 
+    {
+        std::string out{ "" };
+
+        for (int n1 = 0; n1 < stringy.length(); n1++)
+        {
+            if(std::isdigit(stringy[n1]) || stringy[n1] == '.')
+            {
+                out += stringy[n1];
+            }
+        }
+
+        return out;
+    }
+
+#pragma region string_format
+    static std::string get_string_format_numeric_generic(int valCount, const std::string& valueTypeChar, const std::string& delimiter)
+    {
+        std::string out{};
+
+        out = valueTypeChar;
+        for (size_t n1 = 1; n1 < valCount; n1++)
+        {
+            out += delimiter + valueTypeChar;
+        }
+
+        return out;
+    }
+#pragma endregion
+
 #pragma region trim
     static const std::string WHITESPACE = " \n\r\t\f\v";
+
+    static std::string ltrim_byToken(const std::string& s, const std::string& token)
+    {
+        size_t indexToken = find_index_of_keyword(s, token) + token.size();
+        if (indexToken == std::string::npos) return s;
+
+        return s.substr(indexToken);
+    }
+
+    static std::string rtrim_byToken(const std::string& s, const std::string& token)
+    {
+        size_t indexToken = find_index_of_keyword(s, token) + token.size();
+        if (indexToken == std::string::npos) return s;
+
+        return s.substr(0, indexToken);
+    }
 
     static std::string ltrim_whiteSpace(const std::string& s)
     {

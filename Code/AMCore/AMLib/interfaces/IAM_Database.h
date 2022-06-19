@@ -27,7 +27,13 @@ public:
 	/// Closes the cconnection to the database
 	/// </summary>
 	/// <returns></returns>
-	virtual int disconnect() { return -1;  };
+	virtual int disconnect() { return -1;  }
+
+	/// <summary>
+	/// Executes query that does not return data, only Action queries
+	/// </summary>
+	/// <returns></returns>
+	virtual int execute_query(std::string Query) { return -1; }
 
 	/// <summary>
 	/// Obtains a list of tables that the database contains
@@ -98,6 +104,14 @@ public:
 	/// <param name="newData"></param>
 	/// <returns></returns>
 	virtual int insert_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData) { return -1; }
+
+	/// <summary>
+	/// Returns query for insert row based on tablestructure and values
+	/// </summary>
+	/// <param name="tableName">tablestructure</param>
+	/// <param name="newData"></param>
+	/// <returns></returns>
+	virtual std::string get_insert_query(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData) { return "Not implemented"; }
 
 	/// <summary>
 	/// Updates data in table

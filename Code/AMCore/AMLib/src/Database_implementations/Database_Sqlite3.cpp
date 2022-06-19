@@ -36,6 +36,11 @@ int Database_Sqlite3::disconnect()
 	return 0;
 }
 
+int Database_Sqlite3::execute_query(std::string Query) 
+{ 
+	return sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
+}
+
 std::vector<std::string> Database_Sqlite3::get_tableNames()
 {
 	std::vector<std::string> Response;
@@ -174,6 +179,12 @@ int Database_Sqlite3::remove_row(const AM_Database_TableStruct* tableName, std::
 
 int Database_Sqlite3::insert_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData)
 {
+	int result = sqlite3_exec(db, get_insert_query(tableName, newData).c_str(), NULL, NULL, &_errorMessage);
+	return result;
+}
+
+std::string Database_Sqlite3::get_insert_query(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData)
+{
 	std::string Query = "INSERT INTO \'" + tableName->tableName + "\' ( ";
 
 	Query += tableName->columnNames[1];
@@ -190,8 +201,7 @@ int Database_Sqlite3::insert_row(const AM_Database_TableStruct* tableName, std::
 	}
 	Query += " );";
 
-	int result = sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
-	return result;
+	return Query;
 }
 
 int Database_Sqlite3::update_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData)

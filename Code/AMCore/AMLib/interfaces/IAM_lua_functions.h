@@ -169,6 +169,7 @@ protected:
 		add_new_function(state, "template_pixelcase_getSelectPhases", "string", "template_pixelcase_getSelectPhases", Bind_PCTemplate_getSelectPhases);
 
 		add_new_function(state, "template_pixelcase_setEquilibriumTemperatureRange", "string", "template_pixelcase_getComposition", Bind_PCTemplate_setEquilibrimTemperatureRange);
+		add_new_function(state, "template_pixelcase_setStepSize", "string", "template_pixelcase_setStepSize <double>", Bind_PCTemplate_setEquilibrimStepSize);
 
 		add_new_function(state, "template_pixelcase_setScheilTemperatureRange", "string", "template_pixelcase_setScheilTemperatureRange <double start> <double end>", Bind_PCTemplate_setScheilTemperatureRange);
 		add_new_function(state, "template_pixelcase_setScheilLiquidFraction", "string", "template_pixelcase_setScheilLiquidFraction <double>", Bind_PCTemplate_setScheilLiquidFraction);
@@ -186,8 +187,8 @@ protected:
 		add_new_function(state, "configuration_setExternalAPI_path", "string status", "configuration_setAPI_path <string Filename> (set path to external dll e.g. matcalc)", Bind_configuration_setExternalAPIpath);
 		add_new_function(state, "configuration_get_working_directory", "string", "configuration_get_working_directory", Bind_configuration_getWorkingDirectory);
 		add_new_function(state, "configuration_set_working_directory", "string", "configuration_set_working_directory <string Directory>", Bind_configuration_setWorkingDirectory);
-		add_new_function(state, "configuration_get_thermodynamic_database_path", "string", "configuration_get_thermodynamic_database_path", Bind_configuration_setThermodynamicDatabasePath);
-		add_new_function(state, "configuration_set_thermodynamic_database_path", "string", "configuration_set_thermodynamic_database_path <string filename>", Bind_configuration_getThermodynamicDatabasePath);
+		add_new_function(state, "configuration_set_thermodynamic_database_path", "string", "configuration_get_thermodynamic_database_path", Bind_configuration_setThermodynamicDatabasePath);
+		add_new_function(state, "configuration_get_thermodynamic_database_path", "string", "configuration_set_thermodynamic_database_path <string filename>", Bind_configuration_getThermodynamicDatabasePath);
 		add_new_function(state, "configuration_get_physical_database_path", "string", "configuration_get_physical_database_path", Bind_configuration_getPhysicalDatabasePath);
 		add_new_function(state, "configuration_set_physical_database_path", "string", "configuration_set_physical_database_path <string filename>", Bind_configuration_setPhysicalDatabasePath);
 		add_new_function(state, "configuration_get_mobility_database_path", "string", "configuration_get_mobility_database_path", Bind_configuration_getMobilityDatabasePath);
@@ -1075,6 +1076,27 @@ protected:
 		return 1;
 	}
 
+	static int Bind_PCTemplate_setEquilibrimStepSize(lua_State* state)
+	{
+		std::vector<std::string> parameters;
+		if (check_global_using_openProject(state, lua_gettop(state), 1,
+			" Input has to specify the stepsize ",
+			parameters) != 0) return 1;
+
+		// You have to create a template where you do al the configurations you want to run.
+		AM_pixel_parameters* pointerPixel = _openProject->get_case_template();
+		if (pointerPixel == nullptr)
+		{
+			lua_pushstring(state, "No template created, please create a template!");
+			return 1;
+		}
+
+		pointerPixel->set_equilibrium_config_stepSize(std::stold(parameters[0]));
+		
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
 
 	// Scheil config
 	static int Bind_PCTemplate_setScheilTemperatureRange(lua_State* state)
@@ -1317,7 +1339,7 @@ protected:
 	{
 		int noParameters = lua_gettop(state);
 		std::string parameter = lua_tostring(state, 1);
-		std::string out = _dbFramework->get_dataController()->get_csv((Data_Controller::DATATABLES)std::stoi(parameter));
+		std::string out = "";//_dbFramework->get_dataController()->get_csv((Data_Controller::DATATABLES)std::stoi(parameter));
 
 		lua_pushstring(state, out.c_str());
 		return 1;
@@ -1326,6 +1348,46 @@ protected:
 	
 
 #pragma endregion
+#pragma endregion
+
+#pragma region LUA
+	static std::string run_command(lua_State* state, std::string command)
+	{
+		int c_out = lua_getglobal(state, command.c_str());
+
+		lua_call(state, 0, 1);
+
+		std::string out;
+		try
+		{
+			out = lua_tostring(state, -1);
+		}
+		catch (const std::exception&)
+		{
+			out = "Command not recognized!";
+		}
+
+		lua_pop(state, 1);
+
+		return out;
+	}
+
+	static std::string run_command(lua_State* state, std::string command, std::vector<std::string> parameters)
+	{
+		lua_getglobal(state, command.c_str());
+
+		for each (std::string pary in parameters)
+		{
+			lua_pushstring(state, pary.c_str());
+		}
+
+		lua_call(state, parameters.size(), 1);
+
+		std::string out(lua_tostring(state, -1));
+		lua_pop(state, 1);
+
+		return out;
+	}
 #pragma endregion
 
 };

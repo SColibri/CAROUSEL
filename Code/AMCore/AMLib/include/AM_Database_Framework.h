@@ -25,11 +25,12 @@ public:
 	{
 		return _database;
 	}
-
+	/*
 	Data_Controller* get_dataController()
 	{
 		return _dataController;
 	}
+	*/
 
 	const std::string get_apiExternalPath()
 	{
@@ -42,7 +43,7 @@ private:
 	AM_Config* _configuration{ nullptr };
 	AM_FileManagement _fileManagement;
 	IAM_Database* _database{ nullptr };
-	Data_Controller* _dataController{ nullptr };
+	// Data_Controller* _dataController{ nullptr };
 
 
 #pragma region Database

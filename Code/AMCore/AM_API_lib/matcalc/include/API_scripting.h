@@ -20,7 +20,7 @@ namespace API_Scripting
 		std::vector<std::string> out
 		{
 			"use-module core",
-			"set-working-directory \"" + configuration->get_working_directory() + "\"",
+			"set-working-directory " + configuration->get_working_directory() + "",
 			"open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path() + "",
 			"set-variable-value npc 25"
 		};
@@ -37,9 +37,20 @@ namespace API_Scripting
 		return out;
 	}
 
+#pragma region single_commands
+	std::string static script_initialize_core() 
+	{
+		return "use-module core";
+	}
+
+	std::string static script_set_working_directory(AM_Config* configuration)
+	{
+		return "set-working-directory \"" + configuration->get_working_directory() + "\"";
+	}
+
 	std::string static script_set_thermodynamic_database(std::string parameters)
 	{
-		return "open-thermodyn-database " + parameters;
+		return "open-thermodynamic-database " + parameters;
 	}
 
 	std::string static script_set_physical_database(std::string parameters)
@@ -73,27 +84,29 @@ namespace API_Scripting
 		return out;
 	}
 
+	std::string static Script_setStepOptions(std::string stepOptions)
+	{
+		std::string out = "set-step-option " + stepOptions ;
+
+		return out;
+	}
+	std::string static Script_stepEquilibrium()
+	{
+		std::string out = "step-equilibrium";
+
+		return out;
+	}
+
 	std::string static Script_setComposition_weight(std::vector<std::string> Elements, 
 													std::vector<std::string> Values)
 	{
-		std::string out{};
-		std::string compDef{};
-
-		if(Elements.size() == Values.size())
+		std::string buildComp{ "enter-composition type=weight-percent composition=\"" };
+		for (int n1 = 1; n1 < Elements.size(); n1++)
 		{
-			int Index{0};
-			compDef = "enter-composition type=weigth-percent composition=\"";
-			for each (std::string elementy in Elements)
-			{
-				out += "set-variable-value variable=x_" + elementy + "_0 value=" + Values[Index++] + "\n";
-				compDef += elementy + "=" + "x_" + elementy + "_0 ";
-			}
-			compDef += "\"";
-			out += compDef + "\n";
+			buildComp += Elements[n1] + "=" + Values[n1] + " ";
 		}
-		else { out = "$ ERROR setting up compositions, Elements.size <> Values.size"; }
-
-		return out;
+		buildComp += "\"";
+		return buildComp;
 	}
 
 	std::string static Script_setTemperature_Celcius(double temperature)
@@ -105,18 +118,130 @@ namespace API_Scripting
 
 	std::string static Script_setStartValues()
 	{
-		std::string out = "set-start-values \n ";
+		std::string out = "set-start-values";
 
 		return out;
 	}
 
 	std::string static Script_calculateEquilibrium()
 	{
-		std::string out = "set-automatic-startvalues \n \
-						   calculate-equilibrium \n ";
+		std::string out = "calculate-equilibrium";
 
 		return out;
 	}
+
+	std::string static Script_selectPhases(std::vector<std::string> Phases)
+	{
+		std::string out = "select-phases ";
+
+		for each (std::string elementy in Phases)
+		{
+			out += elementy + " ";
+		}
+
+		out += "";
+
+		return out;
+	}
+
+
+	std::string static Script_readThermodynamicDatabase()
+	{
+		std::string out = "read-thermodynamic-database \n";
+		return out;
+	}
+
+	std::string static Script_openThermodynamicDatabase(AM_Config* configuration)
+	{
+		std::string out = "open-thermodynamic-database " + configuration->get_ThermodynamicDatabase_path() + "" + "\n";
+		return out;
+	}
+
+	std::string static Script_readMobilityDatabase(AM_Config* configuration)
+	{
+		std::string out = "read-mobility-database " + configuration->get_MobilityDatabase_path() + "" + "\n";
+		return out;
+	}
+
+	std::string static Script_readPhysicalDatabase(AM_Config* configuration)
+	{
+		std::string out = "read-physical-database " + configuration->get_PhysicalDatabase_path() + "" + "\n";
+		return out;
+	}
+
+	std::string static Script_set_number_of_precipitate_classes(int precipClasses)
+	{
+		std::string out = "set-variable-value npc " + std::to_string(precipClasses) + "\n";
+		return out;
+	}
+
+#pragma region MatcalcBUFFER
+	std::string static script_buffer_listContent()
+	{
+		return "list-buffer-contents";
+	}
+
+	std::string static script_buffer_loadState(int stateNumber)
+	{
+		return "load-buffer-state line-index=" + std::to_string(stateNumber);
+	}
+
+	std::string static script_buffer_getPhaseStatus(std::string phaseName)
+	{
+		string_manipulators::toCaps(phaseName);
+		return "list-phase-status phase=" + phaseName;
+	}
+
+	std::string static script_buffer_clear(std::string bufferName)
+	{
+		return "list-phase-status phase=" + bufferName;
+	}
+#pragma endregion
+#pragma region MatcalcVariables
+	std::string static script_format_variable_string(const std::string& stringVar ,
+													 const std::string& format, 
+													 std::vector<std::string>& variableNames) 
+	{
+		std::string out{ "format-variable-string variable=" + 
+						 stringVar + 
+					    " format_string=\"" + format + "\" " +
+						IAM_Database::csv_join_row(variableNames," ")};
+
+		return out;
+	}
+
+	std::vector<std::string> static script_get_phase_equilibrium_variable_name(std::vector<std::string>& Phases)
+	{
+		std::vector<std::string> out;
+
+		for (std::string phaseN : Phases)
+		{
+			out.push_back("F$" + phaseN);
+		}
+
+		return out;
+	}
+
+	std::vector<std::string> static script_get_phase_equilibrium_scheil_variable_name(std::vector<std::string>& Phases)
+	{
+		std::vector<std::string> out;
+
+		for (std::string phaseN : Phases)
+		{
+			out.push_back("F$" + phaseN + "_S");
+		}
+
+		return out;
+	}
+
+	std::string static print_variable_to_console(std::string stringVar)
+	{
+		std::string out{"send-console-string string=#" + stringVar};
+		return out;
+	}
+#pragma endregion
+
+#pragma endregion
 
 	std::string static Script_setupScheilGulliver()
 	{
@@ -132,49 +257,8 @@ namespace API_Scripting
 
 
 
-	std::string static Script_selectPhases(std::vector<std::string> Phases)
-	{
-		std::string out = "select-phases ";
-
-		for each (std::string elementy in Phases)
-		{
-			out += elementy + " ";
-		}
-
-		out += "\n";
-
-		return out;
-	}
-
-	std::string static Script_readThermodynamicDatabase()
-	{
-		std::string out = "read-thermodyn-database \n";
-		return out;
-	}
 	
-	std::string static Script_readThermodynamicDatabase(AM_Config* configuration)
-	{
-		std::string out = "read-thermodyn-database \'" + configuration->get_ThermodynamicDatabase_path() + "\'"  + "\n";
-		return out;
-	}
 
-	std::string static Script_readMobilityDatabase(AM_Config* configuration)
-	{
-		std::string out = "read-thermodyn-database \'" + configuration->get_MobilityDatabase_path() + "\'" + "\n";
-		return out;
-	}
-
-	std::string static Script_readPhysicalDatabase(AM_Config* configuration)
-	{
-		std::string out = "read-thermodyn-database \'" + configuration->get_PhysicalDatabase_path() + "\'" + "\n";
-		return out;
-	}
-
-	std::string static Script_set_number_of_precipitate_classes(int precipClasses)
-	{
-		std::string out = "set-variable-value npc " + std::to_string(precipClasses) + "\n";
-		return out;
-	}
 
 	std::string static Script_Header()
 	{
@@ -186,7 +270,7 @@ namespace API_Scripting
 		return out;
 	}
 
-#pragma region Equilibrium
+#pragma region Equilibrium_steps
 	std::vector<std::string> static Script_run_stepEquilibrium(AM_Config* configuration, 
 																double startTemperature,
 																double endTemperature,
@@ -194,45 +278,63 @@ namespace API_Scripting
 																std::vector<std::string>& Compositions, 
 																std::vector<std::string>& Phases)
 	{
-		std::vector<std::string> out = Script_initialize(configuration);
-		out.push_back("select-elements " + IAM_Database::csv_join_row(Elements, " "));
-		out.push_back("select-phases " + IAM_Database::csv_join_row(Phases, " "));
-		out.push_back("read-thermodyn-database \'" + configuration->get_ThermodynamicDatabase_path() + "\'");
-		out.push_back("read-mobility-database \'" + configuration->get_MobilityDatabase_path() + "\'");
-		out.push_back("read-physical-database \'" + configuration->get_PhysicalDatabase_path() + "\'");
-		out.push_back("set-reference-element " + Elements[0]); // TODO let the user select the reference element, here default Index == 0
-		out.push_back("set_step-option type=temperature"); // TODO add this parameter to eConfig
-		out.push_back("set-step-option temperature-in-celsius=yes"); // TODO this should be based on eConfig
-		out.push_back("set-step-option range start=" + std::to_string(startTemperature) + 
-					  " stop=" + std::to_string(endTemperature) + " scale=lin step-width=-25");
+		std::vector<std::string> out;
+		out.push_back(script_initialize_core());
+		out.push_back(script_set_thermodynamic_database(configuration->get_ThermodynamicDatabase_path()));
+		out.push_back(Script_selectElements(Elements));
+		out.push_back(Script_selectPhases(Phases));
+		out.push_back(Script_readThermodynamicDatabase());
+		out.push_back(Script_readMobilityDatabase(configuration));
+		out.push_back(Script_readPhysicalDatabase(configuration));
+		out.push_back(Script_setReferenceElement(Elements[0])); // TODO let the user select the reference element, here default Index == 0
+		out.push_back("set-temperature-celsius " + std::to_string((int)startTemperature));
+		out.push_back(Script_setComposition_weight(Elements, Compositions)); //TODO let user define the composition type
+		out.push_back(Script_setStartValues());
+		out.push_back(Script_calculateEquilibrium());
+		out.push_back(Script_setStepOptions("type=temperature")); // TODO add this parameter to eConfig
+		out.push_back(Script_setStepOptions("temperature-in-celsius=yes")); // TODO this should be based on eConfig
+		out.push_back(Script_setStepOptions("range start=" + std::to_string((int)startTemperature) +
+												 " stop=" + std::to_string((int)endTemperature) + 
+												 " scale=lin step-width=1"));
+		out.push_back(Script_stepEquilibrium());
 
-		// Build string for composition, we omit the first element because this si the reference element
-		std::string buildComp{ "" };
-		for(int n1 = 1; n1 < Elements.size(); n1++)
-		{
-			buildComp += Elements[n1] + "=" + Compositions[n1] + " ";
-		}
-		out.push_back("enter-composition type=weight-percent composition=\"" + buildComp + "\""); //TODO let user define the composition type
-		out.push_back("step-equilibrium");
+		return out;
+	}
+
+	std::vector<std::string> static Script_run_stepScheilEquilibrium(AM_Config* configuration,
+		double startTemperature,
+		double endTemperature,
+		double stepWitdh,
+		std::vector<std::string>& Elements,
+		std::vector<std::string>& Compositions,
+		std::vector<std::string>& Phases)
+	{
+		std::vector<std::string> out;
+		out.push_back(script_initialize_core());
+		out.push_back(script_set_thermodynamic_database(configuration->get_ThermodynamicDatabase_path()));
+		out.push_back(Script_selectElements(Elements));
+		out.push_back(Script_selectPhases(Phases));
+		out.push_back(Script_readThermodynamicDatabase());
+		out.push_back(Script_readMobilityDatabase(configuration));
+		out.push_back(Script_readPhysicalDatabase(configuration));
+		out.push_back(Script_setReferenceElement(Elements[0])); // TODO let the user select the reference element, here default Index == 0
+		out.push_back("set-temperature-celsius " + std::to_string((int)startTemperature));
+		out.push_back(Script_setComposition_weight(Elements, Compositions)); //TODO let user define the composition type
+		out.push_back(Script_setStartValues());
+		out.push_back(Script_calculateEquilibrium());
+		out.push_back(Script_setStepOptions("type=scheil")); // TODO add this parameter to eConfig
+		out.push_back(Script_setStepOptions("range start=" + std::to_string((int)startTemperature) +
+			" stop=" + std::to_string((int)endTemperature) +
+			" step-width=" + std::to_string(stepWitdh)));
+		out.push_back(Script_setStepOptions("scheil-dependent-phase=LIQUID")); // TODO let choose the phase
+		out.push_back(Script_setStepOptions("scheil-minimum-liquid-fraction=0.01")); // TODO add parameter for this
+		out.push_back(Script_setStepOptions("temperature-in-celsius=yes")); // TODO this should be based on eConfig
+		out.push_back(Script_setStepOptions("scheil-create-phases-automatically=yes"));
+		
+		out.push_back(Script_stepEquilibrium());
 
 		return out;
 	}
 #pragma endregion
-#pragma region MatcalcBUFFER
-	std::string static script_buffer_listContent() 
-	{
-		return "list-buffer-contents";
-	}
 
-	std::string static script_buffer_loadState(int stateNumber)
-	{
-		return "load-buffer-state line-index=" + std::to_string(stateNumber);
-	}
-
-	std::string static script_buffer_getPhaseStatus(std::string phaseName)
-	{
-		string_manipulators::toCaps(phaseName);
-		return "list-phase-status phase=" + phaseName;
-	}
-#pragma endregion
 }

@@ -87,6 +87,21 @@ public:
 		return 0;
 	}
 
+	static int save(std::vector<IAM_DBS*>& vectorSave)
+	{
+		if (vectorSave.size() == 0) return 1;
+		std::string stringBuild{ "BEGIN TRANSACTION;\n" }; //TODO: this is specific to SQLIite 3, remove :)
+
+		for(int n1 = 0; n1 < vectorSave.size(); n1++)
+		{
+			stringBuild += vectorSave[n1]->_db->get_insert_query(&vectorSave[n1]->_tableStructure, vectorSave[n1]->get_input_vector()) + "\n";
+		}
+
+		stringBuild += "COMMIT;";
+		
+		return vectorSave[0]->_db->execute_query(stringBuild);;
+	}
+
 	virtual int remove() 
 	{
 		if (_id == -1) return 1;
