@@ -22,7 +22,6 @@ namespace AMFramework.Views.Config
     {
         public Configuration()
         {
-            this.DataContext = new Controller.Controller_Config();
             InitializeComponent();
         }
 

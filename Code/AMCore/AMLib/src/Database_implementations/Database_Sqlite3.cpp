@@ -307,26 +307,20 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows_joint(cons
 std::string Database_Sqlite3::get_tableRows(std::string& tableName)
 {
 	std::string Query = "SELECT * FROM \'" + tableName + "\' ";
-	sqlite3_stmt* stmt;
 	AM_Database_TableStruct dataStruct = get_tableStruct(tableName);
 
 	std::vector<std::vector<std::string>> outRows = get_tableRows(&dataStruct);
-	
 	std::string out = get_csv(outRows);
-	sqlite3_finalize(stmt);
 	return out;
 }
 
 std::string Database_Sqlite3::get_tableRows(std::string& tableName, std::string& whereQuery)
 {
 	std::string Query = "SELECT * FROM \'" + tableName + "\' WHERE " + whereQuery;
-	sqlite3_stmt* stmt;
 	AM_Database_TableStruct dataStruct = get_tableStruct(tableName);
 
 	std::vector<std::vector<std::string>> outRows = get_tableRows(&dataStruct, whereQuery);
-
 	std::string out = get_csv(outRows);
-	sqlite3_finalize(stmt);
 	return out;
 }
 

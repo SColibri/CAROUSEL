@@ -113,27 +113,26 @@ int& AM_Server::send_buffer(std::string& sendMessage)
 	if (check_send(iSendResult) == SOCKET_ERROR) return iSendResult;
 	printf("Bytes sent -START-: %d\n", iSendResult);
 
-
-
-	while (sendMessage.length() - 1 > sendIndex)
-	{
-		reset_buffer(sendBuffer, sendBuffer_len);
-		for (size_t i = sendIndex; i < sendMessage.length(); i++)
+	if(sendMessage.length() != 0)
+		while (sendMessage.length() - 1 > sendIndex)
 		{
-			if (i - sendIndex == sendBuffer_len)
+			reset_buffer(sendBuffer, sendBuffer_len);
+			for (size_t i = sendIndex; i < sendMessage.length(); i++)
 			{
-				sendIndex = i;
-				break;
+				if (i - sendIndex == sendBuffer_len)
+				{
+					sendIndex = i;
+					break;
+				}
+
+				sendBuffer[i - sendIndex] = sendMessage[i];
+
+				if (i == sendMessage.length() - 1) sendIndex = i;
 			}
-
-			sendBuffer[i - sendIndex] = sendMessage[i];
-
-			if (i == sendMessage.length() - 1) sendIndex = i;
+			iSendResult = send(_clientSocket, sendBuffer, sendBuffer_len, 0);
+			if (check_send(iSendResult) == SOCKET_ERROR) return iSendResult;
+			printf("Bytes sent: %d\n", iSendResult);
 		}
-		iSendResult = send(_clientSocket, sendBuffer, sendBuffer_len, 0);
-		if (check_send(iSendResult) == SOCKET_ERROR) return iSendResult;
-		printf("Bytes sent: %d\n", iSendResult);
-	}
 
 	reset_buffer(sendBuffer, sendBuffer_len);
 	sendBuffer[0] = 'E';
@@ -195,14 +194,22 @@ void AM_Server::initialize(std::string port)
 			std::vector<std::string> splitCommand = split_commands(std::string(recvbuf));
 			std::string out;
 
-			if (splitCommand.size() == 1)
+			try
 			{
-				out = _implementation->run_lua_command(splitCommand[0]);
+				if (splitCommand.size() == 1)
+				{
+					out = _implementation->run_lua_command(splitCommand[0]);
+				}
+				else
+				{
+					out = _implementation->run_lua_command(splitCommand[0], get_parameters(splitCommand));
+				}
 			}
-			else
+			catch (const std::exception& e)
 			{
-				out = _implementation->run_lua_command(splitCommand[0], get_parameters(splitCommand));
+				out = "Error: " + *e.what();
 			}
+			
 
 			if (send_buffer(out) == SOCKET_ERROR) return;
 

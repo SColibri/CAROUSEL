@@ -9,7 +9,7 @@
 
 API_lua_functions::API_lua_functions(lua_State* state) : IAM_lua_functions(state)
 {
-	//AMBaseFunctions::add_base_functions(state, this);
+	//AMBaseFunctions::add_base_functions(state, this);bind_matcalc_initializeCore
 	add_base_functions(state);
 	add_functions_to_lua(state);
 }
@@ -111,7 +111,8 @@ int API_lua_functions::bind_initializeCore_command(lua_State* state)
 {
 	if (_configuration == nullptr) return -1;
 	std::string out = runVectorCommands(API_Scripting::Script_initialize(_configuration));
-
+	//TODO: if not loaded this causes an error you missed this one
+	// 
 	// Load database elements and phases each time this function is called
 	bind_getElementNames_command(state); // Elements
 	out += lua_tostring(state, -1); lua_pop(state, 1);

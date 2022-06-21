@@ -188,7 +188,7 @@ protected:
 		add_new_function(state, "configuration_get_working_directory", "string", "configuration_get_working_directory", Bind_configuration_getWorkingDirectory);
 		add_new_function(state, "configuration_set_working_directory", "string", "configuration_set_working_directory <string Directory>", Bind_configuration_setWorkingDirectory);
 		add_new_function(state, "configuration_set_thermodynamic_database_path", "string", "configuration_get_thermodynamic_database_path", Bind_configuration_setThermodynamicDatabasePath);
-		add_new_function(state, "configuration_get_thermodynamic_database_path", "string", "configuration_set_thermodynamic_database_path <string filename>", Bind_configuration_getThermodynamicDatabasePath);
+		add_new_function(state, "configuration_get_thermodynamic_database_path", "string", "configuration_get_thermodynamic_database_path <string filename>", Bind_configuration_getThermodynamicDatabasePath);
 		add_new_function(state, "configuration_get_physical_database_path", "string", "configuration_get_physical_database_path", Bind_configuration_getPhysicalDatabasePath);
 		add_new_function(state, "configuration_set_physical_database_path", "string", "configuration_set_physical_database_path <string filename>", Bind_configuration_setPhysicalDatabasePath);
 		add_new_function(state, "configuration_get_mobility_database_path", "string", "configuration_get_mobility_database_path", Bind_configuration_getMobilityDatabasePath);
@@ -379,11 +379,13 @@ protected:
 	/// <returns></returns>
 	static int Bind_configuration_setAPIpath(lua_State* state)
 	{
-		int noParameters = lua_gettop(state);
-		if(noParameters > 0)
+		std::vector<std::string> parameters = get_parameters(state);
+
+		if (parameters.size() > 0)
 		{
-			std::string parameter = lua_tostring(state, 1);
+			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
 			_configuration->set_api_path(parameter);
+			_configuration->save();
 
 			lua_pushstring(state, "OK");
 		}
@@ -417,11 +419,13 @@ protected:
 	/// <returns></returns>
 	static int Bind_configuration_setExternalAPIpath(lua_State* state)
 	{
-		int noParameters = lua_gettop(state);
-		if (noParameters > 0)
+		std::vector<std::string> parameters = get_parameters(state);
+
+		if (parameters.size() > 0)
 		{
-			std::string parameter = lua_tostring(state, 1);
+			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
 			_configuration->set_apiExternal_path(parameter);
+			_configuration->save();
 
 			lua_pushstring(state, "OK");
 		}
@@ -457,12 +461,13 @@ protected:
 	/// <returns></returns>
 	static int Bind_configuration_setWorkingDirectory(lua_State* state)
 	{
-		int noParameters = lua_gettop(state);
+		std::vector<std::string> parameters = get_parameters(state);
 
-		if(noParameters > 0)
+		if(parameters.size() > 0)
 		{
-			std::string parameter = lua_tostring(state, 1);
+			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
 			_configuration->set_working_directory(parameter);
+			_configuration->save();
 
 			lua_pushstring(state, "OK");
 		}
@@ -501,6 +506,7 @@ protected:
 		{
 			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
 			_configuration->set_ThermodynamicDatabase_path(parameter);
+			_configuration->save();
 
 			lua_pushstring(state, "OK");
 		}
@@ -539,6 +545,7 @@ protected:
 		{
 			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
 			_configuration->set_PhysicalDatabase_path(parameter);
+			_configuration->save();
 
 			lua_pushstring(state, "OK");
 		}
@@ -577,6 +584,7 @@ protected:
 		{
 			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
 			_configuration->set_MobilityDatabase_path(parameter);
+			_configuration->save();
 
 			lua_pushstring(state, "OK");
 		}
@@ -1339,7 +1347,7 @@ protected:
 	{
 		int noParameters = lua_gettop(state);
 		std::string parameter = lua_tostring(state, 1);
-		std::string out = "";//_dbFramework->get_dataController()->get_csv((Data_Controller::DATATABLES)std::stoi(parameter));
+		std::string out = Data_Controller::get_csv(_dbFramework->get_database(), (Data_Controller::DATATABLES)std::stoi(parameter));
 
 		lua_pushstring(state, out.c_str());
 		return 1;

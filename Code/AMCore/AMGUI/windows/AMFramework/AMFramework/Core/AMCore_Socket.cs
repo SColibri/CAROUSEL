@@ -17,7 +17,7 @@ namespace AMFramework.Core
         public bool connected { get { return _connected; } }
         public void init() 
         {
-            s.ReceiveTimeout = 5000;
+            s.ReceiveTimeout = 15000;
             connect_to_server("127.0.0.1", 27015);
         }
         private void connect_to_server(string host, int port) 

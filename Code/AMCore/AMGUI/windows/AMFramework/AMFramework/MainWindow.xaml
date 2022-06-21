@@ -44,15 +44,17 @@
             </Ribbon.QuickAccessToolBar>
 
             <RibbonTab Header="Home" KeyTip="H" >
-                <!-- Charting-->
-                <RibbonGroup x:Name="Project" Header="Project">
+                <!-- Project -->
+                <RibbonGroup x:Name="project" Header="Project">
+                    <RibbonButton  Label="Configuration" 
+                                   Click="RibbonButton_Click_1"
+                                   SmallImageSource="Resources/Icons/tablerIcons/device-desktop-analytics.png"/>
                     <RibbonButton  Label="new" 
                                    Click="RibbonButton_Click_NewProject" 
                                    SmallImageSource="Resources/Icons/tablerIcons/layout-grid-add.png"/>
                     <RibbonButton  Label="open" 
                                    Click="RibbonButton_Click_2"
                                    SmallImageSource="Resources/Icons/tablerIcons/file-search.png"/>
-
                 </RibbonGroup>
                 
                 <!-- Database-->

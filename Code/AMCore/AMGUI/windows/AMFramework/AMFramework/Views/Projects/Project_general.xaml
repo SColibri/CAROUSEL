@@ -29,7 +29,7 @@
                 <TextBox Grid.Row="1" 
                          x:Name="Pname"
                          Margin="3,0,3,5" 
-                         FontSize="18" 
+                         FontSize="15" 
                          Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          TextAlignment="Left"
                          TextWrapping="WrapWithOverflow"
@@ -53,7 +53,7 @@
                 <TextBlock Text="API type" FontWeight="Bold" FontSize="12" Margin="3" VerticalAlignment="Bottom"/>
                 <TextBox Grid.Row="1" 
                          Margin="3,0,3,5" 
-                         FontSize="18" IsEnabled="false" 
+                         FontSize="15" IsEnabled="false" 
                          Text="{Binding Path=APIName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          TextAlignment="Left"
                          TextWrapping="WrapWithOverflow"

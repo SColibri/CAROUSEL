@@ -124,16 +124,6 @@ namespace AMFramework
 
         }
 
-        private void RibbonButton_Click_newProject(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void RibbonButton_Click_1(object sender)
-        {
-
-        }
-
         private void RibbonButton_Click_NewProject(object sender, RoutedEventArgs e)
         {
             Popup.Visibility = Visibility.Visible;
@@ -174,8 +164,18 @@ namespace AMFramework
         };
 
 
+
         #endregion
 
+        private void RibbonButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            Popup.Visibility = Visibility.Visible;
 
+            Controller.Controller_MainWindow controller_MainWindow = (Controller.Controller_MainWindow)DataContext;
+            Components.Windows.AM_popupWindow Pw = controller_MainWindow.popupConfigurations();
+            Pw.PopupWindowClosed += ClosePopup;
+
+            PopupFrame.Navigate(Pw);
+        }
     }
 }

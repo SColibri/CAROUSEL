@@ -126,36 +126,41 @@ public:
 	}
 #pragma endregion
 
-	std::string get_csv(DATATABLES selOption)
+	static std::string get_csv(IAM_Database* db,DATATABLES selOption)
 	{
+		AM_Database_TableStruct tbStruct;
+
 		switch (selOption)
 		{
 		case Data_Controller::PROJECTS:
-			if (_datatable_projects != nullptr) return _datatable_projects->get_csv();
+			tbStruct = AMLIB::TN_Projects();
 			break;
 		case Data_Controller::CASES:
-			if (_datatable_cases != nullptr) return _datatable_cases->get_csv();
+			tbStruct = AMLIB::TN_Case(); 
 			break;
 		case Data_Controller::ELEMENTS:
-			if (_datatable_elements != nullptr) return _datatable_elements->get_csv();
+			tbStruct = AMLIB::TN_Element(); 
 			break;
 		case Data_Controller::PHASES:
-			if (_datatable_phases != nullptr) return _datatable_phases->get_csv();
+			tbStruct = AMLIB::TN_Phase(); 
 			break;
 		case Data_Controller::ELEMENTS_COMPOSITION:
-			if (_datatable_elements_composition != nullptr) return _datatable_elements_composition->get_csv();
+			tbStruct = AMLIB::TN_ElementComposition(); 
 			break;
 		case Data_Controller::SCHEIL_PHASE_FRACTIONS:
-			if (_datatable_scheil_configurations != nullptr) return _datatable_scheil_configurations->get_csv();
+			tbStruct = AMLIB::TN_ScheilPhaseFraction(); 
 			break;
 		case Data_Controller::CALPHAD:
-			if (_datatable_CALPHADDB != nullptr) return _datatable_CALPHADDB->get_csv();
+			tbStruct = AMLIB::TN_CALPHADDatabase(); 
 			break;
 		default:
 			break;
 		}
+		if(tbStruct.columnNames.size() == 0) return "No data available";
 
-		return "No data available";
+		AM_Database_Datatable tableReturn(db, &tbStruct);
+		tableReturn.load_data();
+		return tableReturn.get_csv();
 	}
 
 private:

@@ -434,7 +434,7 @@ private:
 			tempPhaseFraction[n1] = new DBS_EquilibriumPhaseFraction(_dbFramework->get_database(), -1);
 		}
 
-
+		// retreive data from matcalc buffer
 		for(int n1 = 1; n1 < bufferRowEntries.size(); n1++)
 		{
 			// get buffer row items
@@ -462,6 +462,7 @@ private:
 			
 		}
 
+		// save in database and remove from memory
 		int resp = IAM_DBS::save(tempPhaseFraction);
 		for (int n1 = 0; n1 < tempPhaseFraction.size(); n1++)
 		{
@@ -473,7 +474,12 @@ private:
 		return 1;
 	}
 
-
+	/// <summary>
+	/// Based on the current openProject, runs a stepped equilibrium calculation
+	/// input Parameters: INT <IDCase>
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
 	static int Bind_SPC_StepScheil(lua_State* state)
 	{
 		if (_openProject == nullptr)
@@ -568,6 +574,7 @@ private:
 
 		}
 
+		// cumulative fraction, save as table
 		for (int n1 = 1; n1 < tempPhaseFraction.size(); n1++)
 		{
 			for (int n2 = 0; n2 < selectedPhases.size(); n2++)
@@ -577,6 +584,7 @@ private:
 			}
 		}
 
+		// Save all entries
 		tempPhaseCumulativeFraction.insert(tempPhaseCumulativeFraction.end(), tempPhaseFraction.begin(), tempPhaseFraction.end());
 		int resp = IAM_DBS::save(tempPhaseCumulativeFraction);
 		for (int n1 = 0; n1 < tempPhaseFraction.size(); n1++)

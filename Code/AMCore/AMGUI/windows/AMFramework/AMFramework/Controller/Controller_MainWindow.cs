@@ -56,6 +56,29 @@ namespace AMFramework.Controller
 
         #endregion
 
+        #region Configurations
+        public Components.Windows.AM_popupWindow popupConfigurations()
+        {
+            Views.Config.Configuration Pg = new();
+            Pg.DataContext = new Controller.Controller_Config(_coreSocket);
+
+            Components.Windows.AM_popupWindow Pw = new() { Title = "Configurations" };
+            Pw.ContentPage.Children.Add(Pg);
+
+            Components.Button.AM_button nbutt = new()
+            {
+                IconName = FontAwesome.WPF.FontAwesomeIcon.Save.ToString(),
+                Margin = new System.Windows.Thickness(3),
+                CornerRadius = "20",
+                GradientTransition = "DodgerBlue"
+            };
+            nbutt.ClickButton += ((Controller.Controller_Config)Pg.DataContext).saveClickHandle;
+
+            Pw.add_button(nbutt);
+            return Pw;
+        }
+        #endregion
+
         #region Projects
         private List<Model.Model_Projects> _projects = new();
         public List<Model.Model_Projects> Projects { 
