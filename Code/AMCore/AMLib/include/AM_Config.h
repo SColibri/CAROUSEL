@@ -3,6 +3,7 @@
 #include <filesystem>
 #include "AM_FileManagement.h"
 #include "../interfaces/IStrigify.h"
+#include "../interfaces/IAM_Observed.h"
 
 
 /** \defgroup AMLib
@@ -18,7 +19,7 @@
 /// <summary>
 /// Configuration options used by the framework
 /// </summary>
-class AM_Config : IStringify{
+class AM_Config : public IStringify, public IAM_Observed{
 
 public:
 	
@@ -54,6 +55,11 @@ public:
 	/// </summary>
 	/// <param name="filename"></param>
 	void load(std::string filename);
+
+	/// <summary>
+	/// Loads by default name
+	/// </summary>
+	void load();
 #pragma endregion Methods
 
 	// setters-getters

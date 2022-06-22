@@ -40,4 +40,9 @@ std::string AM_API_Matcalc::run_lua_command(const std::string& command, std::vec
 }
 
 std::string AM_API_Matcalc::helloApi() { return "From matcalc"; }
+
+void AM_API_Matcalc::dispose() 
+{ 
+	std::string out = _luaInterpreter.run_command("exit");
+}
 #pragma endregion

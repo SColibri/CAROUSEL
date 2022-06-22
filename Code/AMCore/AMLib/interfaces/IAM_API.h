@@ -32,6 +32,7 @@ public:
 	virtual std::string run_lua_command(const std::string& command, std::vector<std::string> parameters) { return "Not implemented"; }
 	virtual void load_config(std::string filename){}
 	virtual std::string helloApi() { return "From interface"; }
+	virtual void dispose() {}
 
 	/// <summary>
 	/// obtains list of functions defined for the implementation

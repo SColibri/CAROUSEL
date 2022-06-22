@@ -40,6 +40,13 @@ private:
 	static int bind_hello_world(lua_State* state);
 
 	/// <summary>
+	/// closes matcalc core
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int bind_exit(lua_State* state);
+
+	/// <summary>
 	/// This calls the run matcalc script, the parameter passed to lua has to be 
 	/// the filename for the script
 	/// </summary>

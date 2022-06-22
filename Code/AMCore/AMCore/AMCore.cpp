@@ -79,9 +79,11 @@ int main(int argc, char* argv[])
 	AM_Config config01;
 	config01.set_apiExternal_path("C:/Program Files/MatCalc 6/mc_core.dll");
 	config01.set_working_directory("C:/Users/drogo/Desktop/Homless");
+	config01.set_ThermodynamicDatabase_path("C:/Users/drogo/Documents/MatCalcUserData/database/thermodynamic/ME-Al1.2.tdb");
+	config01.load();
 
 	API_controll api01(config01);
-	config01.set_ThermodynamicDatabase_path("C:/Users/drogo/Documents/MatCalcUserData/database/thermodynamic/ME-Al1.2.tdb");
+	config01.add_observer((IAM_Observer*) &api01);
 
 	HelpOptions Options(argc, argv);
 	if (Options.get_help() == "TRUE") { Options.Show_help(); }
@@ -138,91 +140,7 @@ int main(int argc, char* argv[])
 		servy.init();
 	}
 
-	std::string outtest = api01.get_implementation()->run_lua_script("C:/Users/drogo/Desktop/Homless/TestLua.lua");
-
-	std::vector<std::string> vecpar{ "C:/Users/drogo/Desktop/Homless/GM02_main_loop.mcs" };
-	std::vector<std::string> runCom{ "open-thermodyn-database C:/Users/drogo/Documents/MatCalcUserData/database/thermodynamic/ME-Al1.2.tdb" };
-	std::vector<std::string> runCom2{ "exit" };
-	api01.get_implementation()->helloApi();
-	//std::string outHere = api01.get_implementation()->run_lua_command("hello_world");
-	std::string outHereother = ""; // api01.get_implementation()->run_lua_command("run_script", vecpar);
-	//std::string mcrThing = api01.get_implementation()->run_lua_command("run_command", runCom);
-	//std::string mcrThing_2 = api01.get_implementation()->run_lua_command("initialize_core");
-	//std::cout << "Lua is doing this: " << outHere << " and this too? " << outHereother << " and mcd: " << mcrThing << endl;
-
-	std::ofstream class_file;
-	std::string Save01 = config01.get_save_string();
-
-	class_file.open("testFile.txt");
-	class_file << Save01;
-	class_file.close();
-
-	std::ifstream filey;
-	filey.open("testFile.txt");
-	AM_Config config02;
-	config02.load_string(filey);
-
-	char Namey[] = "Test";
-
-
-	AM_Database_Framework amF(&config01);
-
-	IAM_Database* db01 = (IAM_Database*) new Database_Sqlite3(&config01);
-	db01 -> connect();
 	
-	AM_Database_TableStruct TB01;
-	TB01.tableName = "Compound_01";
-
-	TB01.columnNames.push_back("column_01");
-	TB01.columnNames.push_back("column_02");
-	TB01.columnNames.push_back("column_03");
-	TB01.columnNames.push_back("column_04");
-
-	TB01.columnDataType.push_back("CHAR[150]");
-	TB01.columnDataType.push_back("CHAR[150]");
-	TB01.columnDataType.push_back("CHAR[150]");
-	TB01.columnDataType.push_back("CHAR[150]");
-
-	db01->add_table(&TB01);
-
-	std::vector<std::string> TBNames = db01->get_tableNames();
-
-	for each (std::string Table in TBNames)
-	{
-		cout << "Table content: " << Table << "\n";
-	}
-
-	cout << "Save is done " << endl;
-
-	DBS_Project NewDB(db01, -1);
-	NewDB.APIName = "New name";
-	NewDB.Name = "Cool project";
-	NewDB.save();
-
-	DBS_Project savedDB(db01, NewDB.id());
-	savedDB.load();
-
-	DBS_Element NewDBE(db01, -1);
-	NewDBE.Name = "Cool project";
-	NewDBE.save();
-	NewDBE.load();
-
-	DBS_ElementComposition NewEly(db01, -1);
-	NewEly.IDElement = 1;
-	NewEly.Value = 0.5;
-	NewEly.TypeComposition = "weight";
-	NewEly.save();
-
-	DBS_ElementComposition NewElyL(db01, NewEly.id());
-	NewElyL.load();
-
-	AM_Database_TableStruct prj = AMLIB::TN_Projects();
-	std::vector<std::vector<std::string>> testTable = db01->get_tableRows(&prj);
-	bool stopHere{true};
-	//MenuOption_Main MO;
-	//MO.init();
-
-	// HelpOptions HO;
 
 	return 0;
 }

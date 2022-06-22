@@ -88,6 +88,13 @@ int API_lua_functions::bind_hello_world(lua_State* state)
 	return 1;
 }
 
+int API_lua_functions::bind_exit(lua_State* state)
+{
+	std::string hw = _api->APIcommand("exit");
+	lua_pushstring(state, hw.c_str());
+	return 1;
+}
+
 int API_lua_functions::bind_run_script(lua_State* state)
 {
 	int noParameters = lua_gettop(state);

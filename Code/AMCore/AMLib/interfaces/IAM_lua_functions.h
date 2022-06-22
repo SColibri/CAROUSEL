@@ -150,7 +150,7 @@ protected:
 		add_new_function(state, "project_loadName", "string", "project_loadName <string>", Bind_project_loadName);
 		add_new_function(state, "project_new", "string", "project_new <string Name>", Bind_project_new);
 		add_new_function(state, "project_setName", "string", "projet_setName <new name>", Bind_project_setName);
-		add_new_function(state, "project_getData", "string csv format", "project_getData <int ID>", Bind_project_getData);
+		add_new_function(state, "project_getData", "string csv format", "project_getData", Bind_project_getData);
 		add_new_function(state, "project_setData", "string csv format", "project_setData <int ID>,<string Name>", Bind_project_setData);
 		add_new_function(state, "project_selectElements", "string csv format", "project_SelectElements <string element1> (add all alements as parameters sepparated by a space char)", Bind_project_SelectElements);
 		add_new_function(state, "project_getSelectedElements", "string csv format", "project_getSelectedElements", Bind_project_getSelectedElements);

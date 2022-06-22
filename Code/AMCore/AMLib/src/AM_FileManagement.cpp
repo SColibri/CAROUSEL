@@ -18,7 +18,7 @@
 	std::string AM_FileManagement::save_file(FILEPATH option_, std::string filename, std::string content) {
 		std::ofstream class_file;
 		std::string Save01 = content;
-		std::string fullFileName = get_filePath(option_) + "/" + filename;
+		std::string fullFileName = filename;
 
 		class_file.open(fullFileName);
 		class_file << content;
@@ -33,6 +33,9 @@
 
 		switch (option_)
 		{
+		case FILEPATH::SYSTEM:
+			response = "";
+			break;
 		case FILEPATH::GENERAL:
 			response = _workingDirectory;
 			break;

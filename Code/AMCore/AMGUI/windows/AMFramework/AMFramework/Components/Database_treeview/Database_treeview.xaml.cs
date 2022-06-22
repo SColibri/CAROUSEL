@@ -25,7 +25,7 @@ namespace AMFramework.Components.Database_treeview
             InitializeComponent();
         }
 
-        public Database_treeview(ref Controller.Controller_MainWindow amCore)
+        public Database_treeview(ref Controller.Controller_DBS_Projects amCore)
         {
             DataContext = amCore;
         }

@@ -30,6 +30,7 @@ public:
 	virtual std::string run_lua_command(const std::string& command) override;
 	virtual std::string run_lua_command(const std::string& command, std::vector<std::string> parameters) override;
 	virtual std::string helloApi() override;
+	virtual void dispose() override;
 #pragma endregion
 };
 

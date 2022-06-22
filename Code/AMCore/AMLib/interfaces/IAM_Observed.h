@@ -17,7 +17,10 @@ public:
 
 	void remove_observer(IAM_Observer* observer) 
 	{
-		_observers.erase(_observers.begin(), _observers.end(), observer);
+		_observers.erase(std::remove_if(_observers.begin(), 
+										_observers.end(), 
+										[&](IAM_Observer* observy) {return observy == observer; }),
+										_observers.end());
 	}
 
 	void notify_observers() 
@@ -25,7 +28,7 @@ public:
 		for(IAM_Observer* observer : _observers)
 		{
 			if (observer == nullptr) continue;
-			observer->update(*this);
+			observer->update();
 		}
 	}
 

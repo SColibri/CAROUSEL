@@ -2,6 +2,7 @@
 #include "../../AMLib/include/AM_Config.h"
 #include "../../AMLib/include/AM_lua_interpreter.h"
 #include "../../AMLib/interfaces/IAM_API.h"
+#include "../../AMLib/interfaces/IAM_Observer.h"
 #include <stdexcept>
 #include <Windows.h>
 
@@ -13,7 +14,7 @@
 /// Handles communication with the dynamic library that
 /// contains the implementation of the IAM_API interface
 /// </summary>
-class API_controll
+class API_controll: IAM_Observer
 {
 public:
 	/// <summary>
@@ -31,9 +32,19 @@ public:
 			return _implementation; 
 	}
 
+#pragma region Interface_Observer
+	virtual void update() override
+	{
+		if (_api_path_last.compare(_configuration->get_api_path()) == 0) return;
+		_implementation->dispose();
+		load_api(*_configuration);
+	}	
+#pragma endregion
+
 private:
 	HINSTANCE _library{NULL}; // dynamic library instance
 	AM_Config* _configuration{nullptr};
+	std::string _api_path_last{ "" };
 
 	/// <summary>
 	/// implementation of the IAM_API interface, where

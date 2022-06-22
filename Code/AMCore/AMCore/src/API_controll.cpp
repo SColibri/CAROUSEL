@@ -14,6 +14,7 @@ API_controll::~API_controll()
 
 void API_controll::load_api(AM_Config& configuration)
 {
+	_api_path_last = configuration.get_api_path().c_str();
 	_library = LoadLibrary(TEXT(configuration.get_api_path().c_str()));
 	_implementation = DLL_get(_library);
 }

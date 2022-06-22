@@ -97,7 +97,7 @@
                                 Margin="2"
                                 Width="60"
                                 FontWeight="Normal"
-                                Command ="{Binding Path=Search_API_Path}"/>
+                                Command ="{Binding Path=Search_externalAPI_Path}"/>
                     </Grid>
                 </GroupBox>
 
@@ -146,7 +146,7 @@
                                 Margin="2"
                                 Width="60"
                                 FontWeight="Normal"
-                                Command ="{Binding Path=Search_API_Path}"/>
+                                Command ="{Binding Path=Search_workingDirectory_Path}"/>
 
 
                         <TextBlock Text="Path to thermodynamic database"
@@ -170,7 +170,7 @@
                                 Margin="2"
                                 Width="60"
                                 FontWeight="Normal"
-                                Command ="{Binding Path=Search_API_Path}"/>
+                                Command ="{Binding Path=Search_thermodynamic_database_Path}"/>
 
                         <TextBlock Text="Path to Physical database"
                                    Margin="5"
@@ -193,7 +193,7 @@
                                 Margin="2"
                                 Width="60"
                                 FontWeight="Normal"
-                                Command ="{Binding Path=Search_API_Path}"/>
+                                Command ="{Binding Path=Search_physical_database_Path}"/>
 
                         <TextBlock Text="Path to Mobility database"
                                    Margin="5"
@@ -216,7 +216,7 @@
                                 Margin="2"
                                 Width="60"
                                 FontWeight="Normal"
-                                Command ="{Binding Path=Search_API_Path}"/>
+                                Command ="{Binding Path=Search_Mobility_database_Path}"/>
                         
                     </Grid>
                 </GroupBox>

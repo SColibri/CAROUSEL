@@ -29,9 +29,11 @@
 #pragma region Methods
 	void AM_Config::save()
 	{
-		_fileManagement.save_file(AM_FileManagement::FILEPATH::GENERAL,
+		_fileManagement.save_file(AM_FileManagement::FILEPATH::SYSTEM,
 								  Name + ".config",
 								  get_save_string());
+
+		notify_observers();
 	}
 
 	void AM_Config::load(std::string filename)
@@ -41,6 +43,14 @@
 
 		load_string(streamF);
 		streamF.close();
+	}
+
+	void AM_Config::load()
+	{
+		std::string filename = Name + ".config";
+
+		if (!std::filesystem::exists(filename)) return;
+		load(Name + ".config");
 	}
 #pragma endregion Methods
 
@@ -146,6 +156,7 @@
 		ss << "\n";
 		ss << "Name" << separatorChar << Name << std::endl;
 		ss << "_apiPath" << separatorChar << _apiPath << std::endl;
+		ss << "_apiExternalPath" << separatorChar << _apiExternalPath << std::endl;
 		ss << "_thermodynamic_database_path" << separatorChar << _thermodynamic_database_path << std::endl;
 		ss << "_physical_database_path" << separatorChar << _physical_database_path << std::endl;
 		ss << "_mobility_database_path" << separatorChar << _mobility_database_path << std::endl;
@@ -178,6 +189,9 @@
 					}
 					else if(var.find("_apiPath") != std::string::npos) {
 						_apiPath = var.substr(var.find(separatorChar) + 1);
+					}
+					else if (var.find("_apiExternalPath") != std::string::npos) {
+						_apiExternalPath = var.substr(var.find(separatorChar) + 1);
 					}
 					else if (var.find("_thermodynamic_database_path") != std::string::npos) {
 						_thermodynamic_database_path = var.substr(var.find(separatorChar) + 1);

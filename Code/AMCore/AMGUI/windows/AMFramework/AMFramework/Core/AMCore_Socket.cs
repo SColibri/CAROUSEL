@@ -78,6 +78,7 @@ namespace AMFramework.Core
                 s = new Socket(AddressFamily.InterNetwork,
                 SocketType.Stream,
                 ProtocolType.Tcp);
+                _connected = false;
 
                 strBuild = "Error: " + e.Message;
             }
@@ -86,6 +87,9 @@ namespace AMFramework.Core
             return strBuild;
         }
 
-
+        public void dispose() 
+        { 
+        
+        }
     }
 }

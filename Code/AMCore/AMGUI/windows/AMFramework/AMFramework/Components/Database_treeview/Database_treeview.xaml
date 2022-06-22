@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AMFramework.Components.Database_treeview"
+             xmlns:controllers ="clr-namespace:AMFramework.Controller"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -20,8 +21,13 @@
             <TextBlock Grid.Column="0" Text="Search: " Margin="5"/>
             <TextBox Grid.Column="1" Margin="5"/>
         </Grid>
-        <TreeView Grid.Row="1" ItemsSource="{Binding Path=Projects}">
-            
+        <TreeView Grid.Row="1">
+            <HierarchicalDataTemplate DataType="{x:Type controllers:Controller_DBS_Projects}" ItemsSource="{Binding Path=SelectedProject, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBlock Text="{Binding Path=SelectedProject.Name}" />
+            </HierarchicalDataTemplate>
+            <HierarchicalDataTemplate ItemsSource="{Binding Path=Cases, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" DataType="{x:Type controllers:Controller_Cases}">
+                <TextBlock Text="{Binding Path=Name}"/>
+            </HierarchicalDataTemplate>
         </TreeView>
     </Grid>
 </UserControl>

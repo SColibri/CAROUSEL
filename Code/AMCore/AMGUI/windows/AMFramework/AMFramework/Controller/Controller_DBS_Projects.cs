@@ -14,6 +14,7 @@ namespace AMFramework.Controller
         public Controller_DBS_Projects(Core.AMCore_Socket socket) 
         {
             _AMCore_Socket = socket;
+            controllerCases = new(socket, -1, -1);
         }
         #endregion
 
@@ -79,12 +80,15 @@ namespace AMFramework.Controller
             set 
             { 
                 _selectedProject = value;
+                controllerCases = new(_AMCore_Socket, _selectedProject.ID, -1);
                 OnPropertyChanged("SelectedProject");
             }
         }
         public void SelectProject(int ID) 
-        { 
-        
+        {
+            string outy = _AMCore_Socket.send_receive("project_loadID" + ID.ToString());
+            if (outy.CompareTo("OK") != 0) return;
+            SelectedProject = DataModel(ID);
         }
 
         public Model.Model_Projects DataModel(int ID) 
@@ -92,7 +96,7 @@ namespace AMFramework.Controller
             Model.Model_Projects model = new Model.Model_Projects();
 
             if(ID == -1) return model;
-            string outy = _AMCore_Socket.send_receive("dataController_getProjectData " + ID);
+            string outy = _AMCore_Socket.send_receive("project_getData ");
             fillModel(ref model, outy.Split(",").ToList());
 
             return model;
@@ -124,6 +128,10 @@ namespace AMFramework.Controller
             model.APIName = dataIn[2];
         }
 
+        #endregion
+
+        #region other_controllers
+        public Controller.Controller_Cases controllerCases;
         #endregion
     }
 }

@@ -198,7 +198,7 @@ private:
         CloseHandle(si->child_in_w);
         CloseHandle(si->child_out_r);
         CloseHandle(si->child_out_w);
-        CloseHandle(si->proc);
+        // CloseHandle(si->proc);
     }
 
 

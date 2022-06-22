@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.IO;
 
 namespace AMFramework.Controller
 {
@@ -122,19 +123,167 @@ namespace AMFramework.Controller
 
         private void Search_externalAPI_path_controll()
         {
-            OpenFileDialog OFD = new OpenFileDialog();
-            OFD.Multiselect = false;
-            OFD.Filter = "API library|*.dll";
-            OFD.Title = "Select folder where external API can be found";
-            OFD.CheckFileExists = true;
+            System.Windows.Forms.FolderBrowserDialog OFD = new System.Windows.Forms.FolderBrowserDialog();
+            OFD.Description = "external API directory";
+            OFD.UseDescriptionForTitle = true;
 
-            if (OFD.ShowDialog() == true)
+            if (OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                datamodel.External_API_path = OFD.FileName;
+                datamodel.External_API_path = OFD.SelectedPath;
             }
         }
 
         private bool Can_Change_externalAPI_path()
+        {
+            return true;
+        }
+        #endregion
+
+        #region external_Working_directory
+
+        private ICommand _Search_workingDirectory_Path;
+        public ICommand Search_workingDirectory_Path
+        {
+            get
+            {
+                if (_Search_workingDirectory_Path == null)
+                {
+                    _Search_workingDirectory_Path = new RelayCommand(
+                        param => this.Search_workingDirectory_path_controll(),
+                        param => this.Can_Change_externalAPI_path()
+                    );
+                }
+                return _Search_externalAPI_Path;
+            }
+        }
+
+        private void Search_workingDirectory_path_controll()
+        {
+            System.Windows.Forms.FolderBrowserDialog OFD = new System.Windows.Forms.FolderBrowserDialog();
+            OFD.Description = "working directory";
+            OFD.UseDescriptionForTitle = true;
+
+            if (OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                datamodel.Working_Directory = OFD.SelectedPath;
+            }
+        }
+
+        private bool Can_Change_workingDirectory_path()
+        {
+            return true;
+        }
+        #endregion
+
+        #region external_thermodynamic_database
+
+        private ICommand _Search_thermodynamic_database_Path;
+        public ICommand Search_thermodynamic_database_Path
+        {
+            get
+            {
+                if (_Search_thermodynamic_database_Path == null)
+                {
+                    _Search_thermodynamic_database_Path = new RelayCommand(
+                        param => this.Search_thermodynamic_database_path_controll(),
+                        param => this.Can_Change_thermodynamic_database_path()
+                    );
+                }
+                return _Search_thermodynamic_database_Path;
+            }
+        }
+
+        private void Search_thermodynamic_database_path_controll()
+        {
+            OpenFileDialog OFD = new OpenFileDialog();
+            OFD.Multiselect = false;
+            OFD.Filter = "thermodynamic database|*.tdb";
+            OFD.Title = "Select a thermodynamic database";
+            OFD.CheckFileExists = true;
+
+            if (OFD.ShowDialog() == true)
+            {
+                datamodel.Thermodynamic_database_path = OFD.FileName;
+            }
+        }
+
+        private bool Can_Change_thermodynamic_database_path()
+        {
+            return true;
+        }
+        #endregion
+
+        #region external_Physical_database
+
+        private ICommand _search_physical_database_Path;
+        public ICommand Search_physical_database_Path
+        {
+            get
+            {
+                if (_search_physical_database_Path == null)
+                {
+                    _search_physical_database_Path = new RelayCommand(
+                        param => this.Search_physical_database_path_controll(),
+                        param => this.Can_Change_physical_database_path()
+                    );
+                }
+                return _search_physical_database_Path;
+            }
+        }
+
+        private void Search_physical_database_path_controll()
+        {
+            OpenFileDialog OFD = new OpenFileDialog();
+            OFD.Multiselect = false;
+            OFD.Filter = "physical database|*.pdb";
+            OFD.Title = "Select a physical database";
+            OFD.CheckFileExists = true;
+
+            if (OFD.ShowDialog() == true)
+            {
+                datamodel.Physical_database_path = OFD.FileName;
+            }
+        }
+
+        private bool Can_Change_physical_database_path()
+        {
+            return true;
+        }
+        #endregion
+
+        #region external_Mobility_database
+
+        private ICommand _search_Mobility_database_Path;
+        public ICommand Search_Mobility_database_Path
+        {
+            get
+            {
+                if (_search_Mobility_database_Path == null)
+                {
+                    _search_Mobility_database_Path = new RelayCommand(
+                        param => this.Search_Mobility_database_path_controll(),
+                        param => this.Can_Change_Mobility_database_path()
+                    );
+                }
+                return _search_Mobility_database_Path;
+            }
+        }
+
+        private void Search_Mobility_database_path_controll()
+        {
+            OpenFileDialog OFD = new OpenFileDialog();
+            OFD.Multiselect = false;
+            OFD.Filter = "physical database|*.ddb";
+            OFD.Title = "Select a physical database";
+            OFD.CheckFileExists = true;
+
+            if (OFD.ShowDialog() == true)
+            {
+                datamodel.Mobility_database_path = OFD.FileName;
+            }
+        }
+
+        private bool Can_Change_Mobility_database_path()
         {
             return true;
         }
