@@ -44,7 +44,7 @@ TEST_CASE("AM_project", "[classic]")
 		REQUIRE(project.get_project_ID() == -1);
 
 		//Test create new project
-		project.set_project_name("projecty", main_setup::configuration.get_api_path());
+		project.set_project_name("projecty", main_setup::configuration.get_api_path(), main_setup::configuration.get_apiExternal_path());
 		REQUIRE(project.get_project_ID() != -1);
 	}
 

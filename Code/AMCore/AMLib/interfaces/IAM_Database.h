@@ -154,6 +154,13 @@ public:
 																	  std::string whereQuery) {return std::vector<std::vector<std::string>>();}
 
 	/// <summary>
+	/// Use custom query on sql database
+	/// </summary>
+	/// <param name="whereQuery"></param>
+	/// <returns></returns>
+	virtual std::vector<std::vector<std::string>> get_fromQuery(std::string whereQuery){return std::vector<std::vector<std::string>>(); }
+
+	/// <summary>
 	/// get table content in csv format
 	/// </summary>
 	/// <param name="tableName"></param>

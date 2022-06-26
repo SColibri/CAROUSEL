@@ -63,7 +63,7 @@ public:
 	/// <returns></returns>
 	std::string MCRCommand(std::string commandLine);
 	std::string APIcommand(std::string commandLine);
-
+	std::string APIcommand(std::string commandLine, IPC_winapi* mcc_comm);
 private:
 	HINSTANCE _library{NULL}; // Matcalc library
 	AM_Config* _configuration{nullptr}; // configuration file
@@ -142,7 +142,7 @@ private:
 			{
 				// for some reason the exit command does not
 				// always exit at the first try, matcalc pipe errors?
-				MCRCommand("exit");
+				MCRCommand("exit\r\n");
 			}
 			
 			_mcc_sockThread.join();

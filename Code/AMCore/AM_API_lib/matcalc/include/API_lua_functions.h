@@ -1,11 +1,14 @@
 #pragma once
 
 #include <string>
+#include <thread>
+#include <mutex>
 #include "../include/API_scripting.h"
 #include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
 #include "../../../AMLib/interfaces/IAM_lua_functions.h"
 #include "../../../AMLib/include/AM_Config.h"
 #include "../../../AMLib/interfaces/IAM_Database.h"
+#include "../../../AMLib/x_Helpers/IPC_winapi.h"
 #include "API_matcalc_lib.h"
 
 /** \addtogroup AM_API_lib
@@ -23,7 +26,8 @@ public:
 
 private:
 	inline static API_matcalc_lib* _api{nullptr};
-	
+	inline static std::mutex _mutex;
+
 	/// <summary>
 	/// Registers the function's signature in lua 
 	/// </summary>
@@ -77,6 +81,13 @@ private:
 	/// <param name="state"></param>
 	/// <returns></returns>
 	static int bind_getElementNames_command(lua_State* state);
+
+	/// <summary>
+	/// get phases available in the database
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int bind_DatabasePhaseNames_command(lua_State* state);
 
 	/// <summary>
 	/// Obtains the elements available on a database
@@ -301,13 +312,26 @@ private:
 	static int bind_matcalc_buffer_listContent(lua_State* state)
 	{
 		check_parameters(state, lua_gettop(state), 0, "you are golden");
-		std::string out = _api->APIcommand(API_Scripting::script_buffer_listContent());
+		/*std::string out = _api->APIcommand(API_Scripting::script_buffer_listContent());
 		int index_start_buffer = string_manipulators::find_index_of_keyword(out, "Index");
 		int index_end_buffer = string_manipulators::find_index_of_keyword(out, "MC:");
 		out = out.substr(index_start_buffer, index_end_buffer - index_start_buffer - 2);
-
+		*/
+		std::string out = matcalc_buffer_listContent();
 		lua_pushstring(state, out.c_str());
 		return 1;
+	}
+	static std::string matcalc_buffer_listContent(IPC_winapi* mccComm = nullptr) 
+	{
+		std::string out;
+		if(mccComm == nullptr)
+			out = _api->APIcommand(API_Scripting::script_buffer_listContent());
+		else
+			out = _api->APIcommand(API_Scripting::script_buffer_listContent(), mccComm);
+
+		int index_start_buffer = string_manipulators::find_index_of_keyword(out, "Index");
+		int index_end_buffer = string_manipulators::find_index_of_keyword(out, "MC:");
+		return out.substr(index_start_buffer, index_end_buffer - index_start_buffer - 2);
 	}
 
 	/// <summary>
@@ -322,6 +346,108 @@ private:
 
 		std::string out = _api->APIcommand(API_Scripting::script_buffer_clear(parameters[0]));
 		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+#pragma endregion
+
+#pragma region Project
+
+	/// <summary>
+	/// Based on the current openProject, runs a stepped equilibrium calculation
+	/// input Parameters: INT <IDCase>
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_get_active_phases(lua_State* state)
+	{
+		//check for input
+		if (check_parameters(state, lua_gettop(state), 1, "usage <ID Case>") != 0) return 1; 
+		
+		// get parameters
+		std::vector<std::string> parameters = get_parameters(state);
+
+		// clear buffer before starting
+		std::string outClearBuffer = run_command(state, "matcalc_buffer_clear", std::vector<std::string> {"_default_"});
+		std::string phaseNames = run_command(state, "matcalc_database_phaseNames");
+		std::vector<std::string> listPhases = string_manipulators::split_text(phaseNames, "\n");
+		std::string idCase = parameters[0];
+		
+		// If pixel_parameters is a null pointer, that means that either the case does not exist or
+		// it corresponds to another project ID
+		AM_pixel_parameters* pixel_parameters = _openProject->get_pixelCase(std::stoi(idCase));
+		if (pixel_parameters == nullptr)
+		{
+			lua_pushstring(state, "Error: IDCase does not belong to the project or it does not exist!");
+			return 1;
+		}
+
+		// Initialize case
+		//TODO: When no selected elements, gives Error, catch this one
+		std::string outCommand_1 = runVectorCommands(API_Scripting::Script_run_stepEquilibrium(_configuration,
+			pixel_parameters->get_EquilibriumConfiguration()->StartTemperature,
+			pixel_parameters->get_EquilibriumConfiguration()->EndTemperature,
+			_openProject->get_selected_elements_ByName(),
+			pixel_parameters->get_composition_string(),
+			listPhases));
+
+		// Get buffer content
+		std::string buffer_raw = run_command(state, "matcalc_buffer_listContent");
+		std::vector<std::string> bufferRowEntries = string_manipulators::split_text(buffer_raw, "\n");
+		if (bufferRowEntries.size() < 2)
+		{
+			std::string ErrorOut = "Error: Equilibrium calculation was not possible -> " + outCommand_1;
+			lua_pushstring(state, ErrorOut.c_str());
+			return 1;
+		}
+
+		// pixel parameters
+		std::vector<std::string> selectedPhases = pixel_parameters->get_selected_phases_ByName();
+		std::vector<int> selectedPhases_id = pixel_parameters->get_selected_phases_ByID();
+		std::vector<IAM_DBS*> tempPhaseFraction(listPhases.size());
+
+		for (size_t n1 = 0; n1 < listPhases.size(); n1++)
+		{
+			tempPhaseFraction[n1] = new DBS_ActivePhases(_dbFramework->get_database(), -1);
+		}
+
+		// retreive data from matcalc buffer
+		for (int n1 = 1; n1 < bufferRowEntries.size(); n1++)
+		{
+			// get buffer row items
+			std::vector<std::string> bufferCells = string_manipulators::split_text(bufferRowEntries[n1], " ");
+			std::string outCommand_loadState = _api->APIcommand(API_Scripting::script_buffer_loadState(n1 - 1));
+
+			// get phase fraction values in a csv format, delimiter is ","
+			std::string outCommand_statusPhase = run_command(state, "matcalc_buffer_get_equilibrium_phase_fraction", selectedPhases);
+			std::vector<std::string> phaseValues = string_manipulators::split_text(outCommand_statusPhase, ",");
+
+			for (int n2 = 0; n2 < selectedPhases.size(); n2++)
+			{
+				int indexPhase = (n1 - 1) * selectedPhases.size() + n2;
+				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->IDCase = pixel_parameters->get_caseID();
+				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->IDPhase = selectedPhases_id[n2];
+			}
+
+			if (bufferCells.size() < 2) continue;
+			for (int n2 = 0; n2 < selectedPhases.size(); n2++)
+			{
+				int indexPhase = (n1 - 1) * selectedPhases.size() + n2;
+				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->Temperature = std::stold(string_manipulators::get_numeric_value(bufferCells[1]));
+				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->Value = std::stold(phaseValues[n2]);
+			}
+
+		}
+
+		// save in database and remove from memory
+		int resp = IAM_DBS::save(tempPhaseFraction);
+		for (int n1 = 0; n1 < tempPhaseFraction.size(); n1++)
+		{
+			delete tempPhaseFraction[n1];
+		}
+
+
+		lua_pushstring(state, outCommand_1.c_str());
 		return 1;
 	}
 
@@ -387,26 +513,15 @@ private:
 	/// <returns></returns>
 	static int Bind_SPC_StepEquilibrium(lua_State* state)
 	{
-		if(_openProject == nullptr)
-		{
-			lua_pushstring(state, "No open project is available, please create a new project or open an existing one ");
-			return 1;
-		}
-
-		int noParameters = lua_gettop(state);
-		if (noParameters < 1)
-		{
-			lua_pushstring(state, "usage: <INT Case ID> ");
-			return 1;
-		}
+		if (check_parameters(state, lua_gettop(state), 1, "usage: <INT Case ID>") != 0) return 1;
+		std::vector<std::string> parameters = get_parameters(state);
 
 		// clear buffer before starting
 		std::string outClearBuffer = run_command(state, "matcalc_buffer_clear", std::vector<std::string> {"_default_"});
-		std::string idCase = lua_tostring(state, 1);
 		
 		// If pixel_parameters is a null pointer, that means that either the case does not exist or
 		// it corresponds to another project ID
-		AM_pixel_parameters* pixel_parameters = _openProject->get_pixelCase(std::stoi(idCase));
+		AM_pixel_parameters* pixel_parameters = _openProject->get_pixelCase(std::stoi(parameters[0]));
 		if (pixel_parameters == nullptr)
 		{
 			lua_pushstring(state, "Error: IDCase does not belong to the project or it does not exist!");
@@ -414,6 +529,7 @@ private:
 		}
 
 		// Initialize case
+		//TODO: When no selected elements, gives Error, catch this one
 		std::string outCommand_1 = runVectorCommands(API_Scripting::Script_run_stepEquilibrium(_configuration,
 			pixel_parameters->get_EquilibriumConfiguration()->StartTemperature,
 			pixel_parameters->get_EquilibriumConfiguration()->EndTemperature,
@@ -436,37 +552,26 @@ private:
 		std::vector<int> selectedPhases_id = pixel_parameters->get_selected_phases_ByID();
 		std::vector<IAM_DBS*> tempPhaseFraction((bufferRowEntries.size() - 1)* selectedPhases.size());
 
+		// Initialize all phase fractions
 		for (size_t n1 = 0; n1 < tempPhaseFraction.size(); n1++)
-		{
 			tempPhaseFraction[n1] = new DBS_EquilibriumPhaseFraction(_dbFramework->get_database(), -1);
-		}
 
-		// retreive data from matcalc buffer
-		for(int n1 = 1; n1 < bufferRowEntries.size(); n1++)
+		// store buffer into 
+		std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, selectedPhases);
+		
+		// copy data to database objects
+		for (int n1 = 0; n1 < BufferRows.size(); n1++)
 		{
-			// get buffer row items
-			std::vector<std::string> bufferCells = string_manipulators::split_text(bufferRowEntries[n1], " ");
-			std::string outCommand_loadState = _api->APIcommand(API_Scripting::script_buffer_loadState(n1 - 1));
+			std::vector<std::string> phaseValues = string_manipulators::split_text(BufferRows[n1], ",");
 
-			// get phase fraction values in a csv format, delimiter is ","
-			std::string outCommand_statusPhase = run_command(state, "matcalc_buffer_get_equilibrium_phase_fraction", selectedPhases);
-			std::vector<std::string> phaseValues = string_manipulators::split_text(outCommand_statusPhase, ",");
-			
-			for (int n2 = 0; n2 < selectedPhases.size(); n2++)
+			for (int n2 = 1; n2 < phaseValues.size(); n2++)
 			{
-				int indexPhase = (n1 - 1) * selectedPhases.size() + n2;
+				int indexPhase = (n1) * selectedPhases.size() + (n2 - 1);
 				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->IDCase = pixel_parameters->get_caseID();
-				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->IDPhase = selectedPhases_id[n2];
-			}
-
-			if (bufferCells.size() < 2) continue;
-			for (int n2 = 0; n2 < selectedPhases.size(); n2++)
-			{
-				int indexPhase = (n1 - 1) * selectedPhases.size() + n2;
-				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->Temperature = std::stold(string_manipulators::get_numeric_value(bufferCells[1]));
+				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->IDPhase = selectedPhases_id[n2-1];
+				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->Temperature = std::stold(phaseValues[0]);
 				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->Value = std::stold(phaseValues[n2]);
 			}
-			
 		}
 
 		// save in database and remove from memory
@@ -480,6 +585,137 @@ private:
 		lua_pushstring(state, outCommand_1.c_str());
 		return 1;
 	}
+	static int Bind_SPC_Parallel_StepEquilibrium(lua_State* state)
+	{
+		// Check and get parameters
+		if (check_parameters(state, lua_gettop(state), 2, "usage: <ID project> <ID Cases>") != 0) return 1;
+		std::vector<std::string> parameters = get_parameters(state);
+
+		// Initialize AM_project object, this is used for checking if cases belong to the project
+		AM_Project Project(_dbFramework->get_database(),_configuration,std::stoi(parameters[0]));
+		std::vector<AM_pixel_parameters*> pixel_parameters;
+
+		// Get pointers for all cases
+		std::vector<std::string> rangeIDCase = string_manipulators::split_text(parameters[1],"-");
+		int start = std::stoi(rangeIDCase[0]);
+		int end = std::stoi(rangeIDCase[1]);
+		int range = end - start;
+
+		for(int n1 = 0; n1 < range + 1; n1++)
+		{
+			pixel_parameters.push_back(Project.get_pixelCase(start + n1));
+			if(pixel_parameters[n1] == nullptr)
+			{
+				std::string ErrorOut = "Error: Selected ID case is not part of this project!";
+				lua_pushstring(state, ErrorOut.c_str());
+				return 1;
+			}
+		}
+
+		// Create communication to mcc for each thread
+		int threadsAvail = 5;
+		int splitSize = pixel_parameters.size() / threadsAvail;
+		int remainder = pixel_parameters.size() % threadsAvail;
+		if(remainder + splitSize > pixel_parameters.size())
+		{
+			threadsAvail = 1;
+			splitSize = 1;
+		}
+
+		std::vector<IPC_winapi*> mcc_comms;
+		for(int n1 = 0; n1 < threadsAvail; n1++)
+		{
+			mcc_comms.push_back(new IPC_winapi(L"C:/Program Files/MatCalc 6/mcc.exe"));
+			mcc_comms[n1]->set_endflag("MC:");
+		}
+			
+
+		auto funcStep = [](IPC_winapi* mccComm, std::vector<AM_pixel_parameters*> PixelList, AM_Project* projectM )
+		{
+			for(AM_pixel_parameters* pixel_parameters : PixelList)
+			{
+				std::string outCommand_1 = runVectorCommands(API_Scripting::Script_run_stepEquilibrium(_configuration,
+					pixel_parameters->get_EquilibriumConfiguration()->StartTemperature,
+					pixel_parameters->get_EquilibriumConfiguration()->EndTemperature,
+					projectM->get_selected_elements_ByName(),
+					pixel_parameters->get_composition_string(),
+					pixel_parameters->get_selected_phases_ByName()), mccComm);
+
+				// Get buffer content, check if buffer contains data 
+				// before continuing
+				std::string buffer_raw = matcalc_buffer_listContent(mccComm);
+				std::vector<std::string> bufferRowEntries = string_manipulators::split_text(buffer_raw, "\n");
+				if (bufferRowEntries.size() < 2) continue;
+
+				// pixel parameters
+				std::vector<std::string> selectedPhases = pixel_parameters->get_selected_phases_ByName();
+				std::vector<int> selectedPhases_id = pixel_parameters->get_selected_phases_ByID();
+				std::vector<IAM_DBS*> tempPhaseFraction((bufferRowEntries.size() - 1) * selectedPhases.size());
+
+				// Initialize all phase fractions
+				for (size_t n1 = 0; n1 < tempPhaseFraction.size(); n1++)
+					tempPhaseFraction[n1] = new DBS_EquilibriumPhaseFraction(_dbFramework->get_database(), -1);
+
+				// store buffer into 
+				std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, selectedPhases, mccComm);
+
+				// copy data to database objects
+				for (int n1 = 0; n1 < BufferRows.size(); n1++)
+				{
+					std::vector<std::string> phaseValues = string_manipulators::split_text(BufferRows[n1], ",");
+
+					for (int n2 = 1; n2 < phaseValues.size(); n2++)
+					{
+						int indexPhase = (n1)*selectedPhases.size() + (n2 - 1);
+						((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->IDCase = pixel_parameters->get_caseID();
+						((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->IDPhase = selectedPhases_id[n2 - 1];
+						((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->Temperature = std::stold(phaseValues[0]);
+						((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->Value = std::stold(phaseValues[n2]);
+					}
+				}
+
+				// save in database and remove from memory
+				_mutex.lock();
+				int resp = IAM_DBS::save(tempPhaseFraction);
+				for (int n1 = 0; n1 < tempPhaseFraction.size(); n1++)
+				{
+					delete tempPhaseFraction[n1];
+				}
+				_mutex.unlock();
+
+				mccComm->send_command("exit\r\n");
+				delete mccComm;
+
+				mccComm = new IPC_winapi(L"C:/Program Files/MatCalc 6/mcc.exe");
+				mccComm->set_endflag("MC:");
+			}
+		};
+
+		int Index = 0;
+		std::vector<std::thread> threadList;
+		for(int n1 = 0; n1 < threadsAvail; n1++)
+		{
+			std::vector<AM_pixel_parameters*> tempVector(pixel_parameters.begin() + n1* splitSize, pixel_parameters.begin() + (n1 + 1)*splitSize);
+			threadList.push_back(std::thread(funcStep, mcc_comms[n1], tempVector, & Project));
+			Index += splitSize;
+		}
+			
+		for (int n1 = 0; n1 < threadsAvail; n1++)
+		{
+			threadList[n1].join();
+		}
+
+		for (int n1 = 0; n1 < threadsAvail; n1++)
+		{
+			mcc_comms[n1]->send_command("exit\r\n");
+			delete mcc_comms[n1];
+		}
+		mcc_comms.clear();
+
+		std::string outmsg = "OK";
+		lua_pushstring(state, outmsg.c_str());
+		return 1;
+	}
 
 	/// <summary>
 	/// Based on the current openProject, runs a stepped equilibrium calculation
@@ -489,26 +725,15 @@ private:
 	/// <returns></returns>
 	static int Bind_SPC_StepScheil(lua_State* state)
 	{
-		if (_openProject == nullptr)
-		{
-			lua_pushstring(state, "No open project is available, please create a new project or open an existing one ");
-			return 1;
-		}
-
-		int noParameters = lua_gettop(state);
-		if (noParameters < 1)
-		{
-			lua_pushstring(state, "usage: <INT Case ID> ");
-			return 1;
-		}
+		if (check_parameters(state, lua_gettop(state), 1, "usage: <INT Case ID>") != 0) return 1;
+		std::vector<std::string> parameters = get_parameters(state);
 
 		// clear buffer before starting
 		std::string outClearBuffer = run_command(state, "matcalc_buffer_clear", std::vector<std::string> {"_default_"});
-		std::string idCase = lua_tostring(state, 1);
 
 		// If pixel_parameters is a null pointer, that means that either the case does not exist or
 		// it corresponds to another project ID
-		AM_pixel_parameters* pixel_parameters = _openProject->get_pixelCase(std::stoi(idCase));
+		AM_pixel_parameters* pixel_parameters = _openProject->get_pixelCase(std::stoi(parameters[0]));
 		if (pixel_parameters == nullptr)
 		{
 			lua_pushstring(state, "Error: IDCase does not belong to the project or it does not exist!");
@@ -546,39 +771,22 @@ private:
 			tempPhaseCumulativeFraction[n1] = new DBS_ScheilCumulativeFraction(_dbFramework->get_database(), -1);
 		}
 
+		// store buffer into 
+		std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, selectedPhases);
 
-		for (int n1 = 1; n1 < bufferRowEntries.size(); n1++)
+		// copy data to database objects
+		for (int n1 = 0; n1 < BufferRows.size(); n1++)
 		{
-			// get buffer row items
-			std::vector<std::string> bufferCells = string_manipulators::split_text(bufferRowEntries[n1], " ");
-			std::string outCommand_loadState = _api->APIcommand(API_Scripting::script_buffer_loadState(n1 - 1));
+			std::vector<std::string> phaseValues = string_manipulators::split_text(BufferRows[n1], ",");
 
-			// get phase fraction values in a csv format, delimiter is ","
-			std::string outCommand_statusPhase = run_command(state, "matcalc_buffer_get_scheil_phase_cumulative_fraction", selectedPhases);
-			std::string outCommand_statusCumulativePhase = run_command(state, "matcalc_buffer_get_equilibrium_phase_fraction", selectedPhases);
-			std::vector<std::string> phaseValues = string_manipulators::split_text(outCommand_statusPhase, ",");
-			std::vector<std::string> phaseCumulativeValues = string_manipulators::split_text(outCommand_statusCumulativePhase, ",");
-
-			for (int n2 = 0; n2 < selectedPhases.size(); n2++)
+			for (int n2 = 1; n2 < phaseValues.size(); n2++)
 			{
-				int indexPhase = (n1 - 1) * selectedPhases.size() + n2;
-				((DBS_ScheilPhaseFraction*)tempPhaseFraction[indexPhase])->IDCase = pixel_parameters->get_caseID();
-				((DBS_ScheilPhaseFraction*)tempPhaseFraction[indexPhase])->IDPhase = selectedPhases_id[n2];
-
-				((DBS_ScheilCumulativeFraction*)tempPhaseCumulativeFraction[indexPhase])->IDCase = pixel_parameters->get_caseID();
-				((DBS_ScheilCumulativeFraction*)tempPhaseCumulativeFraction[indexPhase])->IDPhase = selectedPhases_id[n2];
+				int indexPhase = (n1)*selectedPhases.size() + (n2 - 1);
+				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->IDCase = pixel_parameters->get_caseID();
+				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->IDPhase = selectedPhases_id[n2 - 1];
+				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->Temperature = std::stold(phaseValues[0]);
+				((DBS_EquilibriumPhaseFraction*)tempPhaseFraction[indexPhase])->Value = std::stold(phaseValues[n2]);
 			}
-
-			if (bufferCells.size() < 2) continue;
-			for (int n2 = 0; n2 < selectedPhases.size(); n2++)
-			{
-				int indexPhase = (n1 - 1) * selectedPhases.size() + n2;
-				((DBS_ScheilPhaseFraction*)tempPhaseFraction[indexPhase])->Temperature = std::stold(string_manipulators::get_numeric_value(bufferCells[1]));
-				((DBS_ScheilPhaseFraction*)tempPhaseFraction[indexPhase])->Value = std::stold(phaseValues[n2]);
-
-				((DBS_ScheilCumulativeFraction*)tempPhaseCumulativeFraction[indexPhase])->Temperature = std::stold(string_manipulators::get_numeric_value(bufferCells[1]));
-			}
-
 		}
 
 		// cumulative fraction, save as table
@@ -650,6 +858,32 @@ private:
 	/// <param name="parameter"></param>
 	/// <returns></returns>
 	static std::string runVectorCommands(std::vector<std::string> parameter);
+	static std::string runVectorCommands(std::vector<std::string> parameter, IPC_winapi* mcc_comm);
+
+	static std::vector<std::string> read_matcalc_calcphase_buffer(int BufferSize, std::vector<std::string>& selectedPhases, IPC_winapi* mccComm = nullptr)
+	{
+		// store buffer into 
+		std::string formatVariable = string_manipulators::get_string_format_numeric_generic(selectedPhases.size(), "%g", ",");
+		std::string FORMATString = API_Scripting::script_format_variable_string("TempData", formatVariable, API_Scripting::script_get_phase_equilibrium_variable_name(selectedPhases));
+		std::string scriptFile = API_Scripting::Buffer_to_variable(std::to_string(BufferSize), FORMATString, "TempData", _configuration);
+		
+		// run script
+		std::string run_;
+		if(mccComm == nullptr)
+		{
+			run_ = _api->APIcommand(API_Scripting::script_runScript(scriptFile));
+		}
+		else
+		{
+			run_ = _api->APIcommand(API_Scripting::script_runScript(scriptFile), mccComm);
+		}
+
+		std::filesystem::remove(scriptFile);
+
+		std::vector<std::string> BufferRows = string_manipulators::read_file_to_end(scriptFile.substr(0, scriptFile.size() - 4) + ".Framework");
+		std::filesystem::remove(scriptFile.substr(0, scriptFile.size() - 4) + ".Framework");
+		return BufferRows;
+	}
 #pragma endregion
 
 };

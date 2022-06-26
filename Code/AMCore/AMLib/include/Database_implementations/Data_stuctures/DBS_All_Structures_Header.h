@@ -14,3 +14,4 @@
 #include "DBS_ScheilCumulativeFraction.h"
 #include "DBS_SelectedElements.h"
 #include "DBS_SelectedPhases.h"
+#include "DBS_ActivePhases.h"

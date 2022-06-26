@@ -24,7 +24,7 @@ public:
 	/// </summary>
 	/// <param name="newName"></param>
 	/// <param name="apiPath"></param>
-	void set_project_name(std::string newName, std::string apiPath);
+	void set_project_name(std::string newName, std::string apiPath, std::string externalAPI_Path);
 	
 	/// <summary>
 	/// get project name
@@ -38,6 +38,12 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	const std::string& get_project_APIName();
+
+	/// <summary>
+	/// get external API Name (e.g. Matcalc + version)
+	/// </summary>
+	/// <returns></returns>
+	const std::string& get_project_external_APIName();
 
 	/// <summary>
 	/// returns current project id, unsaved projects have an id of -1
@@ -258,6 +264,7 @@ private:
 
 	DBS_Project* _project{nullptr}; //project object connected to database
 	AM_pixel_parameters* _tempPixel {nullptr};
+	DBS_CALPHADDatabase* _calphadDatabases {nullptr};
 	std::vector<AM_pixel_parameters*> _singlePixel_cases; // single cases
 	std::vector<DBS_SelectedElements*> _selectedElements; // list of selected elements
 
@@ -271,6 +278,8 @@ private:
 	/// loads selected elements for this project
 	/// </summary>
 	void load_DBS_selectedElements();
+
+	void load_DBS_CALPHAD();
 #pragma endregion
 
 #pragma region pointerRemove

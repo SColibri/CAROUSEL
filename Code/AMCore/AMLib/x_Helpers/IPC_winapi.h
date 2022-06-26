@@ -47,18 +47,21 @@ public:
     string& send_command(const string& commandString) 
     {
         //flush_pipe(); // check if pipe is empty
-        DWORD dwWritten, dwAvail;
+        DWORD dwWritten{0}, dwAvail{0};
         WriteFile(process_info.child_in_w, commandString.c_str(), commandString.size(), &dwWritten, NULL);
-        
+        if (commandString.compare("exit\r\n") == 0) dwWritten = 0;
+
         if(dwWritten == 0)
         {
             _stdout = "Error: command was not sent";
+            _isRunning = false;
+            CloseHandles(&process_info);
         }
         else 
         {
             for(;;)
             {
-                PeekNamedPipe(process_info.child_out_r, 0, 0, 0, &dwAvail, 0);
+                int outTest = PeekNamedPipe(process_info.child_out_r, 0, 0, 0, &dwAvail, 0);
                 if (dwAvail != 0) break;
                 std::this_thread::sleep_for(std::chrono::microseconds(150));
             }
@@ -155,7 +158,7 @@ private:
 
     void ReadFromPipe(subprocess_info* si)
     {
-        DWORD dwRead, dwWritten, dwAvail, dwleft;
+        DWORD dwRead{ 0 }, dwWritten{ 0 }, dwAvail{ 0 }, dwleft{ 0 };
         BOOL bSuccess = FALSE;
         HANDLE hParentStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
         _stdout = "";
@@ -194,11 +197,18 @@ private:
 
     void CloseHandles(subprocess_info* si)
     {
-        CloseHandle(si->child_in_r);
-        CloseHandle(si->child_in_w);
-        CloseHandle(si->child_out_r);
-        CloseHandle(si->child_out_w);
-        // CloseHandle(si->proc);
+        try
+        {
+            //CloseHandle(si->child_in_r);
+            //CloseHandle(si->child_in_w);
+            //CloseHandle(si->child_out_r);
+            //CloseHandle(si->child_out_w);
+            // CloseHandle(si->proc);
+        }
+        catch (const std::exception&)
+        {
+
+        }
     }
 
 

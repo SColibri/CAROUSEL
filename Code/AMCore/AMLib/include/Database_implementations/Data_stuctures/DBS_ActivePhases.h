@@ -1,32 +1,28 @@
 #pragma once
+
 #include "../../../interfaces/IAM_DBS.h"
-/// <summary>
-/// Implements IAM_DBS.h interface, this is a CALPHAD database
-/// object structure (only stores name of the database).
-/// </summary>
-class DBS_CALPHADDatabase : public IAM_DBS
+
+class DBS_ActivePhases : public IAM_DBS
 {
 public:
 	int IDProject{ -1 };
-	std::string Thermodynamic{ "" };
-	std::string Physical{ "" };
-	std::string Mobility{ "" };
+	int IDPhase{ -1 };
+	int StartTemp{ 700 };
+	int EndTemp{ 25 };
 
-	DBS_CALPHADDatabase(IAM_Database* database, int id) :
+	DBS_ActivePhases(IAM_Database* database, int id) :
 		IAM_DBS(database)
 	{
 		_id = id;
-		_tableStructure = AMLIB::TN_CALPHADDatabase();
+		_tableStructure = AMLIB::TN_ActivePhases();
 	}
 
-	DBS_CALPHADDatabase(const DBS_CALPHADDatabase& toCopy): 
-		IAM_DBS(toCopy._db)
+	static int remove_selection_data(IAM_Database* database, int CaseID)
 	{
-		_tableStructure = toCopy._tableStructure;
-		IDProject = toCopy.IDProject;
-		Thermodynamic = toCopy.Thermodynamic;
-		Physical = toCopy.Physical;
-		Mobility = toCopy.Mobility;
+		std::string query = AMLIB::TN_ActivePhases().columnNames[0] +
+			" = " + std::to_string(CaseID);
+
+		return database->remove_row(&AMLIB::TN_ActivePhases(), query);
 	}
 
 #pragma region implementation
@@ -35,9 +31,9 @@ public:
 	{
 		std::vector<std::string> input{ std::to_string(_id),
 										std::to_string(IDProject),
-										Thermodynamic,
-										Physical,
-										Mobility };
+										std::to_string(IDPhase),
+										std::to_string(StartTemp),
+										std::to_string(EndTemp) };
 		return input;
 	}
 
@@ -58,15 +54,12 @@ public:
 
 		set_id(std::stoi(rawData[0]));
 		IDProject = std::stoi(rawData[1]);
-		Thermodynamic = rawData[2];
-		Physical = rawData[3];
-		Mobility = rawData[4];
-
+		IDPhase = std::stoi(rawData[2]);
+		StartTemp = std::stoi(rawData[3]);
+		EndTemp = std::stoi(rawData[4]);
 		return 0;
 	}
 
 #pragma endregion
-
-private:
 
 };

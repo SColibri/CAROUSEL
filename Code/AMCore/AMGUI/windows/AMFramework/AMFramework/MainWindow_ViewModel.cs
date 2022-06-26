@@ -15,6 +15,8 @@ namespace AMFramework
         private List<Components.Scripting.Scripting_ViewModel> _openScripts = new List<Components.Scripting.Scripting_ViewModel>();
         public List<Components.Scripting.Scripting_ViewModel> OpenScripts { get { return _openScripts; } }
 
+        private Views.Projects.Project_ViewModel _projects = new Views.Projects.Project_ViewModel();
+        public Views.Projects.Project_ViewModel Projects { get { return _projects; } }
 
 
         #region Interface
@@ -83,6 +85,27 @@ namespace AMFramework
 
             result.Content = charty;
             result.Tag = new Components.Charting.Charting_ViewModel();
+
+            return result;
+        }
+
+        public TabItem get_project_tab(Controller.Controller_DBS_Projects projectController) 
+        {
+            TabItem result = new TabItem();
+
+            string headerTitle = projectController.SelectedProject.Name;
+            Uri ImageUri = null; //TODO add lua Icon here
+            if (headerTitle.Length == 0)
+            {
+                result.Header = get_TabHeader("Project without name", ImageUri);
+            }
+            else
+            {
+                result.Header = get_TabHeader(headerTitle, ImageUri);
+            }
+
+            result.Content = _projects.get_project_content(projectController);
+            result.Tag = _projects;
 
             return result;
         }

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
+using System.Windows;
 
 namespace AMFramework.Controller
 {
@@ -14,13 +16,22 @@ namespace AMFramework.Controller
         
         private Controller.Controller_AMCore _AMCore;
         private Controller.Controller_DBS_Projects _DBSProjects;
+        private Controller.Controller_Config _Config;
+
         private Core.AMCore_Socket _coreSocket = new Core.AMCore_Socket();
+
+        private Views.Projects.Project_contents _viewProjectContents;
+
         public Controller_MainWindow() 
         {
             _coreSocket.init();
             _AMCore = new(_coreSocket);
             _DBSProjects = new(_coreSocket);
+            _Config = new(_coreSocket);
+
             _AMCore.PropertyChanged += Core_output_changed_Handle;
+
+            _viewProjectContents = new(ref _DBSProjects);
 
             reloadProjects();
         }
@@ -33,6 +44,15 @@ namespace AMFramework.Controller
                 CoreOut = _AMCore.CoreOutput;
             }
         }
+
+        #region getters
+        public Controller.Controller_DBS_Projects get_project_controller() { return _DBSProjects; }
+
+        public Views.Projects.Project_contents get_project_view_content()
+        {
+            return _viewProjectContents;
+        }
+        #endregion
 
         #region Interfaces
         public event PropertyChangedEventHandler PropertyChanged;
@@ -60,7 +80,7 @@ namespace AMFramework.Controller
         public Components.Windows.AM_popupWindow popupConfigurations()
         {
             Views.Config.Configuration Pg = new();
-            Pg.DataContext = new Controller.Controller_Config(_coreSocket);
+            Pg.DataContext = _Config; // new Controller.Controller_Config(_coreSocket);
 
             Components.Windows.AM_popupWindow Pw = new() { Title = "Configurations" };
             Pw.ContentPage.Children.Add(Pg);
@@ -131,11 +151,27 @@ namespace AMFramework.Controller
                 CornerRadius = "20",
                 GradientTransition = "DodgerBlue"
             };
-            //nbutt.ClickButton += Pg.saveClickHandle;
+            nbutt.ClickButton += _DBSProjects.Select_project_Handle;
 
             Pw.add_button(nbutt);
             return Pw;
         }
+
+
+        public System.Windows.Controls.TabItem projectView_Tab()
+        {
+            Binding myBinding = new Binding("VisibilityProperty");
+            myBinding.Source = _DBSProjects.ProjectVisibility;
+            myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+
+            System.Windows.Controls.TabItem Tabby = new ();
+            Tabby.SetBinding(UIElement.VisibilityProperty ,myBinding);
+            Tabby.Content = new Views.Projects.Project_contents(ref _DBSProjects);
+
+            OnPropertyChanged("OpenScripts");
+            return Tabby;
+        }
+
         #endregion
 
         #region Scripting

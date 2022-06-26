@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace AMFramework.Controller
 {
@@ -14,7 +16,8 @@ namespace AMFramework.Controller
         public Controller_DBS_Projects(Core.AMCore_Socket socket) 
         {
             _AMCore_Socket = socket;
-            controllerCases = new(socket, -1, -1);
+            controllerCases = new(ref socket, this);
+            Controller_Selected_Elements = new(ref socket, this);
         }
         #endregion
 
@@ -24,6 +27,51 @@ namespace AMFramework.Controller
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
+
+        #region Flags
+        private bool _isSelected = false;
+        public bool ISselected
+        {
+            get { return _isSelected; }
+            set
+            {
+                _isSelected = value;
+                
+                if(value == true) 
+                {
+                    SelectedCaseID = -1;
+                }
+                
+                OnPropertyChanged("ISselected");
+                OnPropertyChanged("ProjectVisibility");
+            }
+        }
+
+        public Visibility ProjectVisibility 
+        { 
+            get 
+            { 
+                if (ISselected) { return Visibility.Visible; }
+                else { return Visibility.Collapsed; }
+            }
+        }
+
+        private int _selected_caseID = -1;
+        public int SelectedCaseID { 
+            get { return _selected_caseID; } 
+            set 
+            { 
+                _selected_caseID = value;
+
+                if(value > -1) 
+                { 
+                    _isSelected = false;
+                }
+
+                OnPropertyChanged("SelectedCaseID");
+            } 
         }
         #endregion
 
@@ -80,8 +128,11 @@ namespace AMFramework.Controller
             set 
             { 
                 _selectedProject = value;
-                controllerCases = new(_AMCore_Socket, _selectedProject.ID, -1);
+                controllerCases.refresh();
+                Controller_Selected_Elements.refresh();
                 OnPropertyChanged("SelectedProject");
+                OnPropertyChanged("Cases");
+                OnPropertyChanged("Elements");
             }
         }
         public void SelectProject(int ID) 
@@ -131,7 +182,78 @@ namespace AMFramework.Controller
         #endregion
 
         #region other_controllers
-        public Controller.Controller_Cases controllerCases;
+        private Controller.Controller_Cases controllerCases;
+        public List<Model.Model_Case> Cases
+        {
+            get 
+            { 
+                return controllerCases.Cases;
+            }
+        }
+
+        private Controller.Controller_Selected_Elements Controller_Selected_Elements;
+        public List<Model.Model_SelectedElements> Elements
+        {
+            get { return Controller_Selected_Elements.Elements; }
+        }
+        #endregion
+
+        #region Handles
+        public void Select_project_Handle(object sender, EventArgs e)
+        { 
+            for(int n1 = 0; n1 < DB_projects.Count(); n1++) 
+            {
+                if (DB_projects[n1].IsSelected) 
+                {
+                    SelectedProject = DB_projects[n1];
+                    break;
+                }
+            }
+        
+        }
+
+        public void selected_treeview_item(object sender, RoutedPropertyChangedEventArgs<object> e) 
+        {
+   
+            TreeView refTreeView = sender as TreeView;
+            if (refTreeView.SelectedItem == null) return;
+
+            TreeViewItem refTreeItem = refTreeView.SelectedItem as TreeViewItem;
+            if (refTreeItem == null) return;
+            if (refTreeItem.Tag == null) return;
+
+            if (refTreeItem.Tag.ToString().ToUpper().CompareTo("PROJECT") == 0) 
+            {
+                ISselected = true;
+            }
+            else if (refTreeItem.Tag.ToString().ToUpper().Contains("CASESS")) 
+            {
+                StackPanel refStack = (StackPanel)refTreeItem.Header;
+                Model.Model_Case? model = null;
+
+                for (int n1 = 0; n1 < refStack.Children.Count ; n1++) 
+                {
+                    if (refStack.Children[n1].GetType().Equals(typeof(TextBlock))) 
+                    {
+                        if (((TextBlock)refStack.Children[n1]).Tag.GetType().Equals(typeof(Model.Model_Case))) 
+                        {
+                            model = ((Model.Model_Case)((TextBlock)refStack.Children[n1]).Tag);
+                        }
+                    }
+                }
+
+                if (model is null) return;
+
+                controllerCases.SelectedCase = model;
+            }
+            else 
+            {
+                ISselected = false;
+            }
+            
+
+
+        }
         #endregion
     }
 }

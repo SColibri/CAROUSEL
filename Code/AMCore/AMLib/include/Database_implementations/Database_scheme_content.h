@@ -56,11 +56,48 @@ namespace AMLIB
 		AM_Database_TableStruct out;
 		out.add_new("ID","INTEGER PRIMARY KEY"); // Auto increment ID
 		out.add_new("Name","TEXT"); // User defined project name
-		out.add_new("API_Name", "TEXT"); // API used -> API dll name
+		out.add_new("API_Name", "TEXT"); // API used -> API dll name (framework implementation)
+		out.add_new("externalAPI_Name", "TEXT"); // API used -> API dll name (e.g: matcalc)
 		out.tableName = "Projects";
 
 		return out;
 	}
+
+	/// <summary>
+	/// Specifies the name of the database used for the current case run.
+	/// </summary>
+	/// <returns></returns>
+	static AM_Database_TableStruct TN_CALPHADDatabase()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY");
+		out.add_new("IDProject", "INTEGER");
+		out.add_new("Thermodynamic", "TEXT");
+		out.add_new("Physical", "TEXT");
+		out.add_new("Mobility", "TEXT");
+		out.tableName = "CALPHADDatabase";
+
+		return out;
+	}
+
+	/// <summary>
+	/// Active phases for selected elements using range temperature
+	/// </summary>
+	/// <returns></returns>
+	static AM_Database_TableStruct TN_ActivePhases()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY"); // Auto increment ID
+		out.add_new("IDProject", "INTEGER"); // User defined project name
+		out.add_new("IDPhase", "INTEGER"); // API used -> API dll name
+		out.add_new("StartTemp", "INTEGER"); // API used -> API dll name
+		out.add_new("EndTemp", "INTEGER"); // API used -> API dll name
+		out.tableName = "ActivePhases";
+
+		return out;
+	}
+
+
 
 #pragma endregion
 
@@ -240,22 +277,7 @@ namespace AMLIB
 	}
 #pragma endregion
 
-	/// <summary>
-	/// Specifies the name of the database used for the current case run.
-	/// </summary>
-	/// <returns></returns>
-	static AM_Database_TableStruct TN_CALPHADDatabase()
-	{
-		AM_Database_TableStruct out;
-		out.add_new("ID", "INTEGER PRIMARY KEY");
-		out.add_new("IDCase", "INTEGER");
-		out.add_new("Thermodynamic", "TEXT");
-		out.add_new("Physical", "TEXT");
-		out.add_new("Mobility", "TEXT");
-		out.tableName = "CALPHADDatabase";
-
-		return out;
-	}
+	
 
 #pragma endregion
 

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <fstream>
 
 namespace string_manipulators
 {
@@ -121,6 +122,24 @@ namespace string_manipulators
 
     // No need to re-invent the wheel for trimming whitespaces.
     // code snippet from: https://www.techiedelight.com/trim-string-cpp-remove-leading-trailing-spaces/
+#pragma endregion
+
+#pragma region File
+    static std::vector<std::string> read_file_to_end(std::string fileName)
+    {
+        if (!std::filesystem::exists(fileName)) return  std::vector<std::string>();
+        
+        std::ifstream iStream(fileName);
+        std::vector<std::string> out;
+
+        std::string tempString;
+        while (std::getline(iStream, tempString)) {
+            out.push_back(tempString);
+        }
+
+        iStream.close();
+        return out;
+    }
 #pragma endregion
 
 }

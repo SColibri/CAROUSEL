@@ -9,6 +9,7 @@ class DBS_Project: public IAM_DBS
 public:
 	std::string Name{""};
 	std::string APIName{""};
+	std::string External_APIName{ "" };
 
 	DBS_Project(IAM_Database* database, int id): 
 		IAM_DBS(database)
@@ -53,7 +54,8 @@ public:
 	{
 		std::vector<std::string> input{ std::to_string(_id),
 										Name,
-										APIName };
+										APIName,
+										External_APIName };
 		return input;
 	}
 
@@ -74,6 +76,7 @@ public:
 		set_id(std::stoi(rawData[0]));
 		Name = rawData[1];
 		APIName = rawData[2];
+		External_APIName = rawData[3];
 		
 		return 0;
 	}

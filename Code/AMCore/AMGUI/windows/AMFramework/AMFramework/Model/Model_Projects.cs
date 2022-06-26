@@ -44,6 +44,18 @@ namespace AMFramework.Model
             }
         }
 
+        #region Other_properties
+        private bool _isSelected = false;
+        public bool IsSelected 
+        {
+            get { return _isSelected; }
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged("IsSelected");
+            }
+        }
+        #endregion
 
         public string get_csv() 
         {

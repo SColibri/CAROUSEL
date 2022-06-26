@@ -1,6 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <windows.h>
+#include <mutex>
 #include "../../../AMLib/include/AM_Project.h"
 #include "../../../AMLib/include/AM_Config.h"
 #include "../../../AMLib/include/AM_Database_Framework.h"
@@ -17,7 +18,8 @@ namespace main_setup
 	static AM_Config configuration;
 	static AM_Database_Framework* _dbF{ nullptr };
 	static IAM_Database* _db{ nullptr };
-	HINSTANCE _library{ NULL };
+	static HINSTANCE _library{ NULL };
+	static std::mutex LoadProject_mutex;
 
 	typedef IAM_API* (__cdecl* MYPROC)(AM_Config*);
 	IAM_API* DLL_get(HINSTANCE hLib) {
@@ -62,6 +64,30 @@ namespace main_setup
 		_library = LoadLibrary(TEXT(configuration.get_api_path().c_str()));
 		api = DLL_get(_library);
 		isLoaded = true;
+	}
+
+	static void parallel_run(std::vector<std::string> ListIDCases)
+	{
+		LoadProject_mutex.lock();
+		HINSTANCE library = LoadLibrary(TEXT(configuration.get_api_path().c_str()));
+		IAM_API* api = DLL_get(library);
+		
+		
+		api->run_lua_command("project_loadID", std::vector<std::string> {"1"});
+		LoadProject_mutex.unlock();
+
+		for (int n1 = 0; n1 < ListIDCases.size(); n1++)
+		{
+			std::string outAll = main_setup::api->run_lua_command("pixelcase_stepEquilibrium",
+				std::vector<std::string> {ListIDCases[n1]});
+
+			std::string outAll_Scheil = main_setup::api->run_lua_command("pixelcase_stepScheil",
+				std::vector<std::string> {ListIDCases[n1]});
+		}
+		
+
+		api->dispose();
+		
 	}
 }
 
@@ -231,8 +257,8 @@ TEST_CASE("IAM_lua_functions")
 			// Create cases from template
 			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("template_pixelcase_concentrationVariant",
 				std::vector<std::string> {"FE", "0.001", "10",
-				"MN", "0.001", "1",
-				"ZN", "0.001", "1"}), "OK") != std::string::npos);
+											"MN", "0.001", "5",
+											"ZN", "0.001", "3"}), "OK") != std::string::npos);
 
 			//IPC_pipe::IPC_pipe tempOne("C:/Program Files/MatCalc 6/mcc.exe");
 			//tempOne.send_command("use-module core \r\n");
@@ -292,6 +318,11 @@ TEST_CASE("IAM_lua_functions")
 
 
 			tempProject.refresh_data();
+
+		std::string outAll = main_setup::api->run_lua_command("pixelcase_step_equilibrium_parallel",
+				std::vector<std::string> {"1","1-150"});
+
+			/*
 			for (int n1 = 0; n1 < tempProject.get_singlePixel_Cases().size(); n1++)
 			{
 				std::string outAll = main_setup::api->run_lua_command("pixelcase_stepEquilibrium",
@@ -299,7 +330,7 @@ TEST_CASE("IAM_lua_functions")
 				 
 				std::string outAll_Scheil = main_setup::api->run_lua_command("pixelcase_stepScheil",
 					std::vector<std::string> {std::to_string(tempProject.get_singlePixel_Cases()[n1]->get_caseID())});
-			}
+			}*/
 			
 
 

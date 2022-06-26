@@ -36,6 +36,11 @@ public:
 	{
 		return _configuration->get_apiExternal_path();
 	}
+
+	const std::string get_apiPath()
+	{
+		return _configuration->get_api_path();
+	}
 #pragma endregion
 
 private:

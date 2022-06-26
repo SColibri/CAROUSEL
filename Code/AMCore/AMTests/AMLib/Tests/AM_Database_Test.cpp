@@ -33,7 +33,7 @@ TEST_CASE("Database", "[classic]")
 
 
 		DBS_CALPHADDatabase CalDB(db01, -1);
-		CalDB.IDCase = 1;
+		CalDB.IDProject = 1;
 		CalDB.Thermodynamic = "New Name Calphad";
 		CalDB.save();
 		REQUIRE(CalDB.id() > -1);
@@ -41,7 +41,7 @@ TEST_CASE("Database", "[classic]")
 		DBS_CALPHADDatabase CalDBL(db01, CalDB.id());
 		CalDBL.load();
 		REQUIRE(CalDBL.id() > -1);
-		REQUIRE(CalDBL.IDCase == CalDB.IDCase);
+		REQUIRE(CalDBL.IDProject == CalDB.IDProject);
 		REQUIRE(std::strcmp(CalDBL.Thermodynamic.c_str(), CalDB.Thermodynamic.c_str()) == 0);
 
 		DBS_Case CaseDB(db01, -1);

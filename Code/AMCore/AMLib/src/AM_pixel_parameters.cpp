@@ -11,7 +11,6 @@ AM_pixel_parameters::AM_pixel_parameters(IAM_Database* database,
 	_case->IDProject = _project->id();
 	_case->load();
 
-	_CALPHAD_DB = new DBS_CALPHADDatabase(_db, -1);
 	_scheilConfiguration = new DBS_ScheilConfiguration(_db, -1);
 	_equilibriumConfiguration = new DBS_EquilibriumConfiguration(_db, -1);
 	load_all();
@@ -22,9 +21,6 @@ AM_pixel_parameters::AM_pixel_parameters(const AM_pixel_parameters& toCopy)
 	_db = toCopy._db;
 	_project = toCopy._project;
 	_case = new DBS_Case(*toCopy._case);
-
-	_CALPHAD_DB = new DBS_CALPHADDatabase(*toCopy._CALPHAD_DB);
-	_CALPHAD_DB->IDCase = _case->id();
 
 	_scheilConfiguration = new DBS_ScheilConfiguration(*toCopy._scheilConfiguration);
 	_scheilConfiguration->IDCase = _case->id();
@@ -53,9 +49,6 @@ void AM_pixel_parameters::save()
 {
 	if (!_allowSave) return;
 	_case->save();
-
-	_CALPHAD_DB->IDCase = _case->id();
-	_CALPHAD_DB->save();
 
 	_scheilConfiguration->IDCase = _case->id();
 	_scheilConfiguration->save();
@@ -111,13 +104,6 @@ int AM_pixel_parameters::create_new_pixel(IAM_Database* db, AM_Config* configura
 	newCase.Name = newName;
 	newCase.IDGroup = 0;
 	newCase.save();
-
-	DBS_CALPHADDatabase newCAL(db, -1);
-	newCAL.IDCase = newCase.id();
-	newCAL.Thermodynamic = std::filesystem::path(configuration->get_ThermodynamicDatabase_path()).filename().string();
-	newCAL.Physical = std::filesystem::path(configuration->get_PhysicalDatabase_path()).filename().string();
-	newCAL.Mobility = std::filesystem::path(configuration->get_MobilityDatabase_path()).filename().string();
-	newCAL.save();
 
 	// we use the default phase for the dependent phase in the Scheil
 	// configuration,default = LIQUID.
@@ -474,27 +460,12 @@ void AM_pixel_parameters::remove_all_seleccted_phase()
 #pragma region Data
 void AM_pixel_parameters::load_all()
 {
-	load_DBS_CALPHADDB(_case->id());
 	load_DBS_ScheilConfig(_case->id());
 	load_DBS_EquilibriumConfig(_case->id());
 	load_DBS_EquilibriumPhaseFraction();
 	load_DBS_ScheilPhaseFraction();
 	load_DBS_elementComposition();
 	load_DBS_selectedPhases();
-}
-
-void AM_pixel_parameters::load_DBS_CALPHADDB(int IDCase)
-{
-	if (_CALPHAD_DB == nullptr) return;
-
-	AM_Database_Datatable DTable(_db, &AMLIB::TN_CALPHADDatabase());
-	DTable.load_data(AMLIB::TN_CALPHADDatabase().columnNames[1] + " = \'" + std::to_string(IDCase) + "\'");
-
-	if (DTable.row_count() > 0)
-	{
-		std::vector<std::string> rowData = DTable.get_row_data(0); // we only expect one value to match for this, all others will be ignored
-		_CALPHAD_DB->load(rowData);
-	}
 }
 
 void AM_pixel_parameters::load_DBS_ScheilConfig(int IDCase)

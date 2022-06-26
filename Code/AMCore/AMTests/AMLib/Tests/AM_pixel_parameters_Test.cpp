@@ -30,7 +30,7 @@ namespace main_setup
 
 		// create new test project
 		project = new AM_Project(_db, &configuration, -1);
-		project->set_project_name("projecty", configuration.get_api_path());
+		project->set_project_name("projecty", configuration.get_api_path(), configuration.get_apiExternal_path());
 	}
 }
 
@@ -86,11 +86,6 @@ TEST_CASE("AM_pixel_parameters", "[classic]")
 		REQUIRE(pixelP.get_CaseName().compare("Casey") == 0);
 		REQUIRE(pixelP.get_composition_double().size() == main_setup::project->get_selected_elements_ByName().size());
 		REQUIRE(pixelP.get_selected_phases_ByName().size() == 0);
-
-		REQUIRE(pixelP.get_calphad()->IDCase == pixelP.get_caseID());
-		REQUIRE(pixelP.get_calphad_thermodynamic_database().compare(main_setup::configuration.get_ThermodynamicDatabase_path()) == 0);
-		REQUIRE(pixelP.get_calphad_mobility_database().compare(main_setup::configuration.get_MobilityDatabase_path()) == 0);
-		REQUIRE(pixelP.get_calphad_physical_database().compare(main_setup::configuration.get_PhysicalDatabase_path()) == 0);
 
 		REQUIRE(pixelP.get_EquilibriumConfiguration()->IDCase == pixelP.get_caseID());
 

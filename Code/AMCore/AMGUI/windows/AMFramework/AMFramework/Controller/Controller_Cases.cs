@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Windows.Data;
+using System.Collections;
 
 namespace AMFramework.Controller
 {
@@ -12,17 +14,19 @@ namespace AMFramework.Controller
 
         #region Cons_Des
         private Core.AMCore_Socket _AMCore_Socket;
+        private Controller.Controller_DBS_Projects _ControllerProjects;
         private int _idProject = -1;
         private int _selectedIDCase = -1;
-        public Controller_Cases(Core.AMCore_Socket socket, 
-                                int IDProject,
-                                int IDCase)
+
+        public Controller_Cases(ref Core.AMCore_Socket socket,
+                               Controller.Controller_DBS_Projects _project)
         {
             _AMCore_Socket = socket;
-            _idProject = IDProject;
-            _selectedIDCase = IDCase;
-            load_data();
+            _ControllerProjects = _project;
+            _selectedPhases = new Controller_Selected_Phases(ref socket, this);
+            _elementComposition = new(ref socket, this);
         }
+
         public Controller_Cases()
         {
 
@@ -41,26 +45,44 @@ namespace AMFramework.Controller
         #region Data
         private Model.Model_Case _selectedCase = new();
 
-        List<Model.Model_Case> _cases = new();
+        List<Model.Model_Case> _cases = new List< Model.Model_Case >();
 
         public List<Model.Model_Case> Cases
         {
-            get { return _cases; }
-            set
+            get 
             {
-                _cases = value;
-                OnPropertyChanged("Cases");
+                return _cases; 
+            }
+        }
+        #endregion
+
+        #region Flags
+        private Model.Model_Case _selected_case;
+        public Model.Model_Case SelectedCase 
+        { 
+            get { return _selected_case; } 
+            set 
+            {
+                _selected_case = value;
+                OnPropertyChanged("SelectedCase");
+                OnPropertyChanged("SelectedPhases");
+                OnPropertyChanged("ElementComposition");
             }
         }
         #endregion
 
         #region Methods
+        public void refresh() 
+        {
+            load_data();
+        }
 
         private string load_data() 
         {
-            string outy = _AMCore_Socket.send_receive("dataController_csv 1");
+            string Query = "database_table_custom_query SELECT * FROM \'Case\' WHERE IDProject = " + _ControllerProjects.SelectedProject.ID.ToString();
+            string outy = _AMCore_Socket.send_receive(Query);
             List<string> rowItems = outy.Split("\n").ToList();
-            _cases = new();
+            _cases = new List<Model.Model_Case>();
 
             foreach (string item in rowItems)
             {
@@ -76,18 +98,28 @@ namespace AMFramework.Controller
                     model.Name = columnItems[3];
                     model.Script = columnItems[4];
                     model.Date = columnItems[5];
-                    model.PosX = Convert.ToInt32(columnItems[6]);
-                    model.PosY = Convert.ToInt32(columnItems[7]);
-                    model.PosZ = Convert.ToInt32(columnItems[8]);
-
+                    model.PosX = Convert.ToDouble(columnItems[6]);
+                    model.PosY = Convert.ToDouble(columnItems[7]);
+                    model.PosZ = Convert.ToDouble(columnItems[8]);
+                    model.ElementComposition = new();
                     _cases.Add(model);
                 }
             }
 
+            _selectedPhases.fill_models_with_selectedPhases();
+            _elementComposition.fill_models_with_composition();
             OnPropertyChanged("Cases");
             return outy;
         }
 
+        #endregion
+
+        #region Controllers
+        private Controller.Controller_Selected_Phases _selectedPhases;
+        public List<Model.Model_SelectedPhases> SelectedPhases { get { return _selectedPhases.Phases; } }
+
+        private Controller.Controller_ElementComposition _elementComposition;
+        public List<Model.Model_ElementComposition> ElementComposition { get { return _elementComposition.Composition; } }
         #endregion
 
     }

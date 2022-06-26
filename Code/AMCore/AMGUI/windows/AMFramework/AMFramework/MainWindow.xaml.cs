@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +17,11 @@ namespace AMFramework
         {
             InitializeComponent();
             DataContext = new Controller.Controller_MainWindow();
-            databaseView.DataContext = DataContext;
+
+            databaseView.DataContext = ((Controller.Controller_MainWindow)DataContext).get_project_controller();
+            databaseView.Navigator.SelectedItemChanged += ((Controller.Controller_MainWindow)DataContext).get_project_controller().selected_treeview_item;
+
+            ((Controller.Controller_MainWindow)DataContext).get_project_controller().PropertyChanged += OnProperty_changed_project;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -29,7 +34,6 @@ namespace AMFramework
         {
             MainTabControl.Items.Add(viewModel.get_new_lua_script());
             MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-
         }
 
         #endregion
@@ -94,16 +98,6 @@ namespace AMFramework
             
         }
 
-        private void RibbonMenuItem_Click_3()
-        {
-
-        }
-
-        private void RibbonMenuItem_Click_4()
-        {
-
-        }
-
         private void RibbonMenuItem_Click_loadApi(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
@@ -163,6 +157,61 @@ namespace AMFramework
             Visible = true
         };
 
+
+
+        #endregion
+
+        #region Handles
+        #region project
+        private void OnProperty_changed_project(object sender, PropertyChangedEventArgs propertyName)
+        {
+            if (propertyName.PropertyName == null) return;
+
+            Controller.Controller_DBS_Projects controllerReference = (Controller.Controller_DBS_Projects)sender;
+            if (propertyName.PropertyName.ToUpper().CompareTo("ISSELECTED") == 0)
+            {
+                OnProperty_IsSelected(controllerReference);
+            }
+        }
+
+        private void OnProperty_IsSelected(Controller.Controller_DBS_Projects controllerReference) 
+        {
+            // Do nothing, no project has been selected
+            if (controllerReference.SelectedProject == null) return;
+
+            // Remove tab if not selected
+            if (controllerReference.ISselected == false) 
+            {
+                Remove_project_tab();
+                return;
+            }
+
+            // Add tab if it is selected
+            MainTabControl.Items.Add(viewModel.get_project_tab(((Controller.Controller_MainWindow)DataContext).get_project_controller()));
+            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+
+            // Remove all other tabs
+            Remove_cases_tab();
+        }
+
+        private void Remove_project_tab() 
+        {
+            for (int n1 = 0; n1 < MainTabControl.Items.Count; n1++)
+            {
+                if (((TabItem)MainTabControl.Items[n1]).Tag.GetType().Equals(typeof(Views.Projects.Project_ViewModel)))
+                {
+                    MainTabControl.Items.Remove(MainTabControl.Items[n1]);
+                    break;
+                }
+            }
+        }
+
+        private void Remove_cases_tab() 
+        { 
+        
+        }
+
+        #endregion
 
 
         #endregion

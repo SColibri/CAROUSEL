@@ -406,33 +406,6 @@ public:
 	double get_scheil_config_minimumLiquidFraction();
 #pragma endregion
 
-#pragma region CALPHAD
-	DBS_CALPHADDatabase* get_calphad() 
-	{
-		return _CALPHAD_DB;
-	}
-
-	const int& get_calphad_id()
-	{
-		return _CALPHAD_DB->id();
-	}
-
-	const std::string& get_calphad_thermodynamic_database()
-	{
-		return _CALPHAD_DB->Thermodynamic;
-	}
-	
-	const std::string& get_calphad_mobility_database()
-	{
-		return _CALPHAD_DB->Mobility;
-	}
-
-	const std::string& get_calphad_physical_database()
-	{
-		return _CALPHAD_DB->Physical;
-	}
-#pragma endregion
-
 #pragma endregion
 
 
@@ -444,7 +417,6 @@ private:
 	//Models
 	IAM_Database* _db;
 	DBS_Project* _project;
-	DBS_CALPHADDatabase* _CALPHAD_DB;
 	DBS_Case* _case;
 	DBS_ScheilConfiguration* _scheilConfiguration;
 	DBS_EquilibriumConfiguration* _equilibriumConfiguration;

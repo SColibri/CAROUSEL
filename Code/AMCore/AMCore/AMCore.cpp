@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 	config01.set_apiExternal_path("C:/Program Files/MatCalc 6/mc_core.dll");
 	config01.set_working_directory("C:/Users/drogo/Desktop/Homless");
 	config01.set_ThermodynamicDatabase_path("C:/Users/drogo/Documents/MatCalcUserData/database/thermodynamic/ME-Al1.2.tdb");
-	config01.load();
+	//config01.load();
 
 	API_controll api01(config01);
 	config01.add_observer((IAM_Observer*) &api01);

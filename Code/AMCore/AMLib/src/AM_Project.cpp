@@ -9,6 +9,7 @@ AM_Project::AM_Project(IAM_Database* database, AM_Config* configuration, int id)
 
 	load_singlePixel_Cases();
 	load_DBS_selectedElements();
+	load_DBS_CALPHAD();
 }
 
 AM_Project::AM_Project(IAM_Database* database, AM_Config* configuration, std::string projectName) :
@@ -18,12 +19,16 @@ AM_Project::AM_Project(IAM_Database* database, AM_Config* configuration, std::st
 	_project->load_ByName(projectName);
 
 	if (_project->load() != 0) _project->set_id(-1);
+	load_singlePixel_Cases();
+	load_DBS_selectedElements();
+	load_DBS_CALPHAD();
 }
 
 AM_Project::~AM_Project()
 {
 	if (_project != nullptr) delete _project;
 	if (_tempPixel != nullptr) delete _tempPixel;
+	if (_calphadDatabases != nullptr) delete _calphadDatabases;
 	clear_selectedElements();
 	clear_singlePixel_cases();
 }
@@ -31,11 +36,18 @@ AM_Project::~AM_Project()
 #pragma endregion
 
 #pragma region setters_getters
-void AM_Project::set_project_name(std::string newName, std::string apiPath)
+void AM_Project::set_project_name(std::string newName, std::string apiPath, std::string externalAPI_Path)
 {
 	_project->Name = newName;
 	_project->APIName = std::filesystem::path(apiPath).filename().string();
+	_project->External_APIName = std::filesystem::path(externalAPI_Path).filename().string();
 	_project->save();
+
+	_calphadDatabases->IDProject = _project->id();
+	_calphadDatabases->Thermodynamic = std::filesystem::path(_configuration->get_ThermodynamicDatabase_path()).filename().string();
+	_calphadDatabases->Physical = std::filesystem::path(_configuration->get_PhysicalDatabase_path()).filename().string();
+	_calphadDatabases->Mobility = std::filesystem::path(_configuration->get_MobilityDatabase_path()).filename().string();
+	_calphadDatabases->save();
 }
 
 const std::string& AM_Project::get_project_name()
@@ -46,6 +58,11 @@ const std::string& AM_Project::get_project_name()
 const std::string& AM_Project::get_project_APIName()
 {
 	return _project->APIName;
+}
+
+const std::string& AM_Project::get_project_external_APIName()
+{
+	return _project->External_APIName;
 }
 
 const int& AM_Project::get_project_ID()
@@ -105,7 +122,6 @@ std::string AM_Project::set_selected_elements_ByName(std::vector<std::string> ne
 	load_singlePixel_Cases();
 	return outy;
 }
-
 
 std::vector<std::string> AM_Project::get_selected_elements_ByName()
 {
@@ -197,6 +213,7 @@ void AM_Project::refresh_data()
 
 	load_singlePixel_Cases();
 	load_DBS_selectedElements();
+	load_DBS_CALPHAD();
 }
 #pragma endregion
 
@@ -340,4 +357,23 @@ void AM_Project::load_DBS_selectedElements()
 		}
 	}
 }
+void AM_Project::load_DBS_CALPHAD()
+{
+	if (_project == nullptr) return;
+
+	AM_Database_Datatable DTable(_db, &AMLIB::TN_CALPHADDatabase());
+	DTable.load_data(AMLIB::TN_CALPHADDatabase().columnNames[1] + " = \'" + std::to_string(_project->id()) + "\'");
+
+	if (DTable.row_count() > 0)
+	{
+		if (_calphadDatabases != nullptr) delete _calphadDatabases;
+		std::vector<std::string> rowData = DTable.get_row_data(0);
+		_calphadDatabases = new DBS_CALPHADDatabase(_db, -1);
+		_calphadDatabases->load(rowData);
+		return;
+	}
+
+	_calphadDatabases = new DBS_CALPHADDatabase(_db, -1);
+}
+
 #pragma endregion

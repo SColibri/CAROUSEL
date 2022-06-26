@@ -108,6 +108,28 @@ namespace AMFramework.Model
             }
         }
 
+        private List<string> _SelectedPhases = new();
+        public List<string> SelectedPhases
+        {
+            get { return _SelectedPhases; }
+            set
+            {
+                _SelectedPhases = value;
+                OnPropertyChanged("SelectedPhases");
+            }
+        }
+
+        List<Model.Model_ElementComposition> _elementComposition = new();
+        public List<Model.Model_ElementComposition> ElementComposition
+        {
+            get { return _elementComposition; }
+            set
+            {
+                _elementComposition = value;
+                OnPropertyChanged("ElementComposition");
+            }
+        }
+
         #region Interfaces
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -116,5 +138,6 @@ namespace AMFramework.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
+
     }
 }

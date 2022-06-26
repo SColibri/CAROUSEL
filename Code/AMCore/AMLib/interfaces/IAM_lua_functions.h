@@ -8,6 +8,7 @@
 #include "../include/AM_Database_Framework.h"
 #include "../include/AM_Project.h"
 #include "../x_Helpers/string_manipulators.h"
+#include "../x_Helpers/IPC_winapi.h"
 
 extern "C" {
 #include "../external/lua542/include/lua.h"
@@ -139,6 +140,7 @@ protected:
 
 		// Database
 		add_new_function(state, "database_tableQuery", "string, csv format, delimiter comma char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
+		add_new_function(state, "database_table_custom_query", "string, csv format, delimiter comma char", "database_tableFullQuery <Full query>", baseBind_DatabaseByQuery);
 		add_new_function(state, "database_tableList", "string, csv format, delimiter comma char", "database_tableList", baseBind_DatabaseTableList);
 		
 		//Data controller
@@ -317,9 +319,30 @@ protected:
 		else if (noParameters == 2)
 		{
 			std::string parameter_2 = lua_tostring(state, 2);
+			string_manipulators::replace_token_from_socketString(parameter_2);
+
 			out = _dbFramework->get_database()->get_tableRows(parameter, parameter_2);
 		}
 		
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	static int baseBind_DatabaseByQuery(lua_State* state)
+	{
+		std::vector<std::string> parameters = get_parameters(state);
+		std::string out{ "" };
+
+		if(parameters.size() < 1)
+		{
+			out = "Error, wrong parameters!";
+			lua_pushstring(state, out.c_str());
+			return 1;
+		}
+
+		std::vector<std::vector<std::string>> tableContents = _dbFramework->get_database()->get_fromQuery(IAM_Database::csv_join_row(parameters, " "));
+		out = IAM_Database::get_csv(tableContents);
 
 		lua_pushstring(state, out.c_str());
 		return 1;
@@ -466,6 +489,7 @@ protected:
 		if(parameters.size() > 0)
 		{
 			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
+			parameter = string_manipulators::trim_whiteSpace(parameter);
 			_configuration->set_working_directory(parameter);
 			_configuration->save();
 
@@ -670,7 +694,7 @@ protected:
 		std::string out{ "" };
 		std::string parameter = lua_tostring(state, 1);
 		std::replace(parameter.begin(), parameter.end(), '#', ' ');
-		_openProject->set_project_name(parameter, _dbFramework->get_apiExternalPath());
+		_openProject->set_project_name(parameter, _dbFramework->get_apiPath(), _dbFramework->get_apiExternalPath());
 		
 		lua_pushstring(state, "OK");
 		return 1;
@@ -693,7 +717,7 @@ protected:
 			return 1;
 		}
 
-		_openProject->set_project_name(parameters[0], _dbFramework->get_apiExternalPath());
+		_openProject->set_project_name(IAM_Database::csv_join_row(parameters, " "), _dbFramework->get_apiPath(), _dbFramework->get_apiExternalPath());
 
 		lua_pushstring(state, "OK");
 		return 1;

@@ -128,6 +128,19 @@ std::string API_matcalc_lib::APIcommand(std::string commandLine)
 	std::string outResult = _mcc_subprocess.send_command(commandLine + "\r\n");
 	return outResult;
 }
+
+std::string API_matcalc_lib::APIcommand(std::string commandLine, IPC_winapi* mcc_comm)
+{
+	//flush the pipe before another command:
+	if (mcc_comm == nullptr) return "Error pointer";
+	if (!mcc_comm->isRunning())
+	{
+		mcc_comm->initialize(L"C:/Program Files/MatCalc 6/mcc.exe");
+		mcc_comm->set_endflag("MC:");
+	}
+	std::string outResult = mcc_comm->send_command(commandLine + "\r\n");
+	return outResult;
+}
 #pragma endregion
 
 #pragma region JunkCode

@@ -58,7 +58,8 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 	add_new_function(state, "matcalc_buffer_get_scheil_phase_cumulative_fraction", "string", "matcalc_buffer_get_scheil_phase_fraction", bind_matcalc_buffer_getEquilibriumPhaseFraction);
 	add_new_function(state, "matcalc_buffer_listContent", "string", "matcalc_buffer_listContent", bind_matcalc_buffer_listContent);
 	add_new_function(state, "matcalc_buffer_clear", "string", "matcalc_buffer_clear", bind_matcalc_buffer_clear);
-
+	add_new_function(state, "matcalc_database_phaseNames", "string", "matcalc_database_phaseNames", bind_DatabasePhaseNames_command);
+	
 	//
 	add_new_function(state, "hello_world", "void", "baby lua script :)", bind_hello_world);
 	add_new_function(state, "run_script", "std::string filename", "filename", bind_run_script);
@@ -71,9 +72,10 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 	//
 	add_new_function(state, "pixelcase_stepEquilibrium_IDProject", "std::string out", "<int IDProject> <int IDCase>", Bind_SPC_StepEquilibrium_ByProjectID);
 	add_new_function(state, "pixelcase_stepEquilibrium", "std::string out", "<int IDCase>", Bind_SPC_StepEquilibrium);
+	add_new_function(state, "pixelcase_step_equilibrium_parallel", "std::string out", "<int ID project> <int IDCase (optional more than 1)>", Bind_SPC_Parallel_StepEquilibrium);
 	add_new_function(state, "pixelcase_stepScheil", "std::string out", "<int IDCase>", Bind_SPC_StepScheil);
 	add_new_function(state, "pixelcase_run_cases", "std::string out", "pixelcase_run_cases", Bind_SPC_run_cases);
-
+	// Bind_SPC_Parallel_StepEquilibrium
 	//add_new_function(state, "database_tableList", "std::string out", "void", AMBaseFunctions::baseBind_DatabaseTableList);
 }
 
@@ -160,7 +162,7 @@ int API_lua_functions::bind_getElementNames_command(lua_State* state)
 	return 1;
 }
 
-int API_lua_functions::bind_getPhaseNames_command(lua_State* state)
+int API_lua_functions::bind_DatabasePhaseNames_command(lua_State* state)
 {
 	if (_configuration == nullptr) return -1;
 	std::string commOut = runVectorCommands(API_Scripting::script_get_thermodynamic_database(_configuration));
@@ -169,9 +171,23 @@ int API_lua_functions::bind_getPhaseNames_command(lua_State* state)
 
 	std::string out;
 	if (IndexPhases == std::string::npos || IndexExitCode == std::string::npos) out = "Error, data was not found!";
+	else
+	{
+		out = commOut.substr(IndexPhases, IndexExitCode - IndexPhases);
+	}
+
+	lua_pushstring(state, out.c_str());
+	return 1;
+}
+
+int API_lua_functions::bind_getPhaseNames_command(lua_State* state)
+{
+	if (_configuration == nullptr) return -1;
+
+	std::string out = run_command(state, "matcalc_database_phaseNames");
+	if (string_manipulators::find_index_of_keyword(out, "Error") != std::string::npos) out = "Error, data was not found!";
 	else 
 	{ 
-		out = commOut.substr(IndexPhases, IndexExitCode - IndexPhases);
 		std::vector<std::string> outSplit = string_manipulators::split_text(out, "\n");
 
 		for(size_t n1 = 2; n1 < outSplit.size() - 1 ; n1++)
@@ -249,6 +265,18 @@ std::string API_lua_functions::runVectorCommands(std::vector<std::string> parame
 	for each (std::string commLine in parameter)
 	{
 		out += _api->APIcommand(commLine);
+	}
+
+	return out;
+}
+
+std::string API_lua_functions::runVectorCommands(std::vector<std::string> parameter, IPC_winapi* mcc_comm)
+{
+	std::string out{};
+
+	for each (std::string commLine in parameter)
+	{
+		out += _api->APIcommand(commLine, mcc_comm);
 	}
 
 	return out;

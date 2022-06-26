@@ -13,22 +13,22 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace AMFramework.Components.Database_treeview
+namespace AMFramework.Views.Projects
 {
     /// <summary>
-    /// Interaction logic for Database_treeview.xaml
+    /// Interaction logic for Project_contents.xaml
     /// </summary>
-    public partial class Database_treeview : UserControl
+    public partial class Project_contents : UserControl
     {
-        public Database_treeview()
+        public Project_contents()
         {
             InitializeComponent();
         }
 
-        public Database_treeview(ref Controller.Controller_DBS_Projects amCore)
+        public Project_contents(ref Controller.Controller_DBS_Projects pController)
         {
-            DataContext = amCore;
+            InitializeComponent();
+            DataContext = pController;
         }
-
     }
 }

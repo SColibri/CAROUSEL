@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include "../include/Database_implementations/Database_Factory.h"
+#include "../x_Helpers/string_manipulators.h"
 
 // Constructors, destructors and other
 // -------------------------------------------------------------------------------------
@@ -68,7 +69,7 @@
 
 	void AM_Config::set_working_directory(std::string mainPath)
 	{
-		_fileManagement.set_workingDirectory(mainPath);
+		_fileManagement.set_workingDirectory(string_manipulators::trim_whiteSpace(mainPath));
 	}
 
 	const std::string AM_Config::get_working_directory()

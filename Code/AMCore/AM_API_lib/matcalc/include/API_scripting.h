@@ -1,13 +1,30 @@
 #pragma once
 #include <string>
+#include <fstream>
 #include <ctime>
 #include <vector>
+#include <mutex>
 #include "../../../AMLib/include/AM_Config.h"
 #include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
 #include "../../../AMLib/x_Helpers/string_manipulators.h"
 
 namespace API_Scripting
 {
+#pragma region Helpers
+	inline static std::mutex _uniqueNumber_mutex;
+	inline static size_t _uniqueNumber = 0;
+	static size_t get_uniqueNumber()
+	{
+		size_t out;
+
+		_uniqueNumber_mutex.lock();
+		out = _uniqueNumber;
+		_uniqueNumber += 1;
+		_uniqueNumber_mutex.unlock();
+
+		return out;
+	}
+#pragma endregion
 	
 	std::vector<std::string> static Script_initialize(AM_Config* configuration) 
 	{
@@ -43,6 +60,11 @@ namespace API_Scripting
 		return "use-module core";
 	}
 
+	std::string static script_runScript(std::string scriptFilenam)
+	{
+		return "run-script-file \"" + scriptFilenam + "\"";
+	}
+
 	std::string static script_set_working_directory(AM_Config* configuration)
 	{
 		return "set-working-directory \"" + configuration->get_working_directory() + "\"";
@@ -67,7 +89,7 @@ namespace API_Scripting
 	{
 		std::string out = "select-elements ";
 
-		for each (std::string elementy in Elements)
+		for(std::string elementy : Elements)
 		{
 			out += elementy + " ";
 		}
@@ -204,7 +226,7 @@ namespace API_Scripting
 	{
 		std::string out{ "format-variable-string variable=" + 
 						 stringVar + 
-					    " format_string=\"" + format + "\" " +
+					    " format-string=\"%g," + format + "\" T " +
 						IAM_Database::csv_join_row(variableNames," ")};
 
 		return out;
@@ -254,11 +276,6 @@ namespace API_Scripting
 
 		return out;
 	}
-
-
-
-	
-
 
 	std::string static Script_Header()
 	{
@@ -336,5 +353,32 @@ namespace API_Scripting
 		return out;
 	}
 #pragma endregion
+
+
+#pragma region Script_contents
+	std::string static Buffer_to_variable(std::string BUFFERSIZE, std::string FORMATTEDSTRING, std::string TEMPDATA, AM_Config* configuration)
+	{
+		// create filenames
+		std::string tempName = "TempFile" + std::to_string(std::rand() + get_uniqueNumber());
+		std::string matcalfFilename = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "/" + tempName + ".Framework";
+
+		// create script
+		std::string scriptTemplate = "export-open-file file-name=\"" + matcalfFilename + "\" \n";
+		scriptTemplate += "for (i;1.." + BUFFERSIZE + ") \n@ load-buffer-state line-index=i \n";
+		scriptTemplate += "@ " + FORMATTEDSTRING + " \n";
+		scriptTemplate += "@ export-file-variables format-string=\"#" + TEMPDATA + "\" \n";
+		scriptTemplate += "endfor \n";
+		scriptTemplate += "export-close-file \n";
+
+		// Save script
+		std::string fileName = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) +  "/" + tempName + ".mcs";
+		std::ofstream striptFile(fileName);
+		striptFile << scriptTemplate.c_str() << std::endl;
+		striptFile.close();
+
+		return fileName;
+	}
+#pragma endregion
+
 
 }
