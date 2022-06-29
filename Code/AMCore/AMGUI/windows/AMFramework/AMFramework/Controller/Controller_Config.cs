@@ -68,39 +68,39 @@ namespace AMFramework.Controller
         #region APIPath_Framework
 
         private ICommand _Search_API_Path;
-            public ICommand Search_API_Path
+        public ICommand Search_API_Path
+        {
+            get
             {
-                get
+                if (_Search_API_Path == null)
                 {
-                    if (_Search_API_Path == null)
-                    {
-                        _Search_API_Path = new RelayCommand(
-                            param => this.Search_API_path_controll(),
-                            param => this.Can_Change_API_path()
-                        );
-                    }
-                    return _Search_API_Path;
+                    _Search_API_Path = new RelayCommand(
+                        param => this.Search_API_path_controll(),
+                        param => this.Can_Change_API_path()
+                    );
                 }
+                return _Search_API_Path;
             }
+        }
 
-            private void Search_API_path_controll()
+        private void Search_API_path_controll()
+        {
+            OpenFileDialog OFD = new OpenFileDialog();
+            OFD.Multiselect = false;
+            OFD.Filter = "AM_library|*.dll";
+            OFD.Title = "Select the AM_Framework API library";
+            OFD.CheckFileExists = true;
+
+            if (OFD.ShowDialog() == true)
             {
-                OpenFileDialog OFD = new OpenFileDialog();
-                OFD.Multiselect = false;
-                OFD.Filter = "AM_library|*.dll";
-                OFD.Title = "Select the AM_Framework API library";
-                OFD.CheckFileExists = true;
-
-                if (OFD.ShowDialog() == true)
-                {
-                    datamodel.API_path = OFD.FileName;
-                }
+                datamodel.API_path = OFD.FileName;
             }
+        }
 
-            private bool Can_Change_API_path()
-            {
-                return true;
-            }
+        private bool Can_Change_API_path()
+        {
+            return true;
+        }
         #endregion
 
         #region external_APIPath_Framework

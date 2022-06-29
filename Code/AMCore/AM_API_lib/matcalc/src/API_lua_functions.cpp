@@ -59,7 +59,8 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 	add_new_function(state, "matcalc_buffer_listContent", "string", "matcalc_buffer_listContent", bind_matcalc_buffer_listContent);
 	add_new_function(state, "matcalc_buffer_clear", "string", "matcalc_buffer_clear", bind_matcalc_buffer_clear);
 	add_new_function(state, "matcalc_database_phaseNames", "string", "matcalc_database_phaseNames", bind_DatabasePhaseNames_command);
-	
+	add_new_function(state, "matcalc_database_elementNames", "string", "matcalc_database_elementNames", bind_DatabaseElementNames_command);
+
 	//
 	add_new_function(state, "hello_world", "void", "baby lua script :)", bind_hello_world);
 	add_new_function(state, "run_script", "std::string filename", "filename", bind_run_script);
@@ -133,7 +134,7 @@ int API_lua_functions::bind_initializeCore_command(lua_State* state)
 	return 1;
 }
 
-int API_lua_functions::bind_getElementNames_command(lua_State* state)
+int API_lua_functions::bind_DatabaseElementNames_command(lua_State* state)
 {
 	if (_configuration == nullptr) return -1;
 	std::string commOut = runVectorCommands(API_Scripting::script_get_thermodynamic_database(_configuration));
@@ -141,10 +142,27 @@ int API_lua_functions::bind_getElementNames_command(lua_State* state)
 	size_t IndexPhases = string_manipulators::find_index_of_keyword(commOut, "# of phases in database");
 
 	std::string out;
-	if (IndexPhases == std::string::npos || IndexElements == std::string::npos) out = "Error, data was not found!";
-	else 
+	if (IndexElements == std::string::npos || IndexPhases == std::string::npos) out = "Error, data was not found!";
+	else
 	{
 		out = commOut.substr(IndexElements, IndexPhases - IndexElements);
+	}
+
+	lua_pushstring(state, out.c_str());
+	return 1;
+}
+
+int API_lua_functions::bind_getElementNames_command(lua_State* state)
+{
+	if (_configuration == nullptr) return -1;
+	std::string commOut = runVectorCommands(API_Scripting::script_get_thermodynamic_database(_configuration));
+	size_t IndexElements = string_manipulators::find_index_of_keyword(commOut, "# of elements in database");
+	size_t IndexPhases = string_manipulators::find_index_of_keyword(commOut, "# of phases in database");
+
+	std::string out = run_command(state, "matcalc_database_phaseNames");
+	if (string_manipulators::find_index_of_keyword(out, "Error") != std::string::npos) out = "Error, data was not found!";
+	else 
+	{
 		std::vector<std::string> outSplit = string_manipulators::split_text(out, "\n");
 
 		for (size_t n1 = 1; n1 < outSplit.size() - 1 ; n1++)

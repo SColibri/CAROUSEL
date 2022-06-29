@@ -17,6 +17,7 @@ namespace AMFramework.Controller
         private Controller.Controller_AMCore _AMCore;
         private Controller.Controller_DBS_Projects _DBSProjects;
         private Controller.Controller_Config _Config;
+        private Controller.Controller_Plot _Plot;
 
         private Core.AMCore_Socket _coreSocket = new Core.AMCore_Socket();
 
@@ -28,6 +29,7 @@ namespace AMFramework.Controller
             _AMCore = new(_coreSocket);
             _DBSProjects = new(_coreSocket);
             _Config = new(_coreSocket);
+            _Plot = new(ref _coreSocket, _DBSProjects);
 
             _AMCore.PropertyChanged += Core_output_changed_Handle;
 
@@ -52,6 +54,9 @@ namespace AMFramework.Controller
         {
             return _viewProjectContents;
         }
+
+        public Controller.Controller_Plot get_plot_Controller() { return _Plot; }
+
         #endregion
 
         #region Interfaces

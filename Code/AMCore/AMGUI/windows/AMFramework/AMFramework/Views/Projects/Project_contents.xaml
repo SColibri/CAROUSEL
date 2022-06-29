@@ -86,7 +86,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="LightYellow" Margin="1" BorderBrush="Silver" BorderThickness="1">
-                                        <TextBlock Text="{Binding}" Margin="1" Height="Auto" Width="Auto"></TextBlock>
+                                        <TextBlock Text="{Binding Path=PhaseName}" Margin="1" Height="Auto" Width="Auto"></TextBlock>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

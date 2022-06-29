@@ -51,10 +51,10 @@
                 <TreeViewItem Header="Active phases" Tag="SELECTION">
 
                 </TreeViewItem>
-                <TreeViewItem Header="Single pixel cases" Tag="Case" ItemsSource="{Binding Path=Cases, UpdateSourceTrigger=PropertyChanged}">
+                <TreeViewItem Header="Single pixel cases" Tag="CaseList" ItemsSource="{Binding Path=Cases, UpdateSourceTrigger=PropertyChanged}">
                     <TreeViewItem.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Tag="Case">
 
                                 <Image Width="15" 
                                            Margin="3" 

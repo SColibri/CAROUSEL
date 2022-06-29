@@ -18,6 +18,7 @@ namespace AMFramework.Controller
             _AMCore_Socket = socket;
             controllerCases = new(ref socket, this);
             Controller_Selected_Elements = new(ref socket, this);
+            Controller_Elements = new(ref socket, this);
         }
         #endregion
 
@@ -42,10 +43,10 @@ namespace AMFramework.Controller
                 if(value == true) 
                 {
                     SelectedCaseID = -1;
+                    _selected_case_window = false;
                 }
                 
                 OnPropertyChanged("ISselected");
-                OnPropertyChanged("ProjectVisibility");
             }
         }
 
@@ -68,10 +69,28 @@ namespace AMFramework.Controller
                 if(value > -1) 
                 { 
                     _isSelected = false;
+                    _selected_case_window = false;
                 }
 
                 OnPropertyChanged("SelectedCaseID");
             } 
+        }
+
+        private bool _selected_case_window = false;
+        public bool SelectedCaseWindow 
+        { 
+            get { return _selected_case_window; }
+            set 
+            { 
+                _selected_case_window = value;
+                if (value) 
+                {
+                    _isSelected = false;
+                    SelectedCaseID = -1;
+                }
+
+                OnPropertyChanged("SelectedCaseWindow");
+            }
         }
         #endregion
 
@@ -181,21 +200,76 @@ namespace AMFramework.Controller
 
         #endregion
 
-        #region other_controllers
+        #region Cases
         private Controller.Controller_Cases controllerCases;
         public List<Model.Model_Case> Cases
         {
-            get 
-            { 
+            get
+            {
                 return controllerCases.Cases;
             }
         }
 
+        public void Case_load_equilibrium_phase_fraction(Model.Model_Case model) 
+        {
+            controllerCases.update_phaseFractions(model);
+        }
+
+        public void Case_clear_phase_fraction_data() 
+        {
+            //controllerCases.Clear_phase_fractions();
+        }
+
+        private List<Model.Model_Phase> _used_Phases_inCases;
+        public List<Model.Model_Phase> Used_Phases_inCases
+        { get { return _used_Phases_inCases; } }
+
+        public void refresh_used_Phases_inCases() 
+        {
+            if (_selectedProject is null) return;
+            List<int> CaseList = Cases.Select(c => c.ID).ToList();
+            _used_Phases_inCases = Controller.Controller_Phase.get_unique_phases_from_caseList(ref _AMCore_Socket, _selectedProject.ID);
+
+            OnPropertyChanged("Used_Phases_inCases");
+        }
+
+        #endregion
+
+        #region Phases
+        private List<Model.Model_Phase> _available_Phase = new();
+        public List<Model.Model_Phase> AvailablePhase { get { return _available_Phase; } }
+
+        public void load_database_available_phases()
+        {
+            _available_Phase = Controller_Phase.get_available_phases_in_database(ref _AMCore_Socket);
+            OnPropertyChanged("AvailablePhase");
+        }
+        #endregion
+
+        #region Elements
         private Controller.Controller_Selected_Elements Controller_Selected_Elements;
+        private Controller.Controller_Element Controller_Elements;
         public List<Model.Model_SelectedElements> Elements
         {
             get { return Controller_Selected_Elements.Elements; }
         }
+
+        private List<Model.Model_Element> _available_Elements = new();
+        public List<Model.Model_Element> AvailableElements { get { return _available_Elements; } }
+
+        public void load_database_available_elements() 
+        {
+            _available_Elements = Controller_Elements.get_available_elements_in_database();
+            OnPropertyChanged("AvailableElements");
+        }
+        #endregion
+
+        #region Plot
+
+        #endregion
+
+        #region other_controllers
+
         #endregion
 
         #region Handles
@@ -226,7 +300,11 @@ namespace AMFramework.Controller
             {
                 ISselected = true;
             }
-            else if (refTreeItem.Tag.ToString().ToUpper().Contains("CASESS")) 
+            else if (refTreeItem.Tag.ToString().ToUpper().Contains("CASELIST")) 
+            {
+                SelectedCaseWindow = true;
+            }
+            else if (refTreeItem.Tag.ToString().ToUpper().Contains("CASE")) 
             {
                 StackPanel refStack = (StackPanel)refTreeItem.Header;
                 Model.Model_Case? model = null;

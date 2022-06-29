@@ -12,7 +12,7 @@
 
 #pragma comment (lib, "Ws2_32.lib")
 
-#define DEFAULT_BUFLEN 512
+#define DEFAULT_BUFLEN 2048
 #define DEFAULT_PORT "27015"
 
 /// <summary>

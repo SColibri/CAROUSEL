@@ -108,8 +108,20 @@ namespace AMFramework.Model
             }
         }
 
-        private List<string> _SelectedPhases = new();
-        public List<string> SelectedPhases
+        #region Other
+        private bool _isSelected = false;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged("IsSelected");
+            }
+        }
+
+        private List<Model.Model_SelectedPhases> _SelectedPhases = new();
+        public List<Model.Model_SelectedPhases> SelectedPhases
         {
             get { return _SelectedPhases; }
             set
@@ -129,6 +141,40 @@ namespace AMFramework.Model
                 OnPropertyChanged("ElementComposition");
             }
         }
+
+        List<Model.Model_EquilibriumPhaseFraction> _equilibriumPhaseFractions = new();
+        public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFractions
+        {
+            get { return _equilibriumPhaseFractions; }
+            set
+            {
+                _equilibriumPhaseFractions = value;
+                OnPropertyChanged("EquilibriumPhaseFractions");
+            }
+        }
+
+        List<Model.Model_ScheilPhaseFraction> _scheilPhaseFractions = new();
+        public List<Model.Model_ScheilPhaseFraction> ScheilPhaseFractions
+        {
+            get { return _scheilPhaseFractions; }
+            set
+            {
+                _scheilPhaseFractions = value;
+                OnPropertyChanged("ScheilPhaseFractions");
+            }
+        }
+
+        List<Model.Model_EquilibriumConfiguration> _equilibriumConfiguration = new();
+        public List<Model.Model_EquilibriumConfiguration> EquilibriumConfiguration
+        {
+            get { return _equilibriumConfiguration; }
+            set
+            {
+                _equilibriumConfiguration = value;
+                OnPropertyChanged("EquilibriumConfiguration");
+            }
+        }
+        #endregion
 
         #region Interfaces
         public event PropertyChangedEventHandler PropertyChanged;

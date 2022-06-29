@@ -17,7 +17,7 @@ namespace AMFramework.Core
         public bool connected { get { return _connected; } }
         public void init() 
         {
-            s.ReceiveTimeout = 1000;
+            s.ReceiveTimeout = 10000;
             connect_to_server("127.0.0.1", 27015);
         }
         private void connect_to_server(string host, int port) 
@@ -46,7 +46,7 @@ namespace AMFramework.Core
             {
                 if (!_connected) { init(); }
                 byte[] msg = Encoding.UTF8.GetBytes(sendMessage);
-                byte[] bytes = new byte[512];
+                byte[] bytes = new byte[2048];
                 int byteCount = s.Send(msg, 0, msg.Length, SocketFlags.None);
                 Console.WriteLine("Sent {0} bytes.", byteCount);
 

@@ -11,8 +11,8 @@ public:
 	double Temperature{ 700 };
 	double StartTemperature{ 700 };
 	double EndTemperature{ 700 };
+	std::string TemperatureType{ "C" };
 	double StepSize{ 25 };
-	std::string TemperatureType{"C"};
 	double Pressure{ 101325 };
 
 	DBS_EquilibriumConfiguration(IAM_Database* database, int id) :
@@ -30,8 +30,8 @@ public:
 		Temperature = toCopy.Temperature;
 		StartTemperature = toCopy.StartTemperature;
 		EndTemperature = toCopy.EndTemperature;
-		StepSize = toCopy.StepSize;
 		TemperatureType = toCopy.TemperatureType;
+		StepSize = toCopy.StepSize;
 		Pressure = toCopy.Pressure;
 	}
 
@@ -51,8 +51,8 @@ public:
 										std::to_string(Temperature),
 										std::to_string(StartTemperature),
 										std::to_string(EndTemperature),
-										std::to_string(StepSize),
 										TemperatureType,
+										std::to_string(StepSize),
 										std::to_string(Pressure)};
 		return input;
 	}
@@ -76,8 +76,8 @@ public:
 		Temperature = std::stod(rawData[2]);
 		StartTemperature = std::stod(rawData[3]);
 		EndTemperature = std::stod(rawData[4]);
-		StepSize = std::stold(rawData[5]);
-		TemperatureType = rawData[6];
+		TemperatureType = rawData[5];
+		StepSize = std::stold(rawData[6]);
 		Pressure = std::stod(rawData[7]);
 		return 0;
 	}

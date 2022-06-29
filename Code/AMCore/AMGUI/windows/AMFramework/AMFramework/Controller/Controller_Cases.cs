@@ -25,6 +25,7 @@ namespace AMFramework.Controller
             _ControllerProjects = _project;
             _selectedPhases = new Controller_Selected_Phases(ref socket, this);
             _elementComposition = new(ref socket, this);
+            _equilibriumPhaseFractions = new(ref socket, this);
         }
 
         public Controller_Cases()
@@ -112,6 +113,16 @@ namespace AMFramework.Controller
             return outy;
         }
 
+        public void update_phaseFractions(Model.Model_Case model) 
+        {
+            if (model is null) return;
+            _equilibriumPhaseFractions.fill_model_phase_fraction(model);
+        }
+
+        public void Clear_phase_fractions(Model.Model_Case model)
+        {
+            _equilibriumPhaseFractions.clear_models_phaseFractions();
+        }
         #endregion
 
         #region Controllers
@@ -120,6 +131,10 @@ namespace AMFramework.Controller
 
         private Controller.Controller_ElementComposition _elementComposition;
         public List<Model.Model_ElementComposition> ElementComposition { get { return _elementComposition.Composition; } }
+
+        private Controller.Controller_EquilibriumPhaseFraction _equilibriumPhaseFractions;
+        public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }
+
         #endregion
 
     }

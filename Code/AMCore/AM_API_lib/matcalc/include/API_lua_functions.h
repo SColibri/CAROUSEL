@@ -76,6 +76,13 @@ private:
 	static int bind_initializeCore_command(lua_State* state);
 
 	/// <summary>
+	/// Returns Database element list
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int bind_DatabaseElementNames_command(lua_State* state);
+
+	/// <summary>
 	/// Obtains the elements available on a database
 	/// </summary>
 	/// <param name="state"></param>

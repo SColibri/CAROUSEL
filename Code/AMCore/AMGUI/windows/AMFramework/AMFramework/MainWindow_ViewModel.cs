@@ -18,6 +18,8 @@ namespace AMFramework
         private Views.Projects.Project_ViewModel _projects = new Views.Projects.Project_ViewModel();
         public Views.Projects.Project_ViewModel Projects { get { return _projects; } }
 
+        private Views.Case.Case_ViewModel _caseView = new Views.Case.Case_ViewModel();
+        public Views.Case.Case_ViewModel CaseView { get { return _caseView; } }
 
         #region Interface
         public bool close()
@@ -106,6 +108,27 @@ namespace AMFramework
 
             result.Content = _projects.get_project_content(projectController);
             result.Tag = _projects;
+
+            return result;
+        }
+
+        public TabItem get_case_list_tab(Controller.Controller_Plot plotController)
+        {
+            TabItem result = new TabItem();
+
+            string headerTitle = plotController.SelectedProject.Name;
+            Uri ImageUri = null; //TODO add lua Icon here
+            if (headerTitle.Length == 0)
+            {
+                result.Header = get_TabHeader("Cases", ImageUri);
+            }
+            else
+            {
+                result.Header = get_TabHeader(headerTitle, ImageUri);
+            }
+
+            result.Content = _caseView.get_content(plotController);
+            result.Tag = _caseView;
 
             return result;
         }

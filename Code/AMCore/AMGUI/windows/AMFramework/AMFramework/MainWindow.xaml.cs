@@ -183,17 +183,40 @@ namespace AMFramework
             if (controllerReference.ISselected == false) 
             {
                 Remove_project_tab();
-                return;
+            }
+            else 
+            {
+                // Add tab if it is selected
+                MainTabControl.Items.Add(viewModel.get_project_tab(((Controller.Controller_MainWindow)DataContext).get_project_controller()));
+                MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
             }
 
-            // Add tab if it is selected
-            MainTabControl.Items.Add(viewModel.get_project_tab(((Controller.Controller_MainWindow)DataContext).get_project_controller()));
-            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+            if(controllerReference.SelectedCaseWindow == false) 
+            {
+                Remove_CasePlot_Tab();
+            }
+            else 
+            {
+                MainTabControl.Items.Add(viewModel.get_case_list_tab(((Controller.Controller_MainWindow)DataContext).get_plot_Controller()));
+                MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+            }
+            
 
             // Remove all other tabs
             Remove_cases_tab();
         }
 
+        private void Remove_CasePlot_Tab()
+        {
+            for (int n1 = 0; n1 < MainTabControl.Items.Count; n1++)
+            {
+                if (((TabItem)MainTabControl.Items[n1]).Tag.GetType().Equals(typeof(Views.Case.Case_ViewModel)))
+                {
+                    MainTabControl.Items.Remove(MainTabControl.Items[n1]);
+                    break;
+                }
+            }
+        }
         private void Remove_project_tab() 
         {
             for (int n1 = 0; n1 < MainTabControl.Items.Count; n1++)
