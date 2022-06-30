@@ -56,7 +56,7 @@ namespace AMFramework.Controller
             if (LineGraphID.Any(m => m.Item1 == IDCase && m.Item2 == IDPhase)) return;
 
             // find model from project controller
-            Model.Model_Case? model = _projectController.Cases.Find(e => e.ID == 1);
+            Model.Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
             if (model is null) return;
 
             // load Data
@@ -68,6 +68,13 @@ namespace AMFramework.Controller
             Model.Model_SelectedPhases phaseSelected = model.SelectedPhases.Find(e => e.IDCase == IDCase && e.IDPhase == IDPhase) ?? new();
             List<double> tempAxis = modelList.Select(e => e.Temperature).ToList();
             List<double> phaseFraction = modelList.Select(e => e.Value).ToList();
+
+            for (int n1 = 0; n1 < phaseFraction.Count; n1++)
+            {
+                if (phaseFraction[n1] == 0) continue;
+                phaseFraction[n1] = Math.Abs(Math.Log10(phaseFraction[n1]));
+            }
+
             DataPlot.Add(new(tempAxis, phaseFraction));
 
             // create new line plots

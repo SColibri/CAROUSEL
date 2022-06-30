@@ -92,6 +92,17 @@ namespace AMFramework.Controller
                 OnPropertyChanged("SelectedCaseWindow");
             }
         }
+
+        private bool _isWorking = false;
+        public bool IsWorking 
+        { 
+            get { return _isWorking; }
+            set 
+            {
+                _isWorking = value;
+                OnPropertyChanged("IsWorking");
+            }
+        }
         #endregion
 
         #region Methods
@@ -226,10 +237,13 @@ namespace AMFramework.Controller
 
         public void refresh_used_Phases_inCases() 
         {
+            IsWorking = true;
+
             if (_selectedProject is null) return;
             List<int> CaseList = Cases.Select(c => c.ID).ToList();
             _used_Phases_inCases = Controller.Controller_Phase.get_unique_phases_from_caseList(ref _AMCore_Socket, _selectedProject.ID);
 
+            //IsWorking = false;
             OnPropertyChanged("Used_Phases_inCases");
         }
 

@@ -99,7 +99,7 @@ int& AM_Server::check_send(int& result)
 int& AM_Server::send_buffer(std::string& sendMessage)
 {
 	size_t sendIndex = 0;
-	const int sendBuffer_len{ 500 };
+	const int sendBuffer_len{ DEFAULT_BUFLEN };
 	char sendBuffer[sendBuffer_len];
 
 	reset_buffer(sendBuffer, sendBuffer_len);

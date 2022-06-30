@@ -30,7 +30,8 @@ namespace AMFramework.Views.Case
             InitializeComponent();
             DataContext = plotController;
             plotController.refresh_used_Phases_inCases();
-            LineCharty.DataContext = plotController;
+
+            MainGrid.Children.Add(new Components.Charting.LinePhaseChart.LinePhaseChart(plotController));
 
 
         }

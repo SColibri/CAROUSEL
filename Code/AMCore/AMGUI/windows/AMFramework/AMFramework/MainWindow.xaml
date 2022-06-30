@@ -26,6 +26,7 @@
                 <GradientStop Color="Silver" Offset="0.2"/>
                 <GradientStop Color="white" Offset="0.95"/>
             </LinearGradientBrush>
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
         </Grid.Resources>
 
         <Ribbon Name="MainMenu" SelectedIndex="0" Grid.Row="0" Panel.ZIndex="0">
@@ -250,6 +251,11 @@
 
             </Frame>
         </Grid>
-        
+
+        <Grid x:Name="ProjectWorking" Visibility="{Binding Path=ProjectIsLoading, Converter={StaticResource BoolToVis}}" Grid.ColumnSpan="4" Grid.RowSpan="4">
+            <Border Opacity="70" Background="Black" Grid.RowSpan="4">
+                
+            </Border>
+        </Grid>
     </Grid>
 </Window>

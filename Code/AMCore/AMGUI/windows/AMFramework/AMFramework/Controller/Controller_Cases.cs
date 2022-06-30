@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Data;
 using System.Collections;
+using System.Windows.Input;
 
 namespace AMFramework.Controller
 {
@@ -135,6 +136,38 @@ namespace AMFramework.Controller
         private Controller.Controller_EquilibriumPhaseFraction _equilibriumPhaseFractions;
         public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }
 
+        #endregion
+
+        #region Commands
+        #region run_equilibrium
+
+        private ICommand _run_equilibrium;
+        public ICommand Run_equilibrium
+        {
+            get
+            {
+                if (_run_equilibrium == null)
+                {
+                    _run_equilibrium = new RelayCommand(
+                        param => this.Run_equilibrium_controll(),
+                        param => this.Can_Run_equilibrium()
+                    );
+                }
+                return _run_equilibrium;
+            }
+        }
+
+        private void Run_equilibrium_controll()
+        {
+
+            refresh();
+        }
+
+        private bool Can_Run_equilibrium()
+        {
+            return true;
+        }
+        #endregion
         #endregion
 
     }

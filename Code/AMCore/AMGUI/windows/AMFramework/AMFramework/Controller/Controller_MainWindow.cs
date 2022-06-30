@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
 using System.Windows.Data;
 using System.Windows;
+using System.Windows.Input;
 
 namespace AMFramework.Controller
 {
@@ -27,7 +28,10 @@ namespace AMFramework.Controller
         {
             _coreSocket.init();
             _AMCore = new(_coreSocket);
+
             _DBSProjects = new(_coreSocket);
+            _DBSProjects.PropertyChanged += Project_property_changed_handle;
+
             _Config = new(_coreSocket);
             _Plot = new(ref _coreSocket, _DBSProjects);
 
@@ -56,6 +60,74 @@ namespace AMFramework.Controller
         }
 
         public Controller.Controller_Plot get_plot_Controller() { return _Plot; }
+
+        #endregion
+
+        #region GUIElements
+        #region Flags
+        private bool _show_popup = false;
+        public bool ShowPopup
+        {
+            get { return _show_popup; }
+            set
+            {
+                _show_popup = value;
+                OnPropertyChanged("ShowPopup");
+            }
+        }
+
+        private bool _isLoading = false;
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged("IsLoading");
+            }
+        }
+
+        private bool _isComputing = false;
+        public bool IsComputing
+        {
+            get { return _isComputing; }
+            set
+            {
+                _isComputing = value;
+                OnPropertyChanged("IsComputing");
+            }
+        }
+
+        private bool _tabControl_Visible = true;
+        public bool TabControlVisible 
+        { 
+            get { return _tabControl_Visible; } 
+            set 
+            { 
+                _tabControl_Visible=value;
+                OnPropertyChanged("TabControlVisible");
+            }
+        }
+
+        #endregion
+        #region Control_Elements
+        #region TabItems
+        private List<TabItem> _tabItems = new();
+        public List<TabItem> TabItems { get { return _tabItems; } }
+        public void Add_Tab_Item(TabItem itemy) 
+        { 
+            TabItems.Add(itemy);
+            OnPropertyChanged("TabItems");
+        }
+        public void Remove_tab_Item(TabItem itemy) 
+        { 
+            TabItems.Remove(itemy);
+            OnPropertyChanged("TabItems");
+        }
+
+        #endregion
+        #endregion
+
 
         #endregion
 
@@ -105,33 +177,51 @@ namespace AMFramework.Controller
         #endregion
 
         #region Projects
+
+        #region Data
         private List<Model.Model_Projects> _projects = new();
-        public List<Model.Model_Projects> Projects { 
-            get => _projects; 
-            set 
+        public List<Model.Model_Projects> Projects
+        {
+            get => _projects;
+            set
             {
                 _projects = value;
                 OnPropertyChanged("Projects");
-            } 
+            }
         }
-        public void reloadProjects() 
+        #endregion
+
+        private void Project_property_changed_handle(object sender, PropertyChangedEventArgs e) 
+        {
+            if (e is null) return;
+            if (e.PropertyName is null) return;
+            if(e?.PropertyName?.CompareTo("IsWorking") == 0) 
+            {
+                OnPropertyChanged("IsLoading");
+            }
+        }
+        #region Methods
+        public void reloadProjects()
         {
             CoreOut = _DBSProjects.DB_projects_reload();
             Projects = _DBSProjects.DB_projects;
         }
-        public void createProject(string Name) 
-        { 
+        public void createProject(string Name)
+        {
             CoreOut = _DBSProjects.DB_projects_create_new(Name);
         }
 
-        public Components.Windows.AM_popupWindow popupProject(int ID) 
+        #endregion
+
+        #region Controls
+        public Components.Windows.AM_popupWindow popupProject(int ID)
         {
             Views.Projects.Project_general Pg = new(_DBSProjects, ID);
             Components.Windows.AM_popupWindow Pw = new() { Title = "New project" };
             Pw.ContentPage.Children.Add(Pg);
-            
-            Components.Button.AM_button nbutt = new() 
-            { 
+
+            Components.Button.AM_button nbutt = new()
+            {
                 IconName = "Save",
                 Margin = new System.Windows.Thickness(3),
                 CornerRadius = "20",
@@ -162,20 +252,51 @@ namespace AMFramework.Controller
             return Pw;
         }
 
-
         public System.Windows.Controls.TabItem projectView_Tab()
         {
             Binding myBinding = new Binding("VisibilityProperty");
             myBinding.Source = _DBSProjects.ProjectVisibility;
             myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
 
-            System.Windows.Controls.TabItem Tabby = new ();
-            Tabby.SetBinding(UIElement.VisibilityProperty ,myBinding);
+            System.Windows.Controls.TabItem Tabby = new();
+            Tabby.SetBinding(UIElement.VisibilityProperty, myBinding);
             Tabby.Content = new Views.Projects.Project_contents(ref _DBSProjects);
 
             OnPropertyChanged("OpenScripts");
             return Tabby;
         }
+        #endregion
+
+        #region Commands
+        #region _new_project
+
+        private ICommand _new_project;
+        public ICommand New_project
+        {
+            get
+            {
+                if (_new_project == null)
+                {
+                    _new_project = new RelayCommand(
+                        param => this.New_project_controll(),
+                        param => this.Can_Change_new_project()
+                    );
+                }
+                return _new_project;
+            }
+        }
+
+        private void New_project_controll()
+        {
+
+        }
+
+        private bool Can_Change_new_project()
+        {
+            return true;
+        }
+        #endregion
+        #endregion
 
         #endregion
 
@@ -223,6 +344,10 @@ namespace AMFramework.Controller
             return result;
         }
 
+        #endregion
+
+        #region Commands
+        
         #endregion
 
     }

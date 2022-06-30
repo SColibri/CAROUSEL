@@ -51,13 +51,17 @@ namespace AMFramework.Components.Charting.LinePhaseChart
         private void handle_updated_plot(object sender, PropertyChangedEventArgs e) 
         {
             if (e is null) return;
-            if(e.PropertyName.CompareTo("LineGraphs") == 0) 
+            if(e.PropertyName.CompareTo("DataPlot") == 0) 
             {
                 ListPlot.Plot.Clear();
-                for (int n1 = 0; n1 < _plotController.LineGraphs.Count; n1++)
+                for (int n1 = 0; n1 < _plotController.DataPlot.Count; n1++)
                 {
-                    ListGraph.Children.Add(_plotController.LineGraphs[n1]);
+                    ListPlot.Plot.AddScatter(_plotController.DataPlot[n1].Item1.ToArray(), _plotController.DataPlot[n1].Item2.ToArray());
                 }
+                ListPlot.Plot.XAxis.RulerMode(true);
+                ListPlot.Plot.YAxis.RulerMode(true);
+
+                ListPlot.Refresh();
             }
         }
 

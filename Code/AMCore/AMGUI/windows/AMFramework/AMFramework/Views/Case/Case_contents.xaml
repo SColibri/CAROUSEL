@@ -8,9 +8,64 @@
              xmlns:phase_1="clr-namespace:AMFramework.Components.Charting.LinePhaseChart"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <phase_1:LinePhaseChart x:Name="LineCharty">
-            
-        </phase_1:LinePhaseChart>
+    <Grid x:Name="MainGrid">
+        <StackPanel>
+            <GroupBox Header="Equilibrium">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <GroupBox Header="Configuration">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <GroupBox Header="Temperature range">
+                                <StackPanel>
+                                    <StackPanel Margin="5">
+                                        <TextBlock Text="Start"/>
+                                        <TextBox/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5">
+                                        <TextBlock Text="End"/>
+                                        <TextBox/>
+                                    </StackPanel>
+                                    <StackPanel Margin="5">
+                                        <TextBlock Text="Step size"/>
+                                        <TextBox/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Calculations" Grid.Row="1">
+                        <WrapPanel Orientation="Horizontal">
+                            <Button Content="Calculate" Margin="5"/>
+                            <Button Content="Run script" Margin="5"/>
+                            <Button Content="Values" Margin="5"/>
+                            <Button Content="Export values" Margin="5"/>
+                        </WrapPanel>
+                    </GroupBox>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Scheil">
+                
+            </GroupBox>
+            <GroupBox Header="Kinetic">
+                <Grid>
+                    
+                </Grid>
+            </GroupBox>
+        </StackPanel>
     </Grid>
 </UserControl>
