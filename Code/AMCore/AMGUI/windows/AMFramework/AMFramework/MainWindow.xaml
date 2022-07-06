@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AMFramework" 
         xmlns:local2="clr-namespace:AMFramework.Components.Database_treeview"
         xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
-        xmlns:AMWindow="clr-namespace:AMFramework.Components.Windows"
+        xmlns:AMWindow="clr-namespace:AMFramework.Components.Windows" xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_MainWindow}"
         mc:Ignorable="d"
         Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
     <Grid>
@@ -118,7 +118,7 @@
             <local2:Database_treeview x:Name="databaseView">
                 
             </local2:Database_treeview>
-            <TabControl x:Name="MainTabControl" Grid.Column="2">
+            <TabControl x:Name="MainTabControl" Grid.Column="2" ItemsSource="{Binding Path=TabItems, UpdateSourceTrigger=PropertyChanged}">
                 <TabControl.Style>
                     <Style TargetType="TabControl">
                         <Setter Property="Visibility" Value="Visible"/>
@@ -134,7 +134,6 @@
                         </Style.Triggers>
                     </Style>
                 </TabControl.Style>
-
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
                         <Setter Property="Template">
@@ -252,7 +251,7 @@
             </Frame>
         </Grid>
 
-        <Grid x:Name="ProjectWorking" Visibility="{Binding Path=ProjectIsLoading, Converter={StaticResource BoolToVis}}" Grid.ColumnSpan="4" Grid.RowSpan="4">
+        <Grid x:Name="ProjectWorking" Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}}" Grid.ColumnSpan="4" Grid.RowSpan="4">
             <Border Opacity="70" Background="Black" Grid.RowSpan="4">
                 
             </Border>

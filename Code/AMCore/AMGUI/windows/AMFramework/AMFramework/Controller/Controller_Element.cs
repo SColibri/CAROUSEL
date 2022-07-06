@@ -10,9 +10,9 @@ namespace AMFramework.Controller
     internal class Controller_Element : INotifyPropertyChanged
     {
         #region Socket
-        private Core.AMCore_Socket _AMCore_Socket;
+        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller_DBS_Projects _projectController;
-        public Controller_Element(ref Core.AMCore_Socket socket, Controller_DBS_Projects projectController)
+        public Controller_Element(ref Core.IAMCore_Comm socket, Controller_DBS_Projects projectController)
         {
             _AMCore_Socket = socket;
             _projectController = projectController;
@@ -43,7 +43,7 @@ namespace AMFramework.Controller
         {
             List<Model.Model_Element> composition = new();
             string Query = "database_table_custom_query SELECT Element.ID as IDE, Element.Name, SelectedElements.* FROM SelectedElements INNER JOIN Element ON Element.ID=SelectedElements.IDElement WHERE IDProject = " + IDProject;
-            string outCommand = _AMCore_Socket.send_receive(Query);
+            string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)
@@ -59,7 +59,7 @@ namespace AMFramework.Controller
         {
             List<Model.Model_Element> composition = new();
             string Query = "database_table_custom_query SELECT Element.* FROM Element";
-            string outCommand = _AMCore_Socket.send_receive(Query);
+            string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)
@@ -77,7 +77,7 @@ namespace AMFramework.Controller
             // get available element names from database
             List<Model.Model_Element> composition = new();
             string Query = "matcalc_database_elementNames";
-            string outCommand = _AMCore_Socket.send_receive(Query);
+            string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> elementList = outCommand.Split("\n").ToList();
 
             // get related ID's from database by given name, missing ID's are ignored
@@ -87,7 +87,7 @@ namespace AMFramework.Controller
             {
                 Query += " OR Name = '" + elementList[i] + "' "; 
             }
-            outCommand = _AMCore_Socket.send_receive(Query);
+            outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)

@@ -65,7 +65,7 @@
                 
             </TextBlock>
             <StackPanel x:Name="ButtonsPanel" Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Column="1" Margin="2,2,2,2">
-                <AMButton:AM_button IconName="Close" ForegroundIcon="White" CornerRadius="20" Margin="5" GradientColor_2="Red" ToolTip="Close" ClickButton="AM_button_ClickButton"/>
+                <AMButton:AM_button x:Name="closeButton" IconName="Close" ForegroundIcon="White" CornerRadius="20" Margin="5" GradientColor_2="Red" ToolTip="Close" ClickButton="AM_button_ClickButton"/>
             </StackPanel>
         </Grid>
 

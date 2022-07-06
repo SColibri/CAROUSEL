@@ -187,7 +187,7 @@ public:
 	{
 		std::string out{ "" };
 
-		for each (std::vector<std::string> rowItem in tableData)
+		for (std::vector<std::string> rowItem : tableData)
 		{
 			out += csv_join_row(rowItem, Delimiter) + "\n";
 		}

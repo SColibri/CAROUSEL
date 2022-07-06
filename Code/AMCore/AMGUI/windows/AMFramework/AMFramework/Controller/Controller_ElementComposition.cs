@@ -10,9 +10,9 @@ namespace AMFramework.Controller
     public class Controller_ElementComposition : INotifyPropertyChanged
     {
         #region Socket
-        private Core.AMCore_Socket _AMCore_Socket;
+        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller_Cases _CaseController;
-        public Controller_ElementComposition(ref Core.AMCore_Socket socket, Controller_Cases caseController)
+        public Controller_ElementComposition(ref Core.IAMCore_Comm socket, Controller_Cases caseController)
         {
             _AMCore_Socket = socket;
             _CaseController = caseController;
@@ -39,7 +39,7 @@ namespace AMFramework.Controller
         {
             List<Model.Model_ElementComposition> composition = new();
             string Query = "database_table_custom_query SELECT ElementComposition.*, Element.Name FROM ElementComposition INNER JOIN Element ON Element.ID=ElementComposition.IDElement WHERE IDCase = " + IDCase;
-            string outCommand = _AMCore_Socket.send_receive(Query);
+            string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)

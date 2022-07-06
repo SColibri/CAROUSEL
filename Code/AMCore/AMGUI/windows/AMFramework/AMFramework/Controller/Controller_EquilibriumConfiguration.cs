@@ -11,9 +11,9 @@ namespace AMFramework.Controller
     {
 
         #region Socket
-        private Core.AMCore_Socket _AMCore_Socket;
+        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller_Cases _CaseController;
-        public Controller_EquilibriumConfiguration(ref Core.AMCore_Socket socket, Controller_Cases caseController)
+        public Controller_EquilibriumConfiguration(ref Core.IAMCore_Comm socket, Controller_Cases caseController)
         {
             _AMCore_Socket = socket;
             _CaseController = caseController;
@@ -36,11 +36,20 @@ namespace AMFramework.Controller
             get { return _configuration; }
         }
 
-        public List<Model.Model_EquilibriumConfiguration> get_configuration_list(int IDCase)
+        public void save(Model.Model_EquilibriumConfiguration model)
+        {
+            string outComm = _AMCore_Socket.run_lua_command("singlepixel_equilibrium_config_save " + model.get_csv(),"");
+            if (outComm.CompareTo("OK") != 0)
+            {
+                MainWindow.notify.ShowBalloonTip(5000, "Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);
+            }
+        }
+
+        public Model.Model_EquilibriumConfiguration get_configuration_list(int IDCase)
         {
             List<Model.Model_EquilibriumConfiguration> composition = new();
             string Query = "database_table_custom_query SELECT EquilibriumConfiguration.* FROM EquilibriumConfiguration WHERE IDCase = " + IDCase;
-            string outCommand = _AMCore_Socket.send_receive(Query);
+            string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)
@@ -50,7 +59,8 @@ namespace AMFramework.Controller
                 composition.Add(fillModel(columnItems));
             }
 
-            return composition;
+            if (composition.Count == 0) return new();
+            return composition[0];
         }
 
         private Model.Model_EquilibriumConfiguration fillModel(List<string> DataRaw)
@@ -64,7 +74,7 @@ namespace AMFramework.Controller
             modely.StartTemperature = Convert.ToDouble(DataRaw[3]);
             modely.EndTemperature = Convert.ToDouble(DataRaw[4]);
             modely.TemperatureType = DataRaw[5];
-            modely.StepSize = Convert.ToDouble(DataRaw[6]);
+            modely.StepSize = 25;//Convert.ToDouble(DataRaw[6]);
             modely.Pressure = Convert.ToDouble(DataRaw[7]);
 
             return modely;

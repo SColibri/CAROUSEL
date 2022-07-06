@@ -14,9 +14,9 @@ namespace AMFramework.Controller
     {
 
         #region Socket
-        private Core.AMCore_Socket _AMCore_Socket;
+        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller_DBS_Projects _projectController;
-        public Controller_Plot(ref Core.AMCore_Socket socket, Controller_DBS_Projects projectController)
+        public Controller_Plot(ref Core.IAMCore_Comm socket, Controller_DBS_Projects projectController)
         {
             _AMCore_Socket = socket;
             _projectController = projectController;
@@ -72,7 +72,7 @@ namespace AMFramework.Controller
             for (int n1 = 0; n1 < phaseFraction.Count; n1++)
             {
                 if (phaseFraction[n1] == 0) continue;
-                phaseFraction[n1] = Math.Abs(Math.Log10(phaseFraction[n1]));
+                //phaseFraction[n1] = Math.Abs(Math.Log10(phaseFraction[n1]));
             }
 
             DataPlot.Add(new(tempAxis, phaseFraction));

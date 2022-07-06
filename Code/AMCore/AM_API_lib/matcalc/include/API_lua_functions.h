@@ -146,6 +146,7 @@ private:
 	/// <returns></returns>
 	static int bind_calculateEquilibrium_command(lua_State* state);
 
+
 #pragma region MatCalc
 
 	static int bind_matcalc_initializeCore(lua_State* state)
@@ -371,6 +372,7 @@ private:
 		//check for input
 		if (check_parameters(state, lua_gettop(state), 1, "usage <ID Case>") != 0) return 1; 
 		
+
 		// get parameters
 		std::vector<std::string> parameters = get_parameters(state);
 
@@ -528,6 +530,14 @@ private:
 		
 		// If pixel_parameters is a null pointer, that means that either the case does not exist or
 		// it corresponds to another project ID
+		DBS_Case tempCase(_dbFramework->get_database(),std::stoi(parameters[0]));
+		tempCase.load();
+
+		if (_openProject == nullptr)
+		{
+			run_command(state, "project_loadID", std::vector<std::string> {std::to_string(tempCase.IDProject)});
+		}
+
 		AM_pixel_parameters* pixel_parameters = _openProject->get_pixelCase(std::stoi(parameters[0]));
 		if (pixel_parameters == nullptr)
 		{

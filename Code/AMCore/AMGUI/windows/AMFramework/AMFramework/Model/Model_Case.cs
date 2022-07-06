@@ -108,6 +108,20 @@ namespace AMFramework.Model
             }
         }
 
+        public string get_csv()
+        {
+            string outy = ID + ","  + 
+                          IDProject + "," + 
+                          IDGroup  + "," + 
+                          Name.Replace(" ", "#") + "," +
+                          Script.Replace(" ", "#") + "," +
+                          Date.Replace(" ", "#") + "," +
+                          PosX + "," +
+                          PosY + "," +
+                          PosZ + ",";
+            return outy;
+        }
+
         #region Other
         private bool _isSelected = false;
         public bool IsSelected
@@ -129,6 +143,18 @@ namespace AMFramework.Model
                 _SelectedPhases = value;
                 OnPropertyChanged("SelectedPhases");
             }
+        }
+
+        public void Add_selectedPhases(Model.Model_SelectedPhases model) 
+        {
+            _SelectedPhases.Add(model);
+            OnPropertyChanged("SelectedPhases");
+        }
+
+        public void Clear_selectedPhases() 
+        {
+            _SelectedPhases.Clear();
+            OnPropertyChanged("SelectedPhases");
         }
 
         List<Model.Model_ElementComposition> _elementComposition = new();
@@ -153,6 +179,17 @@ namespace AMFramework.Model
             }
         }
 
+        Model.Model_EquilibriumConfiguration _equilibriumConfiguration = new();
+        public Model.Model_EquilibriumConfiguration EquilibriumConfiguration
+        {
+            get { return _equilibriumConfiguration; }
+            set
+            {
+                _equilibriumConfiguration = value;
+                OnPropertyChanged("EquilibriumConfiguration");
+            }
+        }
+
         List<Model.Model_ScheilPhaseFraction> _scheilPhaseFractions = new();
         public List<Model.Model_ScheilPhaseFraction> ScheilPhaseFractions
         {
@@ -164,16 +201,17 @@ namespace AMFramework.Model
             }
         }
 
-        List<Model.Model_EquilibriumConfiguration> _equilibriumConfiguration = new();
-        public List<Model.Model_EquilibriumConfiguration> EquilibriumConfiguration
+        Model.Model_ScheilConfiguration _scheilConfiguration = new();
+        public Model.Model_ScheilConfiguration ScheilConfiguration
         {
-            get { return _equilibriumConfiguration; }
+            get { return _scheilConfiguration; }
             set
             {
-                _equilibriumConfiguration = value;
-                OnPropertyChanged("EquilibriumConfiguration");
+                _scheilConfiguration = value;
+                OnPropertyChanged("ScheilConfiguration");
             }
         }
+
         #endregion
 
         #region Interfaces

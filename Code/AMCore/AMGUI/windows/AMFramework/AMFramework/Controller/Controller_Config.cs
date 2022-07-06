@@ -14,37 +14,34 @@ namespace AMFramework.Controller
     {
 
         #region Cons_Des
+        private static Core.IAMCore_Comm _apiHandle;
         private Core.AMCore_Socket _AMCore_Socket;
-        public Controller_Config(Core.AMCore_Socket socket)
-        {
-            _AMCore_Socket = socket;
-            load_model_data();
-        }
         public Controller_Config()
         {
-
+            _apiHandle = new Core.AMCore_libHandle("C:/Users/drogo/Documents/TUM/Thesis/Framework/AMFramework/Code/AMCore/out/build/x64-debug/AM_API_lib/matcalc/AM_MATCALC_Lib.dll");
+            load_model_data();
         }
 
         private void load_model_data() 
         {
-            datamodel.API_path = _AMCore_Socket.send_receive("configuration_getAPI_path");
-            datamodel.External_API_path = _AMCore_Socket.send_receive("configuration_getExternalAPI_path");
-            datamodel.Working_Directory = _AMCore_Socket.send_receive("configuration_get_working_directory");
-            datamodel.Thermodynamic_database_path = _AMCore_Socket.send_receive("configuration_get_thermodynamic_database_path");
-            datamodel.Physical_database_path = _AMCore_Socket.send_receive("configuration_get_physical_database_path");
-            datamodel.Mobility_database_path = _AMCore_Socket.send_receive("configuration_get_mobility_database_path");
+            datamodel.API_path = _apiHandle.run_lua_command("configuration_getAPI_path", "");
+            datamodel.External_API_path = _apiHandle.run_lua_command("configuration_getExternalAPI_path", "");
+            datamodel.Working_Directory = _apiHandle.run_lua_command("configuration_get_working_directory", "");
+            datamodel.Thermodynamic_database_path = _apiHandle.run_lua_command("configuration_get_thermodynamic_database_path", "");
+            datamodel.Physical_database_path = _apiHandle.run_lua_command("configuration_get_physical_database_path", "");
+            datamodel.Mobility_database_path = _apiHandle.run_lua_command("configuration_get_mobility_database_path", "");
         }
 
         private void save_model_data() 
         {
             bool dataSaved = true;
 
-            if(_AMCore_Socket.send_receive("configuration_setAPI_path " + datamodel.API_path).CompareTo("OK") != 0) dataSaved = false;
-            if (_AMCore_Socket.send_receive("configuration_setExternalAPI_path " + datamodel.External_API_path).CompareTo("OK") != 0) dataSaved = false;
-            if (_AMCore_Socket.send_receive("configuration_set_working_directory " + datamodel.Working_Directory).CompareTo("OK") != 0) dataSaved = false;
-            if (_AMCore_Socket.send_receive("configuration_set_thermodynamic_database_path " + datamodel.Thermodynamic_database_path).CompareTo("OK") != 0) dataSaved = false;
-            if (_AMCore_Socket.send_receive("configuration_set_physical_database_path " + datamodel.Physical_database_path).CompareTo("OK") != 0) dataSaved = false;
-            if (_AMCore_Socket.send_receive("configuration_set_mobility_database_path " + datamodel.Mobility_database_path).CompareTo("OK") != 0) dataSaved = false;
+            if(_apiHandle.run_lua_command("configuration_setAPI_path " + datamodel.API_path,"").CompareTo("OK") != 0) dataSaved = false;
+            if (_apiHandle.run_lua_command("configuration_setExternalAPI_path " + datamodel.External_API_path, "").CompareTo("OK") != 0) dataSaved = false;
+            if (_apiHandle.run_lua_command("configuration_set_working_directory " + datamodel.Working_Directory, "").CompareTo("OK") != 0) dataSaved = false;
+            if (_apiHandle.run_lua_command("configuration_set_thermodynamic_database_path " + datamodel.Thermodynamic_database_path, "").CompareTo("OK") != 0) dataSaved = false;
+            if (_apiHandle.run_lua_command("configuration_set_physical_database_path " + datamodel.Physical_database_path, "").CompareTo("OK") != 0) dataSaved = false;
+            if (_apiHandle.run_lua_command("configuration_set_mobility_database_path " + datamodel.Mobility_database_path, "").CompareTo("OK") != 0) dataSaved = false;
 
             if(dataSaved == false) 
             {
@@ -55,6 +52,10 @@ namespace AMFramework.Controller
 
         }
 
+        #endregion
+
+        #region getters
+        public static Core.IAMCore_Comm ApiHandle { get { return _apiHandle; } }
         #endregion
 
         #region Model

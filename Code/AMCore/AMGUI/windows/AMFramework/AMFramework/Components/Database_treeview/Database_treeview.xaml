@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:AMFramework.Components.Database_treeview"
              xmlns:controllers ="clr-namespace:AMFramework.Controller"
              xmlns:models ="clr-namespace:AMFramework.Model"
-             xmlns:converters ="clr-namespace:AMFramework.Components.Converters"
+             xmlns:converters ="clr-namespace:AMFramework.Components.Converters" d:DataContext="{d:DesignInstance Type=controllers:Controller_DBS_Projects}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -47,14 +47,21 @@
                 </Style>
             </TreeView.Resources>
 
-            <TreeViewItem Header="{Binding Path=SelectedProject.Name, UpdateSourceTrigger=PropertyChanged}" Tag="Project">
+            <TreeViewItem Header="{Binding Path=SelectedProject.Name, UpdateSourceTrigger=PropertyChanged}" Tag="{Binding}">
+                <TreeViewItem Header="Selected elements" ItemsSource="{Binding Path=Elements}">
+                    <TreeViewItem.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=ElementName}"/>
+                        </DataTemplate>
+                    </TreeViewItem.ItemTemplate>
+                </TreeViewItem>
                 <TreeViewItem Header="Active phases" Tag="SELECTION">
 
                 </TreeViewItem>
                 <TreeViewItem Header="Single pixel cases" Tag="CaseList" ItemsSource="{Binding Path=Cases, UpdateSourceTrigger=PropertyChanged}">
                     <TreeViewItem.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Tag="Case">
+                            <StackPanel Orientation="Horizontal" Tag="{Binding}">
 
                                 <Image Width="15" 
                                            Margin="3" 
@@ -83,7 +90,7 @@
                                                         <ColumnDefinition Width="auto"/>
                                                     </Grid.ColumnDefinitions>
 
-                                                    <TextBlock Text="{Binding Path=ElementName}" Margin="1" Height="Auto" Width="Auto" Grid.Column="0" FontWeight="Bold"></TextBlock>
+                                                    <TextBlock Text="{Binding Path=ElementName}" Margin="1" Height="Auto" Width="Auto" Grid.Column="0" FontWeight="Normal"></TextBlock>
                                                     <TextBlock Text=":" Margin="1" Height="Auto" Width="Auto" Grid.Column="1"></TextBlock>
                                                     <TextBlock Text="{Binding Path=Value}" Margin="1" Height="Auto" Width="Auto" Grid.Column="2"></TextBlock>
                                                 </Grid>

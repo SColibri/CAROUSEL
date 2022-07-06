@@ -36,6 +36,9 @@ public:
 
 extern "C" 
 {
+
+	static std::string _commandOut;
+
 	/// <summary>
 	/// Pointer to implementation of interface IAM_API for dynamic linking
 	/// </summary>
@@ -44,6 +47,51 @@ extern "C"
 		AM_API_Matcalc* ApiControll = new AM_API_Matcalc(configuration);
 		return ApiControll;
 	}
+
+	/// <summary>
+	/// Pointer to implementation of interface IAM_API for dynamic linking
+	/// </summary>
+	/// <returns></returns>
+	__declspec(dllexport) AM_API_Matcalc* get_API_controll_default() {
+		AM_Config* configuration = new AM_Config;
+		configuration->load();
+
+		AM_API_Matcalc* ApiControll = new AM_API_Matcalc(configuration);
+		return ApiControll;
+	}
+
+	/// <summary>
+	/// Run lua commands with parameters
+	/// </summary>
+	/// <param name="API_pointer"></param>
+	/// <param name="command"></param>
+	/// <param name="parameters"></param>
+	/// <returns></returns>
+	__declspec(dllexport) char const* API_run_lua_command(AM_API_Matcalc* API_pointer, char* command, char* parameters) {
+		
+		std::vector<std::string> CommCheck = string_manipulators::split_text(command, " ");
+		std::string CommandValue(CommCheck[0]);
+
+		std::string ParamValue = "";
+		for (size_t n1 = 1; n1 < CommCheck.size(); n1++)
+		{
+			if (n1 > 1)
+			{
+				ParamValue += " ";
+			}
+
+			ParamValue += CommCheck[n1];
+		}
+		ParamValue += parameters;
+
+		// std::string ParamValue(parameters);
+		std::vector<std::string> Parameters = string_manipulators::split_text(ParamValue,"||");
+
+		_commandOut = API_pointer->run_lua_command(CommandValue, Parameters);
+		const char* out = _commandOut.c_str();
+		return out;
+	}
+
 }
 
 /** @}*/

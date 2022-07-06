@@ -5,6 +5,7 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -7927,7 +7928,7 @@
 
   <ItemGroup>
     <Folder Include="Components\Terminal\" />
-    <Folder Include="System\" />
+    <Folder Include="Libraries\dll\" />
     <Folder Include="Resources\img\" />
   </ItemGroup>
 

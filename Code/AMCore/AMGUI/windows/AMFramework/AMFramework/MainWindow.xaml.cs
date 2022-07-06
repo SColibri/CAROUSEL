@@ -15,6 +15,9 @@ namespace AMFramework
         private MainWindow_ViewModel viewModel = new();
         public MainWindow()
         {
+            AMsystem.AMFramework_library_APIHandle TestWindow = new("C:/Users/drogo/Documents/TUM/Thesis/Framework/AMFramework/Code/AMCore/out/build/x64-debug/AM_API_lib/matcalc/AM_MATCALC_Lib.dll");
+            string outTest = TestWindow.run_lua_command("configuration_set_working_directory", "C:/Users/drogo/Desktop/Homless");
+
             InitializeComponent();
             DataContext = new Controller.Controller_MainWindow();
 
@@ -22,6 +25,8 @@ namespace AMFramework
             databaseView.Navigator.SelectedItemChanged += ((Controller.Controller_MainWindow)DataContext).get_project_controller().selected_treeview_item;
 
             ((Controller.Controller_MainWindow)DataContext).get_project_controller().PropertyChanged += OnProperty_changed_project;
+
+            
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -32,8 +37,10 @@ namespace AMFramework
         #region HandlesRibbon
         private void RibbonMenuItem_Click_new_luaFile(object sender, RoutedEventArgs e)
         {
-            MainTabControl.Items.Add(viewModel.get_new_lua_script());
+            Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+            controllerMain.Add_Tab_Item(viewModel.get_new_lua_script());
             MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+            MainTabControl.Items.Refresh();
         }
 
         #endregion
@@ -53,7 +60,9 @@ namespace AMFramework
                         ((Interfaces.ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).close();
                     }
 
-                    MainTabControl.Items.RemoveAt(MainTabControl.SelectedIndex);
+                    Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+                    controllerMain.Remove_tab_Item((TabItem)MainTabControl.SelectedItem);
+                    MainTabControl.Items.Refresh();
                 }
             }    
         }
@@ -76,8 +85,10 @@ namespace AMFramework
             {
                 if (File.Exists(ofd.FileName) == true)
                 {
-                    MainTabControl.Items.Add(((Controller.Controller_MainWindow)DataContext).scriptView_new_lua_script(ofd.FileName));
+                    Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+                    controllerMain.Add_Tab_Item(controllerMain.scriptView_new_lua_script(ofd.FileName));
                     MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+                    MainTabControl.Items.Refresh();
                 }
                 else
                 {
@@ -93,9 +104,11 @@ namespace AMFramework
 
         private void RibbonButton_Click(object sender, RoutedEventArgs e)
         {
-            MainTabControl.Items.Add(viewModel.get_new_plot());
+
+            Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+            controllerMain.Add_Tab_Item(viewModel.get_new_plot());
             MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-            
+            MainTabControl.Items.Refresh();
         }
 
         private void RibbonMenuItem_Click_loadApi(object sender, RoutedEventArgs e)
@@ -107,8 +120,11 @@ namespace AMFramework
             { 
                 if(File.Exists(ofd.FileName) == true) 
                 {
-                    MainTabControl.Items.Add(((Controller.Controller_MainWindow)DataContext).scriptView_new_lua_script(ofd.FileName));
+
+                    Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+                    controllerMain.Add_Tab_Item(controllerMain.scriptView_new_lua_script(ofd.FileName));
                     MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+                    MainTabControl.Items.Refresh();
                 }
                 else 
                 {
@@ -187,8 +203,10 @@ namespace AMFramework
             else 
             {
                 // Add tab if it is selected
-                MainTabControl.Items.Add(viewModel.get_project_tab(((Controller.Controller_MainWindow)DataContext).get_project_controller()));
+                Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+                controllerMain.Add_Tab_Item(viewModel.get_project_tab(controllerMain.get_project_controller()));
                 MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+                MainTabControl.Items.Refresh();
             }
 
             if(controllerReference.SelectedCaseWindow == false) 
@@ -197,10 +215,24 @@ namespace AMFramework
             }
             else 
             {
-                MainTabControl.Items.Add(viewModel.get_case_list_tab(((Controller.Controller_MainWindow)DataContext).get_plot_Controller()));
+                Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+                controllerMain.Add_Tab_Item(viewModel.get_case_list_tab(controllerMain.get_plot_Controller()));
                 MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+                MainTabControl.Items.Refresh();
             }
-            
+
+            if (controllerReference.SelectedCaseID == false)
+            {
+                Remove_caseID_tab();
+            }
+            else
+            {
+                Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+                controllerMain.Add_Tab_Item(viewModel.get_case_itemTab(controllerMain.get_project_controller().ControllerCases));
+                MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+                MainTabControl.Items.Refresh();
+            }
+
 
             // Remove all other tabs
             Remove_cases_tab();
@@ -212,7 +244,9 @@ namespace AMFramework
             {
                 if (((TabItem)MainTabControl.Items[n1]).Tag.GetType().Equals(typeof(Views.Case.Case_ViewModel)))
                 {
-                    MainTabControl.Items.Remove(MainTabControl.Items[n1]);
+                    Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+                    controllerMain.Remove_tab_Item((TabItem)MainTabControl.Items[n1]);
+                    MainTabControl.Items.Refresh();
                     break;
                 }
             }
@@ -223,7 +257,23 @@ namespace AMFramework
             {
                 if (((TabItem)MainTabControl.Items[n1]).Tag.GetType().Equals(typeof(Views.Projects.Project_ViewModel)))
                 {
-                    MainTabControl.Items.Remove(MainTabControl.Items[n1]);
+                    Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+                    controllerMain.Remove_tab_Item((TabItem)MainTabControl.Items[n1]);
+                    MainTabControl.Items.Refresh();
+                    break;
+                }
+            }
+        }
+
+        private void Remove_caseID_tab()
+        {
+            for (int n1 = 0; n1 < MainTabControl.Items.Count; n1++)
+            {
+                if (((TabItem)MainTabControl.Items[n1]).Tag.GetType().Equals(typeof(Views.Projects.Project_ViewModel)))
+                {
+                    Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+                    controllerMain.Remove_tab_Item((TabItem)MainTabControl.Items[n1]);
+                    MainTabControl.Items.Refresh();
                     break;
                 }
             }

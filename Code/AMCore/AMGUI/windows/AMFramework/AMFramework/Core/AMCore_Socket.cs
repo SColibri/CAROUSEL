@@ -8,7 +8,7 @@ using System.Net;
 
 namespace AMFramework.Core
 {
-    public class AMCore_Socket
+    public class AMCore_Socket : IAMCore_Comm
     {
         private Socket s = new Socket(AddressFamily.InterNetwork,
                 SocketType.Stream,
@@ -91,5 +91,12 @@ namespace AMFramework.Core
         { 
         
         }
+
+        #region Interface
+        public string run_lua_command(string command, string parameters)
+        {
+            return send_receive(command + parameters);
+        }
+        #endregion
     }
 }

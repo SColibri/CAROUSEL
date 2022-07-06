@@ -246,7 +246,7 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_D
 {
 	std::vector<std::vector<std::string>> out;
 	std::string Query = "SELECT * FROM \'" + tableName->tableName + "\' ";
-	sqlite3_stmt* stmt;
+	sqlite3_stmt* stmt = nullptr;
 	
 	int exec_result = sqlite3_prepare_v2(db, Query.c_str(), -1, &stmt, 0);
 	if (exec_result == SQLITE_OK) {
@@ -255,9 +255,10 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_D
 		{
 			out.push_back(get_input_row(tableName, stmt));	
 		}
+
+		sqlite3_finalize(stmt);
 	}
 
-	sqlite3_finalize(stmt);
 	return out;
 }
 
@@ -265,7 +266,7 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_tableRows(const AM_D
 {
 	std::vector<std::vector<std::string>> out;
 	std::string Query = "SELECT * FROM \'" + tableName->tableName + "\' WHERE " + whereQuery;
-	sqlite3_stmt* stmt;
+	sqlite3_stmt* stmt = nullptr;
 
 	int exec_result = sqlite3_prepare_v2(db, Query.c_str(), -1, &stmt, 0);
 	if (exec_result == SQLITE_OK) {
@@ -321,14 +322,19 @@ std::vector<std::vector<std::string>> Database_Sqlite3::get_fromQuery(std::strin
 			for (int n1 = 0; n1 < columnCount; n1++)
 			{
 				const unsigned char* testy = sqlite3_column_text(stmt, n1);
+				
+				if (testy == nullptr) continue;
 				rowContent.push_back(std::string((const char*)testy));
 			}
 
 			out.push_back(rowContent);
 		}
+
 	}
 
 	sqlite3_finalize(stmt);
+
+	
 	return out;
 }
 
@@ -360,7 +366,9 @@ std::vector<std::string> Database_Sqlite3::get_input_row(const AM_Database_Table
 	for each (std::string column in tableName->columnNames)
 	{
 		const unsigned char* testy = sqlite3_column_text(stmt, Index++);
-		rowContent.push_back(std::string((const char*)testy));
+
+		if (testy == nullptr) continue;
+		rowContent.push_back((const char*)testy);
 	}
 
 	return rowContent;

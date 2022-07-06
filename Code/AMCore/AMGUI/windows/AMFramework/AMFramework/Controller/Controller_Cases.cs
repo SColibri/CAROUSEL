@@ -14,12 +14,12 @@ namespace AMFramework.Controller
     {
 
         #region Cons_Des
-        private Core.AMCore_Socket _AMCore_Socket;
+        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller.Controller_DBS_Projects _ControllerProjects;
         private int _idProject = -1;
         private int _selectedIDCase = -1;
 
-        public Controller_Cases(ref Core.AMCore_Socket socket,
+        public Controller_Cases(ref Core.IAMCore_Comm socket,
                                Controller.Controller_DBS_Projects _project)
         {
             _AMCore_Socket = socket;
@@ -27,6 +27,7 @@ namespace AMFramework.Controller
             _selectedPhases = new Controller_Selected_Phases(ref socket, this);
             _elementComposition = new(ref socket, this);
             _equilibriumPhaseFractions = new(ref socket, this);
+            _equilibriumConfigurations = new(ref socket, this);
         }
 
         public Controller_Cases()
@@ -44,8 +45,14 @@ namespace AMFramework.Controller
         }
         #endregion
 
+        #region getters
+        public Controller.Controller_DBS_Projects get_project_controller() 
+        { 
+            return _ControllerProjects;
+        }
+        #endregion
+
         #region Data
-        private Model.Model_Case _selectedCase = new();
 
         List<Model.Model_Case> _cases = new List< Model.Model_Case >();
 
@@ -56,6 +63,16 @@ namespace AMFramework.Controller
                 return _cases; 
             }
         }
+
+        public void save(Model.Model_Case model) 
+        {
+            string outComm = _AMCore_Socket.run_lua_command("singlepixel_case_save " + model.get_csv(),"");
+            if(outComm.CompareTo("OK") != 0) 
+            {
+                MainWindow.notify.ShowBalloonTip(5000,"Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);
+            }
+        }
+
         #endregion
 
         #region Flags
@@ -71,6 +88,31 @@ namespace AMFramework.Controller
                 OnPropertyChanged("ElementComposition");
             }
         }
+
+        private bool _show_popup = false;
+        public bool ShowPopup 
+        {
+            get { return _show_popup;}
+            set 
+            {
+                _show_popup = value;
+                OnPropertyChanged("ShowPopup");
+            }
+        }
+        #endregion
+
+        #region Views
+        private Components.Windows.AM_popupWindow _popupView = new();
+
+        public Components.Windows.AM_popupWindow PopupView 
+        { 
+            get => _popupView;
+            set 
+            { 
+                _popupView = value;
+                OnPropertyChanged("PopupView");
+            }
+        }
         #endregion
 
         #region Methods
@@ -82,7 +124,7 @@ namespace AMFramework.Controller
         private string load_data() 
         {
             string Query = "database_table_custom_query SELECT * FROM \'Case\' WHERE IDProject = " + _ControllerProjects.SelectedProject.ID.ToString();
-            string outy = _AMCore_Socket.send_receive(Query);
+            string outy = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outy.Split("\n").ToList();
             _cases = new List<Model.Model_Case>();
 
@@ -110,6 +152,7 @@ namespace AMFramework.Controller
 
             _selectedPhases.fill_models_with_selectedPhases();
             _elementComposition.fill_models_with_composition();
+            _equilibriumConfigurations.fill_models_with_equilibroiumConfiguration();
             OnPropertyChanged("Cases");
             return outy;
         }
@@ -133,6 +176,7 @@ namespace AMFramework.Controller
         private Controller.Controller_ElementComposition _elementComposition;
         public List<Model.Model_ElementComposition> ElementComposition { get { return _elementComposition.Composition; } }
 
+        private Controller.Controller_EquilibriumConfiguration _equilibriumConfigurations;
         private Controller.Controller_EquilibriumPhaseFraction _equilibriumPhaseFractions;
         public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }
 
@@ -159,6 +203,12 @@ namespace AMFramework.Controller
 
         private void Run_equilibrium_controll()
         {
+            string Query = "pixelcase_stepEquilibrium " + SelectedCase.ID;
+            string outMessage = _AMCore_Socket.run_lua_command(Query,"");
+            if (outMessage.CompareTo("OK") == 0) 
+            { 
+            
+            }
 
             refresh();
         }
@@ -168,6 +218,67 @@ namespace AMFramework.Controller
             return true;
         }
         #endregion
+
+        #region run_scheil
+
+        private ICommand _run_scheil;
+        public ICommand Run_scheil
+        {
+            get
+            {
+                if (_run_scheil == null)
+                {
+                    _run_scheil = new RelayCommand(
+                        param => this.Run_scheil_controll(),
+                        param => this.Can_Run_scheil()
+                    );
+                }
+                return _run_scheil;
+            }
+        }
+
+        private void Run_scheil_controll()
+        {
+
+            refresh();
+        }
+
+        private bool Can_Run_scheil()
+        {
+            return true;
+        }
+        #endregion
+
+        #region Save
+
+        private ICommand _saveCommand;
+        public ICommand SaveCommand
+        {
+            get
+            {
+                if (_run_equilibrium == null)
+                {
+                    _run_equilibrium = new RelayCommand(
+                        param => this.Run_Save_Command(),
+                        param => this.Can_Save_Command()
+                    );
+                }
+                return _run_equilibrium;
+            }
+        }
+
+        private void Run_Save_Command()
+        {
+            save(SelectedCase);
+            refresh();
+        }
+
+        private bool Can_Save_Command()
+        {
+            return true;
+        }
+        #endregion
+
         #endregion
 
     }

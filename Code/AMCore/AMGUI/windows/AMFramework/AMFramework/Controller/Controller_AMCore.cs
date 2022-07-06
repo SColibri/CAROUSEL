@@ -10,10 +10,10 @@ namespace AMFramework.Controller
     public class Controller_AMCore : INotifyPropertyChanged
     {
 
-        private Core.AMCore_Socket _AMCore_Socket;
-        public Controller_AMCore(Core.AMCore_Socket socket) 
+        private Core.IAMCore_Comm _AMCore_comm;
+        public Controller_AMCore(Core.IAMCore_Comm socket) 
         {
-            _AMCore_Socket = socket;
+            _AMCore_comm = socket;
         }
 
         
@@ -46,7 +46,7 @@ namespace AMFramework.Controller
         {
             get
             {
-                string outy = _AMCore_Socket.send_receive("database_tableList");
+                string outy = _AMCore_comm.run_lua_command("database_tableList","");
                 _DB_tables = outy.Split(",").ToList();
                 return _DB_tables;
             }
@@ -56,7 +56,7 @@ namespace AMFramework.Controller
         #region Commands
             public string Run_command(string commy) 
             {
-                CoreOutput = _AMCore_Socket.send_receive(commy);
+                CoreOutput = _AMCore_comm.run_lua_command(commy,"");
                 return CoreOutput;
             }
         #endregion

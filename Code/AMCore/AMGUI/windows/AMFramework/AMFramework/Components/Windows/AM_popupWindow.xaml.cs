@@ -39,7 +39,23 @@ namespace AMFramework.Components.Windows
 
         public void add_button(Components.Button.AM_button toAdd) 
         {
+            toAdd.Height = 25;
+            toAdd.Width = 25;
+            toAdd.Margin = new Thickness(5);
             ButtonsPanel.Children.Add(toAdd);
+        }
+
+        public void clear_buttons()
+        {
+            while (ButtonsPanel.Children.Count > 1) 
+            {
+                foreach (UserControl item in ButtonsPanel.Children)
+                {
+                    if (item.Name.CompareTo("closeButton") == 0) continue;
+                    ButtonsPanel.Children.Remove(item);
+                    break;
+                }
+            }
         }
 
         #region events

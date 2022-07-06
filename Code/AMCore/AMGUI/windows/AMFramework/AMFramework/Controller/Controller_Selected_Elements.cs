@@ -11,9 +11,9 @@ namespace AMFramework.Controller
     {
 
         #region Socket
-        private Core.AMCore_Socket _AMCore_Socket;
+        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller.Controller_DBS_Projects _ProjectController;
-        public Controller_Selected_Elements(ref Core.AMCore_Socket socket, Controller.Controller_DBS_Projects projectController)
+        public Controller_Selected_Elements(ref Core.IAMCore_Comm socket, Controller.Controller_DBS_Projects projectController)
         {
             _AMCore_Socket = socket;
             _ProjectController = projectController;
@@ -47,7 +47,7 @@ namespace AMFramework.Controller
         private void load_elements() 
         {
             string Query = "database_table_custom_query SELECT SelectedElements.*, Element.Name FROM SelectedElements INNER JOIN Element ON Element.ID=SelectedElements.IDElement WHERE IDProject = " + _ProjectController.SelectedProject.ID.ToString();
-            string outy = _AMCore_Socket.send_receive(Query);
+            string outy = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outy.Split("\n").ToList();
             _Elements.Clear();
 

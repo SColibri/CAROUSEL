@@ -133,6 +133,27 @@ namespace AMFramework
             return result;
         }
 
+        public TabItem get_case_itemTab(Controller.Controller_Cases controllerCase)
+        {
+            TabItem result = new TabItem();
+
+            string headerTitle = "Case: " + controllerCase.SelectedCase.Name;
+            Uri ImageUri = null; //TODO add lua Icon here
+            if (headerTitle.Length == 0)
+            {
+                result.Header = get_TabHeader("Cases", ImageUri);
+            }
+            else
+            {
+                result.Header = get_TabHeader(headerTitle, ImageUri);
+            }
+
+            result.Content = _caseView.get_item(controllerCase);
+            result.Tag = _caseView;
+
+            return result;
+        }
+
         #endregion
 
         #region Formatting

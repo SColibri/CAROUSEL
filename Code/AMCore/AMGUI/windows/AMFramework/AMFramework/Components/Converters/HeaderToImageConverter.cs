@@ -18,33 +18,36 @@ namespace AMFramework.Components.Converters
         public static HeaderToImageConverter Instance = new HeaderToImageConverter();
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string tagType = (string)value;
+            //Default image
             string imagePath = "Resources/Icons/tablerIcons/fidget-spinner.png";
+            string tagType = "";
+            // if Tag is of tyype string
+            if (value is null) tagType = "PROJECT";
+            else if (value.GetType().Equals(typeof(string))) { tagType = (string)value; }
+            else if (value.GetType().Equals(typeof(Model.Model_Projects))) { tagType = "PROJECT"; }
+            else if (value.GetType().Equals(typeof(Model.Model_Case))) { tagType = "CASEITEM"; }
 
-            if(value is not null) 
+            if (tagType.ToUpper().CompareTo("PROJECT") == 0)
             {
-                if (tagType.ToUpper().CompareTo("PROJECT") == 0)
-                {
-                    imagePath = "Resources/Icons/tablerIcons/layout-board.png";
-                }
-                else if (tagType.ToUpper().CompareTo("CASE") == 0)
-                {
-                    imagePath = "Resources/Icons/tablerIcons/marquee.png";
-                }
-                else if (tagType.ToUpper().CompareTo("OBJECT") == 0)
-                {
-                    imagePath = "Resources/Icons/tablerIcons/3d-cube-sphere.png";
-                }
-                else if (tagType.ToUpper().CompareTo("SELECTION") == 0)
-                {
-                    imagePath = "Resources/Icons/tablerIcons/clipboard-list.png";
-                } 
-                else if (tagType.ToUpper().CompareTo("CASEITEM") == 0)
-                {
-                    imagePath = "Resources/Icons/tablerIcons/dots.png";
-                } 
+                imagePath = "Resources/Icons/tablerIcons/layout-board.png";
             }
-            
+            else if (tagType.ToUpper().CompareTo("CASELIST") == 0)
+            {
+                imagePath = "Resources/Icons/tablerIcons/marquee.png";
+            }
+            else if (tagType.ToUpper().CompareTo("OBJECT") == 0)
+            {
+                imagePath = "Resources/Icons/tablerIcons/3d-cube-sphere.png";
+            }
+            else if (tagType.ToUpper().CompareTo("SELECTION") == 0)
+            {
+                imagePath = "Resources/Icons/tablerIcons/clipboard-list.png";
+            }
+            else if (tagType.ToUpper().CompareTo("CASEITEM") == 0)
+            {
+                imagePath = "Resources/Icons/tablerIcons/dots.png";
+            }
+
             return new BitmapImage(new Uri($"/{ imagePath }", UriKind.Relative));
         }
 

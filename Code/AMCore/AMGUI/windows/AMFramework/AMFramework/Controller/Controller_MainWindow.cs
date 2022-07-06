@@ -20,21 +20,21 @@ namespace AMFramework.Controller
         private Controller.Controller_Config _Config;
         private Controller.Controller_Plot _Plot;
 
-        private Core.AMCore_Socket _coreSocket = new Core.AMCore_Socket();
+        private Core.IAMCore_Comm _coreSocket = new Core.AMCore_Socket();
 
         private Views.Projects.Project_contents _viewProjectContents;
 
         public Controller_MainWindow() 
         {
-            _coreSocket.init();
+            _Config = new();
+            _coreSocket = Controller.Controller_Config.ApiHandle;
+
             _AMCore = new(_coreSocket);
 
             _DBSProjects = new(_coreSocket);
             _DBSProjects.PropertyChanged += Project_property_changed_handle;
 
-            _Config = new(_coreSocket);
             _Plot = new(ref _coreSocket, _DBSProjects);
-
             _AMCore.PropertyChanged += Core_output_changed_Handle;
 
             _viewProjectContents = new(ref _DBSProjects);
@@ -110,6 +110,7 @@ namespace AMFramework.Controller
         }
 
         #endregion
+
         #region Control_Elements
         #region TabItems
         private List<TabItem> _tabItems = new();
@@ -127,7 +128,6 @@ namespace AMFramework.Controller
 
         #endregion
         #endregion
-
 
         #endregion
 

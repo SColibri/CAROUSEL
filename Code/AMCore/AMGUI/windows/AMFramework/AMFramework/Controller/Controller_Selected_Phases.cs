@@ -11,9 +11,9 @@ namespace AMFramework.Controller
     {
 
         #region Socket
-        private Core.AMCore_Socket _AMCore_Socket;
+        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller.Controller_Cases _CaseController;
-        public Controller_Selected_Phases(ref Core.AMCore_Socket socket, Controller.Controller_Cases caseController)
+        public Controller_Selected_Phases(ref Core.IAMCore_Comm socket, Controller.Controller_Cases caseController)
         {
             _AMCore_Socket = socket;
             _CaseController = caseController;
@@ -47,7 +47,7 @@ namespace AMFramework.Controller
         private void load_phases()
         {
             string Query = "database_table_custom_query SELECT SelectedPhases.*, Phase.Name FROM SelectedPhases INNER JOIN Element ON Phase.ID=SelectedPhases.IDPhase WHERE IDProject = " + _CaseController.SelectedCase.ID.ToString();
-            string outy = _AMCore_Socket.send_receive(Query);
+            string outy = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outy.Split("\n").ToList();
             _Phases.Clear();
 
@@ -74,7 +74,7 @@ namespace AMFramework.Controller
         private List<Model.Model_SelectedPhases> get_phas_list(int IDCase)
         {
             string Query = "database_table_custom_query SELECT SelectedPhases.*, Phase.Name FROM SelectedPhases INNER JOIN Phase ON Phase.ID=SelectedPhases.IDPhase WHERE IDCase = " + IDCase;
-            string outy = _AMCore_Socket.send_receive(Query);
+            string outy = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outy.Split("\n").ToList();
             List<Model.Model_SelectedPhases> PhaseList = new();
 

@@ -151,7 +151,7 @@ protected:
 		add_new_function(state, "project_loadID", "string", "project_selectID <int>", Bind_project_loadID);
 		add_new_function(state, "project_loadName", "string", "project_loadName <string>", Bind_project_loadName);
 		add_new_function(state, "project_new", "string", "project_new <string Name>", Bind_project_new);
-		add_new_function(state, "project_setName", "string", "projet_setName <new name>", Bind_project_setName);
+		add_new_function(state, "project_setName", "string", "project_setName <new name>", Bind_project_setName);
 		add_new_function(state, "project_getData", "string csv format", "project_getData", Bind_project_getData);
 		add_new_function(state, "project_setData", "string csv format", "project_setData <int ID>,<string Name>", Bind_project_setData);
 		add_new_function(state, "project_selectElements", "string csv format", "project_SelectElements <string element1> (add all alements as parameters sepparated by a space char)", Bind_project_SelectElements);
@@ -177,6 +177,12 @@ protected:
 		add_new_function(state, "template_pixelcase_setScheilLiquidFraction", "string", "template_pixelcase_setScheilLiquidFraction <double>", Bind_PCTemplate_setScheilLiquidFraction);
 		add_new_function(state, "template_pixelcase_setScheilDependentPhase", "string", "template_pixelcase_setScheilDependentPhase <string>", Bind_PCTemplate_setScheilDependentPhase);
 		add_new_function(state, "template_pixelcase_setScheilStepSize", "string", "template_pixelcase_setScheilStepSize <double>", Bind_PCTemplate_setScheilStepSize);
+
+		//###-> Case
+		// Bind_SinglePixel_Case_Save
+		add_new_function(state, "singlepixel_case_save", "string - OK", "singlepixel_case_save <string csv input>", Bind_SinglePixel_Case_Save);
+		add_new_function(state, "singlepixel_equilibrium_config_save", "string - OK", "singlepixel_equilibrium_config_save <string csv input>", Bind_SinglePixel_EquilibriumConfig_Save);
+		add_new_function(state, "singlepixel_scheil_config_save", "string - OK", "singlepixel_scheil_config_save <string csv input>", Bind_SinglePixel_ScheilConfig_Save);
 
 
 		//------- Generic (needs project ID)
@@ -910,7 +916,96 @@ protected:
 		lua_pushstring(state, _openProject->csv_list_SelectedElements().c_str());
 		return 1;
 	}
+	static int Bind_SinglePixel_Case_Save(lua_State* state)
+	{
+		// get parameters
+		std::vector<std::string> parameters = get_parameters(state);
+		if(parameters.size() == 0)
+		{
+			lua_pushstring(state, "Input in csv format not given");
+			return 1;
+		}
 
+		// get csv input and check type
+		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
+		if (!string_manipulators::isNumber(csvF[0]))
+		{
+			lua_pushstring(state, "Wrong type");
+			return 1;
+		}
+
+		// if this is a new case, save as template (this will also create all configurations entries)
+		if (std::stoi(csvF[0]) == -1)
+		{
+			DBS_Project tempProject(_dbFramework->get_database(), _openProject->get_project_ID());
+			AM_pixel_parameters pointerPixel(_dbFramework->get_database(), &tempProject, -1);
+
+			pointerPixel.save();
+			csvF[0] = std::to_string(pointerPixel.get_caseID());
+		}
+
+		DBS_Case tempCase(_dbFramework->get_database(), std::stoi(csvF[0]));
+		tempCase.load(csvF);
+		tempCase.save();
+
+
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	static int Bind_SinglePixel_EquilibriumConfig_Save(lua_State* state)
+	{
+		// get parameters
+		std::vector<std::string> parameters = get_parameters(state);
+		if (parameters.size() == 0)
+		{
+			lua_pushstring(state, "Input in csv format not given");
+			return 1;
+		}
+
+		// get csv input and check type
+		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
+		if (!string_manipulators::isNumber(csvF[0]))
+		{
+			lua_pushstring(state, "Wrong type");
+			return 1;
+		}
+
+		DBS_EquilibriumConfiguration tempCase(_dbFramework->get_database(), std::stoi(csvF[0]));
+		tempCase.load(csvF);
+		tempCase.save();
+
+
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+	static int Bind_SinglePixel_ScheilConfig_Save(lua_State* state)
+	{
+		// get parameters
+		std::vector<std::string> parameters = get_parameters(state);
+		if (parameters.size() == 0)
+		{
+			lua_pushstring(state, "Input in csv format not given");
+			return 1;
+		}
+
+		// get csv input and check type
+		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
+		if (!string_manipulators::isNumber(csvF[0]))
+		{
+			lua_pushstring(state, "Wrong type");
+			return 1;
+		}
+
+		DBS_ScheilConfiguration tempCase(_dbFramework->get_database(), std::stoi(csvF[0]));
+		tempCase.load(csvF);
+		tempCase.save();
+
+
+		lua_pushstring(state, "OK");
+		return 1;
+	}
 #pragma endregion
 
 #pragma region PixelCase
@@ -1369,6 +1464,7 @@ protected:
 
 	static int Bind_dataController_csv(lua_State* state)
 	{
+		
 		int noParameters = lua_gettop(state);
 		std::string parameter = lua_tostring(state, 1);
 		std::string out = Data_Controller::get_csv(_dbFramework->get_database(), (Data_Controller::DATATABLES)std::stoi(parameter));

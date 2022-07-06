@@ -11,9 +11,9 @@ namespace AMFramework.Controller
     {
 
         #region Socket
-        private Core.AMCore_Socket _AMCore_Socket;
+        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller_Cases _CaseController;
-        public Controller_EquilibriumPhaseFraction(ref Core.AMCore_Socket socket, Controller_Cases caseController)
+        public Controller_EquilibriumPhaseFraction(ref Core.IAMCore_Comm socket, Controller_Cases caseController)
         {
             _AMCore_Socket = socket;
             _CaseController = caseController;
@@ -39,8 +39,8 @@ namespace AMFramework.Controller
         public List<Model.Model_EquilibriumPhaseFraction> get_equilibrium_list(int IDCase)
         {
             List<Model.Model_EquilibriumPhaseFraction> result = new();
-            string Query = "database_table_custom_query SELECT EquilibriumPhaseFraction.*, Phase.Name FROM EquilibriumPhaseFraction INNER JOIN Phase ON Phase.ID=EquilibriumPhaseFraction.IDPhase WHERE IDCase = " + IDCase;
-            string outCommand = _AMCore_Socket.send_receive(Query);
+            string Query = "database_table_custom_query SELECT EquilibriumPhaseFraction.*, Phase.Name FROM EquilibriumPhaseFraction INNER JOIN Phase ON Phase.ID=EquilibriumPhaseFraction.IDPhase WHERE IDCase = " + IDCase + " ORDER BY EquilibriumPhaseFraction.Temperature";
+            string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)

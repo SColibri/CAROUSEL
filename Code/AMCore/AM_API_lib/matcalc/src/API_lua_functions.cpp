@@ -159,13 +159,13 @@ int API_lua_functions::bind_getElementNames_command(lua_State* state)
 	size_t IndexElements = string_manipulators::find_index_of_keyword(commOut, "# of elements in database");
 	size_t IndexPhases = string_manipulators::find_index_of_keyword(commOut, "# of phases in database");
 
-	std::string out = run_command(state, "matcalc_database_phaseNames");
+	std::string out = commOut.substr(IndexElements, IndexPhases - IndexElements);//run_command(state, "matcalc_database_phaseNames");
 	if (string_manipulators::find_index_of_keyword(out, "Error") != std::string::npos) out = "Error, data was not found!";
 	else 
 	{
 		std::vector<std::string> outSplit = string_manipulators::split_text(out, "\n");
 
-		for (size_t n1 = 1; n1 < outSplit.size() - 1 ; n1++)
+		for (size_t n1 = 2; n1 < outSplit.size() - 1 ; n1++)
 		{
 			if (outSplit[n1].length() > 0)
 			{

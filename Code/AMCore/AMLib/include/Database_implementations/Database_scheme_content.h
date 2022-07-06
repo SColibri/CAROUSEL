@@ -97,6 +97,22 @@ namespace AMLIB
 		return out;
 	}
 
+	/// <summary>
+	/// get active phases for current configuration
+	/// </summary>
+	/// <returns></returns>
+	static AM_Database_TableStruct TN_ActivePhases_Configuration()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY"); // Auto increment ID
+		out.add_new("IDProject", "INTEGER"); // Project ID reference
+		out.add_new("StartTemp", "INTEGER"); // step-equilibrium start temperature
+		out.add_new("EndTemp", "INTEGER"); // set-equilibrium end temperature
+		out.add_new("StepSize", "INTEGER"); // step size for step-equilibrium
+		out.tableName = "ActivePhases_Configuration";
+
+		return out;
+	}
 
 
 #pragma endregion

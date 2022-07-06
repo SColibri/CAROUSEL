@@ -10,9 +10,9 @@ namespace AMFramework.Controller
     internal class Controller_Phase : INotifyPropertyChanged
     {
         #region Socket
-        private Core.AMCore_Socket _AMCore_Socket;
+        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller_Cases _CaseController;
-        public Controller_Phase(ref Core.AMCore_Socket socket, Controller_Cases caseController)
+        public Controller_Phase(ref Core.IAMCore_Comm socket, Controller_Cases caseController)
         {
             _AMCore_Socket = socket;
             _CaseController = caseController;
@@ -29,12 +29,12 @@ namespace AMFramework.Controller
         #endregion
 
         #region Data
-        public static List<Model.Model_Phase> get_unique_phases_from_caseList(ref Core.AMCore_Socket socket, int IDProject)
+        public static List<Model.Model_Phase> get_unique_phases_from_caseList(ref Core.IAMCore_Comm socket, int IDProject)
         {
             List<Model.Model_Phase> composition = new();
             string Query = "database_table_custom_query SELECT DISTINCT Phase.*, SelectedPhases.IDPhase FROM Phase INNER JOIN SelectedPhases ON Phase.ID = SelectedPhases.IDPhase INNER JOIN \'Case\' ON \'Case\'.IDProject = " + IDProject;
 
-            string outCommand = socket.send_receive(Query);
+            string outCommand = socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)
@@ -50,7 +50,7 @@ namespace AMFramework.Controller
         {
             List<Model.Model_Phase> composition = new();
             string Query = "database_table_custom_query SELECT Phase.ID as IDP, Phase.Name, SelectedPhases.* FROM SelectedPhases INNER JOIN Phase ON Phase.ID=SelectedPhases.IDPhase WHERE IDCase = " + IDCase;
-            string outCommand = _AMCore_Socket.send_receive(Query);
+            string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)
@@ -66,7 +66,7 @@ namespace AMFramework.Controller
         {
             List<Model.Model_Phase> composition = new();
             string Query = "database_table_custom_query SELECT Phase.* FROM Phase";
-            string outCommand = _AMCore_Socket.send_receive(Query);
+            string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)
@@ -79,27 +79,23 @@ namespace AMFramework.Controller
             return composition;
         }
 
-        public static List<Model.Model_Phase> get_available_phases_in_database(ref Core.AMCore_Socket socket)
+        public static List<Model.Model_Phase> get_available_phases_in_database(ref Core.IAMCore_Comm socket)
         {
             // get available element names from database
             List<Model.Model_Phase> composition = new();
             string Query = "matcalc_database_phaseNames";
-            string outCommand = socket.send_receive(Query);
+            string outCommand = socket.run_lua_command(Query,"");
             List<string> pahseList = outCommand.Split("\n").ToList();
 
             // get related ID's from database by given name, missing ID's are ignored
             if (pahseList.Count == 0) return composition;
-            Query = "database_table_custom_query SELECT * FROM Phase WHERE Name = '" + pahseList[0] + "' ";
-            for (int i = 0; i < pahseList.Count; i++)
+            Query = "database_table_custom_query SELECT * FROM Phase WHERE ";
+            for (int i = 2; i < pahseList.Count -1; i++)
             {
-                Query += " OR Name = '" + pahseList[i] + "' ";
-            }
-            outCommand = socket.send_receive(Query);
-            List<string> rowItems = outCommand.Split("\n").ToList();
+                string tempQuery = Query + " Name = '" + pahseList[i].Replace("\r", "") + "' ";
+                outCommand = socket.run_lua_command(tempQuery,"");
 
-            foreach (string item in rowItems)
-            {
-                List<string> columnItems = item.Split(",").ToList();
+                List<string> columnItems = outCommand.Split(",").ToList();
                 if (columnItems.Count < 2) continue;
                 composition.Add(fillModel(columnItems));
             }

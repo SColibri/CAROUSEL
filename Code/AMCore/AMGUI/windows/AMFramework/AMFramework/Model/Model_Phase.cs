@@ -48,6 +48,17 @@ namespace AMFramework.Model
                 OnPropertyChanged("IsSelected");
             }
         }
+
+        private bool _isVisible = true;
+        public bool IsVisible
+        {
+            get { return _isVisible; }
+            set
+            {
+                _isVisible = value;
+                OnPropertyChanged("IsVisible");
+            }
+        }
         #endregion
 
         #region Interfaces
