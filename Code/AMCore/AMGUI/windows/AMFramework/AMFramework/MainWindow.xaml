@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:AMFramework" 
         xmlns:local2="clr-namespace:AMFramework.Components.Database_treeview"
         xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
-        xmlns:AMWindow="clr-namespace:AMFramework.Components.Windows" xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_MainWindow}"
+        xmlns:AMWindow="clr-namespace:AMFramework.Components.Windows" 
+        xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_MainWindow}"
         mc:Ignorable="d"
         Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
     <Grid>

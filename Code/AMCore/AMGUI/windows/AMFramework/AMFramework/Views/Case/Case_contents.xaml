@@ -9,5 +9,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="MainGrid">
+        <ScrollViewer>
+            <StackPanel x:Name="MainContent">
+            
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

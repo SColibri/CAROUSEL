@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
@@ -22,11 +23,12 @@ namespace AMFramework
             DataContext = new Controller.Controller_MainWindow();
 
             databaseView.DataContext = ((Controller.Controller_MainWindow)DataContext).get_project_controller();
-            databaseView.Navigator.SelectedItemChanged += ((Controller.Controller_MainWindow)DataContext).get_project_controller().selected_treeview_item;
+            databaseView.Navigator.SelectedItemChanged += ((Controller.Controller_MainWindow)DataContext).Selected_treeview_item_Handle;
+            databaseView.Navigator.SelectedItemChanged += Treeview_selectionChanged_Handle;
 
             ((Controller.Controller_MainWindow)DataContext).get_project_controller().PropertyChanged += OnProperty_changed_project;
-
             
+
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -178,13 +180,21 @@ namespace AMFramework
         #endregion
 
         #region Handles
+        #region Treeview
+        private void Treeview_selectionChanged_Handle(object sender, EventArgs e)
+        {
+            MainTabControl.Items.Refresh();
+            MainTabControl.SelectedItem = MainTabControl.Items[MainTabControl.Items.Count - 1];
+        }
+
+        #endregion
         #region project
         private void OnProperty_changed_project(object sender, PropertyChangedEventArgs propertyName)
         {
             if (propertyName.PropertyName == null) return;
 
             Controller.Controller_DBS_Projects controllerReference = (Controller.Controller_DBS_Projects)sender;
-            if (propertyName.PropertyName.ToUpper().CompareTo("ISSELECTED") == 0)
+            if (propertyName.PropertyName.ToUpper().CompareTo("SELECTEDTAB") == 0)
             {
                 OnProperty_IsSelected(controllerReference);
             }
@@ -194,6 +204,26 @@ namespace AMFramework
         {
             // Do nothing, no project has been selected
             if (controllerReference.SelectedProject == null) return;
+
+            remove_all_treeview_tabs();
+            switch (controllerReference.SelectedTab)
+            {
+                case Controller.Controller_DBS_Projects.TABS.NONE:
+                    break;
+                case Controller.Controller_DBS_Projects.TABS.PROJECT:
+
+                    break;
+                case Controller.Controller_DBS_Projects.TABS.SELECTED_ELEMENTS:
+                    break;
+                case Controller.Controller_DBS_Projects.TABS.AVAILABLE_PHASES:
+                    break;
+                case Controller.Controller_DBS_Projects.TABS.SINGLE_PIXEL_CASES:
+                    break;
+                case Controller.Controller_DBS_Projects.TABS.CASEITEM:
+                    break;
+                default:
+                    break;
+            }
 
             // Remove tab if not selected
             if (controllerReference.ISselected == false) 
@@ -238,6 +268,13 @@ namespace AMFramework
             Remove_cases_tab();
         }
 
+        private void remove_all_treeview_tabs() 
+        {
+            Remove_project_tab();
+            Remove_CasePlot_Tab();
+            Remove_caseID_tab();
+            Remove_cases_tab();
+        }
         private void Remove_CasePlot_Tab()
         {
             for (int n1 = 0; n1 < MainTabControl.Items.Count; n1++)

@@ -13,6 +13,7 @@ set(TEST_SET
     AM_project_Test
     AM_pixel_parameters_Test
     AM_lua_Test
+    AM_Threading_Test
 )
 
 foreach(target ${TEST_SET})

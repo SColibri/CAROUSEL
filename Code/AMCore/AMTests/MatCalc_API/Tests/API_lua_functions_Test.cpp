@@ -37,7 +37,7 @@ namespace main_setup
 	static void init()
 	{
 		configuration.set_working_directory("C:/Users/drogo/Desktop/Homless");
-		configuration.set_apiExternal_path("C:/Program Files/MatCalc 6");
+		configuration.set_apiExternal_path("C:/Program\\ Files/MatCalc\\ 6");
 		configuration.set_api_path("../../AM_API_lib/matcalc/AM_MATCALC_Lib.dll");
 
 		// NOTE: when passing paths to matcalc we have to pass with escape characters, otherwise this will not work
@@ -165,7 +165,7 @@ TEST_CASE("IAM_lua_functions")
 	{
 		// create new project
 		REQUIRE(main_setup::api->run_lua_command("project_new",
-			std::vector<std::string> {"TestProject"}).compare("OK") == 0);
+			std::vector<std::string> {"TestProject"}).compare("1") == 0);
 
 		REQUIRE(string_manipulators::find_index_of_keyword(
 			main_setup::api->run_lua_command("project_getData"), "TestProject") != std::string::npos);
@@ -319,7 +319,7 @@ TEST_CASE("IAM_lua_functions")
 
 			tempProject.refresh_data();
 
-		std::string outAll = main_setup::api->run_lua_command("pixelcase_step_equilibrium_parallel",
+		std::string outAll = main_setup::api->run_lua_command("pixelcase_step_scheil_parallel",
 				std::vector<std::string> {"1","1-150"});
 
 			/*

@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 
 namespace AMFramework.Components.Charting
 {
-    internal class ChartingWindow:Canvas
+    public class ChartingWindow:Canvas
     {
         private int _DataLength = 0;
         private Point _chartCenter = new();
@@ -20,6 +20,24 @@ namespace AMFramework.Components.Charting
 
         private List<Axes> _AxesList = new();
         public List<Axes> AxesList { get { return _AxesList; } }
+
+        public struct SpyderSeriesData
+        {
+            public string SeriesName;
+            public List<double> Data;
+            public List<string> AxeName;
+            public object Tag;
+            public SpyderSeriesData() 
+            {
+                SeriesName = "Empty";
+                Data = new List<double>();
+                AxeName = new List<string>();
+                Tag = "Empty";
+            }
+        }
+
+        private List<SpyderSeriesData> _series = new();
+        public List<SpyderSeriesData> Series { get { return _series; } }
 
         private List<List<double>> _Data = new();
         public List <List<double>> Data { 
@@ -91,20 +109,54 @@ namespace AMFramework.Components.Charting
             this.SizeChanged += HandleTab;
         }
 
+        #region getters_setters
+        public void Add_series(SpyderSeriesData NewSeries) 
+        {
+            _series.Add(NewSeries);
+            Update_axes();
+        }
+        #endregion
+
         #region Methods
+        private void Update_axes() 
+        {
+            _AxesList.Clear();
+            List<string> AxesNames = _series.SelectMany(e => e.AxeName).Select(fy => fy).Distinct().ToList();
+            foreach (string axy in AxesNames)
+            {
+                Axes tempAxe = new(axy);
+                tempAxe.MinValue = 0;
+                tempAxe.MaxValue = 1;
+
+                _AxesList.Add(tempAxe);
+            }
+        }
 
         public void Add_Axe(Axes NewAxe)
         {
             _AxesList.Add(NewAxe);
             UpdateImage();
         }
-        
+
+        public void Clear_axes()
+        {
+            _AxesList.Clear();
+        }
+
+        public void ClearAll() 
+        {
+            _AxesList.Clear();
+            _Data.Clear();
+            Series.Clear();
+        }
+
         public void UpdateImage()
         {
             this.Children.Clear();
 
             BuildBaseAxe();
-            BuildDataPoints();
+            BuidDataPoints_usingStructure();
+            //BuildDataPoints();
             BuildBaseAxe();
 
         }
@@ -116,6 +168,7 @@ namespace AMFramework.Components.Charting
         #region ImageBuild
         private void BuildBaseAxe()
         {
+            if (_AxesList.Count == 0) return;
             double SplitBase = 360 / (_AxesList.Count);
             Int16 Index = 0;
             double CurrentAngle = 45;
@@ -288,6 +341,54 @@ namespace AMFramework.Components.Charting
                     ellipseGeometry.RadiusX = 5;
                     ellipseGeometry.RadiusY = 5;
                     path.ToolTip = Listy[n1].ToString();
+                    path.Effect = new System.Windows.Media.Effects.BlurEffect
+                    {
+                        Radius = 3
+                    };
+
+                    this.Children.Add(path);
+
+                    Index++;
+                }
+
+                this.Children.Add(polygon);
+            }
+
+        }
+
+        private void BuidDataPoints_usingStructure() 
+        {
+            for (int n1 = 0; n1 < _series.Count; n1++)
+            {
+                Polygon polygon = new();
+                polygon.Stroke = _AxesColor;
+                polygon.StrokeThickness = 1;
+                polygon.Fill = _PalleteData[n1];
+                polygon.Opacity = 0.5;
+                polygon.Effect = new System.Windows.Media.Effects.BlurEffect
+                {
+                    Radius = 3
+                };
+
+                int Index = 0;
+                foreach (double Listy in _series[n1].Data)
+                {
+                    Point calculated = new Point(
+                            _chartCenter.X - _AxesUnitVectors[Index].X * (Listy * _AxesStepSize[Index] / _AxesList[Index].Interval),
+                            _chartCenter.Y - _AxesUnitVectors[Index].Y * (Listy * _AxesStepSize[Index] / _AxesList[Index].Interval));
+
+                    polygon.Points.Add(calculated);
+
+                    Path path = new Path();
+                    EllipseGeometry ellipseGeometry = new EllipseGeometry();
+                    path.Data = ellipseGeometry;
+                    path.Stroke = _AxesColor;
+                    path.Fill = Brushes.Red;
+                    path.Opacity = 0.8;
+                    ellipseGeometry.Center = new Point(calculated.X, calculated.Y);
+                    ellipseGeometry.RadiusX = 5;
+                    ellipseGeometry.RadiusY = 5;
+                    path.ToolTip = Listy.ToString();
                     path.Effect = new System.Windows.Media.Effects.BlurEffect
                     {
                         Radius = 3

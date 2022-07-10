@@ -197,6 +197,39 @@ namespace API_Scripting
 		return out;
 	}
 
+#pragma region precipitation
+	std::string static Script_create_precipitation_domain(std::string DomainP, std::string PhaseName)
+	{
+		std::string out = "set-precipitation-parameter precipitate-or-domain-name=" + DomainP + " thermodynamic-matrix-phase=" + PhaseName + "\n";
+		return out;
+	}
+
+	std::string static Script_create_new_precipitate(std::string PhaseName)
+	{
+		std::string out = "create-new-phase " + PhaseName + " precipitate" + PhaseName + "\n";
+		return out;
+	}
+
+	std::string static Script_set_precipitation_parameter(std::string PhaseName, std::string ParameterPrecipitation)
+	{
+		std::string out = "set-precipitation-parameter " + PhaseName + "_P0 " + ParameterPrecipitation + "\n";
+		return out;
+	}
+
+#pragma region Kinetics
+	std::string static Script_set_simulation_parameters(std::string kineticParameters)
+	{
+		std::string out = "set-precipitation-parameter " + kineticParameters;
+		return out;
+	}
+
+	std::string static Script_start_precipitate_simulation(std::string kineticParameters)
+	{
+		std::string out = "start-precipitate-simulation " + kineticParameters;
+		return out;
+	}
+#pragma endregion
+#pragma endregion
 #pragma region MatcalcBUFFER
 	std::string static script_buffer_listContent()
 	{
@@ -296,7 +329,7 @@ namespace API_Scripting
 																std::vector<std::string>& Phases)
 	{
 		std::vector<std::string> out;
-		out.push_back(script_initialize_core());
+		//out.push_back(script_initialize_core());
 		out.push_back(script_set_thermodynamic_database(configuration->get_ThermodynamicDatabase_path()));
 		out.push_back(Script_selectElements(Elements));
 		out.push_back(Script_selectPhases(Phases));
@@ -327,7 +360,7 @@ namespace API_Scripting
 		std::vector<std::string>& Phases)
 	{
 		std::vector<std::string> out;
-		out.push_back(script_initialize_core());
+		//out.push_back(script_initialize_core());
 		out.push_back(script_set_thermodynamic_database(configuration->get_ThermodynamicDatabase_path()));
 		out.push_back(Script_selectElements(Elements));
 		out.push_back(Script_selectPhases(Phases));

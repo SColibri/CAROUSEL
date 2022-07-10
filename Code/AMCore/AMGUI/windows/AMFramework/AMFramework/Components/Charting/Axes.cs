@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AMFramework.Components.Charting
 {
-    internal class Axes
+    public class Axes
     {
         private String _Name = "";
         public String Name { get { return _Name; } set { _Name = value; } }

@@ -20,20 +20,23 @@ namespace AMFramework.Core
         #region Constructor
         public AMCore_libHandle(string pathToLibrary)
         {
-            try
-            {
-                Load_library(pathToLibrary);
-                Load_api_controll();
-                Load_run_lua_command_address_space();
-            }
-            catch (Exception e)
-            {
-                System.Windows.Forms.MessageBox.Show("An error occured when loading the API: " + e.Message);
-                throw;
-            }
-
+            Link_to_library(pathToLibrary);
         }
-        
+
+        ~AMCore_libHandle() 
+        {
+            Free_library();
+        }
+
+        private void Free_library() 
+        {
+            if (_library != IntPtr.Zero)
+            {
+                FreeLibrary(_library);
+            }
+            _api_available = false;
+        }
+
         #region Load
         private void Load_library(string pathToLibrary) 
         {
@@ -71,6 +74,11 @@ namespace AMFramework.Core
 
         #endregion
 
+        #region Flags
+        private bool _api_available = false; // Flag used to specify if api is loaded
+
+        #endregion
+
         /// <summary>
         /// Run lua command, base commands come from the library implementation and also form lua scripts that
         /// can be loaded using the run_script command.
@@ -80,6 +88,7 @@ namespace AMFramework.Core
         /// <returns></returns>
         public string run_lua_command(string command, string parameters)
         {
+            if (!_api_available) return "Error: api not available!";
             IntPtr AddressPointer_run_lua = GetProcAddress(_library, "API_run_lua_command");
             API_run_lua_command apiObject = (API_run_lua_command)Marshal.GetDelegateForFunctionPointer(AddressPointer_run_lua, typeof(API_run_lua_command));
 
@@ -97,6 +106,32 @@ namespace AMFramework.Core
             return outCommand.ToString();
         }
 
+
+        public void update_path(string apiPath)
+        {
+            Link_to_library(apiPath);
+        }
+
+        private void Link_to_library(string pathToLibrary)
+        {
+            Free_library();
+
+            if (!System.IO.File.Exists(pathToLibrary)) return;
+            try
+            {
+                Load_library(pathToLibrary);
+                Load_api_controll();
+                Load_run_lua_command_address_space();
+                _api_available = true;
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show("An error occured when loading the API: " + e.Message);
+                throw;
+            }
+        }
+
+        
         #region Library
         #region kernel32
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -113,6 +148,7 @@ namespace AMFramework.Core
 
         [DllImport("kernel32.dll")]
         static extern uint GetLastError();
+
         #endregion
 
         #region AMFramework_library

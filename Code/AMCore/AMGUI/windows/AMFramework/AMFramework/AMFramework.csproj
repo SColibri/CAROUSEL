@@ -7927,6 +7927,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\NewFolder\" />
     <Folder Include="Components\Terminal\" />
     <Folder Include="Libraries\dll\" />
     <Folder Include="Resources\img\" />

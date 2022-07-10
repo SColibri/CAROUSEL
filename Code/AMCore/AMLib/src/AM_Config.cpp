@@ -142,6 +142,16 @@
 		_mobility_database_path = filename;
 	}
 
+	const int& AM_Config::get_max_thread_number()
+	{
+		return _maxThreads;
+	}
+
+	void AM_Config::set_max_thread_number(int maxNumber)
+	{
+		_maxThreads = maxNumber;
+	}
+
 #pragma endregion Getters_Setters
 
 // Interfaces

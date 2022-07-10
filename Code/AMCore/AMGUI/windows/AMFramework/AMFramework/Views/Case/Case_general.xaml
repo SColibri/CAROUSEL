@@ -12,7 +12,7 @@
     <Grid Background="White">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <GroupBox Header="General" Margin="5" FontWeight="DemiBold">
+                <GroupBox Header="General" Margin="5" FontWeight="DemiBold" BorderThickness="2" BorderBrush="Black">
                     <WrapPanel Orientation="Horizontal">
                         <GroupBox Header="Case" Margin="5" Background="AliceBlue" FontWeight="Normal">
                             <WrapPanel>
@@ -142,7 +142,7 @@
                     </WrapPanel>
                 </GroupBox>
                 
-                <GroupBox Header="Step-Equilibrium calculations configuration" FontWeight="DemiBold" Margin="5">
+                <GroupBox Header="Step-Equilibrium calculations configuration" FontWeight="DemiBold" Margin="5" BorderThickness="2" BorderBrush="Black">
                     <WrapPanel Orientation="Horizontal">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -202,7 +202,7 @@
                         </Grid>
                     </WrapPanel>
                 </GroupBox>
-                <GroupBox Header="Step-Scheil calculations configuration" FontWeight="DemiBold" Margin="5">
+                <GroupBox Header="Step-Scheil calculations configuration" FontWeight="DemiBold" Margin="5" BorderThickness="2" BorderBrush="Black">
                     <WrapPanel Orientation="Horizontal">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -274,10 +274,20 @@
                     </WrapPanel>
                     
                 </GroupBox>
+                <GroupBox Header="Precipitation calculations" FontWeight="DemiBold" Margin="5" BorderThickness="2" BorderBrush="Black">
+                    <StackPanel>
+                        <GroupBox Header="Precipitation domain">
 
-            
+                        </GroupBox>
+                        <GroupBox Header="Precipitation phase">
+
+                        </GroupBox>
+                    </StackPanel>
+                </GroupBox>
+
             </StackPanel>
         </ScrollViewer>
+        
         <Grid Visibility="{Binding Path=ShowPopup, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}">
             <Border Background="Black" Opacity="0.7"/>
             <Frame Margin="25" Name="PopupFrame" NavigationUIVisibility="Hidden"/>

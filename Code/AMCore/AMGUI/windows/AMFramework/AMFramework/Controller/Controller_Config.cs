@@ -30,13 +30,14 @@ namespace AMFramework.Controller
             datamodel.Thermodynamic_database_path = _apiHandle.run_lua_command("configuration_get_thermodynamic_database_path", "");
             datamodel.Physical_database_path = _apiHandle.run_lua_command("configuration_get_physical_database_path", "");
             datamodel.Mobility_database_path = _apiHandle.run_lua_command("configuration_get_mobility_database_path", "");
+            datamodel.IsLoaded = true;
         }
 
         private void save_model_data() 
         {
             bool dataSaved = true;
 
-            if(_apiHandle.run_lua_command("configuration_setAPI_path " + datamodel.API_path,"").CompareTo("OK") != 0) dataSaved = false;
+            if (_apiHandle.run_lua_command("configuration_setAPI_path " + datamodel.API_path,"").CompareTo("OK") != 0) dataSaved = false;
             if (_apiHandle.run_lua_command("configuration_setExternalAPI_path " + datamodel.External_API_path, "").CompareTo("OK") != 0) dataSaved = false;
             if (_apiHandle.run_lua_command("configuration_set_working_directory " + datamodel.Working_Directory, "").CompareTo("OK") != 0) dataSaved = false;
             if (_apiHandle.run_lua_command("configuration_set_thermodynamic_database_path " + datamodel.Thermodynamic_database_path, "").CompareTo("OK") != 0) dataSaved = false;
@@ -94,6 +95,7 @@ namespace AMFramework.Controller
 
             if (OFD.ShowDialog() == true)
             {
+                datamodel.IsLoaded = true;
                 datamodel.API_path = OFD.FileName;
             }
         }
@@ -130,6 +132,7 @@ namespace AMFramework.Controller
 
             if (OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                datamodel.IsLoaded = true;
                 datamodel.External_API_path = OFD.SelectedPath;
             }
         }

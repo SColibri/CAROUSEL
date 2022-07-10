@@ -16,6 +16,12 @@ namespace AMFramework.Model
             set
             {
                 _API_path = value;
+
+                if (_is_loaded) 
+                {
+                    Controller.Controller_Config.ApiHandle.update_path(_API_path);
+                }
+                
                 OnPropertyChanged("API_path");
             }
         }
@@ -72,6 +78,17 @@ namespace AMFramework.Model
             {
                 _mobility_database_path = value;
                 OnPropertyChanged("Mobility_database_path");
+            }
+        }
+
+        private bool _is_loaded = false;
+        public bool IsLoaded
+        {
+            get { return _is_loaded; }
+            set 
+            {
+                _is_loaded = value;
+                OnPropertyChanged("IsLoaded");
             }
         }
 

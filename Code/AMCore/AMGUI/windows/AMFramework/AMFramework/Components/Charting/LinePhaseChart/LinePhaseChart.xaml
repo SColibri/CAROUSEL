@@ -5,8 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AMFramework.Components.Charting.LinePhaseChart"
              xmlns:converters ="clr-namespace:AMFramework.Components.Converters"
-             xmlns:plot="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF" xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_Plot}"
+             xmlns:plot="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF" 
+             xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_Plot}"
              xmlns:scotPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
+             xmlns:fa ="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -52,90 +54,29 @@
                 Command="{Binding Path=Plot_linear_phases}">
             
         </Button>
-        
+
         <GroupBox Header="Plot" 
                   Height="Auto"
                   Margin="5"
                   Grid.Column="0"
-                  Grid.Row="1">
-            
-            
+                  Grid.Row="1"
+                  Grid.ColumnSpan="2">
+
+
             <WpfPlot x:Name="ListPlot">
 
             </WpfPlot>
-            
+
         </GroupBox>
-        <GroupBox Header="Data"
-                  Grid.Column="1"
-                  Grid.Row="1">
-            <TreeView x:Name="Navigator" Grid.Row="1" ItemsSource="{Binding Path=SelectedProject}">
-                <TreeView.Resources>
-                    <Style TargetType="{x:Type TreeViewItem}">
-                        <Setter Property="HeaderTemplate">
-                            <Setter.Value>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        
-                                        <Image Width="15" 
-                                           Margin="3" 
-                                           Source="{Binding RelativeSource={RelativeSource 
-                                                                Mode=FindAncestor, 
-                                                                AncestorType={x:Type TreeViewItem}}, 
-                                                            Path=Tag,
-                                                            Converter={x:Static converters:HeaderToImageConverter.Instance}}"/>
 
-                                        <TextBlock VerticalAlignment="Center" Text="{Binding}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </TreeView.Resources>
-
-                <TreeViewItem Header="{Binding Path=SelectedProject.Name, UpdateSourceTrigger=PropertyChanged}" Tag="Project">
-
-                    <TreeViewItem Header="Single pixel cases" Tag="Case" ItemsSource="{Binding Path=Cases, UpdateSourceTrigger=PropertyChanged}">
-                        <TreeViewItem.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    <ItemsControl ItemsSource="{Binding Path=ElementComposition}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <WrapPanel Orientation="Horizontal"
-                                               MaxWidth="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}, Path=ActualWidth}">
-
-                                                </WrapPanel>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border Background="#F3F2F1" Margin="1" BorderBrush="Silver" BorderThickness="1" >
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="auto"/>
-                                                            <ColumnDefinition Width="auto"/>
-                                                            <ColumnDefinition Width="auto"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="auto"/>
-                                                            <RowDefinition Height="auto"/>
-                                                        </Grid.RowDefinitions>
-                                                        <TextBlock Text="{Binding Path=ElementName}" Margin="1" Height="Auto" Width="Auto" Grid.Column="0" FontWeight="Bold"></TextBlock>
-                                                        <TextBlock Text=":" Margin="1" Height="Auto" Width="Auto" Grid.Column="1"></TextBlock>
-                                                        <TextBlock Text="{Binding Path=Value}" Margin="1" Height="Auto" Width="Auto" Grid.Column="2"></TextBlock>
-                                                    </Grid>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Path=Name}" Tag="{Binding}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </TreeViewItem.ItemTemplate>
-                    </TreeViewItem>
-                </TreeViewItem>
-            </TreeView>
-        </GroupBox>
+        <Grid Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}}" Background="AliceBlue" Grid.RowSpan="2" Grid.ColumnSpan="2" Opacity="0.7">
+            <Border Background="AliceBlue">
+                <Border.Effect>
+                    <BlurEffect Radius="1"/>
+                </Border.Effect>
+                <TextBlock Text="Loading" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Border>
+            <fa:ImageAwesome Icon="Spinner" Spin="True" SpinDuration="5"  Width="120"/>
+        </Grid>
     </Grid>
 </UserControl>

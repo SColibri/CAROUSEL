@@ -14,7 +14,7 @@ namespace AMFramework.Controller
 {
     public class Controller_MainWindow : INotifyPropertyChanged
     {
-        
+        private MainWindow_ViewModel _AMView;        
         private Controller.Controller_AMCore _AMCore;
         private Controller.Controller_DBS_Projects _DBSProjects;
         private Controller.Controller_Config _Config;
@@ -30,6 +30,7 @@ namespace AMFramework.Controller
             _coreSocket = Controller.Controller_Config.ApiHandle;
 
             _AMCore = new(_coreSocket);
+            _AMView = new();
 
             _DBSProjects = new(_coreSocket);
             _DBSProjects.PropertyChanged += Project_property_changed_handle;
@@ -228,6 +229,7 @@ namespace AMFramework.Controller
                 GradientTransition = "DodgerBlue"
             };
             nbutt.ClickButton += Pg.saveClickHandle;
+            nbutt.ClickButton += Pw.AM_Close_Window_Event;
 
             Pw.add_button(nbutt);
             return Pw;
@@ -247,6 +249,7 @@ namespace AMFramework.Controller
                 GradientTransition = "DodgerBlue"
             };
             nbutt.ClickButton += _DBSProjects.Select_project_Handle;
+            nbutt.ClickButton += Pw.AM_Close_Window_Event;
 
             Pw.add_button(nbutt);
             return Pw;
@@ -346,8 +349,99 @@ namespace AMFramework.Controller
 
         #endregion
 
+        #region TreeView
+        private TabItem _treeview_selected_tab;
+
+        #region Handles
+        /// <summary>
+        /// Handles treeview selection in main window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void Selected_treeview_item_Handle(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            //Remove old tab
+            if (_treeview_selected_tab != null) Remove_tab_Item(_treeview_selected_tab);
+            GC.Collect();
+
+            // Check parameters
+            TreeView? refTreeView = sender as TreeView;
+            if (refTreeView == null) return;
+            if (refTreeView.SelectedItem == null) return;
+
+            // get selected item
+            object refTreeItem = refTreeView.SelectedItem;
+            if (refTreeItem == null) return;
+
+            // check if object is a treeview or a model
+            if (refTreeItem.GetType().Equals(typeof(TreeViewItem)))
+            {
+                Selected_treeview_item_ByString(refTreeItem as TreeViewItem);
+            }
+            else
+            {
+                Selected_treeview_item_ByModel(refTreeItem);
+            }
+
+            if (_treeview_selected_tab == null) return;
+            if (!TabItems.Contains(_treeview_selected_tab))
+                Add_Tab_Item(_treeview_selected_tab);
+        }
+
+        /// <summary>
+        /// Adds tab item w.r.t the header text of the treeview item
+        /// </summary>
+        /// <param name="refItem"></param>
+        private void Selected_treeview_item_ByString(TreeViewItem refItem)
+        {
+            // check if tag has a object type
+            if (refItem.Tag == null) return;
+
+            // If tag is of another type than string switch to ByModel function
+            if (!refItem.Tag.GetType().Equals(typeof(string))) 
+            {
+                Selected_treeview_item_ByModel(refItem.Tag);
+                return;
+            }
+
+            // get tab item from value set
+            string selectedHeader = (string)refItem.Tag;
+            if (selectedHeader.ToUpper().CompareTo("PROJECT") == 0)
+            {
+                _treeview_selected_tab = _AMView.get_project_tab(_DBSProjects);
+            }
+            else if (selectedHeader.ToUpper().Contains("SINGLE"))
+            {
+                _treeview_selected_tab = _AMView.get_case_list_tab(get_plot_Controller());
+            }
+            else if (selectedHeader.ToUpper().Contains("CASEITEM"))
+            {
+                _treeview_selected_tab = _AMView.get_case_itemTab(_DBSProjects.ControllerCases);
+            }
+        }
+
+        /// <summary>
+        /// Adds tab item w.r.t the model
+        /// </summary>
+        /// <param name="refItem"></param>
+        private void Selected_treeview_item_ByModel(object refItem)
+        {
+            if (refItem.GetType().Equals(typeof(Model.Model_Case)))
+            {
+                _DBSProjects.ControllerCases.SelectedCase = (Model.Model_Case)refItem;
+                _treeview_selected_tab = _AMView.get_case_itemTab(_DBSProjects.ControllerCases);
+            }
+            else if (refItem.GetType().Equals(typeof(Controller_DBS_Projects)))
+            {
+                _treeview_selected_tab = _AMView.get_project_tab((Controller_DBS_Projects)refItem);
+            }
+        }
+
+        #endregion
+        #endregion
+
         #region Commands
-        
+
         #endregion
 
     }

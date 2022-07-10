@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="AMFramework.Components.Charting.LinePhaseChart.SpiderPhaseChart"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AMFramework.Components.Charting.LinePhaseChart"
+             xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_Plot}"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:spy="clr-namespace:AMFramework.Components.Charting"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        
+        <Button Grid.Row="0" Grid.Column="1"
+                Content="Search" Click="Button_Click"></Button>
+        
+        <GroupBox Header="Plot" 
+                  Height="Auto"
+                  Margin="5"
+                  Grid.Column="0"
+                  Grid.Row="1"
+                  Grid.ColumnSpan="1">
+
+            <spy:ChartingWindow x:Name="MainChart"/>
+        </GroupBox>
+
+        <Grid Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}}" Background="AliceBlue" Grid.RowSpan="2" Grid.ColumnSpan="2" Opacity="0.7">
+            <Border Background="AliceBlue">
+                <Border.Effect>
+                    <BlurEffect Radius="1"/>
+                </Border.Effect>
+                <TextBlock Text="Loading" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Border>
+            <fa:ImageAwesome Icon="Spinner" Spin="True" SpinDuration="5"  Width="120"/>
+        </Grid>
+    </Grid>
+</UserControl>

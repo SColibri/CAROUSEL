@@ -75,6 +75,7 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 	add_new_function(state, "pixelcase_stepEquilibrium", "std::string out", "<int IDCase>", Bind_SPC_StepEquilibrium);
 	add_new_function(state, "pixelcase_step_equilibrium_parallel", "std::string out", "<int ID project> <int IDCase (optional more than 1)>", Bind_SPC_Parallel_StepEquilibrium);
 	add_new_function(state, "pixelcase_stepScheil", "std::string out", "<int IDCase>", Bind_SPC_StepScheil);
+	add_new_function(state, "pixelcase_step_scheil_parallel", "std::string out", "<int ID project> <int IDCase (optional more than 1)>", Bind_SPC_Parallel_StepScheil);
 	add_new_function(state, "pixelcase_run_cases", "std::string out", "pixelcase_run_cases", Bind_SPC_run_cases);
 	// Bind_SPC_Parallel_StepEquilibrium
 	//add_new_function(state, "database_tableList", "std::string out", "void", AMBaseFunctions::baseBind_DatabaseTableList);

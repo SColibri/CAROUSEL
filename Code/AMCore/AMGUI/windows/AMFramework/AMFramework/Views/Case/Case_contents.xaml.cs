@@ -31,9 +31,16 @@ namespace AMFramework.Views.Case
             DataContext = plotController;
             plotController.refresh_used_Phases_inCases();
 
-            MainGrid.Children.Add(new Components.Charting.LinePhaseChart.LinePhaseChart(plotController));
+            Components.Charting.LinePhaseChart.LinePhaseChart win01 = new Components.Charting.LinePhaseChart.LinePhaseChart(plotController);
+            win01.Height = 700;
 
+            Components.Charting.LinePhaseChart.SpiderPhaseChart win02 = new Components.Charting.LinePhaseChart.SpiderPhaseChart(plotController);
+            win02.Height = 700;
 
+            MainContent.Children.Add(win01);
+            MainContent.Children.Add(win02);
+
+            
         }
     }
 }

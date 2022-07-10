@@ -97,6 +97,11 @@ namespace AMFramework.Core
         {
             return send_receive(command + parameters);
         }
+
+        public void update_path(string apiPath)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

@@ -31,7 +31,7 @@ namespace AMFramework.Components.Converters
             {
                 imagePath = "Resources/Icons/tablerIcons/layout-board.png";
             }
-            else if (tagType.ToUpper().CompareTo("CASELIST") == 0)
+            else if (tagType.ToUpper().CompareTo("SINGLE PIXEL CASES") == 0)
             {
                 imagePath = "Resources/Icons/tablerIcons/marquee.png";
             }

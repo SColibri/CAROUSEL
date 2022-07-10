@@ -725,7 +725,7 @@ protected:
 
 		_openProject->set_project_name(IAM_Database::csv_join_row(parameters, " "), _dbFramework->get_apiPath(), _dbFramework->get_apiExternalPath());
 
-		lua_pushstring(state, "OK");
+		lua_pushstring(state, std::to_string(_openProject->get_project_ID()).c_str());
 		return 1;
 	}
 

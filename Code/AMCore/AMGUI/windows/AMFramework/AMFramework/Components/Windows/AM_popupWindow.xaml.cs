@@ -74,5 +74,10 @@ namespace AMFramework.Components.Windows
         {
             PopupWindowClosed?.Invoke(this, e);
         }
+
+        public void AM_Close_Window_Event(object sender, EventArgs e) 
+        {
+            PopupWindowClosed?.Invoke(this, e);
+        }
     }
 }

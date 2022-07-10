@@ -29,6 +29,11 @@ public:
     {
         initialize(cmdexec);
     }
+
+    IPC_winapi(std::wstring& cmdexec)
+    {
+        initialize(cmdexec);
+    }
     
     ~IPC_winapi() 
     {
@@ -199,6 +204,8 @@ private:
     {
         try
         {
+            UINT uExitCode;
+            TerminateProcess(si->proc, uExitCode);
             //CloseHandle(si->child_in_r);
             //CloseHandle(si->child_in_w);
             //CloseHandle(si->child_out_r);

@@ -90,6 +90,8 @@ public:
 	const std::string& get_MobilityDatabase_path(); // gets path for external libraries (e.g. matcalc dll)
 	void set_MobilityDatabase_path(std::string filename); // sets path for external libraries (e.g. matcalc dll)
 
+	const int& get_max_thread_number(); // gets the max number of threads to use for calculations 
+	void set_max_thread_number(int maxNumber); // sets the max number of threads to be used for calculations
 #pragma endregion Getters_Setters
 
 	// Interfaces
@@ -111,6 +113,7 @@ private:
 	std::string _physical_database_path{};
 	std::string _mobility_database_path{};
 	std::string _workingDirectory{};
+	int _maxThreads{2};
 
 	/// <summary>
 	/// The framework uses a defined directory structure on which the config file can be found

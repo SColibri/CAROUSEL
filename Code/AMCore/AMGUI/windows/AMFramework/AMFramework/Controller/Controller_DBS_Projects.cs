@@ -33,6 +33,40 @@ namespace AMFramework.Controller
         #endregion
 
         #region Flags
+        public enum TABS
+        {
+            NONE,
+            PROJECT,
+            SELECTED_ELEMENTS,
+            AVAILABLE_PHASES,
+            SINGLE_PIXEL_CASES,
+            CASEITEM
+        }
+
+        private TABS _selected_tab = TABS.NONE;
+        public TABS SelectedTab 
+        { 
+            get { return _selected_tab; } 
+            set 
+            {
+                _selected_tab = value;
+                OnPropertyChanged("SelectedTab");
+            }
+        }
+
+        private TabItem _tab_view = new();
+        public TabItem TabView 
+        { 
+            get { return _tab_view;}
+            set 
+            {
+                _tab_view = value;
+                OnPropertyChanged("TabView");
+            }
+        }
+
+
+
         private bool _isSelected = false;
         public bool ISselected
         {
@@ -40,12 +74,7 @@ namespace AMFramework.Controller
             set
             {
                 _isSelected = value;
-
-                if (value == true)
-                {
-                    SelectedCaseID = false;
-                    _selected_case_window = false;
-                }
+                SelectedTab = TABS.PROJECT;
 
                 OnPropertyChanged("ISselected");
             }
@@ -66,12 +95,7 @@ namespace AMFramework.Controller
             set
             {
                 _selected_caseID = value;
-
-                if (value == true)
-                {
-                    ISselected = false;
-                    SelectedCaseWindow = false;
-                }
+                SelectedTab = TABS.CASEITEM;
 
                 OnPropertyChanged("SelectedCaseID");
             }
@@ -102,6 +126,17 @@ namespace AMFramework.Controller
             {
                 _isWorking = value;
                 OnPropertyChanged("IsWorking");
+            }
+        }
+
+        private bool _loading_project = false;
+        public bool Loading_project
+        {
+            get { return _loading_project; }
+            set 
+            {
+                _loading_project = value;
+                OnPropertyChanged("Loading_project");
             }
         }
         #endregion
@@ -159,21 +194,40 @@ namespace AMFramework.Controller
             set
             {
                 _selectedProject = value;
-                controllerCases.refresh();
-                Controller_Selected_Elements.refresh();
-
-                OnPropertyChanged("SelectedProject");
-                OnPropertyChanged("Cases");
-                OnPropertyChanged("Elements");
-                load_database_available_phases();
+                SelectProject(_selectedProject.ID);
             }
         }
         public void SelectProject(int ID)
         {
-            string outy = _AMCore_Socket.run_lua_command("project_loadID" + ID.ToString(), "");
-            if (outy.CompareTo("OK") != 0) return;
-            SelectedProject = DataModel(ID);
+            if (_loading_project) return;
+
+            Loading_project = true;
+            System.Threading.Thread TH01 = new System.Threading.Thread(Load_project_async);
+            TH01.Priority = System.Threading.ThreadPriority.Highest;
+            TH01.Start(ID);
+        }
+
+        private void Load_project_async(object ID) 
+        {
+            if (!ID.GetType().Equals(typeof(int))) 
+            {
+                Loading_project = false;
+                MainWindow.notify.ShowBalloonTip(5000, "Internal error","Error: wrong input type for Load_project_async", System.Windows.Forms.ToolTipIcon.Error);
+                return;
+            }
+            
+            controllerCases.refresh();
+            Controller_Selected_Elements.refresh();
+
+            _selectedElements = Controller_Selected_Elements.Elements;
+
             load_database_available_phases();
+            Sort_Cases_BySelectedPhases();
+            OnPropertyChanged("SelectedProject");
+            OnPropertyChanged("Cases");
+            OnPropertyChanged(nameof(SelectedElements));
+
+            Loading_project = false;
         }
 
         public Model.Model_Projects DataModel(int ID)
@@ -191,8 +245,7 @@ namespace AMFramework.Controller
         {
             int result = 0;
 
-            string csvFormat = model.get_csv();
-            string outy = _AMCore_Socket.run_lua_command("dataController_saveProjectData " + csvFormat, "");
+            string outy = _AMCore_Socket.run_lua_command("project_new " + model.Name, "");
             if (outy.Contains("Error"))
             {
                 MainWindow.notify.ShowBalloonTip(5000, "AMCore Error", outy, System.Windows.Forms.ToolTipIcon.Error);
@@ -200,7 +253,7 @@ namespace AMFramework.Controller
             }
 
             model.ID = Convert.ToInt32(outy);
-            DB_projects_reload();
+            SelectedProject = DataModel(model.ID);
             MainWindow.notify.ShowBalloonTip(5000, "Project Saved", "Successful", System.Windows.Forms.ToolTipIcon.Info);
             return result;
         }
@@ -226,7 +279,7 @@ namespace AMFramework.Controller
             }
         }
 
-        private List<List<Model.Model_Case>> _cases_BySelectedPhases;
+        private List<List<Model.Model_Case>> _cases_BySelectedPhases = new();
         public List<List<Model.Model_Case>> Cases_BySelectedPhases
         {
             get { return _cases_BySelectedPhases; }
@@ -239,7 +292,30 @@ namespace AMFramework.Controller
 
         private void Sort_Cases_BySelectedPhases()
         {
-        
+            _cases_BySelectedPhases.Clear();
+
+            if (Cases.Count == 0) return;
+            _cases_BySelectedPhases.Add(new());
+            _cases_BySelectedPhases[0].Add(Cases[0]);
+
+            foreach (Model.Model_Case caseItem in Cases.Skip(1))
+            {
+                for (int n1 = 0; n1 < _cases_BySelectedPhases.Count; n1++)
+                {
+                    if (!_cases_BySelectedPhases[n1][0].SelectedPhases.Except(caseItem.SelectedPhases).Any()) 
+                    {
+                        _cases_BySelectedPhases[n1].Add(caseItem);
+                        break;
+                    }
+
+                    if(n1 == _cases_BySelectedPhases.Count - 1) 
+                    {
+                        _cases_BySelectedPhases.Add(new());
+                        _cases_BySelectedPhases[n1+1].Add(caseItem);
+                    }
+                }
+            }
+            OnPropertyChanged("Cases_BySelectedPhases");
         }
 
         public void Case_load_equilibrium_phase_fraction(Model.Model_Case model) 
@@ -342,10 +418,17 @@ namespace AMFramework.Controller
 
         #region Elements
         private Controller.Controller_Selected_Elements Controller_Selected_Elements;
-        private Controller.Controller_Element Controller_Elements;
-        public List<Model.Model_SelectedElements> Elements
+        public Controller.Controller_Selected_Elements controller_Selected_Elements
         {
-            get { return Controller_Selected_Elements.Elements; }
+            get { return Controller_Selected_Elements; }
+        }
+
+        private Controller.Controller_Element Controller_Elements;
+
+        private List<Model.Model_SelectedElements> _selectedElements = new();
+        public List<Model.Model_SelectedElements> SelectedElements
+        {
+            get { return _selectedElements; }
         }
 
         private List<Model.Model_Element> _available_Elements = new();
@@ -407,7 +490,7 @@ namespace AMFramework.Controller
             {
                 ISselected = true;
             }
-            else if (refTree.Tag.ToString().ToUpper().Contains("CASELIST"))
+            else if (refTree.Tag.ToString().ToUpper().Contains("SINGLE"))
             {
                 SelectedCaseWindow = true;
             }

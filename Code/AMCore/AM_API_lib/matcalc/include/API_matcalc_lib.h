@@ -64,6 +64,19 @@ public:
 	std::string MCRCommand(std::string commandLine);
 	std::string APIcommand(std::string commandLine);
 	std::string APIcommand(std::string commandLine, IPC_winapi* mcc_comm);
+
+	/// <summary>
+	/// closes the mcc IPC process. This can be helpful since all mcc processes are CPU heavy even if idle
+	/// this might be an issue with matcalc. A workaround is to close the process and start fresh everytime,
+	/// not the best solution though since you have to restart all instructions, so keep an eye on this fact
+	/// when closing mcc.
+	/// </summary>
+	void close_mcc() 
+	{
+		// dispose for now will do what we want, this can get confusing if the dispose method includes
+		// other instructions
+		dispose();
+	}
 private:
 	HINSTANCE _library{NULL}; // Matcalc library
 	AM_Config* _configuration{nullptr}; // configuration file
