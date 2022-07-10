@@ -215,7 +215,8 @@ namespace AMFramework.Controller
                 MainWindow.notify.ShowBalloonTip(5000, "Internal error","Error: wrong input type for Load_project_async", System.Windows.Forms.ToolTipIcon.Error);
                 return;
             }
-            
+
+            _AMCore_Socket.run_lua_command("project_loadID ", ((int)ID).ToString());
             controllerCases.refresh();
             Controller_Selected_Elements.refresh();
 
@@ -225,7 +226,7 @@ namespace AMFramework.Controller
             Sort_Cases_BySelectedPhases();
             OnPropertyChanged("SelectedProject");
             OnPropertyChanged("Cases");
-            OnPropertyChanged(nameof(SelectedElements));
+            OnPropertyChanged("SelectedElements");
 
             Loading_project = false;
         }
@@ -264,6 +265,11 @@ namespace AMFramework.Controller
             model.ID = Convert.ToInt32(dataIn[0]);
             model.Name = dataIn[1];
             model.APIName = dataIn[2];
+        }
+
+        private void Update_project() 
+        {
+            SelectProject(_selectedProject.ID);
         }
 
         #endregion
@@ -436,8 +442,86 @@ namespace AMFramework.Controller
 
         public void load_database_available_elements() 
         {
+            ElementsIsLoading = true;
             _available_Elements = Controller_Elements.get_available_elements_in_database();
+
+            foreach (Model.Model_SelectedElements Elementy in SelectedElements)
+            {
+                Model.Model_Element SelElement = AvailableElements.Find(e => e.ID == Elementy.IDElement);
+                
+                if (SelElement == null) continue;
+                SelElement.IsSelected = true;
+            }
+
+            ElementsIsLoading = false;
             OnPropertyChanged("AvailableElements");
+        }
+
+        private bool _elementsIsLoading = false;
+        public bool ElementsIsLoading 
+        { 
+            get { return _elementsIsLoading; } 
+            set 
+            { 
+                _elementsIsLoading = value;
+                OnPropertyChanged("_elementsIsLoading");
+            } 
+        }
+
+        private bool _elementsIsSaving = false;
+        public bool ElementsIsSaving
+        {
+            get { return _elementsIsSaving; }
+            set
+            {
+                _elementsIsSaving = value;
+                OnPropertyChanged("ElementsIsSaving");
+            }
+        }
+        public void Save_elementSelection_Handle(object sender, EventArgs e) 
+        {
+            List<Model.Model_Element> ElementListy = AvailableElements.FindAll(e => e.IsSelected == true);
+
+            if(ElementListy.Count == 0) 
+            {
+                System.Windows.Forms.MessageBox.Show("Please select at least one element!");
+                return;
+            }
+
+            // check if user actually changed something before deleting cases
+            if (ElementListy.Count == SelectedElements.Count) 
+            {
+                bool somethingChanged = false;
+                foreach (Model.Model_Element Elementy in ElementListy)
+                {
+                    int Index = SelectedElements.FindIndex(e => e.IDElement == Elementy.ID);
+                    if(Index == -1) 
+                    {
+                        somethingChanged = true;
+                        break;
+                    }
+                }
+
+                if (!somethingChanged) 
+                {
+                    MainWindow.notify.ShowBalloonTip(5000, "Element selection", "No change has been made", System.Windows.Forms.ToolTipIcon.Warning);
+                    return;
+                }
+            }
+
+            // proceed with selection
+            string selectedElements = ElementListy[0].Name;
+            foreach (Model.Model_Element Elementy in ElementListy.Skip(1))
+            {
+                selectedElements += "||" + Elementy.Name;
+            }
+
+            string commOut = _AMCore_Socket.run_lua_command("project_selectElements ", selectedElements);
+            if (commOut.Contains("Error")) { MainWindow.notify.ShowBalloonTip(5000, "Error project", "Elements could not be selected", System.Windows.Forms.ToolTipIcon.Error); }
+
+            Update_project();
+            OnPropertyChanged("SelectedElements");
+            ElementsIsSaving = false;
         }
         #endregion
 

@@ -137,6 +137,12 @@ public:
 	void set_CaseName(std::string newName);
 
 	/// <summary>
+	/// set date of case
+	/// </summary>
+	/// <param name="newDate"></param>
+	void set_CaseDate(std::string newDate);
+
+	/// <summary>
 	/// get vector of composition values in string type
 	/// </summary>
 	/// <returns></returns>

@@ -32,6 +32,17 @@ namespace AMFramework.Model
             }
         }
 
+        private bool _isSelected = false;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged("IsSelected");
+            }
+        }
+
         public string get_csv()
         {
             string outy = ID + "," + Name.Replace(" ", "#");

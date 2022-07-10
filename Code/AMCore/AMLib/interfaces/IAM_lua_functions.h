@@ -783,6 +783,7 @@ protected:
 			" Please add atleast one valid Element ",
 			parameters) != 0) return 1;
 
+		_openProject->clear_project_data();
 		lua_pushstring(state, _openProject->set_selected_elements_ByName(parameters).c_str());
 		return 1;
 	}
@@ -930,7 +931,8 @@ protected:
 		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
 		if (!string_manipulators::isNumber(csvF[0]))
 		{
-			lua_pushstring(state, "Wrong type");
+			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
+			lua_pushstring(state, IDerror.c_str());
 			return 1;
 		}
 
@@ -939,13 +941,14 @@ protected:
 		{
 			DBS_Project tempProject(_dbFramework->get_database(), _openProject->get_project_ID());
 			AM_pixel_parameters pointerPixel(_dbFramework->get_database(), &tempProject, -1);
-
 			pointerPixel.save();
 			csvF[0] = std::to_string(pointerPixel.get_caseID());
 		}
 
 		DBS_Case tempCase(_dbFramework->get_database(), std::stoi(csvF[0]));
 		tempCase.load(csvF);
+		tempCase.Name = csvF[3];
+		tempCase.Date = csvF[5];
 		tempCase.save();
 
 

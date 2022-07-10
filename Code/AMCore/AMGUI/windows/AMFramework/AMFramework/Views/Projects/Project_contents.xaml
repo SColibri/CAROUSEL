@@ -4,9 +4,12 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:AMFramework.Views.Projects"
-      xmlns:converters ="clr-namespace:AMFramework.Components.Converters" xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_DBS_Projects}"
+      xmlns:converters ="clr-namespace:AMFramework.Components.Converters" 
+      xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_DBS_Projects}"
+      xmlns:buttons="clr-namespace:AMFramework.Components.Button"
+      xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800">
+      d:DesignHeight="849.545" d:DesignWidth="800">
 
     <Grid>
         <Grid.Resources>
@@ -143,7 +146,7 @@
                         </Grid.ColumnDefinitions>
 
                         <GroupBox Header="Selected Elements" Grid.Column="0" Margin="5" Background="AliceBlue" MinWidth="100">
-                            <ListBox ItemsSource="{Binding Path=SelectedElements, UpdateSourceTrigger=PropertyChanged}" SelectionMode="Multiple">
+                            <ListBox ItemsSource="{Binding Path=SelectedElements, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" SelectionMode="Multiple">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Label Content="{Binding Path=ElementName}"></Label>
@@ -174,16 +177,10 @@
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock Text="Element:" Margin="5,5,5,5" Grid.Column="0"/>
-                                    <TextBox Margin="5" Grid.Column="1"/>
-                                    <Button Content="Add" Grid.Column="2" Margin="5">
-                                        <Button.Resources>
-                                            <Style TargetType="Border">
-                                                <Setter Property="CornerRadius" Value="3"/>
-                                                <Setter Property="Background" Value="Black"/>
-                                            </Style>
-                                        </Button.Resources>
-                                    </Button> 
-                                   
+                                    <buttons:ConfirmButton Grid.Column="1" Grid.ColumnSpan="2" CornerRadius="5" Margin="10,1,10,1"
+                                                           GradientMouseEnter="LightSalmon" WarningText="This will delete all calculations"
+                                                           ClickButton="ConfirmButton_ClickButton"/>
+                                    
                                 </Grid>
 
                             </GroupBox>
@@ -281,6 +278,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="1*"/>
                                         <ColumnDefinition Width="50"/>
+                                        <ColumnDefinition Width="25"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBox Margin="3" Grid.Column="0"></TextBox>
                                     <Button Content="Go!" Grid.Column="1" Margin="3">
@@ -290,6 +288,9 @@
                                             </Style>
                                         </Button.Resources>
                                     </Button>
+                                    <buttons:AM_button IconName="Plus" Grid.Column="2" Height="25" Width="25" GradientColor_2="Green"
+                                                       VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                                       ToolTip="Add new case" ClickButton="AddNewCase_ClickButton"/>
                                 </Grid>
                             </GroupBox>
                             <ListBox ItemsSource="{Binding Path=Cases}" 
@@ -360,5 +361,16 @@
                 </GroupBox>
             </StackPanel>
         </ScrollViewer>
+
+
+        <Grid x:Name="Popup" Visibility="Collapsed" Grid.RowSpan="5" Panel.ZIndex="3">
+            <Grid Background="Black" Opacity="0.7"/>
+            <Frame x:Name="PopupFrame" Grid.RowSpan="5" Margin="50" NavigationUIVisibility="Hidden">
+
+            </Frame>
+        </Grid>
+
+
+
     </Grid>
 </UserControl>

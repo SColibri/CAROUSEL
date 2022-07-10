@@ -46,31 +46,37 @@ namespace AMFramework.Controller
         #endregion
 
         #region getters
-        public Controller.Controller_DBS_Projects get_project_controller() 
-        { 
+        public Controller.Controller_DBS_Projects get_project_controller()
+        {
             return _ControllerProjects;
         }
         #endregion
 
         #region Data
 
-        List<Model.Model_Case> _cases = new List< Model.Model_Case >();
+        List<Model.Model_Case> _cases = new List<Model.Model_Case>();
 
         public List<Model.Model_Case> Cases
         {
-            get 
+            get
             {
-                return _cases; 
+                return _cases;
             }
         }
 
-        public void save(Model.Model_Case model) 
+        public void save(Model.Model_Case model)
         {
-            string outComm = _AMCore_Socket.run_lua_command("singlepixel_case_save " + model.get_csv(),"");
-            if(outComm.CompareTo("OK") != 0) 
+            string outComm = _AMCore_Socket.run_lua_command("singlepixel_case_save", model.get_csv());
+            if (outComm.CompareTo("OK") != 0)
             {
-                MainWindow.notify.ShowBalloonTip(5000,"Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);
+                MainWindow.notify.ShowBalloonTip(5000, "Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);
             }
+        }
+
+        public void save_Handle(object sender, EventArgs e) 
+        {
+            save(SelectedCase);
+            refresh();
         }
 
         #endregion
@@ -179,6 +185,52 @@ namespace AMFramework.Controller
         private Controller.Controller_EquilibriumConfiguration _equilibriumConfigurations;
         private Controller.Controller_EquilibriumPhaseFraction _equilibriumPhaseFractions;
         public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }
+
+        #endregion
+
+        #region Templates
+        
+        public void Create_templates(Model.Model_Case OriginalCase) 
+        { 
+            if(OriginalCase.CaseTemplates.Count == 0) 
+            {
+                MainWindow.notify.ShowBalloonTip(5000, "Missing templates", "Please define one or more templates",System.Windows.Forms.ToolTipIcon.Info);
+                return;
+            }
+
+            // create new case template
+            _AMCore_Socket.run_lua_command("template_pixelcase_new", "");
+
+            // send element composition
+            string compositionString = OriginalCase.ElementComposition[0].ElementName + "||" + OriginalCase.ElementComposition[0].Value.ToString();
+            foreach (Model.Model_ElementComposition comp in OriginalCase.ElementComposition.Skip(1))
+            {
+                compositionString += "||" + comp.ElementName + "||" + comp.Value.ToString();
+            }
+            _AMCore_Socket.run_lua_command("template_pixelcase_setComposition ", compositionString);
+
+            string phaseString = OriginalCase.SelectedPhases[0].PhaseName;
+            foreach (Model.Model_SelectedPhases comp in OriginalCase.SelectedPhases.Skip(1))
+            {
+                phaseString += "||" + comp.PhaseName ;
+            }
+            _AMCore_Socket.run_lua_command("template_pixelcase_selectPhases ", phaseString);
+            _AMCore_Socket.run_lua_command("template_pixelcase_setEquilibriumTemperatureRange ", 
+                                            OriginalCase.EquilibriumConfiguration.StartTemperature.ToString() + "||" +
+                                            OriginalCase.EquilibriumConfiguration.EndTemperature.ToString() + "||" +
+                                            OriginalCase.EquilibriumConfiguration.StepSize.ToString());
+
+            _AMCore_Socket.run_lua_command("template_pixelcase_setScheilTemperatureRange ",
+                                            OriginalCase.ScheilConfiguration.StartTemperature.ToString() + "||" +
+                                            OriginalCase.ScheilConfiguration.EndTemperature.ToString() + "||" +
+                                            OriginalCase.ScheilConfiguration.StepSize.ToString());
+
+            _AMCore_Socket.run_lua_command("template_pixelcase_setScheilLiquidFraction ",
+                                            OriginalCase.ScheilConfiguration.MinLiquidFraction.ToString());
+
+           
+
+        }
 
         #endregion
 

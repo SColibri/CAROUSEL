@@ -114,6 +114,17 @@ namespace AMFramework.Model
                 OnPropertyChanged("IsSelected");
             }
         }
+
+        private string _dependentPhaseName = "";
+        public string DependentPhaseName
+        {
+            get { return _dependentPhaseName; }
+            set
+            {
+                _dependentPhaseName = value;
+                OnPropertyChanged("DependentPhaseName");
+            }
+        }
         #endregion
 
         #region Interfaces

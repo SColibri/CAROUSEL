@@ -184,6 +184,8 @@ namespace AMFramework
         private void Treeview_selectionChanged_Handle(object sender, EventArgs e)
         {
             MainTabControl.Items.Refresh();
+
+            if (MainTabControl.Items.Count == 0) return;
             MainTabControl.SelectedItem = MainTabControl.Items[MainTabControl.Items.Count - 1];
         }
 

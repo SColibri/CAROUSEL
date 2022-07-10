@@ -85,7 +85,7 @@ namespace AMFramework.Controller
             Query = "database_table_custom_query SELECT * FROM Element WHERE Name = '" + elementList[0] + "' " ;
             for (int i = 0; i < elementList.Count; i++) 
             {
-                Query += " OR Name = '" + elementList[i] + "' "; 
+                Query += " OR Name = '" + elementList[i].Replace("\r","") + "' "; 
             }
             outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();

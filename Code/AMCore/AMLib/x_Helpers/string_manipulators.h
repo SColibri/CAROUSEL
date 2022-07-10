@@ -50,7 +50,7 @@ namespace string_manipulators
     static bool isNumber(const std::string& str)
     {
         for (char const& c : str) {
-            if (std::isdigit(c) == 0) return false;
+            if (std::isdigit(c) == 0 && c != '-') return false;
         }
         return true;
     }

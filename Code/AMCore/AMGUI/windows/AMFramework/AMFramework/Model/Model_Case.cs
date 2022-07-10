@@ -122,6 +122,60 @@ namespace AMFramework.Model
             return outy;
         }
 
+        #region Template
+        public struct CaseTemplateStructure
+        {
+            public Model.Model_Element ElementName;
+            public double RangeStart;
+            public double RangeEnd;
+            public int Steps;
+
+            public CaseTemplateStructure()
+            {
+                ElementName = new();
+                RangeStart = 0;
+                RangeEnd = 0;
+                Steps = 0;
+            }
+
+            public CaseTemplateStructure(Model.Model_Element ElementN, double startRange, double endRange, int stepsTemplate )
+            {
+                ElementName = ElementN;
+                RangeStart = startRange;
+                RangeEnd = endRange;
+                Steps = stepsTemplate;
+            }
+        }
+
+        private List<CaseTemplateStructure> _caseTemplates = new List<CaseTemplateStructure>();
+        public List<CaseTemplateStructure> CaseTemplates 
+        { 
+            get { return _caseTemplates; }
+            set 
+            { 
+                _caseTemplates = value;
+                OnPropertyChanged("CaseTemplate");
+            }
+        }
+
+        private CaseTemplateStructure _selectedCaseTemplate = new();
+        public CaseTemplateStructure SelectedCaseTemplate
+        {
+            get { return _selectedCaseTemplate; }
+            set
+            {
+                _selectedCaseTemplate = value;
+                OnPropertyChanged("SelectedCaseTemplate");
+            }
+        }
+
+        public void Add_template(Model.Model_Element ElementN, double startRange, double endRange, int stepsTemplate) 
+        {
+            CaseTemplateStructure newTemplate = new(ElementN, startRange, endRange, stepsTemplate);
+            CaseTemplates.Add(newTemplate);
+        }
+        #endregion
+
         #region Other
         private bool _isSelected = false;
         public bool IsSelected

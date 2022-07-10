@@ -44,7 +44,7 @@ namespace AMFramework.Controller
         public Model.Model_ScheilConfiguration get_scheil_configuration_case(int IDCase) 
         {
             Model.Model_ScheilConfiguration model = new();
-            string Query = "database_table_custom_query SELECT Phase.ID as IDP, Phase.Name, SelectedPhases.* FROM SelectedPhases INNER JOIN Phase ON Phase.ID=SelectedPhases.IDPhase WHERE IDCase = " + IDCase;
+            string Query = "database_table_custom_query SELECT ScheilConfiguration.*, Phase.Name FROM ScheilConfiguration INNER JOIN Phase ON Phase.ID=SelectedPhases.DependentPhase WHERE IDCase = " + IDCase;
             string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
@@ -57,7 +57,7 @@ namespace AMFramework.Controller
 
         private static Model.Model_ScheilConfiguration fillModel(List<string> DataRaw)
         {
-            if (DataRaw.Count < 6) throw new Exception("Error: Element RawData is wrong");
+            if (DataRaw.Count < 7) throw new Exception("Error: Element RawData is wrong");
 
             Model.Model_ScheilConfiguration modely = new();
             modely.ID = Convert.ToInt32(DataRaw[0]);
@@ -67,7 +67,7 @@ namespace AMFramework.Controller
             modely.StepSize = Convert.ToDouble(DataRaw[4]);
             modely.DependentPhase = Convert.ToInt32(DataRaw[5]);
             modely.MinLiquidFraction = Convert.ToDouble(DataRaw[6]);
-
+            modely.DependentPhaseName = DataRaw[7];
             return modely;
         }
         #endregion

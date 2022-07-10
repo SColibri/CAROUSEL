@@ -30,5 +30,31 @@ namespace AMFramework.Views.Projects
             InitializeComponent();
             DataContext = pController;
         }
+
+        private void ConfirmButton_ClickButton(object sender, EventArgs e)
+        {
+            Popup.Visibility = Visibility.Visible;
+
+            Components.Windows.AM_popupWindow newPopup = Views.Popup.AMFramework_popupWindows.popupElementsList((Controller.Controller_DBS_Projects)DataContext);
+            newPopup.PopupWindowClosed += Close_popup_Handle;
+            PopupFrame.Navigate(newPopup);
+        }
+
+        private void AddNewCase_ClickButton(object sender, EventArgs e)
+        {
+            Popup.Visibility = Visibility.Visible;
+
+            Components.Windows.AM_popupWindow newPopup = Views.Popup.AMFramework_popupWindows.popupCaseWindow(((Controller.Controller_DBS_Projects)DataContext).ControllerCases,
+                                                                                                              ((Controller.Controller_DBS_Projects)DataContext).SelectedProject.ID);
+            newPopup.PopupWindowClosed += Close_popup_Handle;
+            PopupFrame.Navigate(newPopup);
+        }
+
+        private void Close_popup_Handle(object sender, EventArgs e) 
+        {
+            Popup.Visibility = Visibility.Collapsed;
+        }
+
+        
     }
 }

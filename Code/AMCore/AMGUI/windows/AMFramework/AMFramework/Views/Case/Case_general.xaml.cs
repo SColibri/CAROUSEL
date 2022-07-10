@@ -57,6 +57,26 @@ namespace AMFramework.Views.Case
 
             PopupFrame.Navigate(controllerCase.PopupView);
         }
+        private void Phase_select_handle(object sender, EventArgs e)
+        {
+            Controller.Controller_Cases controllerCase = (Controller.Controller_Cases)DataContext;
+            controllerCase.PopupView.ContentPage.Children.Add(new Views.Phase.Phase_List(controllerCase.get_project_controller()));
+            controllerCase.PopupView.Title = "Phases";
+            controllerCase.PopupView.clear_buttons();
+
+            Components.Button.AM_button saveSelection = new();
+            saveSelection.IconName = "Check";
+            saveSelection.GradientTransition = "green";
+            saveSelection.ClickButton += Accept_phase_selection;
+
+            controllerCase.PopupView.add_button(saveSelection);
+
+
+            controllerCase.ShowPopup = true;
+            controllerCase.PopupView.PopupWindowClosed += Close_popup_handle;
+
+            PopupFrame.Navigate(controllerCase.PopupView);
+        }
 
         private void Accept_phase_selection(object sender, EventArgs e)
         {

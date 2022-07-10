@@ -262,6 +262,11 @@ void AM_pixel_parameters::set_CaseName(std::string newName)
 	_case->Name = newName;
 }
 
+void AM_pixel_parameters::set_CaseDate(std::string newDate)
+{
+	_case->Date = newDate;
+}
+
 std::vector<std::string> AM_pixel_parameters::get_composition_string()
 {
 	std::vector<std::string> out;
