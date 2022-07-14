@@ -12,11 +12,11 @@ namespace AMFramework.Controller
     {
         #region Socket
         private Core.IAMCore_Comm _AMCore_Socket;
-        private Controller_DBS_Projects _projectController;
-        public Controller_ScheilConfiguration(ref Core.IAMCore_Comm socket, Controller_DBS_Projects projectController)
+        private Controller_Cases _caseController;
+        public Controller_ScheilConfiguration(ref Core.IAMCore_Comm socket, Controller_Cases caseController)
         {
             _AMCore_Socket = socket;
-            _projectController = projectController;
+            _caseController = caseController;
         }
         #endregion
 

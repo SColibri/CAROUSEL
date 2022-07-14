@@ -8,18 +8,26 @@ namespace AMFramework.Components.Charting
 {
     public class Axes
     {
+        public Axes()
+        {
+
+        }
+        public Axes(String Name)
+        {
+            this._Name = Name;
+        }
+
         private String _Name = "";
-        public String Name { get { return _Name; } set { _Name = value; } }
-
         private double _MinValue = 0;
-        public double MinValue { get { return _MinValue; } set { _MinValue = value; } }
-
-        private double _MaxValue = 0;
-        public double MaxValue { get { return _MaxValue; } set { _MaxValue = value; } }
-
+        private double _MaxValue = 0.00001;
         private double _Interval = 1;
-        public double Interval { 
-            get { return _Interval; } 
+        private bool _IsVisible = true;
+
+        #region Getters_setters
+        public String Name { get { return _Name; } set { _Name = value; } }
+        public double MinValue { get { return _MinValue; } set { _MinValue = value; Check_minmax_values(); } }
+        public double MaxValue { get { return _MaxValue; } set { _MaxValue = value; Check_minmax_values(); } }
+        public double Interval { get { return _Interval; } 
             set { 
                 
                 if(value > 0)
@@ -29,21 +37,23 @@ namespace AMFramework.Components.Charting
                 
             } 
         }
+        public bool IsVisible { get { return _IsVisible; } set { _IsVisible = value; } }
+        #endregion
 
-        private bool _IsVisible = true;
-        public bool IsVisible { get { return _IsVisible; }}
-
-        public Axes()
+        #region checkers
+        private void Check_minmax_values() 
         {
+            if (_MaxValue <= _MinValue)
+            {
+                _MaxValue = _MinValue + 1;
+            }
 
+            if (Interval >= _MaxValue - _MinValue) 
+            { 
+                Interval = (_MaxValue - _MinValue)/5;
+            }
         }
-
-        public Axes(String Name)
-        {
-            this._Name = Name;
-        }
-
-
+        #endregion
 
     }
 }

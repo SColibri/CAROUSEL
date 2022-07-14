@@ -576,7 +576,7 @@ private:
 			tempPhaseFraction[n1] = new DBS_EquilibriumPhaseFraction(_dbFramework->get_database(), -1);
 
 		// store buffer into 
-		std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, selectedPhases);
+		std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, API_Scripting::script_get_phase_equilibrium_variable_name(selectedPhases));
 		
 		// copy data to database objects
 		for (int n1 = 0; n1 < BufferRows.size(); n1++)
@@ -632,23 +632,15 @@ private:
 		}
 
 		// Create communication to mcc for each thread
-		int threadsAvail = 5;
-		int splitSize = pixel_parameters.size() / threadsAvail;
-		int remainder = pixel_parameters.size() % threadsAvail;
-		if(remainder + splitSize > pixel_parameters.size())
-		{
-			threadsAvail = 1;
-			splitSize = 1;
-		}
-
+		std::vector<int> threadWorkload = AMThreading::thread_workload_distribution(_configuration->get_max_thread_number(), pixel_parameters.size());
+		std::wstring externalPath = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(_configuration->get_apiExternal_path() + "/mcc.exe");
 		std::vector<IPC_winapi*> mcc_comms;
-		for(int n1 = 0; n1 < threadsAvail; n1++)
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
 		{
-			mcc_comms.push_back(new IPC_winapi(L"C:/Program Files/MatCalc 6/mcc.exe"));
+			mcc_comms.push_back(new IPC_winapi(externalPath));
 			mcc_comms[n1]->set_endflag("MC:");
 			runVectorCommands(std::vector<string>{API_Scripting::script_initialize_core()}, mcc_comms[n1]);
-		}
-			
+		}		
 
 		auto funcStep = [](IPC_winapi* mccComm, std::vector<AM_pixel_parameters*> PixelList, AM_Project* projectM )
 		{
@@ -677,7 +669,7 @@ private:
 					tempPhaseFraction[n1] = new DBS_EquilibriumPhaseFraction(_dbFramework->get_database(), -1);
 
 				// store buffer into 
-				std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, selectedPhases, mccComm);
+				std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, API_Scripting::script_get_phase_equilibrium_variable_name(selectedPhases), mccComm);
 
 				// copy data to database objects
 				for (int n1 = 0; n1 < BufferRows.size(); n1++)
@@ -695,37 +687,37 @@ private:
 				}
 
 				// save in database and remove from memory
-				_mutex.lock();
+				//_mutex.lock();
 				int resp = IAM_DBS::save(tempPhaseFraction);
 				for (int n1 = 0; n1 < tempPhaseFraction.size(); n1++)
 				{
 					delete tempPhaseFraction[n1];
 				}
-				_mutex.unlock();
+				//_mutex.unlock();
 
-				mccComm->send_command("exit\r\n");
-				delete mccComm;
+				//mccComm->send_command("exit\r\n");
+				//delete mccComm;
 
-				mccComm = new IPC_winapi(L"C:/Program Files/MatCalc 6/mcc.exe");
-				mccComm->set_endflag("MC:");
+				//mccComm = new IPC_winapi(L"C:/Program Files/MatCalc 6/mcc.exe");
+				//mccComm->set_endflag("MC:");
 			}
 		};
 
 		int Index = 0;
 		std::vector<std::thread> threadList;
-		for(int n1 = 0; n1 < threadsAvail; n1++)
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
 		{
-			std::vector<AM_pixel_parameters*> tempVector(pixel_parameters.begin() + n1* splitSize, pixel_parameters.begin() + (n1 + 1)*splitSize);
-			threadList.push_back(std::thread(funcStep, mcc_comms[n1], tempVector, & Project));
-			Index += splitSize;
+			std::vector<AM_pixel_parameters*> tempVector(pixel_parameters.begin() + Index, pixel_parameters.begin() + Index + threadWorkload[n1]);
+			threadList.push_back(std::thread(funcStep, mcc_comms[n1], tempVector, &Project));
+			Index += threadWorkload[n1];
 		}
 			
-		for (int n1 = 0; n1 < threadsAvail; n1++)
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
 		{
 			threadList[n1].join();
 		}
 
-		for (int n1 = 0; n1 < threadsAvail; n1++)
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
 		{
 			mcc_comms[n1]->send_command("exit\r\n");
 			delete mcc_comms[n1];
@@ -792,7 +784,7 @@ private:
 		}
 
 		// store buffer into 
-		std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, selectedPhases);
+		std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, API_Scripting::script_get_phase_equilibrium_scheil_variable_name(selectedPhases));
 
 		// copy data to database objects
 		for (int n1 = 0; n1 < BufferRows.size(); n1++)
@@ -906,7 +898,7 @@ private:
 					
 
 				// store buffer into 
-				std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, selectedPhases, mccComm);
+				std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, API_Scripting::script_get_phase_equilibrium_scheil_variable_name(selectedPhases), mccComm);
 
 				// copy data to database objects
 				for (int n1 = 0; n1 < BufferRows.size(); n1++)
@@ -1017,6 +1009,106 @@ private:
 		return 1;
 	}
 
+	/// <summary>
+	/// Calculate precipitate distribution
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_SPC_parallel_calculate_precipitate_distribution(lua_State* state)
+	{
+		// Check and get parameters
+		if (check_parameters(state, lua_gettop(state), 2, "usage: <ID project> <ID Cases>") != 0) return 1;
+		std::vector<std::string> parameters = get_parameters(state);
+
+		// Initialize AM_project object, this is used for checking if cases belong to the project
+		AM_Project Project(_dbFramework->get_database(), _configuration, std::stoi(parameters[0]));
+		std::vector<AM_pixel_parameters*> pixel_parameters;
+
+		// Get pointers for all cases
+		std::vector<std::string> rangeIDCase = string_manipulators::split_text(parameters[1], "-");
+		int start = std::stoi(rangeIDCase[0]);
+		int end = std::stoi(rangeIDCase[1]);
+		int range = end - start;
+
+		for (int n1 = 0; n1 < range + 1; n1++)
+		{
+			pixel_parameters.push_back(Project.get_pixelCase(start + n1));
+			if (pixel_parameters[n1] == nullptr)
+			{
+				std::string ErrorOut = "Error: Selected ID case is not part of this project!";
+				lua_pushstring(state, ErrorOut.c_str());
+				return 1;
+			}
+		}
+
+		// Create communication to mcc for each thread
+		std::vector<int> threadWorkload = AMThreading::thread_workload_distribution(_configuration->get_max_thread_number(), pixel_parameters.size());
+		std::wstring externalPath = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(_configuration->get_apiExternal_path() + "/mcc.exe");
+		std::vector<IPC_winapi*> mcc_comms;
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
+		{
+			mcc_comms.push_back(new IPC_winapi(externalPath));
+			mcc_comms[n1]->set_endflag("MC:");
+			runVectorCommands(std::vector<string>{API_Scripting::script_initialize_core()}, mcc_comms[n1]);
+		}
+
+		// define the parallel function
+		auto funcStep = [](IPC_winapi* mccComm, std::vector<AM_pixel_parameters*> PixelList, AM_Project* projectM)
+		{
+			for (AM_pixel_parameters* pixel_parameters : PixelList)
+			{
+				if (pixel_parameters->get_precipitation_phases().size() == 0) continue;
+				// create all script commands
+				std::vector<std::string> ScriptInstructions = API_Scripting::Script_run_stepScheilEquilibrium(_configuration,
+					pixel_parameters->get_EquilibriumConfiguration()->StartTemperature,
+					pixel_parameters->get_EquilibriumConfiguration()->EndTemperature,
+					25,
+					projectM->get_selected_elements_ByName(),
+					pixel_parameters->get_composition_string(),
+					pixel_parameters->get_selected_phases_ByName());
+				API_Scripting::Script_run_ScheilPrecipitation(_dbFramework->get_database(), ScriptInstructions, pixel_parameters->get_precipitation_phases(), _configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP));
+
+				//Run script commands
+				std::string outCommand_1 = runVectorCommands(ScriptInstructions, mccComm);
+
+				// Load csv file into database
+				for(auto& ItempPhase: pixel_parameters->get_precipitation_phases())
+				{
+					DBS_Phase tempPhaseName(_dbFramework->get_database(), ItempPhase->IDPhase);
+					tempPhaseName.load();
+
+					ItempPhase->PrecipitateDistribution = IAM_Database::csv_join_row(string_manipulators::read_file_to_end(_configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "/" + std::to_string(ItempPhase->id()) + "_" + tempPhaseName.Name + ".txt"),"\n");
+					ItempPhase->save();
+				}
+			}
+		};
+
+
+		int Index = 0;
+		std::vector<std::thread> threadList;
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
+		{
+			std::vector<AM_pixel_parameters*> tempVector(pixel_parameters.begin() + Index, pixel_parameters.begin() + Index + threadWorkload[n1]);
+			threadList.push_back(std::thread(funcStep, mcc_comms[n1], tempVector, &Project));
+			Index += threadWorkload[n1];
+		}
+
+		for (int n1 = 0; n1 < threadList.size(); n1++)
+		{
+			threadList[n1].join();
+		}
+
+		for (int n1 = 0; n1 < threadList.size(); n1++)
+		{
+			mcc_comms[n1]->send_command("exit\r\n");
+			delete mcc_comms[n1];
+		}
+		mcc_comms.clear();
+
+		std::string outCommand_1 = "";
+		lua_pushstring(state, outCommand_1.c_str());
+		return 1;
+	}
 
 #pragma endregion
 
@@ -1035,7 +1127,7 @@ private:
 	{
 		// store buffer into 
 		std::string formatVariable = string_manipulators::get_string_format_numeric_generic(selectedPhases.size(), "%g", ",");
-		std::string FORMATString = API_Scripting::script_format_variable_string("TempData", formatVariable, API_Scripting::script_get_phase_equilibrium_variable_name(selectedPhases));
+		std::string FORMATString = API_Scripting::script_format_variable_string("TempData", formatVariable, selectedPhases);
 		std::string scriptFile = API_Scripting::Buffer_to_variable(std::to_string(BufferSize), FORMATString, "TempData", _configuration);
 		
 		// run script

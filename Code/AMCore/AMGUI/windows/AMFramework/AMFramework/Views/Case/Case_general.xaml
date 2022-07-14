@@ -50,9 +50,11 @@
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="105"/>
                                                             <ColumnDefinition Width="50"/>
+                                                            <ColumnDefinition Width="25"/>
+                                                            <ColumnDefinition Width="110"/>
                                                         </Grid.ColumnDefinitions>
                                                         <Border Background="AliceBlue" 
-                                            Grid.ColumnSpan="2"
+                                            Grid.ColumnSpan="4"
                                             BorderBrush="Silver"
                                             BorderThickness="1"
                                             CornerRadius="5"/>
@@ -64,7 +66,7 @@
                                                HorizontalAlignment="Right"
                                                        FontWeight="DemiBold"/>
 
-                                                        <TextBox Text="{Binding Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                        <TextBox Text="{Binding Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=350}" 
                                              Grid.Column="1" Margin="3"/>
                                                     </Grid>
                                                 </DataTemplate>

@@ -28,6 +28,8 @@ namespace AMFramework.Controller
             _elementComposition = new(ref socket, this);
             _equilibriumPhaseFractions = new(ref socket, this);
             _equilibriumConfigurations = new(ref socket, this);
+            _scheilConfigurations = new(ref socket, this);
+            _scheilPhaseFractions = new(ref socket, this);
         }
 
         public Controller_Cases()
@@ -167,6 +169,7 @@ namespace AMFramework.Controller
         {
             if (model is null) return;
             _equilibriumPhaseFractions.fill_model_phase_fraction(model);
+            _scheilPhaseFractions.fill_model_phase_fraction(model);
         }
 
         public void Clear_phase_fractions(Model.Model_Case model)
@@ -186,10 +189,15 @@ namespace AMFramework.Controller
         private Controller.Controller_EquilibriumPhaseFraction _equilibriumPhaseFractions;
         public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }
 
+        private Controller.Controller_ScheilConfiguration _scheilConfigurations;
+        private Controller.Controller_ScheilPhaseFraction _scheilPhaseFractions;
+        public List<Model.Model_ScheilPhaseFraction> ScheilPhaseFraction { get { return _scheilPhaseFractions.Equilibrium; } }
+
+
         #endregion
 
         #region Templates
-        
+
         public void Create_templates(Model.Model_Case OriginalCase) 
         { 
             if(OriginalCase.CaseTemplates.Count == 0) 
@@ -255,8 +263,8 @@ namespace AMFramework.Controller
 
         private void Run_equilibrium_controll()
         {
-            string Query = "pixelcase_stepEquilibrium " + SelectedCase.ID;
-            string outMessage = _AMCore_Socket.run_lua_command(Query,"");
+            string Query = SelectedCase.IDProject + "||" + SelectedCase.ID + "-" + SelectedCase.ID;
+            string outMessage = _AMCore_Socket.run_lua_command("pixelcase_step_equilibrium_parallel ", Query);
             if (outMessage.CompareTo("OK") == 0) 
             { 
             

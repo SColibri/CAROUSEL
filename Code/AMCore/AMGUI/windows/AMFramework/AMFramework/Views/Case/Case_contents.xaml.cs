@@ -40,7 +40,7 @@ namespace AMFramework.Views.Case
             MainContent.Children.Add(win01);
             MainContent.Children.Add(win02);
 
-            
+            SelectedPhasesList.DataContext = plotController;
         }
     }
 }

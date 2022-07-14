@@ -226,7 +226,7 @@ namespace AMFramework.Controller
             Sort_Cases_BySelectedPhases();
             OnPropertyChanged("SelectedProject");
             OnPropertyChanged("Cases");
-            OnPropertyChanged("SelectedElements");
+            OnPropertyChanged(nameof(SelectedElements));
 
             Loading_project = false;
         }
@@ -451,6 +451,8 @@ namespace AMFramework.Controller
                 
                 if (SelElement == null) continue;
                 SelElement.IsSelected = true;
+
+                if (Elementy.ISReferenceElementBool) SelElement.IsReferenceElement = true;
             }
 
             ElementsIsLoading = false;
@@ -518,6 +520,14 @@ namespace AMFramework.Controller
 
             string commOut = _AMCore_Socket.run_lua_command("project_selectElements ", selectedElements);
             if (commOut.Contains("Error")) { MainWindow.notify.ShowBalloonTip(5000, "Error project", "Elements could not be selected", System.Windows.Forms.ToolTipIcon.Error); }
+
+            // reference element
+            Model.Model_Element refElement = ElementListy.Find(e => e.IsReferenceElement == true);
+            if (refElement != null)
+            {
+                commOut = _AMCore_Socket.run_lua_command("project_setReferenceElement ", refElement.Name);
+                if (commOut.Contains("Error")) { MainWindow.notify.ShowBalloonTip(5000, "Error project", "Reference element was not set", System.Windows.Forms.ToolTipIcon.Error); }
+            }
 
             Update_project();
             OnPropertyChanged("SelectedElements");

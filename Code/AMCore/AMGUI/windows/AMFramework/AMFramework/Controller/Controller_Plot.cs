@@ -85,6 +85,7 @@ namespace AMFramework.Controller
                 lg.Stroke = new SolidColorBrush(Color.FromArgb(255, 0, (byte)(1 * 10), 0));
                 lg.Description = String.Format("Data series {0}", phaseSelected.PhaseName);
                 lg.StrokeThickness = 2;
+                lg.ToolTip = lg.Description;
 
                 // Add ID's into registered list and send onUpdate
                 LineGraphID.Add(new(IDCase, IDPhase));
@@ -158,6 +159,34 @@ namespace AMFramework.Controller
             _spyderDataPlot.Add(dataPlotItem);
         }
 
+        public void Add_scheil_spyder_phase(int IDCase, double Temperature)
+        {
+            // check if it is already contained before adding
+            if (SpyderGraphID.Any(m => m == IDCase)) return;
+
+            // find model from project controller
+            Model.Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
+            if (model is null) return;
+
+            // load Data
+            _projectController.Case_load_equilibrium_phase_fraction(model);
+            double solidificationTemp = model.ScheilPhaseFractions.Min(e => e.Temperature);
+
+            // get data points
+            SpyderDataStructure dataPlotItem = new();
+            dataPlotItem.IDCase = IDCase;
+            dataPlotItem.Phases = Used_Phases_inCases;
+            foreach (Model.Model_Phase phaseModel in Used_Phases_inCases)
+            {
+                List<Model.Model_ScheilPhaseFraction> modelList = model.ScheilPhaseFractions.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
+                if (modelList.Count == 0) continue;
+
+                Tuple<Model.Model_Phase, List<double>> tempItem = new(phaseModel, new());
+                dataPlotItem.Values.Add(modelList.Select(e => e.Value).ToList());
+            }
+            _spyderDataPlot.Add(dataPlotItem);
+        }
+
         public void Spyderplot_get_data() 
         {
             if (IsLoading) return;
@@ -170,7 +199,9 @@ namespace AMFramework.Controller
         public void Spyderplot_get_data_async() 
         {
             List<Model.Model_Case> selCases = _projectController.Cases.FindAll(e => e.IsSelected == true);
-            // List<Model.Model_Phase> selPhases = Used_Phases_inCases.FindAll(e => e.IsSelected == true);
+            List<Model.Model_Phase> selPhases = Used_Phases_inCases.FindAll(e => e.IsSelected == true);
+            _spyderDataPlot.Clear();
+
 
             for (int n1 = 0; n1 < selCases.Count; n1++)
             {

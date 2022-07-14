@@ -28,8 +28,11 @@
                   Grid.Column="0"
                   Grid.Row="1"
                   Grid.ColumnSpan="1">
-
-            <spy:ChartingWindow x:Name="MainChart"/>
+            <StackPanel>
+                <spy:ChartingWindow x:Name="MainChart" Visibility="Visible" Height="500"/>
+                <WpfPlot x:Name="SpyderPlot" Visibility="Visible" Height="500"/>
+            </StackPanel>
+            
         </GroupBox>
 
         <Grid Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}}" Background="AliceBlue" Grid.RowSpan="2" Grid.ColumnSpan="2" Opacity="0.7">

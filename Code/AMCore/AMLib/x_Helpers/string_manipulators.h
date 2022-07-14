@@ -71,6 +71,14 @@ namespace string_manipulators
     }
 
 #pragma region string_format
+    /// <summary>
+    /// Returns a string with the formatted value types usedin in the string formatter
+    /// e.g output {%i,%g,%d}
+    /// </summary>
+    /// <param name="valCount">Number of variables</param>
+    /// <param name="valueTypeChar">Type of value e.g. %d</param>
+    /// <param name="delimiter">Char used as delimiter e.g. ","</param>
+    /// <returns></returns>
     static std::string get_string_format_numeric_generic(int valCount, const std::string& valueTypeChar, const std::string& delimiter)
     {
         std::string out{};
@@ -125,6 +133,11 @@ namespace string_manipulators
 #pragma endregion
 
 #pragma region File
+    /// <summary>
+    /// Read file to end andd return a vector of strings by line
+    /// </summary>
+    /// <param name="fileName">path to file</param>
+    /// <returns></returns>
     static std::vector<std::string> read_file_to_end(std::string fileName)
     {
         if (!std::filesystem::exists(fileName)) return  std::vector<std::string>();

@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 
 namespace AMFramework.Components.Charting
 {
     public class ChartingWindow:Canvas
     {
+
         private int _DataLength = 0;
         private Point _chartCenter = new();
         private List<Point> _AxesUnitVectors = new();
@@ -27,12 +29,14 @@ namespace AMFramework.Components.Charting
             public List<double> Data;
             public List<string> AxeName;
             public object Tag;
+            public Polygon polygonObj;
             public SpyderSeriesData() 
             {
                 SeriesName = "Empty";
                 Data = new List<double>();
                 AxeName = new List<string>();
                 Tag = "Empty";
+                polygonObj = new Polygon();
             }
         }
 
@@ -67,7 +71,7 @@ namespace AMFramework.Components.Charting
             }
         }
 
-        private SolidColorBrush _AxesColor = Brushes.Silver;
+        private SolidColorBrush _AxesColor = Brushes.DimGray;
         public SolidColorBrush AxesColor { get { return _AxesColor; } set { _AxesColor = value; } }
 
         private Int16 _AxeThickness = 2;
@@ -85,12 +89,12 @@ namespace AMFramework.Components.Charting
         private List<SolidColorBrush> _PalleteData = new List<SolidColorBrush>() 
         { 
             Brushes.YellowGreen,
-            Brushes.Blue,
-            Brushes.Green,
-            Brushes.Orange,
-            Brushes.Orchid,
-            Brushes.PaleGoldenrod,
-            Brushes.PaleGreen
+            Brushes.LightBlue,
+            Brushes.LightGreen,
+            Brushes.LightPink,
+            Brushes.LightCyan,
+            Brushes.LightSeaGreen,
+            Brushes.LightGray
         };
 
         public enum ChartingType
@@ -102,11 +106,13 @@ namespace AMFramework.Components.Charting
 
         public ChartingWindow()
         {
-            this.Background = new SolidColorBrush(Colors.Black);
+            this.Background = new SolidColorBrush(Colors.White);
             Rectangle Background = new();
             this.Children.Add(Background);
             Background.Fill = Brushes.White;
             this.SizeChanged += HandleTab;
+            this.VisualEdgeMode = EdgeMode.Aliased;
+            SnapsToDevicePixels = true;
         }
 
         #region getters_setters
@@ -122,13 +128,34 @@ namespace AMFramework.Components.Charting
         {
             _AxesList.Clear();
             List<string> AxesNames = _series.SelectMany(e => e.AxeName).Select(fy => fy).Distinct().ToList();
+            List<double> maxValues = new();
+
+            // find max value in series
+            for (int n1 = 0; n1 < AxesNames.Count; n1++)
+            {
+                maxValues.Add(0.000001);
+                for (int n2 = 0; n2 < _series.Count; n2++)
+                {
+                    int indexPhase = _series[n2].AxeName.FindIndex(e => e.CompareTo(AxesNames[n1]) == 0);
+                    if (indexPhase == -1) continue;
+                    if(maxValues[n1] < _series[n2].Data[indexPhase]) 
+                    {
+                        maxValues[n1] = _series[n2].Data[indexPhase];
+                    }
+                }
+            }
+
+            int IndexTemp = 0;
             foreach (string axy in AxesNames)
             {
+                
                 Axes tempAxe = new(axy);
                 tempAxe.MinValue = 0;
-                tempAxe.MaxValue = 1;
+                tempAxe.MaxValue = maxValues[IndexTemp];
+                tempAxe.Interval = tempAxe.MaxValue/10;
 
                 _AxesList.Add(tempAxe);
+                IndexTemp += 1;
             }
         }
 
@@ -154,11 +181,14 @@ namespace AMFramework.Components.Charting
         {
             this.Children.Clear();
 
-            BuildBaseAxe();
-            BuidDataPoints_usingStructure();
+            //BuildBaseAxe();
+            
             //BuildDataPoints();
             BuildBaseAxe();
-
+            BuidDataPoints_usingStructure();
+            BuildBaseAxe();
+            Build_legend();
+            Build_axis_legend();
         }
 
 
@@ -168,12 +198,15 @@ namespace AMFramework.Components.Charting
         #region ImageBuild
         private void BuildBaseAxe()
         {
-            if (_AxesList.Count == 0) return;
-            double SplitBase = 360 / (_AxesList.Count);
+            List<Axes> VisList = _AxesList.FindAll(e => e.IsVisible == true);
+            if (VisList.Count == 0) return;
+            
+            double SplitBase = 360 / (VisList.Count);
             Int16 Index = 0;
             double CurrentAngle = 45;
             double CenterX = this.ActualWidth  / 2;
             double CenterY = this.ActualHeight / 2;
+            double TextMargin = 70;
             _chartCenter.X = CenterX;
             _chartCenter.Y = CenterY;
 
@@ -182,17 +215,19 @@ namespace AMFramework.Components.Charting
             path.Data = ellipseGeometry;
             path.Stroke = _AxesColor;
             path.Fill = _AxesColor;
-            path.Opacity = 0.1;
+            path.Opacity = 0.05;
             ellipseGeometry.Center = new Point(CenterX, CenterY);
-            ellipseGeometry.RadiusX = CenterX;
-            ellipseGeometry.RadiusY = CenterY;
+            ellipseGeometry.RadiusX = CenterX - TextMargin;
+            ellipseGeometry.RadiusY = CenterY - TextMargin;
 
             this.Children.Add(path);
 
             _AxesUnitVectors = new();
             _AxesStepSize = new();
-            foreach (Axes obj in _AxesList) 
+            foreach (Axes obj in VisList) 
             {
+                if (!obj.IsVisible) continue;
+
                 double angle = -Math.PI * CurrentAngle / 180.0;
                 Line BaseLine = new();
 
@@ -202,14 +237,14 @@ namespace AMFramework.Components.Charting
                 BaseLine.Stroke = _AxesColor;
                 BaseLine.Effect = new System.Windows.Media.Effects.BlurEffect
                 {
-                    Radius = 3
+                    Radius = 1
                 };
 
                 BaseLine.X1 = CenterX;
                 BaseLine.Y1 = CenterY;
 
-                BaseLine.X2 = BaseLine.X1 + Math.Cos(angle) * BaseLine.X1;
-                BaseLine.Y2 = BaseLine.Y1 + Math.Sin(angle) * BaseLine.Y1;
+                BaseLine.X2 = BaseLine.X1 + Math.Cos(angle) * (BaseLine.X1-TextMargin);
+                BaseLine.Y2 = BaseLine.Y1 + Math.Sin(angle) * (BaseLine.Y1-TextMargin);
 
                 int SpacingLines = (int)((obj.MaxValue-obj.MinValue)/obj.Interval);
                 
@@ -255,6 +290,9 @@ namespace AMFramework.Components.Charting
                             Line TestLine = new Line();
                             TestLine.Stroke = _AxesColor;
                             TestLine.StrokeThickness = _AxeThickness - 1;
+                            
+
+
 
                             TestLine.X1 = X_Calc;
                             TestLine.Y1 = Y_Calc;
@@ -271,17 +309,46 @@ namespace AMFramework.Components.Charting
                                         FontStyles.Normal,
                                         FontWeights.Normal,
                                         FontStretches.Condensed),
-                                        11, Brushes.Yellow, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+                                        11, Brushes.Black, VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
                             Geometry geometry = formattedText.BuildGeometry(new Point(TestLine.X2-12, TestLine.Y2-12));
                             Path PT01 = new Path();
                             PT01.Data = geometry;
                             PT01.Stroke = _AxesColor;
                             PT01.StrokeThickness = _AxeThickness - 1;
-
-                            
+    
                             this.Children.Add(TestLine);
                             this.Children.Add(PT01);
+
+                            if(SpacingLines-1 == n1) 
+                            {
+                                double vector_mult = unitPerp_vector.X * unit_vector.X;
+                                double vector_mult2 = unitPerp_vector.Y * unit_vector.Y;
+                                double angle_text = Math.Acos((unitPerp_vector.Y))*(180/Math.PI);
+
+                                FormattedText formattedAxisName = new System.Windows.Media.FormattedText(obj.Name,
+                                        CultureInfo.GetCultureInfo("en-us"),
+                                        FlowDirection.RightToLeft,
+                                        new Typeface(
+                                        new FontFamily(),
+                                        FontStyles.Normal,
+                                        FontWeights.Normal,
+                                        FontStretches.Condensed),
+                                        11, Brushes.Black, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+
+
+                                Geometry geometryAxisName = formattedAxisName.BuildGeometry(new Point(TestLine.X2, TestLine.Y2));
+
+                                double textOffset = 60;
+                                geometryAxisName.Transform = new TranslateTransform(geometryAxisName.Bounds.Width / 2 - unit_vector.X * textOffset, -unit_vector.Y * textOffset);
+
+
+                                Path PT02 = new Path();
+                                PT02.Data = geometryAxisName;
+                                PT02.Stroke = _AxesColor;
+                                PT02.StrokeThickness = _AxeThickness - 1;
+                                this.Children.Add(PT02);
+                            }
                         }
                         
 
@@ -298,6 +365,7 @@ namespace AMFramework.Components.Charting
 
                 BaseLine.ToolTip = obj.Name;
                 BaseLine.Tag = obj;
+                BaseLine.SnapsToDevicePixels = true;
 
                 this.Children.Add(BaseLine);
                 Index++;
@@ -371,11 +439,13 @@ namespace AMFramework.Components.Charting
                 };
 
                 int Index = 0;
+                int IndexVisible = 0;
                 foreach (double Listy in _series[n1].Data)
                 {
+                    if (!_AxesList[Index].IsVisible) { Index++; continue; }
                     Point calculated = new Point(
-                            _chartCenter.X - _AxesUnitVectors[Index].X * (Listy * _AxesStepSize[Index] / _AxesList[Index].Interval),
-                            _chartCenter.Y - _AxesUnitVectors[Index].Y * (Listy * _AxesStepSize[Index] / _AxesList[Index].Interval));
+                            _chartCenter.X - _AxesUnitVectors[IndexVisible].X * (Listy * _AxesStepSize[IndexVisible] / _AxesList[Index].Interval),
+                            _chartCenter.Y - _AxesUnitVectors[IndexVisible].Y * (Listy * _AxesStepSize[IndexVisible] / _AxesList[Index].Interval));
 
                     polygon.Points.Add(calculated);
 
@@ -393,15 +463,141 @@ namespace AMFramework.Components.Charting
                     {
                         Radius = 3
                     };
-
+                    
                     this.Children.Add(path);
 
-                    Index++;
+                    Index++; IndexVisible++;
                 }
 
                 this.Children.Add(polygon);
+                SpyderSeriesData seriesData = Series[0];
+                seriesData.polygonObj = polygon;
+                Series[n1] = seriesData;
             }
 
+        }
+
+        private void Build_legend() 
+        {
+            Border LegendBorder = new();
+            LegendBorder.Background = new SolidColorBrush(Colors.WhiteSmoke);
+            LegendBorder.CornerRadius = new CornerRadius(5);
+            LegendBorder.Effect = new DropShadowEffect 
+                                        { 
+                                            Color = Colors.Black,
+                                            ShadowDepth = 1,
+                                            Opacity = 1,
+                                            BlurRadius = 1
+                                        };
+
+            Expander LegendExpander = new();
+            LegendExpander.Header = "Series";
+            LegendExpander.Margin = new Thickness(5);
+            LegendBorder.Child = LegendExpander;
+
+            StackPanel LegendStackPanel = new StackPanel();
+            int Index = 0;
+            foreach (SpyderSeriesData item in Series)
+            {
+                Grid seriesGrid = new();
+                seriesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30)});
+                seriesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
+                seriesGrid.Margin = new Thickness(3);
+
+                Border seriesColor = new();
+                seriesColor.Background = _PalleteData[Index];
+                seriesColor.CornerRadius = new CornerRadius(2);
+                seriesColor.Margin = new Thickness(2);
+                seriesColor.SetValue(Grid.ColumnProperty, 0);
+                seriesColor.Tag = Index;
+                seriesColor.MouseUp += HandleSelectSeries;
+
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = item.SeriesName;
+                textBlock.SetValue(Grid.ColumnProperty, 1);
+
+                seriesGrid.Children.Add(seriesColor);
+                seriesGrid.Children.Add(textBlock);
+
+                LegendStackPanel.Children.Add(seriesGrid);
+                Index += 1;
+            }
+            LegendExpander.Content = LegendStackPanel;
+
+            this.Children.Add(LegendBorder);
+            
+        }
+        private void Build_axis_legend() 
+        {
+            Border LegendBorder = new();
+            LegendBorder.Background = new SolidColorBrush(Colors.WhiteSmoke);
+            LegendBorder.CornerRadius = new CornerRadius(5);
+            LegendBorder.Effect = new DropShadowEffect
+            {
+                Color = Colors.Black,
+                ShadowDepth = 1,
+                Opacity = 1,
+                BlurRadius = 1
+            };
+            LegendBorder.HorizontalAlignment = HorizontalAlignment.Right;
+            LegendBorder.Margin = new Thickness(80,0,0,0);
+
+            Expander LegendExpander = new();
+            LegendExpander.Header = "Axes";
+            LegendExpander.Margin = new Thickness(5);
+            LegendBorder.Child = LegendExpander;
+
+            StackPanel LegendStackPanel = new StackPanel();
+            int Index = 0;
+            foreach (Axes item in AxesList)
+            {
+                Grid seriesGrid = new();
+                seriesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30) });
+                seriesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
+                seriesGrid.Margin = new Thickness(3);
+
+                Border seriesColor = new();
+                if(item.IsVisible) seriesColor.Background = new SolidColorBrush(Colors.Black);
+                else seriesColor.Background = new SolidColorBrush(Colors.White);
+                seriesColor.BorderBrush = new SolidColorBrush(Colors.Silver);
+                seriesColor.BorderThickness = new Thickness(1);
+                seriesColor.CornerRadius = new CornerRadius(2);
+                seriesColor.Margin = new Thickness(2);
+                seriesColor.SetValue(Grid.ColumnProperty, 0);
+                seriesColor.Tag = Index;
+                seriesColor.MouseUp += HandleShowHideAxe;
+
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = item.Name;
+                textBlock.SetValue(Grid.ColumnProperty, 1);
+
+                seriesGrid.Children.Add(seriesColor);
+                seriesGrid.Children.Add(textBlock);
+
+                LegendStackPanel.Children.Add(seriesGrid);
+                Index += 1;
+            }
+            LegendExpander.Content = LegendStackPanel;
+
+            this.Children.Add(LegendBorder);
+        }
+        private void Show_series(int Index) 
+        {
+            foreach (SpyderSeriesData item in Series)
+            {
+                item.polygonObj.Visibility = Visibility.Collapsed;
+            }
+
+            SpyderSeriesData itemy = Series[Index];
+            itemy.polygonObj.Visibility = Visibility.Visible;
+        }
+
+        private void Show_all_series()
+        {
+            foreach (SpyderSeriesData item in Series)
+            {
+                item.polygonObj.Visibility = Visibility.Visible;
+            }
         }
         #endregion
 
@@ -482,6 +678,18 @@ namespace AMFramework.Components.Charting
         private void HandleTab(object sender, SizeChangedEventArgs e)
         {
             this.UpdateImage();
+        }
+
+        private void HandleSelectSeries(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Show_series((int)((Border)sender).Tag);
+        }
+
+        private void HandleShowHideAxe(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Axes tempAxe = _AxesList[(int)((Border)sender).Tag];
+            tempAxe.IsVisible = !tempAxe.IsVisible;
+            UpdateImage();
         }
         #endregion
 

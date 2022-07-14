@@ -16,14 +16,16 @@ class AM_FileManagement:IStringify {
 							GENERAL, 
 							PROJECTS, 
 							SCRIPTS, 
-							DATABASE};
+							DATABASE,
+							TEMP};
 
-		std::string filepath_names[5] = {"None",
+		std::string filepath_names[6] = {"None",
 										"System"
 										"General",
 										"Projects",
 										"Scripts", 
-										"Database"};
+										"Database",
+										"temp"};
 
 	// Constructors, destructors and other
 	// -------------------------------------------------------------------------------------

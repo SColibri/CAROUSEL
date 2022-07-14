@@ -25,7 +25,7 @@ public:
 		return database->remove_row(&AMLIB::TN_ActivePhases_Configuration(), query);
 	}
 
-	static int reset_data(IAM_Database* database, int ProjectID)
+	static int remove_project_data(IAM_Database* database, int ProjectID)
 	{
 		std::string query = AMLIB::TN_ActivePhases().columnNames[1] +
 			" = " + std::to_string(ProjectID);
@@ -66,7 +66,6 @@ public:
 		StepSize = std::stoi(rawData[4]);
 		return 0;
 	}
-
 #pragma endregion
 
 };

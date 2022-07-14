@@ -1,5 +1,8 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
+#include "DBS_Case.h"
+#include "DBS_ActivePhases_ElementComposition.h"
+
 /// <summary>
 /// Implements IAM_DBS.h interface, this is a project
 /// object structure.
@@ -32,9 +35,14 @@ public:
 
 	static int remove_project_data(IAM_Database* database, int projectID)
 	{
+		// Remove active phases element composition
+		DBS_ActivePhases_ElementComposition::remove_project_data(database, projectID);
+
+		// get selected Elements from project
 		std::string query = AMLIB::TN_SelectedElements().columnNames[1] +
 			" = " + std::to_string(projectID);
 
+		// Load all cases and delete related data
 		std::string queryCase = AMLIB::TN_Case().columnNames[1] +
 			" = " + std::to_string(projectID);
 		AM_Database_Datatable caseList(database, &AMLIB::TN_Case());
@@ -45,6 +53,7 @@ public:
 			DBS_Case::remove_case_data(database, std::stoi(caseList(0,n1)));
 		}
 
+		// Remove selected elements
 		return database->remove_row(&AMLIB::TN_SelectedElements(), query);
 	}
 

@@ -88,17 +88,15 @@ namespace AMLIB
 	{
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY"); // Auto increment ID
-		out.add_new("IDProject", "INTEGER"); // User defined project name
-		out.add_new("IDPhase", "INTEGER"); // API used -> API dll name
-		out.add_new("StartTemp", "INTEGER"); // API used -> API dll name
-		out.add_new("EndTemp", "INTEGER"); // API used -> API dll name
+		out.add_new("IDProject", "INTEGER"); // Id project
+		out.add_new("IDPhase", "INTEGER"); // active Phase Id
 		out.tableName = "ActivePhases";
 
 		return out;
 	}
 
 	/// <summary>
-	/// get active phases for current configuration
+	/// Configuration for calculating active phases
 	/// </summary>
 	/// <returns></returns>
 	static AM_Database_TableStruct TN_ActivePhases_Configuration()
@@ -114,6 +112,21 @@ namespace AMLIB
 		return out;
 	}
 
+	/// <summary>
+	/// Element composition used for obtaining active phases
+	/// </summary>
+	/// <returns></returns>
+	static AM_Database_TableStruct TN_ActivePhases_ElementComposition()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY"); // Auto increment ID
+		out.add_new("IDProject", "INTEGER"); // Project ID reference
+		out.add_new("IDElement", "INTEGER"); // Element composition
+		out.add_new("Value", "REAL"); // weight composition
+		out.tableName = "ActivePhases_ElementComposition";
+
+		return out;
+	}
 
 #pragma endregion
 
@@ -293,7 +306,53 @@ namespace AMLIB
 	}
 #pragma endregion
 
-	
+#pragma region Precipitation
+	/// <summary>
+	/// Precipitation domain table
+	/// </summary>
+	/// <returns></returns>
+	static AM_Database_TableStruct TN_PrecipitationDomain()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
+		out.add_new("Name", "TEXT"); // Domain name
+		out.add_new("IDPhase", "INTEGER"); // Thermodynamic matrix phase
+		out.add_new("InitialGrainDiameter", "REAL"); // Initial grain diameter
+		out.add_new("EquilibriumDiDe", "REAL"); // Equilibrium dislocation density
+		out.add_new("VacancyEvolutionModel", "TEXT"); 
+		out.add_new("ConsiderExVa", "INTEGER"); // Consider excess vacancy
+		out.add_new("ExcessVacancyEfficiency", "REAL"); // Excess Vacancy efficiency
+		out.tableName = "PrecipitationDomain";
+
+		return out;
+	}
+
+	/// <summary>
+	/// Precipitation phase table
+	/// Phases that are used for generating aa precipitate of specified phase
+	/// </summary>
+	/// <returns></returns>
+	static AM_Database_TableStruct TN_PrecipitationPhase()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
+		out.add_new("IDCase", "INTEGER"); // Case ID
+		out.add_new("IDPhase", "INTEGER"); // Phase ID
+		out.add_new("NumberSizeClasses", "INTEGER"); // Number of precipitation classes
+		out.add_new("Name", "TEXT"); // Name of precipitation phase (default PhaseName_P0)
+		out.add_new("NucleationSites", "TEXT"); // Nucleation sites
+		out.add_new("IDPrecipitationDomain", "INTEGER"); // Precipitation domain ID
+		out.add_new("CalcType", "TEXT"); // Excess Vacancy efficiency
+		out.add_new("MinRadius", "REAL"); // Minimum radius size
+		out.add_new("MeanRadius", "REAL"); // Mean radius size
+		out.add_new("MaxRadius", "REAL"); // maximum radius size
+		out.add_new("StdDev", "REAL"); // standard deviation
+		out.add_new("PrecipitateDistribution", "TEXT"); // precipitation distribution
+		out.tableName = "PrecipitationPhase";
+
+		return out;
+	}
+#pragma endregion
 
 #pragma endregion
 
@@ -319,6 +378,12 @@ namespace AMLIB
 		out.push_back(TN_ScheilPhaseFraction());
 		out.push_back(TN_ScheilCumulativeFraction());
 		out.push_back(TN_CALPHADDatabase());
+		out.push_back(TN_ActivePhases());
+		out.push_back(TN_ActivePhases_Configuration());
+		out.push_back(TN_ActivePhases_ElementComposition());
+		out.push_back(TN_PrecipitationDomain());
+		out.push_back(TN_PrecipitationPhase());
+
 
 		return out;
 	}

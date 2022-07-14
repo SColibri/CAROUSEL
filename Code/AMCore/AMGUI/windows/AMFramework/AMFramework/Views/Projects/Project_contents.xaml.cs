@@ -55,6 +55,5 @@ namespace AMFramework.Views.Projects
             Popup.Visibility = Visibility.Collapsed;
         }
 
-        
     }
 }

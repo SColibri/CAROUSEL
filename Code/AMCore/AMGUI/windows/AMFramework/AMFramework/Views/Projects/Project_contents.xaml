@@ -35,7 +35,7 @@
                                                    Foreground="White"
                                                    FontWeight="Bold"></TextBlock>
                         </Border>
-                        
+
 
                         <ItemsControl ItemsSource="{Binding Path=ElementComposition, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1">
                             <ItemsControl.ItemsPanel>
@@ -64,7 +64,7 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        
+
                         <Button Content="{Binding Path=Name}" 
                                                 Grid.Column="1"
                                                 Margin="-3,0,8,0"
@@ -104,7 +104,7 @@
                         <Border Grid.ColumnSpan="5" Margin="-5" Width="500" BorderBrush="Silver" BorderThickness="0,0,0,1" />
                     </Grid>
 
-                  </Grid>
+                </Grid>
             </DataTemplate>
         </Grid.Resources>
         
@@ -132,9 +132,9 @@
                     </Grid>
                 </GroupBox>
 
-                <GroupBox Header="Configurations" Margin="5" BorderThickness="2" BorderBrush="Black">
+                <GroupBox Header="CALPHAD" Margin="5" BorderThickness="2" BorderBrush="Black">
                     <Grid Margin="5">
-
+                        
                     </Grid>
                 </GroupBox>
 
@@ -145,16 +145,25 @@
                             <ColumnDefinition Width="300"/>
                         </Grid.ColumnDefinitions>
 
+                        
                         <GroupBox Header="Selected Elements" Grid.Column="0" Margin="5" Background="AliceBlue" MinWidth="100">
-                            <ListBox ItemsSource="{Binding Path=SelectedElements, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" SelectionMode="Multiple">
+                            <ListBox x:Name="listboxElements" ItemsSource="{Binding Path=SelectedElements, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" 
+                                     SelectionMode="Single">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Label Content="{Binding Path=ElementName}"></Label>
+                                        <Grid>
+                                            <fa:ImageAwesome Visibility="{Binding Path=ISReferenceElementBool, Converter={StaticResource BoolToVis}}" Icon="Check"
+                                                             VerticalAlignment="Top" HorizontalAlignment="Right" Width="10" Height="10"
+                                                             ToolTip="Reference element"/>
+                                            <Label Content="{Binding Path=ElementName}"></Label>
+                                        </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>
+                                        <WrapPanel Orientation="Horizontal" IsItemsHost="True">
+
+                                        </WrapPanel>
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
                             </ListBox>

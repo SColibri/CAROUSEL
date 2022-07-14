@@ -1,0 +1,110 @@
+﻿<UserControl x:Class="AMFramework.Views.Precipitation.PrecipitationDomain_general"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AMFramework.Views.Precipitation" 
+             xmlns:button="clr-namespace:AMFramework.Components.Button"
+             xmlns:model="clr-namespace:AMFramework.Model" d:DataContext="{d:DesignInstance Type=model:Model_PrecipitationDomain}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <Border BorderBrush="Silver" BorderThickness="0,0,0,1" Grid.ColumnSpan="2"
+                                Margin="20,0,20,0"/>
+
+                <TextBlock Text="Name" Grid.Column="0"/>
+                <TextBox Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <Border BorderBrush="Silver" BorderThickness="0,0,0,1" Grid.ColumnSpan="2"
+                                Margin="20,0,20,0"/>
+
+                <TextBlock Text="Thermodynamic matrix phase" Grid.Column="0"/>
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="50" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding Path=IDPhase, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0"/>
+                    <button:AM_button IconName="Plus" Width="25" Height="25"/>
+                </Grid>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <Border BorderBrush="Silver" BorderThickness="0,0,0,1" Grid.ColumnSpan="2"
+                                Margin="20,0,20,0"/>
+
+                <TextBlock Text="Precipitate" Grid.Column="0"/>
+                <StackPanel Grid.Column="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="150"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Initial grain diameter:" Grid.Column="0"/>
+                        <TextBox Text="{Binding Path=InitialGrainDiameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="150"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Equilibrium dislocation density:" Grid.Column="0"/>
+                        <TextBox Text="{Binding Path=EquilibriumDiDe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <Border BorderBrush="Silver" BorderThickness="0,0,0,1" Grid.ColumnSpan="2"
+                                Margin="20,0,20,0"/>
+
+                <TextBlock Text="Vacancies" Grid.Column="0"/>
+                <StackPanel Grid.Column="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="30"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Vacancy evolution model:" Grid.Column="0"/>
+                        <TextBox Text="{Binding Path=VacancyEvolutionModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="150"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Excess vacancy efficiency:" Grid.Column="0"/>
+                        <TextBox Text="{Binding Path=ExcessVacancyEfficiency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</UserControl>

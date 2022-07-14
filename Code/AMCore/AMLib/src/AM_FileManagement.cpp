@@ -48,6 +48,9 @@
 		case FILEPATH::DATABASE:
 			response = _workingDirectory + "/Database";
 			break;
+		case FILEPATH::TEMP:
+			response = _workingDirectory + "/Temp";
+			break;
 		default:
 			response = "";
 			break;

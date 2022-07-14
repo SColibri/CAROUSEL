@@ -220,6 +220,12 @@ public:
 	/// removes all selected phases
 	/// </summary>
 	void remove_all_seleccted_phase();
+
+	/// <summary>
+	/// returns precipitation phases list
+	/// </summary>
+	/// <returns></returns>
+	std::vector<DBS_PrecipitationPhase* >& get_precipitation_phases();
 #pragma endregion
 
 #pragma endregion
@@ -268,6 +274,16 @@ public:
 	/// loads all selected phases
 	/// </summary>
 	void load_DBS_selectedPhases();
+
+	/// <summary>
+	/// Loads precipitation domains
+	/// </summary>
+	void load_DBS_precipitationDomains();
+
+	/// <summary>
+	/// Loads precipitation phases
+	/// </summary>
+	void load_DBS_precipitationPhases();
 
 #pragma region csv
 	/// <summary>
@@ -431,8 +447,8 @@ private:
 	std::vector<DBS_ScheilPhaseFraction*> _scheilPhaseFractions;
 	std::vector<DBS_ElementComposition*> _elementComposition;
 	std::vector<DBS_SelectedPhases*> _selectedPhases;
-
-
+	std::vector<DBS_PrecipitationDomain*> _precipitationDomains;
+	std::vector<DBS_PrecipitationPhase*> _precipitationPhases;
 
 };
 /** @}*/

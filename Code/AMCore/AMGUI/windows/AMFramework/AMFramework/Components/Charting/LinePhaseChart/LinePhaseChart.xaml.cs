@@ -60,8 +60,14 @@ namespace AMFramework.Components.Charting.LinePhaseChart
                 }
                 ListPlot.Plot.XAxis.RulerMode(true);
                 ListPlot.Plot.YAxis.RulerMode(true);
+               
+                ListPlot.Plot.Legend(true, ScottPlot.Alignment.MiddleLeft);
+                ListPlot.Plot.XAxis.Label("Temperature °C");
+                ListPlot.Plot.YAxis.Label("Phase fraction");
 
                 ListPlot.Refresh();
+                ListPlot.Plot.RenderLegend();
+
             }
         }
 

@@ -113,7 +113,7 @@ private:
 	std::string _physical_database_path{};
 	std::string _mobility_database_path{};
 	std::string _workingDirectory{};
-	int _maxThreads{2};
+	int _maxThreads{3};
 
 	/// <summary>
 	/// The framework uses a defined directory structure on which the config file can be found

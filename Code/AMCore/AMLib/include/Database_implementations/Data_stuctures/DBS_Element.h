@@ -78,6 +78,4 @@ public:
 
 #pragma endregion
 
-private:
-
 };

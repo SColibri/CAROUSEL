@@ -15,6 +15,14 @@ public:
 		_tableStructure = AMLIB::TN_SelectedElements();
 	}
 
+	static int remove_project_data(IAM_Database* database, int projectID)
+	{
+		std::string query = AMLIB::TN_SelectedElements().columnNames[1] +
+			" = " + std::to_string(projectID);
+
+		return database->remove_row(&AMLIB::TN_SelectedElements(), query);
+	}
+
 #pragma region implementation
 
 	virtual std::vector<std::string> get_input_vector() override

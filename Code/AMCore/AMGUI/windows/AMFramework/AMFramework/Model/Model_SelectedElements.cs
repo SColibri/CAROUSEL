@@ -62,6 +62,10 @@ namespace AMFramework.Model
             set
             {
                 _isReferenceElement = value;
+
+                if (value == 1) ISReferenceElementBool = true;
+                else ISReferenceElementBool = false;
+
                 OnPropertyChanged("ISReferenceElement");
             }
         }
@@ -81,6 +85,17 @@ namespace AMFramework.Model
             {
                 _isSelected = value;
                 OnPropertyChanged("IsSelected");
+            }
+        }
+
+        private bool _isReferenceElement_bool = false;
+        public bool ISReferenceElementBool
+        {
+            get { return _isReferenceElement_bool; }
+            set
+            {
+                _isReferenceElement_bool = value;
+                OnPropertyChanged("ISReferenceElementBool");
             }
         }
         #endregion

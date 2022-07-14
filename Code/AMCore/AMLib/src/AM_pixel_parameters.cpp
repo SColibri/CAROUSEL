@@ -457,6 +457,10 @@ void AM_pixel_parameters::remove_all_seleccted_phase()
 	_selectedPhases.clear();
 }
 
+std::vector<DBS_PrecipitationPhase*>& AM_pixel_parameters::get_precipitation_phases()
+{
+	return _precipitationPhases;
+}
 
 #pragma endregion
 
@@ -467,10 +471,12 @@ void AM_pixel_parameters::load_all()
 {
 	load_DBS_ScheilConfig(_case->id());
 	load_DBS_EquilibriumConfig(_case->id());
-	load_DBS_EquilibriumPhaseFraction();
-	load_DBS_ScheilPhaseFraction();
+	//load_DBS_EquilibriumPhaseFraction(); This is huge to load!
+	//load_DBS_ScheilPhaseFraction(); This can also be huge, better load on demand
 	load_DBS_elementComposition();
 	load_DBS_selectedPhases();
+	load_DBS_precipitationDomains();
+	load_DBS_precipitationPhases();
 }
 
 void AM_pixel_parameters::load_DBS_ScheilConfig(int IDCase)
@@ -583,6 +589,44 @@ void AM_pixel_parameters::load_DBS_selectedPhases()
 			std::vector<std::string> rowData = DTable.get_row_data(n1);
 			_selectedPhases.push_back(new DBS_SelectedPhases(_db, -1));
 			_selectedPhases.back()->load(rowData);
+		}
+	}
+}
+
+void AM_pixel_parameters::load_DBS_precipitationDomains()
+{
+	if (_case == nullptr) return;
+	_precipitationDomains.clear();
+
+	AM_Database_Datatable DTable(_db, &AMLIB::TN_PrecipitationDomain());
+	DTable.load_data(AMLIB::TN_PrecipitationDomain().columnNames[1] + " = \'" + std::to_string(_case->id()) + "\'");
+
+	if (DTable.row_count() > 0)
+	{
+		for (int n1 = 0; n1 < DTable.row_count(); n1++)
+		{
+			std::vector<std::string> rowData = DTable.get_row_data(n1);
+			_precipitationDomains.push_back(new DBS_PrecipitationDomain(_db, -1));
+			_precipitationDomains.back()->load(rowData);
+		}
+	}
+}
+
+void AM_pixel_parameters::load_DBS_precipitationPhases()
+{
+	if (_case == nullptr) return;
+	_precipitationPhases.clear();
+
+	AM_Database_Datatable DTable(_db, &AMLIB::TN_PrecipitationPhase());
+	DTable.load_data(AMLIB::TN_PrecipitationPhase().columnNames[1] + " = \'" + std::to_string(_case->id()) + "\'");
+
+	if (DTable.row_count() > 0)
+	{
+		for (int n1 = 0; n1 < DTable.row_count(); n1++)
+		{
+			std::vector<std::string> rowData = DTable.get_row_data(n1);
+			_precipitationPhases.push_back(new DBS_PrecipitationPhase(_db, -1));
+			_precipitationPhases.back()->load(rowData);
 		}
 	}
 }

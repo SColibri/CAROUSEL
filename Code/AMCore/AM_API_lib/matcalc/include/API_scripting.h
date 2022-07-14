@@ -204,15 +204,36 @@ namespace API_Scripting
 		return out;
 	}
 
-	std::string static Script_create_new_precipitate(std::string PhaseName)
+	std::string static Script_create_new_phase(std::string PhaseName)
 	{
-		std::string out = "create-new-phase " + PhaseName + " precipitate" + PhaseName + "\n";
+		std::string out = "create-new-phase parent-phase=" + PhaseName + "_S precipitate " + PhaseName + "(primary)\n";
 		return out;
 	}
 
 	std::string static Script_set_precipitation_parameter(std::string PhaseName, std::string ParameterPrecipitation)
 	{
 		std::string out = "set-precipitation-parameter " + PhaseName + "_P0 " + ParameterPrecipitation + "\n";
+		return out;
+	}
+
+	std::string static Script_precipitate_distribution(std::string PhaseName, std::string filename)
+	{
+		std::string out = "set-precipitation-parameter " + PhaseName + "_P0 " + filename + "\n";
+		return out;
+	}
+
+	std::string static Script_generate_precipitate_distribution(std::string PhaseName, std::string calculationType, 
+		double minRadius, double meanRadius, double maxRadius, double stdDev)
+	{
+		std::string out = "generate-precipitate-distribution phase-name=" + PhaseName + "_P0 calculation-type=" + calculationType + 
+						  " min-radius=" + std::to_string(minRadius) + " mean-radius=" + std::to_string(meanRadius) + " max-radius=" + std::to_string(maxRadius) +
+						  " standard-deviation=" +std::to_string(stdDev) + "\n";
+		return out;
+	}
+
+	std::string static Script_export_precipitate_distribution(std::string PhaseName, std::string filename)
+	{
+		std::string out = "export-precipitate-distribution precipitate-name=" + PhaseName + "_P0 file-name=" + filename + "\n";
 		return out;
 	}
 
@@ -253,6 +274,13 @@ namespace API_Scripting
 	}
 #pragma endregion
 #pragma region MatcalcVariables
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="stringVar"></param>
+	/// <param name="format"></param>
+	/// <param name="variableNames"></param>
+	/// <returns></returns>
 	std::string static script_format_variable_string(const std::string& stringVar ,
 													 const std::string& format, 
 													 std::vector<std::string>& variableNames) 
@@ -329,7 +357,6 @@ namespace API_Scripting
 																std::vector<std::string>& Phases)
 	{
 		std::vector<std::string> out;
-		//out.push_back(script_initialize_core());
 		out.push_back(script_set_thermodynamic_database(configuration->get_ThermodynamicDatabase_path()));
 		out.push_back(Script_selectElements(Elements));
 		out.push_back(Script_selectPhases(Phases));
@@ -360,7 +387,6 @@ namespace API_Scripting
 		std::vector<std::string>& Phases)
 	{
 		std::vector<std::string> out;
-		//out.push_back(script_initialize_core());
 		out.push_back(script_set_thermodynamic_database(configuration->get_ThermodynamicDatabase_path()));
 		out.push_back(Script_selectElements(Elements));
 		out.push_back(Script_selectPhases(Phases));
@@ -385,10 +411,54 @@ namespace API_Scripting
 
 		return out;
 	}
+
+	void static Script_run_ScheilPrecipitation(IAM_Database* db,
+		std::vector<std::string>& stepScheilScript,
+		std::vector<DBS_PrecipitationPhase*> precipitationPhases,
+		std::string TempDirectoryPath)
+	{
+		// Add precipitation phases
+		// TODO: optimize! here we call at each loop the database to load the phase item, we can create a vector pointer for this :)
+		for(auto& item: precipitationPhases)
+		{
+			DBS_Phase tempPhase(db,item->IDPhase);
+			tempPhase.load();
+
+			stepScheilScript.push_back(Script_create_new_phase(tempPhase.Name));
+			stepScheilScript.push_back(Script_set_precipitation_parameter(tempPhase.Name, "nucleation-sites=none"));
+		}
+		
+		stepScheilScript.push_back(Script_stepEquilibrium());
+		stepScheilScript.push_back(script_buffer_loadState(-1));
+
+		for (auto& item : precipitationPhases)
+		{
+			DBS_Phase tempPhase(db, item->IDPhase);
+			tempPhase.load();
+
+			stepScheilScript.push_back(Script_generate_precipitate_distribution(tempPhase.Name, item->CalcType, item->MinRadius, item->MeanRadius, item->MaxRadius, item->StdDev));
+		}
+
+		for (auto& item : precipitationPhases)
+		{
+			DBS_Phase tempPhase(db, item->IDPhase);
+			tempPhase.load();
+
+			stepScheilScript.push_back(Script_export_precipitate_distribution(tempPhase.Name, TempDirectoryPath + "/" + std::to_string(item->id()) + "_" + tempPhase.Name + ".txt"));
+		}
+	}
 #pragma endregion
 
 
 #pragma region Script_contents
+	/// <summary>
+	/// Stores in a file all buffer data specified in FORMATTEDSTRING
+	/// </summary>
+	/// <param name="BUFFERSIZE">Size of Matcalc buffer</param>
+	/// <param name="FORMATTEDSTRING">string that has the formatted variable names</param>
+	/// <param name="TEMPDATA">Name of the temp file</param>
+	/// <param name="configuration">AM_config</param>
+	/// <returns>filename where data is in CSV format</returns>
 	std::string static Buffer_to_variable(std::string BUFFERSIZE, std::string FORMATTEDSTRING, std::string TEMPDATA, AM_Config* configuration)
 	{
 		// create filenames

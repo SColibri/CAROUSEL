@@ -16,4 +16,7 @@
 #include "DBS_SelectedPhases.h"
 #include "DBS_ActivePhases.h"
 #include "DBS_ActivePhases_Configuration.h"
+#include "DBS_ActivePhases_ElementComposition.h"
+#include "DBS_PrecipitationDomain.h"
+#include "DBS_PrecipitationPhase.h"
 

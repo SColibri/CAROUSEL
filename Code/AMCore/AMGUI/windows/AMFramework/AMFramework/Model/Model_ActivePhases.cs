@@ -7,9 +7,8 @@ using System.ComponentModel;
 
 namespace AMFramework.Model
 {
-    public class Model_Element : INotifyPropertyChanged
+    internal class Model_ActivePhases : Interfaces.Model_Interface
     {
-
         private int _id = -1;
         public int ID
         {
@@ -21,43 +20,32 @@ namespace AMFramework.Model
             }
         }
 
-        private string _name = "";
-        public string Name
+        private int _idProject = -1;
+        public int IDProject
         {
-            get { return _name; }
+            get { return _idProject; }
             set
             {
-                _name = value;
-                OnPropertyChanged("Name");
+                _idProject = value;
+                OnPropertyChanged("IDProject");
             }
         }
 
-        private bool _isSelected = false;
-        public bool IsSelected
+        private int _idPhase = -1;
+        public int IDPhase
         {
-            get { return _isSelected; }
+            get { return _idPhase; }
             set
             {
-                _isSelected = value;
-                OnPropertyChanged("IsSelected");
+                _idPhase = value;
+                OnPropertyChanged("IDPhase");
             }
         }
 
-        public string get_csv()
+        public string Get_csv()
         {
-            string outy = ID + "," + Name.Replace(" ", "#");
+            string outy = ID + "," + IDProject + "," + IDPhase;
             return outy;
-        }
-
-        private bool _isReferenceElement = false;
-        public bool IsReferenceElement
-        {
-            get { return _isReferenceElement; }
-            set
-            {
-                _isReferenceElement = value;
-                OnPropertyChanged("IsReferenceElement");
-            }
         }
 
         #region Interfaces
@@ -68,6 +56,5 @@ namespace AMFramework.Model
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
-
     }
 }

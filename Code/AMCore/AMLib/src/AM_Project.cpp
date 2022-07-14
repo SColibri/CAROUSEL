@@ -10,6 +10,9 @@ AM_Project::AM_Project(IAM_Database* database, AM_Config* configuration, int id)
 	load_singlePixel_Cases();
 	load_DBS_selectedElements();
 	load_DBS_CALPHAD();
+	load_DBS_activePhases();
+	load_DBS_activePhasesConfig();
+	load_DBS_activePhases_composition();
 }
 
 AM_Project::AM_Project(IAM_Database* database, AM_Config* configuration, std::string projectName) :
@@ -29,8 +32,10 @@ AM_Project::~AM_Project()
 	if (_project != nullptr) delete _project;
 	if (_tempPixel != nullptr) delete _tempPixel;
 	if (_calphadDatabases != nullptr) delete _calphadDatabases;
+	if (_activePhasesConfig != nullptr) delete _activePhasesConfig;
 	clear_selectedElements();
 	clear_singlePixel_cases();
+	clear_activePhases();
 }
 
 #pragma endregion
@@ -107,6 +112,7 @@ std::string AM_Project::set_selected_elements_ByName(std::vector<std::string> ne
 
 	//Remove all data related to the project
 	DBS_Project::remove_project_data(_db, get_project_ID());
+	DBS_ActivePhases_ElementComposition::remove_project_data(_db, _project->id());
 
 	//Add all selected elements
 	for each (int IDElement in IDelements)
@@ -116,10 +122,17 @@ std::string AM_Project::set_selected_elements_ByName(std::vector<std::string> ne
 		newElem.IDProject = get_project_ID();
 		newElem.save();
 		outy += "Element ID: " + std::to_string(IDElement) + " selected || ";
+		
+		DBS_ActivePhases_ElementComposition newComp(_db, -1);
+		newComp.IDElement = IDElement;
+		newComp.IDProject = _project->id();
+		newComp.save();
+
 	}
 
 	load_DBS_selectedElements();
 	load_singlePixel_Cases();
+
 	return outy;
 }
 
@@ -215,6 +228,19 @@ void AM_Project::refresh_data()
 	load_DBS_selectedElements();
 	load_DBS_CALPHAD();
 }
+#pragma endregion
+
+#pragma region project_methods
+void AM_Project::Edit_active_phase_configuration(int startTemp, int endTemp, int stepSize)
+{
+	if (_activePhasesConfig == nullptr) _activePhasesConfig = new DBS_ActivePhases_Configuration(_db, -1);
+	_activePhasesConfig->IDProject = _project->id();
+	_activePhasesConfig->StartTemp = startTemp;
+	_activePhasesConfig->EndTemp = endTemp;
+	_activePhasesConfig->StepSize = stepSize;
+	_activePhasesConfig->save();
+}
+
 #pragma endregion
 
 #pragma region Checks
@@ -374,6 +400,60 @@ void AM_Project::load_DBS_CALPHAD()
 	}
 
 	_calphadDatabases = new DBS_CALPHADDatabase(_db, -1);
+}
+void AM_Project::load_DBS_activePhasesConfig()
+{
+	if (_project == nullptr) return;
+
+	AM_Database_Datatable DTable(_db, &AMLIB::TN_ActivePhases_Configuration());
+	DTable.load_data(AMLIB::TN_ActivePhases_Configuration().columnNames[1] + " = \'" + std::to_string(_project->id()) + "\'");
+
+	if (DTable.row_count() > 0)
+	{
+		if (_activePhasesConfig != nullptr) delete _activePhasesConfig;
+		std::vector<std::string> rowData = DTable.get_row_data(0);
+		_activePhasesConfig = new DBS_ActivePhases_Configuration(_db, -1);
+		_activePhasesConfig->load(rowData);
+		return;
+	}
+
+	_activePhasesConfig = new DBS_ActivePhases_Configuration(_db, -1);
+}
+void AM_Project::load_DBS_activePhases()
+{
+	if (_project == nullptr) return;
+	clear_activePhases();
+
+	AM_Database_Datatable DTable(_db, &AMLIB::TN_ActivePhases());
+	DTable.load_data(AMLIB::TN_ActivePhases().columnNames[1] + " = \'" + std::to_string(_project->id()) + "\'");
+
+	if (DTable.row_count() > 0)
+	{
+		for (int n1 = 0; n1 < DTable.row_count(); n1++)
+		{
+			std::vector<std::string> rowData = DTable.get_row_data(n1);
+			_ativePhases.push_back(new DBS_ActivePhases(_db, -1));
+			_ativePhases.back()->load(rowData);
+		}
+	}
+}
+void AM_Project::load_DBS_activePhases_composition()
+{
+	if (_project == nullptr) return;
+	clear_activePhases_elementCompositons();
+
+	AM_Database_Datatable DTable(_db, &AMLIB::TN_ActivePhases_ElementComposition());
+	DTable.load_data(AMLIB::TN_ActivePhases_ElementComposition().columnNames[1] + " = \'" + std::to_string(_project->id()) + "\'");
+
+	if (DTable.row_count() > 0)
+	{
+		for (int n1 = 0; n1 < DTable.row_count(); n1++)
+		{
+			std::vector<std::string> rowData = DTable.get_row_data(n1);
+			_ativePhases_composition.push_back(new DBS_ActivePhases_ElementComposition(_db, -1));
+			_ativePhases_composition.back()->load(rowData);
+		}
+	}
 }
 
 #pragma endregion

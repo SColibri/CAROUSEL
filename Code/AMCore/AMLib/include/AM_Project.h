@@ -131,7 +131,7 @@ public:
 #pragma endregion
 
 	
-#pragma region Project
+#pragma region Project_csv
 	std::string csv_list_cases_singlePixel() 
 	{
 		AM_Database_Datatable dataT(_db, &AMLIB::TN_Case());
@@ -175,6 +175,17 @@ public:
 		dataT.load_data(AMLIB::TN_ScheilConfiguration().columnNames[1] + " = \'" + std::to_string(IDCase) + "\'");
 		return dataT.get_csv();
 	}
+
+#pragma endregion
+
+#pragma region Project_methods
+	/// <summary>
+	/// Edit/create active phase configuration, this is used for doing a first search
+	/// </summary>
+	/// <param name="startTemp"></param>
+	/// <param name="endTemp"></param>
+	/// <param name="stepSize"></param>
+	void Edit_active_phase_configuration(int startTemp, int endTemp, int stepSize);
 
 #pragma endregion
 
@@ -265,8 +276,15 @@ private:
 	DBS_Project* _project{nullptr}; //project object connected to database
 	AM_pixel_parameters* _tempPixel {nullptr};
 	DBS_CALPHADDatabase* _calphadDatabases {nullptr};
+	DBS_ActivePhases_Configuration* _activePhasesConfig { nullptr };
+	std::vector<DBS_ActivePhases*> _ativePhases;
+	std::vector<DBS_ActivePhases_ElementComposition*> _ativePhases_composition;
 	std::vector<AM_pixel_parameters*> _singlePixel_cases; // single cases
 	std::vector<DBS_SelectedElements*> _selectedElements; // list of selected elements
+
+#pragma region Project_data
+
+#pragma endregion
 
 #pragma region Loaders
 	/// <summary>
@@ -279,7 +297,26 @@ private:
 	/// </summary>
 	void load_DBS_selectedElements();
 
+	/// <summary>
+	/// loads names of selected database for current project
+	/// </summary>
 	void load_DBS_CALPHAD();
+
+	/// <summary>
+	/// loads active phase configuration
+	/// </summary>
+	void load_DBS_activePhasesConfig();
+
+	/// <summary>
+	/// loads active phases
+	/// </summary>
+	void load_DBS_activePhases();
+
+	/// <summary>
+	/// loads active phases element compositions
+	/// </summary>
+	void load_DBS_activePhases_composition();
+
 #pragma endregion
 
 #pragma region pointerRemove
@@ -302,5 +339,24 @@ private:
 		_singlePixel_cases.clear();
 	}
 
+	/// <summary>
+	/// Removes all pointers to active phases
+	/// </summary>
+	void clear_activePhases()
+	{
+		for (auto* SE : _ativePhases) { delete SE; }
+		_ativePhases.clear();
+	}
+
+	/// <summary>
+	/// Removes all pointers to active phases element compositions
+	/// </summary>
+	void clear_activePhases_elementCompositons()
+	{
+		for (auto* SE : _ativePhases_composition) { delete SE; }
+		_ativePhases.clear();
+	}
+
 #pragma endregion
+
 };
