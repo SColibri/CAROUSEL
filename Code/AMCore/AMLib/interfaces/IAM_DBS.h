@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 #include "../../AMLib/interfaces/IAM_Database.h"
 #include "../../AMLib/include/Database_implementations/Database_scheme_content.h"
 #include "../../AMLib/include/AM_Database_Datatable.h"
@@ -75,9 +76,15 @@ public:
 		std::vector<std::string> input = get_input_vector();
 		if (std::strcmp(input[0].c_str(), "-1") == 0)
 		{
+			// if implemented check before save
 			if (check_before_save() != 0) return 1;
+
+			// Store in the database
 			int insertC = _db->insert_row(&_tableStructure, input);
 			_id = _db->get_last_ID(&_tableStructure);
+
+			// If implemented Create all dependent data
+			if(_id > -1) create_dependent_data();
 		}
 		else
 		{
@@ -87,6 +94,14 @@ public:
 		return 0;
 	}
 
+	/// <summary>
+	/// Batch save of DBS objects. A faster way to save multiple objects in one go. This functions
+	/// does not implement the function calls to create dependent data, this you have to do manually. This
+	/// function is normally not used for items that have dependent data (e.g. Phase fractions) making it fast to save
+	/// a lot of data.
+	/// </summary>
+	/// <param name="vectorSave"></param>
+	/// <returns></returns>
 	static int save(std::vector<IAM_DBS*>& vectorSave)
 	{
 		if (vectorSave.size() == 0) return 1;
@@ -99,13 +114,76 @@ public:
 
 		stringBuild += "COMMIT;";
 		
-		return vectorSave[0]->_db->execute_query(stringBuild);;
+		return vectorSave[0]->_db->execute_query(stringBuild);
 	}
 
+	/// <summary>
+	/// Save unitialized item using as input a csv formatted vector.
+	/// If the object is new it will create a new ID for the object.
+	/// </summary>
+	/// <param name="DBSObject"></param>
+	/// <param name="csvF"></param>
+	/// <returns>ID of initialized object</returns>
+	static int save(IAM_DBS* DBSObject, std::vector<std::string>& csvF)
+	{
+		if (DBSObject == nullptr) return -1;
+
+		// create new config object if non existent
+		if (std::stoi(csvF[0]) == -1)
+		{
+			DBSObject->load(csvF);
+			DBSObject->save();
+			csvF[0] = std::to_string(DBSObject->id());
+		}
+
+		DBSObject->load(csvF);
+		DBSObject->save();
+
+		return DBSObject->id();
+	}
+
+	/// <summary>
+	/// Create dependent data for new items
+	/// </summary>
+	/// <returns></returns>
+	virtual int create_dependent_data() { return 0; }
+
+	/// <summary>
+	/// Removes initialized objects (has a unique id).
+	/// </summary>
+	/// <returns></returns>
 	virtual int remove() 
 	{
 		if (_id == -1) return 1;
 		return _db->remove_row(&_tableStructure, _tableStructure.columnNames[0] + " = \'" + std::to_string(_id) + "\'");
+	}
+
+	/// <summary>
+	/// Should remove all data that depends on this item. After removing the item
+	/// the dependence is lost and therefore useless.
+	/// </summary>
+	/// <returns></returns>
+	virtual int remove_dependent_data() { return 0; }
+
+	/// <summary>
+	/// Remove Item by ID, this function calls the remove_dependent_data which
+	/// removes all data that points to this object.
+	/// </summary>
+	/// <param name="DBSObject">Uninitialized objecct pointer</param>
+	/// <param name="csvF">data in csv format</param>
+	/// <returns></returns>
+	static int remove_byID(IAM_DBS* DBSObject, std::vector<std::string>& csvF)
+	{
+		int result{ -1 };
+
+		// remove existing ID
+		if (std::stoi(csvF[0]) > -1)
+		{
+			DBSObject->remove_dependent_data();
+			result = DBSObject->_db->remove_row(&DBSObject->_tableStructure, "ID=" + csvF[0]);
+		}
+
+		return result;
 	}
 
 	/// <summary>

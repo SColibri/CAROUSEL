@@ -99,6 +99,11 @@ public:
 	/// <returns></returns>
 	int get_reference_element_ByID();
 
+	/// <summary>
+	/// Returns element composition for calculation of active phases
+	/// </summary>
+	/// <returns></returns>
+	std::vector<std::string> get_activePhases_ElementComposition();
 #pragma endregion
 
 #pragma region Project_data
@@ -316,7 +321,6 @@ private:
 	/// loads active phases element compositions
 	/// </summary>
 	void load_DBS_activePhases_composition();
-
 #pragma endregion
 
 #pragma region pointerRemove
@@ -354,7 +358,7 @@ private:
 	void clear_activePhases_elementCompositons()
 	{
 		for (auto* SE : _ativePhases_composition) { delete SE; }
-		_ativePhases.clear();
+		_ativePhases_composition.clear();
 	}
 
 #pragma endregion

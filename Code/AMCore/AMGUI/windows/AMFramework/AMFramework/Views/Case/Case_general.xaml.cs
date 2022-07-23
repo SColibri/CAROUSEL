@@ -96,6 +96,55 @@ namespace AMFramework.Views.Case
             controllerCase.get_project_controller().set_phase_selection_to_current_case();
         }
 
+        private void Button_Add_PrecipitationPhase_Click(object sender, RoutedEventArgs e)
+        {
+            Controller.Controller_Cases controllerCase = (Controller.Controller_Cases)DataContext;
+            controllerCase.SelectedCase.PrecipitationPhases.Add(new());
+            controllerCase.SelectedCase.PrecipitationPhases[controllerCase.SelectedCase.PrecipitationPhases.Count - 1].IDCase = controllerCase.SelectedCase.ID;
+
+            Views.Precipitation.PrecipitationPhase_general windowPPhase = new() { DataContext = controllerCase.SelectedCase.PrecipitationPhases[controllerCase.SelectedCase.PrecipitationPhases.Count - 1] };
+            controllerCase.PopupView.ContentPage.Children.Clear();
+            controllerCase.PopupView.ContentPage.Children.Add(windowPPhase);
+            controllerCase.PopupView.Title = "precipitation Phase";
+            controllerCase.PopupView.clear_buttons();
+
+            Components.Button.AM_button saveSelection = new();
+            saveSelection.IconName = "Check";
+            saveSelection.GradientTransition = "green";
+
+            controllerCase.PopupView.add_button(saveSelection);
+
+            controllerCase.ShowPopup = true;
+            controllerCase.PopupView.PopupWindowClosed += Close_popup_handle;
+
+            PopupFrame.Navigate(controllerCase.PopupView);
+        }
+
+        private void Show_popup_precipitate_phase(Model.Model_PrecipitationPhase model)
+        {
+            Controller.Controller_Cases controllerCase = (Controller.Controller_Cases)DataContext;
+
+            Views.Precipitation.PrecipitationPhase_general windowPPhase = new() { DataContext = model };
+            controllerCase.PopupView.ContentPage.Children.Clear();
+            controllerCase.PopupView.ContentPage.Children.Add(windowPPhase);
+            controllerCase.PopupView.Title = model.Name;
+            controllerCase.PopupView.clear_buttons();
+
+            Components.Button.AM_button saveSelection = new();
+            saveSelection.IconName = "Check";
+            saveSelection.GradientTransition = "green";
+            saveSelection.ClickButton += controllerCase.PrecipitationPhaseController.Handle_ClickOnSave_AMButton;
+            saveSelection.ClickButton += Close_popup_handle;
+
+            controllerCase.PopupView.add_button(saveSelection);
+
+            controllerCase.ShowPopup = true;
+            controllerCase.PopupView.PopupWindowClosed += Close_popup_handle;
+
+            PopupFrame.Navigate(controllerCase.PopupView);
+        }
+
+
         private void Close_popup_handle(object sender, EventArgs e) 
         {
             Controller.Controller_Cases controllerCase = (Controller.Controller_Cases)DataContext;
@@ -104,8 +153,19 @@ namespace AMFramework.Views.Case
             controllerCase.PopupView.PopupWindowClosed -= Close_popup_handle;
         }
 
-        
 
+        #region Handles
+        private void Handle_edit_precipitation_phase(object sender, EventArgs e) 
+        {
+            if (!sender.GetType().Equals(typeof(Model.Model_PrecipitationPhase))) return;
+
+            Model.Model_PrecipitationPhase phase = (Model.Model_PrecipitationPhase)sender;
+
+            Show_popup_precipitate_phase((Model.Model_PrecipitationPhase)sender);
+        }
+
+
+        #endregion
 
     }
 }

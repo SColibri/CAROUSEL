@@ -26,6 +26,11 @@ namespace AMFramework.Controller
         public List<Model.Model_SelectedPhases> Phases
         {
             get { return _Phases; }
+            set
+            { 
+                _Phases = value;
+                OnPropertyChanged("Phases");
+            }
         }
 
         #endregion
@@ -46,7 +51,7 @@ namespace AMFramework.Controller
         }
         private void load_phases()
         {
-            string Query = "database_table_custom_query SELECT SelectedPhases.*, Phase.Name FROM SelectedPhases INNER JOIN Element ON Phase.ID=SelectedPhases.IDPhase WHERE IDProject = " + _CaseController.SelectedCase.ID.ToString();
+            string Query = "database_table_custom_query SELECT SelectedPhases.*, Phase.Name FROM SelectedPhases INNER JOIN Phase ON Phase.ID=SelectedPhases.IDPhase WHERE IDCase = " + _CaseController.SelectedCase.ID.ToString();
             string outy = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outy.Split("\n").ToList();
             _Phases.Clear();

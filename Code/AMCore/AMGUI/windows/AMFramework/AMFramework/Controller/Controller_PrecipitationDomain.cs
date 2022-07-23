@@ -79,6 +79,14 @@ namespace AMFramework.Controller
         {
             AMCore_Socket.run_lua_command("spc_precipitation_domain_save", model.Get_csv());
         }
+
+        public void fill_models_with_precipitation_domains()
+        {
+            foreach (Model.Model_Case casey in _CaseController.Cases)
+            {
+                casey.PrecipitationDomains = Get_model(_AMCore_Socket, casey.ID);
+            }
+        }
         #endregion
 
         #region Interfaces

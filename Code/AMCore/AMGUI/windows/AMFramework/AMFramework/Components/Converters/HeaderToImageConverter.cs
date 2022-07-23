@@ -21,6 +21,7 @@ namespace AMFramework.Components.Converters
             //Default image
             string imagePath = "Resources/Icons/tablerIcons/fidget-spinner.png";
             string tagType = "";
+            string imgName = "";
             // if Tag is of tyype string
             if (value is null) tagType = "PROJECT";
             else if (value.GetType().Equals(typeof(string))) { tagType = (string)value; }
@@ -30,25 +31,31 @@ namespace AMFramework.Components.Converters
             if (tagType.ToUpper().CompareTo("PROJECT") == 0)
             {
                 imagePath = "Resources/Icons/tablerIcons/layout-board.png";
+                imgName = "layout-board";
             }
             else if (tagType.ToUpper().CompareTo("SINGLE PIXEL CASES") == 0)
             {
                 imagePath = "Resources/Icons/tablerIcons/marquee.png";
+                imgName = "marquee";
             }
             else if (tagType.ToUpper().CompareTo("OBJECT") == 0)
             {
                 imagePath = "Resources/Icons/tablerIcons/3d-cube-sphere.png";
+                imgName = "3d-cube-sphere";
             }
             else if (tagType.ToUpper().CompareTo("SELECTION") == 0)
             {
                 imagePath = "Resources/Icons/tablerIcons/clipboard-list.png";
+                imgName = "clipboard-list";
             }
             else if (tagType.ToUpper().CompareTo("CASEITEM") == 0)
             {
                 imagePath = "Resources/Icons/tablerIcons/dots.png";
+                imgName = "dots";
             }
 
-            return new BitmapImage(new Uri($"/{ imagePath }", UriKind.Relative));
+            // return new BitmapImage(new Uri($"/{ imagePath }", UriKind.Relative));
+            return AMsystem.AMFramework_ImageSource.Get_faIcon(imgName);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

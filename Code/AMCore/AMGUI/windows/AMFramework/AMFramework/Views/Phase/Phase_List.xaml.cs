@@ -29,11 +29,7 @@ namespace AMFramework.Views.Phase
         {
             InitializeComponent();
             DataContext = projectController;
-
-            if (projectController.SelectedCaseID == true) 
-            {
-                projectController.get_phase_selection_from_current_case();
-            }
+            projectController.get_phase_selection_from_current_case();
         }
     }
 }

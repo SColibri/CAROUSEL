@@ -317,16 +317,46 @@ TEST_CASE("IAM_lua_functions")
 				std::vector<std::string> {"" }), "MC:") != std::string::npos);
 
 
-			tempProject.refresh_data();
+			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_active_phases_element_composition_save",
+				std::vector<std::string> {	"1,1,2,96.997" }), "1") != std::string::npos);
 
-			/*
+			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_active_phases_element_composition_save",
+				std::vector<std::string> {	"2,1,6,1.0" }), "2") != std::string::npos);
+
+			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_active_phases_element_composition_save",
+				std::vector<std::string> {	"3,1,10,0.6" }), "3") != std::string::npos);
+
+			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_active_phases_element_composition_save",
+				std::vector<std::string> {	"4,1,11,1.0" }), "4") != std::string::npos);
+
+			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_active_phases_element_composition_save",
+				std::vector<std::string> {	"5,1,4,0.3" }), "5") != std::string::npos);
+
+			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_active_phases_element_composition_save",
+				std::vector<std::string> {	"6,1,3,0.1" }), "6") != std::string::npos);
+
+			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_active_phases_element_composition_save",
+				std::vector<std::string> {	"7,1,5,0.001" }), "7") != std::string::npos);
+
+			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_active_phases_element_composition_save",
+				std::vector<std::string> {	"8,1,7,0.001" }), "8") != std::string::npos);
+
+			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_active_phases_element_composition_save",
+				std::vector<std::string> {	"9,1,12,0.001" }), "9") != std::string::npos);
+
+			tempProject.refresh_data();
+			
+
+			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("get_active_phases",
+				std::vector<std::string> {	"1" }), "Error") == std::string::npos);
+
 			std::string outAll_sheil = main_setup::api->run_lua_command("pixelcase_step_scheil_parallel",
 				std::vector<std::string> {"1", "1-150"});
 
 			std::string outAll = main_setup::api->run_lua_command("pixelcase_step_equilibrium_parallel",
 				std::vector<std::string> {"1","1-150"});
-			*/
 
+			/*
 			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,36,25,AL3TI_L_P0,none,-1,normal,0.000001,0.000002,0.000003,0.05, "});
 			DBS_PrecipitationPhase temppPhase(main_setup::_db, 1);
 			temppPhase.load();
@@ -334,6 +364,7 @@ TEST_CASE("IAM_lua_functions")
 
 			std::string outAll_precipitation = main_setup::api->run_lua_command("pixelcase_calculate_precipitate_distribution",
 				std::vector<std::string> {"1", "1-1"});
+			*/
 			/*
 			for (int n1 = 0; n1 < tempProject.get_singlePixel_Cases().size(); n1++)
 			{

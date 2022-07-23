@@ -89,6 +89,17 @@ namespace AMFramework.Components.Button
             }
         }
 
+        private object _modelTag = null;
+
+        public object ModelTag 
+        { 
+            get { return _modelTag; } 
+            set 
+            { 
+                _modelTag = value;
+                OnPropertyChanged("ModelTag");
+            }
+        }
 
 
 

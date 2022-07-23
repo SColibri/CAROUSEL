@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 
 	HelpOptions Options(argc, argv);
 	if (Options.get_help() == "TRUE") { Options.Show_help(); }
-	else if (Options.get_terminal() == "EMPTY")
+	else if (Options.get_terminal() == "TRUE")
 	{
 		system("cls");
 		MenuOption_Main menuOptionMain;

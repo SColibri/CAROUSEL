@@ -156,9 +156,9 @@ namespace API_Scripting
 	{
 		std::string out = "select-phases ";
 
-		for each (std::string elementy in Phases)
+		for (std::string& elementy : Phases)
 		{
-			out += elementy + " ";
+			out += string_manipulators::trim_whiteSpace(elementy) + " ";
 		}
 
 		out += "";
@@ -311,7 +311,15 @@ namespace API_Scripting
 
 		for (std::string phaseN : Phases)
 		{
-			out.push_back("F$" + phaseN + "_S");
+			if(string_manipulators::find_index_of_keyword(phaseN, "LIQUID") == std::string::npos)
+			{
+				out.push_back("F$" + string_manipulators::trim_whiteSpace(phaseN) + "_S");
+			}
+			else
+			{
+				out.push_back("F$" + string_manipulators::trim_whiteSpace(phaseN));
+			}
+			
 		}
 
 		return out;
@@ -372,7 +380,7 @@ namespace API_Scripting
 		out.push_back(Script_setStepOptions("temperature-in-celsius=yes")); // TODO this should be based on eConfig
 		out.push_back(Script_setStepOptions("range start=" + std::to_string((int)startTemperature) +
 												 " stop=" + std::to_string((int)endTemperature) + 
-												 " scale=lin step-width=1"));
+												 " scale=lin step-width=25"));
 		out.push_back(Script_stepEquilibrium());
 
 		return out;
@@ -389,7 +397,22 @@ namespace API_Scripting
 		std::vector<std::string> out;
 		out.push_back(script_set_thermodynamic_database(configuration->get_ThermodynamicDatabase_path()));
 		out.push_back(Script_selectElements(Elements));
-		out.push_back(Script_selectPhases(Phases));
+		
+		if(Phases.size() < 11)
+		{
+			out.push_back(Script_selectPhases(Phases));
+		}
+		else
+		{
+			int Index = 0;
+			for (int n1 = Index; n1 < Phases.size(); n1++)
+			{
+				out.push_back(Script_selectPhases(std::vector<std::string>{Phases[n1]}));
+			}
+			
+		}
+		
+		
 		out.push_back(Script_readThermodynamicDatabase());
 		out.push_back(Script_readMobilityDatabase(configuration));
 		out.push_back(Script_readPhysicalDatabase(configuration));

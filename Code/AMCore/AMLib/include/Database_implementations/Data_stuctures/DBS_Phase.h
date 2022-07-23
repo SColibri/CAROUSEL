@@ -58,6 +58,7 @@ public:
 
 	virtual int load(std::vector<std::string>& rawData) override
 	{
+		_id = -1;
 		if (rawData.size() < 2) return 1;
 		set_id(std::stoi(rawData[0]));
 		Name = rawData[1];
@@ -67,7 +68,7 @@ public:
 	virtual int check_before_save() override
 	{
 		if (Name.length() == 0) return 1;
-		if (element_exists(Name) == true) return 1;
+		//if (element_exists(Name) == true) return 1;
 
 		return 0;
 	}

@@ -181,6 +181,28 @@ namespace AMFramework.Model
                 OnPropertyChanged("IsSelected");
             }
         }
+
+        private string _phaseName = "";
+        public string PhaseName 
+        { 
+            get { return _phaseName; } 
+            set 
+            { 
+                _phaseName = value;
+                OnPropertyChanged("PhaseName");
+            }
+        }
+
+        private string _domainName = "";
+        public string DomainName
+        {
+            get { return _domainName; }
+            set
+            {
+                _domainName = value;
+                OnPropertyChanged("DomainName");
+            }
+        }
         #endregion
 
         #region Interfaces

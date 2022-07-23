@@ -138,6 +138,9 @@ protected:
 		add_new_function(state, "run_lua_script", "string output", "run_lua_script <filename>", baseBind_run_lua_script);
 		add_new_function(state, "add_function_to_framework", "string output", "add_function_to_framework <function name, output, usage>", Bind_add_function_to_framework);
 
+		// ###-> LUA_GUI
+		add_new_function(state, "msgbox", "string OK", "add_function_to_framework <Message>", Bind_lua_msgbox);
+
 		// Database
 		add_new_function(state, "database_tableQuery", "string, csv format, delimiter comma char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
 		add_new_function(state, "database_table_custom_query", "string, csv format, delimiter comma char", "database_tableFullQuery <Full query>", baseBind_DatabaseByQuery);
@@ -148,9 +151,11 @@ protected:
 
 		//Project
 		//------- Binded to open project
+		
+		add_new_function(state, "project_new", "string", "project_new <string Name>", Bind_project_new);
+
 		add_new_function(state, "project_loadID", "string", "project_selectID <int>", Bind_project_loadID);
 		add_new_function(state, "project_loadName", "string", "project_loadName <string>", Bind_project_loadName);
-		add_new_function(state, "project_new", "string", "project_new <string Name>", Bind_project_new);
 		add_new_function(state, "project_setName", "string", "project_setName <new name>", Bind_project_setName);
 		add_new_function(state, "project_getData", "string csv format", "project_getData", Bind_project_getData);
 		add_new_function(state, "project_setData", "string csv format", "project_setData <int ID>,<string Name>", Bind_project_setData);
@@ -161,22 +166,123 @@ protected:
 		add_new_function(state, "project_getReferenceElement", "string", "project_getReferenceElement", Bind_project_getReferenceElement);
 		add_new_function(state, "project_getDataTableCases", "string", "project_getDataTableCases", Bind_project_getDataTableCases);
 
+#pragma region Item_Data
+		//###-> Project
+#pragma region Project
+		add_new_function(state, "project_save", "<INT> ID of new project", "project_save <string> csv format", Bind_Templated_Save<DBS_Project>);
+		add_new_function(state, "project_delete", "<String> OK", "Project_Delete <string> csv format", Bind_Templated_Delete<DBS_Project>);
+		add_new_function(state, "project_load_data", "<String> OK", "project_load_data <string> csv format", Bind_Templated_loadID<DBS_Project>);
+#pragma endregion
+
 		//###-> Active phases
 #pragma region ActivePhases_SaveDelete
-		add_new_function(state, "project_active_phases_save", "<ID> returns id of saved item", "project_active_phases_save <String> csv", Bind_ActivePhases_Save);
-		add_new_function(state, "project_active_phases_element_composition_save", "<ID> returns id of saved item", "project_active_phases_element_composition_save <String> csv", Bind_ActivePhases_Save);
-		add_new_function(state, "project_active_phases_configuration_save", "<ID> returns id of saved item", "project_active_phases_configuration_save <String> csv", Bind_ActivePhases_Save);
-		add_new_function(state, "project_active_phases_delete", "<string> OK", "project_active_phases_delete <String> csv", Bind_ActivePhases_Delete);
-		add_new_function(state, "project_active_phases_element_composition_delete", "<string> OK", "project_active_phases_element_composition_delete <String> csv", Bind_ActivePhasesElementComposition_Delete);
-		add_new_function(state, "project_active_phases_configuration_delete", "<string> ok", "project_active_phases_configuration_delete <String> csv", Bind_ActivePhasesConfiguration_Delete);
+		add_new_function(state, "project_active_phases_save", "<ID> returns id of saved item", "project_active_phases_save <String> csv", Bind_Templated_Save<DBS_ActivePhases>);
+		add_new_function(state, "project_active_phases_delete", "<string> OK", "project_active_phases_delete <String> csv", Bind_Templated_Delete<DBS_ActivePhases>);
+		add_new_function(state, "project_active_phases_loadID", "<ID> returns id of saved item", "project_active_phases_loadID <String> csv", Bind_Templated_loadID<DBS_ActivePhases>);
+
+		add_new_function(state, "project_active_phases_element_composition_save", "<ID> returns id of saved item", "project_active_phases_element_composition_save <String> csv", Bind_Templated_Save<DBS_ActivePhases_ElementComposition>);
+		add_new_function(state, "project_active_phases_element_composition_delete", "<string> OK", "project_active_phases_element_composition_delete <String> csv", Bind_Templated_Delete<DBS_ActivePhases_ElementComposition>);
+		add_new_function(state, "project_active_phases_element_composition_loadID", "<string> OK", "project_active_phases_element_composition_loadID <String> csv", Bind_Templated_loadID<DBS_ActivePhases_ElementComposition>);
+
+		add_new_function(state, "project_active_phases_configuration_save", "<ID> returns id of saved item", "project_active_phases_configuration_save <String> csv", Bind_Templated_Save<DBS_ActivePhases_Configuration>);
+		add_new_function(state, "project_active_phases_configuration_delete", "<string> ok", "project_active_phases_configuration_delete <String> csv", Bind_Templated_Delete<DBS_ActivePhases_Configuration>);
+		add_new_function(state, "project_active_phases_configuration_loadID", "<string> ok", "project_active_phases_configuration_loadID <String> csv", Bind_Templated_loadID<DBS_ActivePhases_Configuration>);
+#pragma endregion
+
+		//###-> Phases
+#pragma region Phases
+		add_new_function(state, "phase_save", "<string> OK", "phase_save <INT> ID", Bind_Templated_Save<DBS_Phase>);
+		add_new_function(state, "phase_delete", "<string> OK", "phase_delete <INT> ID", Bind_Templated_Delete<DBS_Phase>);
+		add_new_function(state, "phase_loadID", "<string> OK", "phase_loadID <String> csv", Bind_Templated_loadID<DBS_Phase>);
+#pragma endregion
+
+		//###-> Elements
+#pragma region Elements 
+		add_new_function(state, "element_save", "<string> OK", "element_save <INT> ID", Bind_Templated_Save<DBS_Element>);
+		add_new_function(state, "element_delete", "<string> OK", "element_delete <INT> ID", Bind_Templated_Delete<DBS_Element>);
+		add_new_function(state, "element_loadID", "<string> OK", "element_loadID <String> csv", Bind_Templated_loadID<DBS_Element>);
+#pragma endregion
+
+		//###-> Selected Phases
+#pragma region SelectedPhases 
+		add_new_function(state, "spc_selectedphase_save", "<string> OK", "spc_selectedphase_save <INT> ID", Bind_Templated_Save<DBS_SelectedPhases>);
+		add_new_function(state, "spc_selectedphase_delete", "<string> OK", "spc_selectedphase_delete <INT> ID", Bind_Templated_Delete<DBS_SelectedPhases>);
+		add_new_function(state, "spc_selectedphase_load_id", "<string> OK", "spc_selectedphase_load_id <String> csv", Bind_Templated_loadID<DBS_SelectedPhases>);
+		add_new_function(state, "spc_selectedphase_load_id_case", "<string> OK", "spc_selectedphase_load_id_case <String> csv", Bind_SelectedPhase_Load_CaseID);
+#pragma endregion
+
+		//###-> Selected Elements
+#pragma region SelectedElements
+		add_new_function(state, "spc_selectedelement_save", "<string> OK", "spc_selectedelement_save <INT> ID", Bind_Templated_Save<DBS_SelectedElements>);
+		add_new_function(state, "spc_selectedelement_delete", "<string> OK", "spc_selectedelement_delete <INT> ID", Bind_Templated_Delete<DBS_SelectedElements>);
+		add_new_function(state, "spc_selectedelement_load_id", "<string> OK", "spc_selectedelement_load_id <String> csv", Bind_Templated_loadID<DBS_SelectedElements>);
+		add_new_function(state, "spc_selectedelement_load_id_project", "<string> OK", "spc_selectedelement_load_id_project <String> csv", Bind_SelectedElement_Load_ProjectID);
+#pragma endregion
+
+		//###-> Selected Elements
+#pragma region ElementComposition 
+		add_new_function(state, "spc_elementcomposition_save", "<string> OK", "spc_elementcomposition_save <INT> ID", Bind_Templated_Save<DBS_ElementComposition>);
+		add_new_function(state, "spc_elementcomposition_delete", "<string> OK", "spc_elementcomposition_delete <INT> ID", Bind_Templated_Delete<DBS_ElementComposition>);
+		add_new_function(state, "spc_elementcomposition_load_id", "<string> OK", "spc_elementcomposition_load_id <String> csv", Bind_Templated_loadID<DBS_ElementComposition>);
+		add_new_function(state, "spc_elementcomposition_load_id_project", "<string> OK", "spc_elementcomposition_load_id_project <String> csv", Bind_ElementComposition_Load_CaseID);
 #pragma endregion
 
 		//###-> Precipitation
 #pragma region Precipitation_SaveDelete
-		add_new_function(state, "spc_precipitation_domain_save", "<string> OK", "spc_precipitation_domain_save <INT> ID", Bind_PrecipitationDomain_Save);
-		add_new_function(state, "spc_precipitation_phase_save", "<string> OK", "spc_precipitation_phase_save <INT> ID", Bind_PrecipitationPhase_Save);
-		add_new_function(state, "spc_precipitation_domain_delete", "<string> OK", "spc_precipitation_domain_delete <INT> ID", Bind_PrecipitationDomain_Delete);
-		add_new_function(state, "spc_precipitation_phase_delete", "<string> OK", "spc_precipitation_phase_delete <INT> ID", Bind_PrecipitationPhase_Delete);
+		add_new_function(state, "spc_precipitation_domain_save", "<string> OK", "spc_precipitation_domain_save <INT> ID", Bind_Templated_Save<DBS_PrecipitationDomain>);
+		add_new_function(state, "spc_precipitation_domain_delete", "<string> OK", "spc_precipitation_domain_delete <INT> ID", Bind_Templated_Delete<DBS_PrecipitationDomain>);
+		add_new_function(state, "spc_precipitation_domain_loadID", "<string> OK", "spc_precipitation_domain_loadID <INT> ID", Bind_Templated_loadID<DBS_PrecipitationDomain>);
+
+
+		add_new_function(state, "spc_precipitation_phase_save", "<string> OK", "spc_precipitation_phase_save <INT> ID", Bind_Templated_Save<DBS_PrecipitationPhase>);
+		add_new_function(state, "spc_precipitation_phase_delete", "<string> OK", "spc_precipitation_phase_delete <INT> ID", Bind_Templated_Delete<DBS_PrecipitationPhase>);
+		add_new_function(state, "spc_precipitation_phase_loadID", "<string> OK", "spc_precipitation_phase_loadID <INT> ID", Bind_Templated_loadID<DBS_PrecipitationPhase>);
+
+#pragma endregion
+
+		//###-> Scheil
+#pragma region Scheil
+		// Configuration
+		add_new_function(state, "spc_scheil_configuration_save", "<string> OK", "spc_scheil_configuration_save <INT> ID", Bind_Templated_Save<DBS_ScheilConfiguration>);
+		add_new_function(state, "spc_scheil_configuration_delete", "<string> OK", "spc_scheil_configuration_delete <INT> ID", Bind_Templated_Delete<DBS_ScheilConfiguration>);
+		add_new_function(state, "spc_scheil_configuration_loadID", "<string> OK", "spc_scheil_configuration_loadID <INT> ID", Bind_Templated_loadID<DBS_ScheilConfiguration>);
+		add_new_function(state, "spc_scheil_configuration_load_caseID", "<string> OK", "spc_scheil_configuration_load_caseID <String> csv", Bind_ScheilConfiguration_Load_CaseID);
+		
+		// Phase fractions
+		add_new_function(state, "spc_scheil_phasefraction_save", "<string> OK", "spc_scheil_phasefraction_save <INT> ID", Bind_Templated_Save<DBS_ScheilPhaseFraction>);
+		add_new_function(state, "spc_scheil_phasefraction_delete", "<string> OK", "spc_scheil_phasefraction_delete <INT> ID", Bind_Templated_Delete<DBS_ScheilPhaseFraction>);
+		add_new_function(state, "spc_scheil_phasefraction_loadID", "<string> OK", "spc_scheil_phasefraction_loadID <String> csv", Bind_Templated_loadID<DBS_ScheilPhaseFraction>);
+		add_new_function(state, "spc_scheil_phasefraction_load_caseID", "<string> OK", "spc_scheil_phasefraction_load_caseID <String> csv", Bind_ScheilPhaseFraction_Load_CaseID);
+#pragma endregion
+
+		//###-> Equilibrium
+#pragma region Equilibrium
+		// Equilibrium configurations
+		add_new_function(state, "spc_equilibrium_configuration_save", "<string> OK", "spc_equilibrium_configuration_save <INT> ID", Bind_Templated_Save<DBS_EquilibriumConfiguration>);
+		add_new_function(state, "spc_equilibrium_configuration_delete", "<string> OK", "spc_equilibrium_configuration_delete <INT> ID", Bind_Templated_Delete<DBS_EquilibriumConfiguration>);
+		add_new_function(state, "spc_equilibrium_configuration_loadID", "<string> OK", "spc_equilibrium_configuration_loadID <INT> ID", Bind_Templated_loadID<DBS_EquilibriumConfiguration>);
+		add_new_function(state, "spc_equilibrium_configuration_load_caseID", "<string> OK", "spc_equilibrium_configuration_load_caseID <String> csv", Bind_EquilibriumConfiguration_Load_CaseID);
+
+		//Equilibrium Phase fractions
+		add_new_function(state, "spc_equilibrium_phasefraction_save", "<string> OK", "spc_equilibrium_phasefraction_save <INT> ID", Bind_Templated_Save<DBS_EquilibriumPhaseFraction>);
+		add_new_function(state, "spc_equilibrium_phasefraction_delete", "<string> OK", "spc_equilibrium_phasefraction_delete <INT> ID", Bind_Templated_Delete<DBS_EquilibriumPhaseFraction>);
+		add_new_function(state, "spc_equilibrium_phasefraction_loadID", "<string> OK", "spc_equilibrium_phasefraction_loadID <String> csv", Bind_Templated_loadID<DBS_EquilibriumPhaseFraction>);
+		add_new_function(state, "spc_equilibrium_phasefraction_load_caseID", "<string> OK", "spc_equilibrium_phasefraction_load_caseID <String> csv", Bind_EquilibriumPhaseFraction_Load_CaseID);
+#pragma endregion
+
+		//###-> Case
+#pragma region Case
+		//Bind_Case_LoadÎD
+		add_new_function(state, "spc_case_save", "<string> OK", "spc_case_save <String> csv", Bind_Templated_Save<DBS_Case>);
+		add_new_function(state, "spc_case_load_id", "<string> csv", "spc_case_load_id <INT> ID Case", Bind_Templated_loadID<DBS_Case>);
+		add_new_function(state, "spc_case_delete", "<string> OK", "spc_case_delete <String> csv", Bind_Templated_Delete<DBS_Case>);
+		add_new_function(state, "spc_case_load_project_id", "<string> csv table", "spc_case_load_project_id <INT> ID project", Bind_Case_Load_ProjectID);
+#pragma endregion
+		//###-> Configuration
+#pragma region Configuration_SaveDelete
+
+#pragma endregion
+
 #pragma endregion
 
 		//###-> Pixel Case
@@ -294,6 +400,35 @@ protected:
 		return 0;
 	}
 
+	/// <summary>
+	/// For csv format data input, we check for the following:
+	/// First entry must be an integer reference to the ID of the object
+	/// It has to be of length > 0
+	/// </summary>
+	/// <param name="state"></param>
+	/// <param name="parameters"></param>
+	/// <returns></returns>
+	int static check_input_csv(lua_State* state, std::vector<std::string>& parameters, std::vector<std::string>& csvF)
+	{
+		parameters = get_parameters(state);
+		if (parameters.size() == 0)
+		{
+			lua_pushstring(state, "Input in csv format not given");
+			return 1;
+		}
+
+		// get csv input and check type
+		csvF = string_manipulators::split_text(string_manipulators::trim_whiteSpace(IAM_Database::csv_join_row(parameters, " ")), ",");
+		if (!string_manipulators::isNumber(csvF[0]))
+		{
+			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
+			lua_pushstring(state, IDerror.c_str());
+			return 1;
+		}
+
+		return 0;
+	}
+
 	std::vector<std::string> static get_parameters(lua_State* state) 
 	{
 		int noParameters = lua_gettop(state);
@@ -310,6 +445,35 @@ protected:
 #pragma endregion
 
 #pragma region BASE_FUNCTIONS
+
+#pragma region LUA_GUI
+	/// <summary>
+	/// Using windows api, show messagebox
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_lua_msgbox(lua_State* state)
+	{
+		std::vector<std::string> parameters = get_parameters(state);
+		if (parameters.size() < 1)
+		{
+			lua_pushstring(state, "Ups... what name should we use?");
+			return 1;
+		}
+
+		int msgboxID = MessageBox(
+			NULL,
+			(LPCSTR)parameters[0].c_str(),
+			(LPCSTR)"Account Details",
+			MB_ICONWARNING | MB_CANCELTRYCONTINUE | MB_DEFBUTTON2
+		);
+
+
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+#pragma endregion
 
 #pragma region LUA
 	static int Bind_add_function_to_framework(lua_State* state)
@@ -397,7 +561,7 @@ protected:
 	{
 		int noParameters = lua_gettop(state);
 		std::string parameter = lua_tostring(state, 1);
-		bool outy = luaL_dofile(state, "C:/Users/drogo/Desktop/Homless/TestLua.lua");// parameter.c_str());
+		bool outy = luaL_dofile(state, parameter.c_str());
 		return 1;
 	}
 
@@ -650,6 +814,126 @@ protected:
 #pragma region Data_controller
 
 #pragma region Project
+#pragma region Save
+	/// <summary>
+	/// Save Projects item using csv data as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_Project_Save(lua_State* state)
+	{
+		std::vector<std::string> parameters = get_parameters(state);
+		if (parameters.size() == 0)
+		{
+			lua_pushstring(state, "Input in csv format not given");
+			return 1;
+		}
+
+		// get csv input and check type
+		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
+		if (!string_manipulators::isNumber(csvF[0]))
+		{
+			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
+			lua_pushstring(state, IDerror.c_str());
+			return 1;
+		}
+
+		// create new config object if non existent
+		if (std::stoi(csvF[0]) == -1)
+		{
+			DBS_Project NewConfig(_dbFramework->get_database(), -1);
+			NewConfig.load(csvF);
+			NewConfig.save();
+			csvF[0] = std::to_string(NewConfig.id());
+		}
+
+		DBS_Project tempConfig(_dbFramework->get_database(), std::stoi(csvF[0]));
+		tempConfig.load(csvF);
+		tempConfig.save();
+
+		lua_pushstring(state, std::to_string(tempConfig.id()).c_str());
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Delete Project item using csv data as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_Project_Delete(lua_State* state)
+	{
+		std::vector<std::string> parameters = get_parameters(state);
+		if (parameters.size() == 0)
+		{
+			lua_pushstring(state, "Input in csv format not given");
+			return 1;
+		}
+
+		// get csv input and check type
+		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
+		if (!string_manipulators::isNumber(csvF[0]))
+		{
+			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
+			lua_pushstring(state, IDerror.c_str());
+			return 1;
+		}
+
+		// remove existing ID
+		if (std::stoi(csvF[0]) > -1)
+		{
+			DBS_Project::remove_project_data(_dbFramework->get_database(), std::stoi(csvF[0]));
+		}
+
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Load
+	/// <summary>
+	/// Load Project item returning csv data as output
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_Project_LoadData(lua_State* state)
+	{
+		std::vector<std::string> parameters = get_parameters(state);
+		if (parameters.size() == 0)
+		{
+			lua_pushstring(state, "Input in csv format not given");
+			return 1;
+		}
+
+		// get csv input and check type
+		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
+		AM_Database_Datatable loadTable(_dbFramework->get_database(), &AMLIB::TN_Projects());
+
+		if (!string_manipulators::isNumber(string_manipulators::trim_whiteSpace(csvF[0])))
+		{
+			loadTable.load_data("Name = \'" + string_manipulators::trim_whiteSpace(IAM_Database::csv_join_row(csvF, " ")) + "\' ");
+		}
+		else
+		{
+			loadTable.load_data("ID = " + csvF[0]);
+		}
+
+		// remove existing ID
+		DBS_Project loadedProject(_dbFramework->get_database(), -1);
+		std::string out = IAM_Database::csv_join_row(loadedProject.get_input_vector(),",");
+
+		if (loadTable.row_count() > 0)
+		{
+			loadedProject.load(loadTable.get_row_data(0));
+			out = IAM_Database::csv_join_row(loadedProject.get_input_vector(), ",");
+		}
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+#pragma endregion
+
 	/// <summary>
 	/// Select project by ID
 	/// </summary>
@@ -731,18 +1015,24 @@ protected:
 	/// <returns></returns>
 	static int Bind_project_new(lua_State* state)
 	{
-		if (_openProject != nullptr) delete _openProject;
-		_openProject = new AM_Project(_dbFramework->get_database(), _configuration, "Empty project");
-
 		std::vector<std::string> parameters = get_parameters(state);
-		if(parameters.size() == 0)
+		if (parameters.size() == 0)
 		{
 			lua_pushstring(state, "Bind_project_new: Error, missing input");
 			return 1;
 		}
 
-		_openProject->set_project_name(IAM_Database::csv_join_row(parameters, " "), _dbFramework->get_apiPath(), _dbFramework->get_apiExternalPath());
+		std::string projectName = IAM_Database::csv_join_row(parameters, " ");
+		projectName = string_manipulators::trim_whiteSpace(projectName);
 
+		if (_openProject != nullptr) delete _openProject;
+		_openProject = new AM_Project(_dbFramework->get_database(), _configuration, projectName);
+
+		if(_openProject->get_project_ID() == -1)
+		{
+			_openProject->set_project_name(projectName, _dbFramework->get_apiPath(), _dbFramework->get_apiExternalPath());
+		}
+		
 		lua_pushstring(state, std::to_string(_openProject->get_project_ID()).c_str());
 		return 1;
 	}
@@ -918,37 +1208,12 @@ protected:
 	/// <returns></returns>
 	static int Bind_ActivePhases_Save(lua_State* state)
 	{
-		std::vector<std::string> parameters = get_parameters(state);
-		if (parameters.size() == 0)
-		{
-			lua_pushstring(state, "Input in csv format not given");
-			return 1;
-		}
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
 
-		// get csv input and check type
-		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
-		if (!string_manipulators::isNumber(csvF[0]))
-		{
-			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
-			lua_pushstring(state, IDerror.c_str());
-			return 1;
-		}
-
-		// create new config object if non existent
-		if (std::stoi(csvF[0]) == -1)
-		{
-			DBS_ActivePhases NewConfig(_dbFramework->get_database(), -1);
-			NewConfig.load(csvF);
-			NewConfig.save();
-			csvF[0] = std::to_string(NewConfig.id());
-		}
-
-		DBS_ActivePhases tempConfig(_dbFramework->get_database(), std::stoi(csvF[0]));
-		tempConfig.load(csvF);
-		tempConfig.save();
-
-
-		lua_pushstring(state, std::to_string(tempConfig.id()).c_str());
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_ActivePhases(_dbFramework->get_database(), -1), csvF)).c_str());
 		return 1;
 	}
 
@@ -959,37 +1224,12 @@ protected:
 	/// <returns></returns>
 	static int Bind_ActivePhasesElementComposition_Save(lua_State* state)
 	{
-		std::vector<std::string> parameters = get_parameters(state);
-		if (parameters.size() == 0)
-		{
-			lua_pushstring(state, "Input in csv format not given");
-			return 1;
-		}
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
 
-		// get csv input and check type
-		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
-		if (!string_manipulators::isNumber(csvF[0]))
-		{
-			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
-			lua_pushstring(state, IDerror.c_str());
-			return 1;
-		}
-
-		// create new config object if non existent
-		if (std::stoi(csvF[0]) == -1)
-		{
-			DBS_ActivePhases_ElementComposition NewConfig(_dbFramework->get_database(), -1);
-			NewConfig.load(csvF);
-			NewConfig.save();
-			csvF[0] = std::to_string(NewConfig.id());
-		}
-
-		DBS_ActivePhases_ElementComposition tempConfig(_dbFramework->get_database(), std::stoi(csvF[0]));
-		tempConfig.load(csvF);
-		tempConfig.save();
-
-
-		lua_pushstring(state, std::to_string(tempConfig.id()).c_str());
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_ActivePhases_ElementComposition(_dbFramework->get_database(), -1), csvF)).c_str());
 		return 1;
 	}
 
@@ -1000,37 +1240,12 @@ protected:
 	/// <returns></returns>
 	static int Bind_ActivePhasesConfiguration_Save(lua_State* state)
 	{
-		std::vector<std::string> parameters = get_parameters(state);
-		if (parameters.size() == 0)
-		{
-			lua_pushstring(state, "Input in csv format not given");
-			return 1;
-		}
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
 
-		// get csv input and check type
-		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
-		if (!string_manipulators::isNumber(csvF[0]))
-		{
-			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
-			lua_pushstring(state, IDerror.c_str());
-			return 1;
-		}
-
-		// create new config object if non existent
-		if (std::stoi(csvF[0]) == -1)
-		{
-			DBS_ActivePhases_Configuration NewConfig(_dbFramework->get_database(), -1);
-			NewConfig.load(csvF);
-			NewConfig.save();
-			csvF[0] = std::to_string(NewConfig.id());
-		}
-
-		DBS_ActivePhases_Configuration tempConfig(_dbFramework->get_database(), std::stoi(csvF[0]));
-		tempConfig.load(csvF);
-		tempConfig.save();
-
-
-		lua_pushstring(state, std::to_string(tempConfig.id()).c_str());
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_ActivePhases_Configuration(_dbFramework->get_database(), -1), csvF)).c_str());
 		return 1;
 	}
 #pragma endregion
@@ -1042,29 +1257,13 @@ protected:
 	/// <returns></returns>
 	static int Bind_ActivePhases_Delete(lua_State* state)
 	{
-		std::vector<std::string> parameters = get_parameters(state);
-		if (parameters.size() == 0)
-		{
-			lua_pushstring(state, "Input in csv format not given");
-			return 1;
-		}
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
 
-		// get csv input and check type
-		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
-		if (!string_manipulators::isNumber(csvF[0]))
-		{
-			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
-			lua_pushstring(state, IDerror.c_str());
-			return 1;
-		}
-
-		// remove existing ID
-		if (std::stoi(csvF[0]) > -1)
-		{
-			int result = _dbFramework->get_database()->remove_row(&AMLIB::TN_ActivePhases(),"ID=" + csvF[0]);
-		}
-
-		lua_pushstring(state, "OK");
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_ActivePhases(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
 		return 1;
 	}
 
@@ -1075,29 +1274,13 @@ protected:
 	/// <returns></returns>
 	static int Bind_ActivePhasesElementComposition_Delete(lua_State* state)
 	{
-		std::vector<std::string> parameters = get_parameters(state);
-		if (parameters.size() == 0)
-		{
-			lua_pushstring(state, "Input in csv format not given");
-			return 1;
-		}
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
 
-		// get csv input and check type
-		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
-		if (!string_manipulators::isNumber(csvF[0]))
-		{
-			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
-			lua_pushstring(state, IDerror.c_str());
-			return 1;
-		}
-
-		// remove existing ID
-		if (std::stoi(csvF[0]) > -1)
-		{
-			int result = _dbFramework->get_database()->remove_row(&AMLIB::TN_ActivePhases_ElementComposition(), "ID=" + csvF[0]);
-		}
-
-		lua_pushstring(state, "OK");
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_ActivePhases_ElementComposition(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
 		return 1;
 	}
 
@@ -1108,30 +1291,13 @@ protected:
 	/// <returns></returns>
 	static int Bind_ActivePhasesConfiguration_Delete(lua_State* state)
 	{
-		std::vector<std::string> parameters = get_parameters(state);
-		if (parameters.size() == 0)
-		{
-			lua_pushstring(state, "Input in csv format not given");
-			return 1;
-		}
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
 
-		// get csv input and check type
-		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
-		if (!string_manipulators::isNumber(csvF[0]))
-		{
-			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
-			lua_pushstring(state, IDerror.c_str());
-			return 1;
-		}
-
-		// create new config object if non existent
-		// remove existing ID
-		if (std::stoi(csvF[0]) > -1)
-		{
-			int result = _dbFramework->get_database()->remove_row(&AMLIB::TN_ActivePhases_Configuration(), "ID=" + csvF[0]);
-		}
-
-		lua_pushstring(state, "OK");
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_ActivePhases_Configuration(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
 		return 1;
 	}
 #pragma endregion
@@ -1139,7 +1305,6 @@ protected:
 #pragma endregion
 
 #pragma region Precipitation
-
 #pragma region Save
 	/// <summary>
 	/// Save precipitatio Domain item using csv as input
@@ -1148,36 +1313,12 @@ protected:
 	/// <returns></returns>
 	static int Bind_PrecipitationDomain_Save(lua_State* state)
 	{
-		std::vector<std::string> parameters = get_parameters(state);
-		if (parameters.size() == 0)
-		{
-			lua_pushstring(state, "Input in csv format not given");
-			return 1;
-		}
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
 
-		// get csv input and check type
-		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
-		if (!string_manipulators::isNumber(csvF[0]))
-		{
-			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
-			lua_pushstring(state, IDerror.c_str());
-			return 1;
-		}
-
-		// create new config object if non existent
-		if (std::stoi(csvF[0]) == -1)
-		{
-			DBS_PrecipitationDomain NewConfig(_dbFramework->get_database(), -1);
-			NewConfig.load(csvF);
-			NewConfig.save();
-			csvF[0] = std::to_string(NewConfig.id());
-		}
-
-		DBS_PrecipitationDomain tempConfig(_dbFramework->get_database(), std::stoi(csvF[0]));
-		tempConfig.load(csvF);
-		tempConfig.save();
-
-		lua_pushstring(state, std::to_string(tempConfig.id()).c_str());
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_PrecipitationDomain(_dbFramework->get_database(), -1), csvF)).c_str());
 		return 1;
 	}
 
@@ -1188,41 +1329,16 @@ protected:
 	/// <returns></returns>
 	static int Bind_PrecipitationPhase_Save(lua_State* state)
 	{
-		std::vector<std::string> parameters = get_parameters(state);
-		if (parameters.size() == 0)
-		{
-			lua_pushstring(state, "Input in csv format not given");
-			return 1;
-		}
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
 
-		// get csv input and check type
-		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
-		if (!string_manipulators::isNumber(csvF[0]))
-		{
-			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
-			lua_pushstring(state, IDerror.c_str());
-			return 1;
-		}
-
-		// create new config object if non existent
-		if (std::stoi(csvF[0]) == -1)
-		{
-			DBS_PrecipitationPhase NewConfig(_dbFramework->get_database(), -1);
-			NewConfig.load(csvF);
-			NewConfig.save();
-			csvF[0] = std::to_string(NewConfig.id());
-		}
-
-		DBS_PrecipitationPhase tempConfig(_dbFramework->get_database(), std::stoi(csvF[0]));
-		tempConfig.load(csvF);
-		tempConfig.save();
-
-		lua_pushstring(state, std::to_string(tempConfig.id()).c_str());
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_PrecipitationPhase(_dbFramework->get_database(), -1), csvF)).c_str());
 		return 1;
 	}
 #pragma endregion
-
-#pragma region remove
+#pragma region Delete
 	/// <summary>
 	/// Remove Precipitatio Domain entry
 	/// </summary>
@@ -1230,29 +1346,13 @@ protected:
 	/// <returns></returns>
 	static int Bind_PrecipitationDomain_Delete(lua_State* state)
 	{
-		std::vector<std::string> parameters = get_parameters(state);
-		if (parameters.size() == 0)
-		{
-			lua_pushstring(state, "Input in csv format not given");
-			return 1;
-		}
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
 
-		// get csv input and check type
-		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
-		if (!string_manipulators::isNumber(csvF[0]))
-		{
-			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
-			lua_pushstring(state, IDerror.c_str());
-			return 1;
-		}
-
-		// remove existing ID
-		if (std::stoi(csvF[0]) > -1)
-		{
-			int result = _dbFramework->get_database()->remove_row(&AMLIB::TN_PrecipitationDomain(), "ID=" + csvF[0]);
-		}
-
-		lua_pushstring(state, "OK");
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_PrecipitationDomain(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
 		return 1;
 	}
 
@@ -1263,35 +1363,840 @@ protected:
 	/// <returns></returns>
 	static int Bind_PrecipitationPhase_Delete(lua_State* state)
 	{
-		std::vector<std::string> parameters = get_parameters(state);
-		if (parameters.size() == 0)
-		{
-			lua_pushstring(state, "Input in csv format not given");
-			return 1;
-		}
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
 
-		// get csv input and check type
-		std::vector<string> csvF = string_manipulators::split_text(IAM_Database::csv_join_row(parameters, " "), ",");
-		if (!string_manipulators::isNumber(csvF[0]))
-		{
-			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
-			lua_pushstring(state, IDerror.c_str());
-			return 1;
-		}
-
-		// remove existing ID
-		if (std::stoi(csvF[0]) > -1)
-		{
-			int result = _dbFramework->get_database()->remove_row(&AMLIB::TN_PrecipitationPhase(), "ID=" + csvF[0]);
-		}
-
-		lua_pushstring(state, "OK");
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_PrecipitationPhase(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
 		return 1;
 	}
 #pragma endregion
 
+#pragma endregion
+
+#pragma region Equilibrium
+#pragma region Save
+	/// <summary>
+	/// Save precipitatio Domain item using csv as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_EquilibriumConfiguration_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_EquilibriumConfiguration(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
 
 #pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Remove Precipitatio Domain entry
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_EquilibriumConfiguration_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_EquilibriumConfiguration(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+
+#pragma endregion
+#pragma region load
+	/// <summary>
+	/// Load case by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_EquilibriumConfiguration_Load_CaseID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_EquilibriumConfiguration());
+		DT.load_data("IDCase = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+#pragma endregion
+
+#pragma region Scheil
+#pragma region Save
+	/// <summary>
+	/// Save precipitatio Domain item using csv as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_ScheilConfiguration_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_ScheilConfiguration(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Remove Precipitatio Domain entry
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_ScheilConfiguration_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_ScheilConfiguration(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+
+#pragma endregion
+#pragma region load
+	/// <summary>
+	/// Load Scheil Configuration by ID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_ScheilConfiguration_LoadID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_ScheilConfiguration());
+		DT.load_data("ID = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Load case by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_ScheilConfiguration_Load_CaseID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_ScheilConfiguration());
+		DT.load_data("IDCase = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+#pragma endregion
+
+#pragma region Phases
+#pragma region Save
+	/// <summary>
+	/// Save precipitatio Domain item using csv as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_Phase_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_Phase(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Remove Precipitatio Domain entry
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_Phase_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_Phase(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+
+#pragma endregion
+#pragma region load
+	/// <summary>
+	/// Load case by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_Phase_LoadID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_Phase());
+		DT.load_data("ID = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+#pragma endregion
+
+#pragma region Elements
+#pragma region Save
+	/// <summary>
+	/// Save precipitatio Domain item using csv as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_Element_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_Element(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Remove Precipitatio Domain entry
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_Element_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_Element(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+
+#pragma endregion
+#pragma region load
+	/// <summary>
+	/// Load case by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_Element_LoadID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_Element());
+		DT.load_data("ID = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+#pragma endregion
+
+#pragma region SelectedPhase
+#pragma region Save
+	/// <summary>
+	/// Save Selected phase item using csv as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_SelectedPhase_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_SelectedPhases(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Remove Selected phase Domain entry
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_SelectedPhase_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_SelectedPhases(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+
+#pragma endregion
+#pragma region load
+	/// <summary>
+	/// Load selected phase by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_SelectedPhase_Load_CaseID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_SelectedPhases());
+		DT.load_data("IDCase = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Load selected phase by ID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_SelectedPhase_LoadID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_SelectedPhases());
+		DT.load_data("ID = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+#pragma endregion
+
+#pragma region SelectedElement
+#pragma region Save
+	/// <summary>
+	/// Save Selected phase item using csv as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_SelectedElement_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_SelectedElements(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Remove Selected phase Domain entry
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_SelectedElement_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_SelectedElements(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+
+#pragma endregion
+#pragma region load
+	/// <summary>
+	/// Load selected phase by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_SelectedElement_Load_ProjectID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_SelectedElements());
+		DT.load_data("IDProject = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Load selected phase by ID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_SelectedElement_LoadID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_SelectedElements());
+		DT.load_data("ID = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+#pragma endregion
+
+#pragma region ElementComposition
+#pragma region Save
+	/// <summary>
+	/// Save Selected phase item using csv as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_ElementComposition_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_ElementComposition(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Remove Selected phase Domain entry
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_ElementComposition_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_ElementComposition(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+
+#pragma endregion
+#pragma region load
+	/// <summary>
+	/// Load selected phase by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_ElementComposition_Load_CaseID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_ElementComposition());
+		DT.load_data("IDCase = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Load selected phase by ID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_ElementComposition_LoadID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_ElementComposition());
+		DT.load_data("ID = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+#pragma endregion
+
+#pragma region EquilibriumPhaseFraction
+#pragma region Save
+	/// <summary>
+	/// Save Selected phase item using csv as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_EquilibriumPhaseFraction_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_EquilibriumPhaseFraction(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Remove Selected phase Domain entry
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_EquilibriumPhaseFraction_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_EquilibriumPhaseFraction(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+
+#pragma endregion
+#pragma region load
+	/// <summary>
+	/// Load selected phase by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_EquilibriumPhaseFraction_Load_CaseID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_EquilibriumPhaseFractions());
+		DT.load_data("IDCase = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Load selected phase by ID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_EquilibriumPhaseFraction_LoadID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_EquilibriumPhaseFractions());
+		DT.load_data("ID = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+#pragma endregion
+
+#pragma region ScheilPhaseFraction
+#pragma region Save
+	/// <summary>
+	/// Save Selected phase item using csv as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_ScheilPhaseFraction_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_ScheilPhaseFraction(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Remove Selected phase Domain entry
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_ScheilPhaseFraction_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS_ScheilPhaseFraction(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+
+#pragma endregion
+#pragma region load
+	/// <summary>
+	/// Load selected phase by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_ScheilPhaseFraction_Load_CaseID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_ScheilPhaseFraction());
+		DT.load_data("IDCase = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Load selected phase by ID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_ScheilPhaseFraction_LoadID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_ScheilPhaseFraction());
+		DT.load_data("ID = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+#pragma endregion
+
+#pragma region Case
+#pragma region load
+	/// <summary>
+	/// Load case by ID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_Case_LoadID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		DBS_Case Item(_dbFramework->get_database(), std::stoi(parameters[0]));
+		Item.load();
+		
+		// send csv
+		lua_pushstring(state, IAM_Database::csv_join_row(Item.get_input_vector(), ",").c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Load case by ID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_Case_Load_ProjectID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_Case());
+		DT.load_data("IDProject = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+
+#pragma region Save
+	/// <summary>
+	/// Save precipitatio Domain item using csv as input
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_Case_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS_Case(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
+
+#pragma endregion
+#pragma region Delete
+	/// <summary>
+	/// Remove Precipitatio Domain entry
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_Case_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state, 
+					  (IAM_DBS::remove_byID(&DBS_Case(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+
+#pragma endregion
+#pragma endregion
+
+#pragma region Template_Data_Manage
+	/// <summary>
+	/// Load a DBS object
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	template<typename DBS>
+	static int Bind_Templated_loadID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		DBS Item(_dbFramework->get_database(), std::stoi(parameters[0]));
+		Item.load();
+
+		// send csv
+		lua_pushstring(state, IAM_Database::csv_join_row(Item.get_input_vector(), ",").c_str());
+		return 1;
+	}
+
+
+	/// <summary>
+	/// Remove as DBS Object
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	template<typename DBS>
+	static int Bind_Templated_Delete(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// Remove data
+		lua_pushstring(state,
+			(IAM_DBS::remove_byID(&DBS(_dbFramework->get_database(), -1), csvF) == 0) ? "OK" : "Error");
+		return 1;
+	}
+
+	/// <summary>
+	/// Save a DBS object
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	template<typename DBS>
+	static int Bind_Templated_Save(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// save
+		lua_pushstring(state, std::to_string(IAM_DBS::save(&DBS(_dbFramework->get_database(), -1), csvF)).c_str());
+		return 1;
+	}
+
+#pragma endregion
+
 
 #pragma region SinglePixelCase
 	
@@ -1920,4 +2825,5 @@ protected:
 	}
 #pragma endregion
 
+#pragma region
 };

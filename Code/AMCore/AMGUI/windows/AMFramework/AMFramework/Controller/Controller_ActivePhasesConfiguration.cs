@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Windows.Input;
 
 namespace AMFramework.Controller
 {
@@ -64,6 +65,63 @@ namespace AMFramework.Controller
         public static void Save(Model.Model_ActivePhasesConfiguration model) 
         { 
             
+        }
+        #endregion
+
+        #region Commands
+        #region FindActivePhases
+
+        private ICommand _Find_Active_Phases;
+        public ICommand Find_Active_Phases
+        {
+            get
+            {
+                if (_Find_Active_Phases == null)
+                {
+                    _Find_Active_Phases = new RelayCommand(
+                        param => this.Find_Active_Phases_Action(),
+                        param => this.Can_Find_Active_Phases()
+                    );
+                }
+                return _Find_Active_Phases;
+            }
+        }
+
+        private void Find_Active_Phases_Action()
+        {
+            if(Searching_Active_Phases) return;
+
+            Searching_Active_Phases = true;
+            System.Threading.Thread TH01 = new(Method_Find_Active_Phases);
+            TH01.Start();
+        }
+
+        private bool Can_Find_Active_Phases()
+        {
+            return true;
+        }
+        #endregion
+        #endregion
+
+        #region Methods
+        private void Method_Find_Active_Phases() 
+        {
+            string outy = _AMCore_Socket.run_lua_command("get_active_phases",_ProjectController.SelectedProject.ID.ToString());
+            Searching_Active_Phases = false;
+            _ProjectController.Refresh_ActivePhases();
+        }
+        #endregion
+
+        #region Flags
+        private bool _Searching_Active_Phases = false;
+        public bool Searching_Active_Phases 
+        {
+            get { return _Searching_Active_Phases; } 
+            set 
+            {
+                _Searching_Active_Phases = value;
+                OnPropertyChanged("Searching_Active_Phases");
+            }
         }
         #endregion
 

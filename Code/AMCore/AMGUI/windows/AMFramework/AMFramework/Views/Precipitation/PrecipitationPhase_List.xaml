@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="AMFramework.Views.Precipitation.PrecipitationPhase_List"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AMFramework.Views.Precipitation" 
+             xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_Cases}"
+             xmlns:button="clr-namespace:AMFramework.Components.Button"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <ItemsControl ItemsSource="{Binding Path=SelectedCase.PrecipitationPhases, UpdateSourceTrigger=PropertyChanged}"
+                      Margin="5">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="25"/>
+                        </Grid.ColumnDefinitions>
+                        <Border BorderBrush="Silver" BorderThickness="0,0,0,1" Margin="15,0,15,0" Grid.ColumnSpan="2">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="White" Offset="0.0"/>
+                                    <GradientStop Color="AliceBlue" Offset="0.2"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <TextBlock Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}" 
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        <button:AM_button Grid.Column="2" IconName="Pencil" Width="25" Height="25" 
+                                          GradientTransition="Green" HorizontalAlignment="Center" VerticalAlignment="Center" ClickButton="AM_button_edit_ClickButton" Tag="{Binding}" Visibility="Hidden"/>
+                        <Button Grid.Column="1" Width="25" Height="25" Content="edit"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Click="Button_Click" Tag="{Binding}"/>
+
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>  
+    </Grid>
+</UserControl>

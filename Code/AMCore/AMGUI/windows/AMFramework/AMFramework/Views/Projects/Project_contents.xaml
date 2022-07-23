@@ -110,7 +110,8 @@
         
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel MinWidth="450">
-                <GroupBox Header="General" Margin="5" BorderThickness="2" BorderBrush="Black">
+                <GroupBox Header="General" Margin="5" BorderThickness="2" BorderBrush="Black"
+                          Style="{StaticResource AM_Groupbox}">
                     <Grid Margin="5">
                         <WrapPanel>
                             <Border Background="AliceBlue" CornerRadius="5" BorderThickness="1" BorderBrush="Silver" Margin="2">
@@ -132,13 +133,15 @@
                     </Grid>
                 </GroupBox>
 
-                <GroupBox Header="CALPHAD" Margin="5" BorderThickness="2" BorderBrush="Black">
+                <GroupBox Header="CALPHAD" Margin="5" BorderThickness="2" BorderBrush="Black"
+                          Style="{StaticResource AM_Groupbox}">
                     <Grid Margin="5">
                         
                     </Grid>
                 </GroupBox>
 
-                <GroupBox Header="Elements" Margin="5" BorderThickness="2" BorderBrush="Black">
+                <GroupBox Header="Elements" Margin="5" BorderThickness="2" BorderBrush="Black"
+                          Style="{StaticResource AM_Groupbox}">
                     <Grid Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
@@ -146,7 +149,8 @@
                         </Grid.ColumnDefinitions>
 
                         
-                        <GroupBox Header="Selected Elements" Grid.Column="0" Margin="5" Background="AliceBlue" MinWidth="100">
+                        <GroupBox Header="Selected Elements" Grid.Column="0" Margin="5" Background="AliceBlue" 
+                                  MinWidth="100" >
                             <ListBox x:Name="listboxElements" ItemsSource="{Binding Path=SelectedElements, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" 
                                      SelectionMode="Single">
                                 <ListBox.ItemTemplate>
@@ -198,7 +202,8 @@
                     </Grid>
                 </GroupBox>
 
-                <GroupBox Header="Active phases" Margin="5" BorderThickness="2" BorderBrush="Black">
+                <GroupBox Header="Active phases" Margin="5" BorderThickness="2" BorderBrush="Black"
+                          Style="{StaticResource AM_Groupbox}">
                     <Grid Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
@@ -206,8 +211,12 @@
                         </Grid.ColumnDefinitions>
 
                         <GroupBox Header="Phases" Grid.Column="0" Margin="5" Background="AliceBlue" MinWidth="100"> 
-                            <ListBox>
-                                
+                            <ListBox ItemsSource="{Binding Path=ActivePhasesController.ActivePhases}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=PhaseName}"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
                             </ListBox>
                         </GroupBox>
 
@@ -228,11 +237,11 @@
 
                                     <StackPanel Margin="5" Grid.Column="0">
                                         <TextBlock Text="Start:" Margin="5,5,5,0"/>
-                                        <TextBox Margin="5"/>
+                                        <TextBox Margin="5" Text="{Binding Path=ActivePhasesConfigurationController.APConfiguration.StartTemp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                     </StackPanel>
                                     <StackPanel Margin="5" Grid.Column="1">
                                         <TextBlock Text="End:" Margin="5,5,5,0"/>
-                                        <TextBox Margin="5"/>
+                                        <TextBox Margin="5" Text="{Binding Path=ActivePhasesConfigurationController.APConfiguration.EndTemp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                     </StackPanel>
                                 </Grid>
                                 
@@ -254,10 +263,11 @@
 
                                     <CheckBox Content="Use Scheil model" 
                                               Margin="5"
-                                              ToolTip="Determine availabl phases using Schiel calculations">
-                                        
+                                              ToolTip="Determine availabl phases using Schiel calculations" IsChecked="True" IsEnabled="False">
+
                                     </CheckBox>
-                                    <Button Content="Find active phases" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
+                                    <Button Content="Find active phases" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+                                            Command="{Binding Path=ActivePhasesConfigurationController.Find_Active_Phases}">
                                         <Button.Resources>
                                             <Style TargetType="Border">
                                                 <Setter Property="CornerRadius" Value="3"/>
@@ -269,11 +279,16 @@
 
                             </GroupBox>
                         </Grid>
-                        
+
+                        <Grid Grid.ColumnSpan="2" Grid.RowSpan="2" Visibility="{Binding Path=ActivePhasesConfigurationController.Searching_Active_Phases, Converter={StaticResource BoolToVis}}">
+                            <Grid Background="Black" Opacity="0.7"></Grid>
+                            <fa:ImageAwesome Icon="Spinner" Spin="True" SpinDuration="6" Width="25" Height="25"/>
+                        </Grid>
                     </Grid>
                 </GroupBox>
 
-                <GroupBox Header="Single pixel cases" Margin="5" BorderThickness="2" BorderBrush="Black">
+                <GroupBox Header="Single pixel cases" Margin="5" BorderThickness="2" BorderBrush="Black"
+                          Style="{StaticResource AM_Groupbox}">
                     <Grid Margin="5" HorizontalAlignment="Left">
                         <WrapPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                             <GroupBox Header="Search" 

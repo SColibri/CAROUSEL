@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:AMFramework.Components.Button"
              mc:Ignorable="d" 
              d:DesignHeight="25" d:DesignWidth="25">
-    <Grid>
+    <Grid UseLayoutRounding="True">
         <Border CornerRadius="{Binding Path=CornerRadius}">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -25,7 +25,10 @@
                              Foreground="{Binding Path=ForegroundIcon}"
                              HorizontalAlignment="Center"
                              VerticalAlignment="Center"
-                             Margin="8"/>
+                             Margin="5" 
+                             RenderOptions.BitmapScalingMode="HighQuality"
+                             RenderOptions.EdgeMode="Aliased" SnapsToDevicePixels="True"
+                             UseLayoutRounding="True"/>
         </Border>
         <Border Background="Transparent" MouseUp="Border_MouseUp">
             <Border.Triggers>

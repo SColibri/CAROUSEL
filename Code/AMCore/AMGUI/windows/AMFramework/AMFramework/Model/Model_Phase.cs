@@ -59,6 +59,17 @@ namespace AMFramework.Model
                 OnPropertyChanged("IsVisible");
             }
         }
+
+        private bool _isActive = false;
+        public bool IsActive
+        {
+            get { return _isActive; }
+            set
+            {
+                _isActive = value;
+                OnPropertyChanged("IsActive");
+            }
+        }
         #endregion
 
         #region Interfaces

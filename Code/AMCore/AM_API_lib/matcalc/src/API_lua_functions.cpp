@@ -61,6 +61,10 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 	add_new_function(state, "matcalc_database_phaseNames", "string", "matcalc_database_phaseNames", bind_DatabasePhaseNames_command);
 	add_new_function(state, "matcalc_database_elementNames", "string", "matcalc_database_elementNames", bind_DatabaseElementNames_command);
 
+	// Project
+	add_new_function(state, "get_active_phases", "void", "<ID project>", Bind_get_active_phases_scheil);
+
+
 	//
 	add_new_function(state, "hello_world", "void", "baby lua script :)", bind_hello_world);
 	add_new_function(state, "run_script", "std::string filename", "filename", bind_run_script);
@@ -185,17 +189,7 @@ int API_lua_functions::bind_getElementNames_command(lua_State* state)
 
 int API_lua_functions::bind_DatabasePhaseNames_command(lua_State* state)
 {
-	if (_configuration == nullptr) return -1;
-	std::string commOut = runVectorCommands(API_Scripting::script_get_thermodynamic_database(_configuration));
-	size_t IndexPhases = string_manipulators::find_index_of_keyword(commOut, "# of phases in database");
-	size_t IndexExitCode = string_manipulators::find_index_of_keyword(commOut.substr(IndexPhases, commOut.size() - IndexPhases), "MC:") + IndexPhases;
-
-	std::string out;
-	if (IndexPhases == std::string::npos || IndexExitCode == std::string::npos) out = "Error, data was not found!";
-	else
-	{
-		out = commOut.substr(IndexPhases, IndexExitCode - IndexPhases);
-	}
+	std::string out = read_matcalc_database_phaseNames(nullptr);
 
 	lua_pushstring(state, out.c_str());
 	return 1;
@@ -281,8 +275,10 @@ int API_lua_functions::bind_selectPhases_command(lua_State* state)
 #pragma region helpers
 std::string API_lua_functions::runVectorCommands(std::vector<std::string> parameter)
 {
+	// ouput string
 	std::string out{};
 
+	// Go through all matcalc directives andd collect output
 	for each (std::string commLine in parameter)
 	{
 		out += _api->APIcommand(commLine);
@@ -293,8 +289,13 @@ std::string API_lua_functions::runVectorCommands(std::vector<std::string> parame
 
 std::string API_lua_functions::runVectorCommands(std::vector<std::string> parameter, IPC_winapi* mcc_comm)
 {
+	// If comm is null pointer use global IPC connection
+	if (mcc_comm == nullptr) return runVectorCommands(parameter);
+
+	// ouput string
 	std::string out{};
 
+	// Go through all matcalc directives andd collect output
 	for each (std::string commLine in parameter)
 	{
 		out += _api->APIcommand(commLine, mcc_comm);

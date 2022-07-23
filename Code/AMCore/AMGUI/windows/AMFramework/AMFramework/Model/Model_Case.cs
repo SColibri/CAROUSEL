@@ -266,6 +266,27 @@ namespace AMFramework.Model
             }
         }
 
+        List<Model.Model_PrecipitationPhase> _precipitationPhases = new();
+        public List<Model.Model_PrecipitationPhase> PrecipitationPhases
+        {
+            get { return _precipitationPhases; }
+            set 
+            { 
+                _precipitationPhases = value;
+                OnPropertyChanged("PrecipitationPhases");
+            }
+        }
+
+        List<Model.Model_PrecipitationDomain> _precipitationDomains = new();
+        public List<Model.Model_PrecipitationDomain> PrecipitationDomains
+        {
+            get { return _precipitationDomains; }
+            set
+            {
+                _precipitationDomains = value;
+                OnPropertyChanged("PrecipitationDomains");
+            }
+        }
         #endregion
 
         #region Interfaces

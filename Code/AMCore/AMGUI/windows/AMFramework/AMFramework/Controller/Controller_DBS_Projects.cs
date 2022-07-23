@@ -20,6 +20,9 @@ namespace AMFramework.Controller
             controllerCases = new(ref socket, this);
             Controller_Selected_Elements = new(ref socket, this);
             Controller_Elements = new(ref socket, this);
+            _ActivePhasesConfigurationController = new(ref socket, this);
+            _ActivePhasesElementCompositionController = new(ref socket, this);
+            _ActivePhasesController = new(ref socket, this);
         }
         #endregion
 
@@ -219,7 +222,7 @@ namespace AMFramework.Controller
             _AMCore_Socket.run_lua_command("project_loadID ", ((int)ID).ToString());
             controllerCases.refresh();
             Controller_Selected_Elements.refresh();
-
+            _ActivePhasesController.Refresh();
             _selectedElements = Controller_Selected_Elements.Elements;
 
             load_database_available_phases();
@@ -397,6 +400,25 @@ namespace AMFramework.Controller
 
         }
 
+        public void set_phase_selection_ifActive() 
+        {
+            if (_ActivePhasesController.ActivePhases.Count == 0) return;
+
+            foreach (var item in AvailablePhase)
+            {
+                Model.Model_ActivePhases tempRef = _ActivePhasesController.ActivePhases.Find(e => e.IDPhase == item.ID);
+                if (tempRef is null) 
+                {
+                    item.IsActive = false;
+                    continue;
+                }
+                else
+                { 
+                    item.IsActive = true;
+                }
+            }
+        }
+
         #region Commands
         #region Search_phases
         private string _search_phase_text = "";
@@ -532,6 +554,31 @@ namespace AMFramework.Controller
             Update_project();
             OnPropertyChanged("SelectedElements");
             ElementsIsSaving = false;
+        }
+        #endregion
+
+        #region ActivePhases
+        private Controller.Controller_ActivePhasesConfiguration _ActivePhasesConfigurationController;
+        public Controller.Controller_ActivePhasesConfiguration ActivePhasesConfigurationController 
+        { 
+            get { return _ActivePhasesConfigurationController; } 
+        }
+
+        private Controller.Controller_ActivePhases _ActivePhasesController;
+        public Controller.Controller_ActivePhases ActivePhasesController
+        {
+            get { return _ActivePhasesController; }
+        }
+
+        private Controller.Controller_ActivePhasesElementComposition _ActivePhasesElementCompositionController;
+        public Controller.Controller_ActivePhasesElementComposition ActivePhasesElementCompositionController
+        {
+            get { return _ActivePhasesElementCompositionController; }
+        }
+
+        public void Refresh_ActivePhases() 
+        {
+            _ActivePhasesController.Refresh();
         }
         #endregion
 

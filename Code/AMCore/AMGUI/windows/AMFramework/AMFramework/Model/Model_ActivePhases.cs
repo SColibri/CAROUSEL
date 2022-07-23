@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace AMFramework.Model
 {
-    internal class Model_ActivePhases : Interfaces.Model_Interface
+    public class Model_ActivePhases : Interfaces.Model_Interface
     {
         private int _id = -1;
         public int ID
@@ -47,6 +47,19 @@ namespace AMFramework.Model
             string outy = ID + "," + IDProject + "," + IDPhase;
             return outy;
         }
+
+        #region Other
+        private string _phaseName = "";
+        public string PhaseName 
+        { 
+            get { return _phaseName; } 
+            set 
+            {
+                _phaseName = value;
+                OnPropertyChanged("PhaseName");
+            }
+        }
+        #endregion
 
         #region Interfaces
         public event PropertyChangedEventHandler PropertyChanged;

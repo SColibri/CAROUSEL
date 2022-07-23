@@ -54,11 +54,20 @@ namespace AMFramework.Controller
         #endregion
 
         #region Commands
-            public string Run_command(string commy) 
+        public string Run_command(string commy) 
+        {
+            List<string> comms = commy.Split(" ").ToList();
+            string parameters = "";
+
+            for (int n1 = 1; n1 < comms.Count; n1++)
             {
-                CoreOutput = _AMCore_comm.run_lua_command(commy,"");
-                return CoreOutput;
+                if (n1 > 1) { parameters += " "; }
+                parameters += comms[n1];
             }
+
+            CoreOutput = _AMCore_comm.run_lua_command(comms[0], parameters);
+            return CoreOutput;
+        }
         #endregion
     }
 }

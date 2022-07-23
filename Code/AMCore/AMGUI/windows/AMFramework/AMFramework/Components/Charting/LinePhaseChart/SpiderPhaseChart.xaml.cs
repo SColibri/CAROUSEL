@@ -55,7 +55,7 @@ namespace AMFramework.Components.Charting.LinePhaseChart
             for (int n1 = 0; n1 < _plotController.SpyderDataPlot.Count; n1++)
             {
                 ChartingWindow.SpyderSeriesData tempSeries = new();
-                tempSeries.SeriesName = _plotController.SpyderDataPlot[n1].IDCase.ToString();
+                tempSeries.SeriesName = _plotController.SpyderDataPlot[n1].Name;
 
                 for (int n2 = 0; n2 < _plotController.SpyderDataPlot[n1].Values.Count; n2++)
                 {

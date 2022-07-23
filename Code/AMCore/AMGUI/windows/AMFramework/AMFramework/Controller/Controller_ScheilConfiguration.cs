@@ -30,13 +30,21 @@ namespace AMFramework.Controller
         #endregion
 
         #region Data
-        Model.Model_ScheilConfiguration _model;
-        public Model.Model_ScheilConfiguration Model { get { return _model; } }
+        Model.Model_ScheilConfiguration _model = new();
+        public Model.Model_ScheilConfiguration Model 
+        { 
+            get { return _model; }
+            set
+            {
+                _model = value;
+                OnPropertyChanged("Model");
+            }
+        }
 
         public void save(Model.Model_ScheilConfiguration model)
         {
-            string outComm = _AMCore_Socket.run_lua_command("singlepixel_equilibrium_config_save " + model.get_csv(),"");
-            if (outComm.CompareTo("OK") != 0)
+            string outComm = _AMCore_Socket.run_lua_command("spc_scheil_configuration_save", model.get_csv());
+            if (!outComm.All(char.IsDigit))
             {
                 MainWindow.notify.ShowBalloonTip(5000, "Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);
             }
@@ -44,12 +52,17 @@ namespace AMFramework.Controller
         public Model.Model_ScheilConfiguration get_scheil_configuration_case(int IDCase) 
         {
             Model.Model_ScheilConfiguration model = new();
-            string Query = "database_table_custom_query SELECT ScheilConfiguration.*, Phase.Name FROM ScheilConfiguration INNER JOIN Phase ON Phase.ID=SelectedPhases.DependentPhase WHERE IDCase = " + IDCase;
+            string Query = "database_table_custom_query SELECT ScheilConfiguration.*, Phase.Name FROM ScheilConfiguration INNER JOIN Phase ON Phase.ID=ScheilConfiguration.DependentPhase WHERE IDCase = " + IDCase;
             string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             if (rowItems.Count == 0) return model;
             List<string> columnItems = rowItems[0].Split(",").ToList();
+            if (columnItems.Count < 7) 
+            {
+                //model
+                return model;
+            }
             model = fillModel(columnItems);
             
             return model;
@@ -69,6 +82,13 @@ namespace AMFramework.Controller
             modely.MinLiquidFraction = Convert.ToDouble(DataRaw[6]);
             modely.DependentPhaseName = DataRaw[7];
             return modely;
+        }
+        #endregion
+
+        #region Getters
+        public Controller.Controller_Cases CaseController 
+        {
+            get { return _caseController; } 
         }
         #endregion
     }

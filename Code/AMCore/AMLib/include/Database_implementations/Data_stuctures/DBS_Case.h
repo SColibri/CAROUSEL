@@ -1,5 +1,9 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
+#include "DBS_ScheilConfiguration.h"
+#include "DBS_EquilibriumConfiguration.h"
+#include "DBS_PrecipitationDomain.h"
+
 /// <summary>
 /// Implements IAM_DBS.h interface, this is a phase
 /// object structure.
@@ -71,6 +75,23 @@ public:
 		return 0;
 	}
 
+	static int create_case_data(IAM_Database* database, int CaseID) 
+	{
+		DBS_ScheilConfiguration new001(database,-1);
+		DBS_EquilibriumConfiguration new002(database, -1);
+		DBS_PrecipitationDomain new003(database, -1);
+		
+		new001.IDCase = CaseID;
+		new002.IDCase = CaseID;
+		new003.IDCase = CaseID;
+
+		new001.save();
+		new002.save();
+		new003.save();
+
+		return 1;
+	}
+
 #pragma region implementation
 
 	virtual std::vector<std::string> get_input_vector() override
@@ -100,6 +121,7 @@ public:
 
 	virtual int load(std::vector<std::string>& rawData) override
 	{
+		_id = -1;
 		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
 		set_id(std::stoi(rawData[0]));
 		IDProject = std::stoi(rawData[1]);
@@ -113,6 +135,23 @@ public:
 		return 0;
 	}
 
+	virtual int remove_dependent_data() override 
+	{
+		//Nothing to do
+		if (_id == -1) return 1;
+		remove_case_data(_db, id());
+
+		return 0;
+	}
+
+	virtual int create_dependent_data() override
+	{
+		//Nothing to do
+		if (_id == -1) return 1;
+		create_case_data(_db, id());
+
+		return 0;
+	}
 #pragma endregion
 
 private:

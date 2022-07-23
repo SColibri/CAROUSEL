@@ -6,19 +6,22 @@
              xmlns:local="clr-namespace:AMFramework.Views.Case" 
              xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_Cases}"
              xmlns:button ="clr-namespace:AMFramework.Components.Button"
+             xmlns:phase="clr-namespace:AMFramework.Views.Precipitation"
              xmlns:popup ="clr-namespace:AMFramework.Components.Windows"
+             xmlns:scheil ="clr-namespace:AMFramework.Views.Scheil"
                 xmlns:AMCase="clr-namespace:AMFramework.Views.Case"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="White">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <GroupBox Header="General" Margin="5" FontWeight="DemiBold" BorderThickness="2" BorderBrush="Black">
+                <GroupBox Header="General" Margin="5" FontWeight="DemiBold" BorderThickness="2" 
+                          BorderBrush="Black" Style="{StaticResource AM_Groupbox}">
                     <Grid>
-                        <button:AM_button IconName="Save" Width="35" Height="35"
-                                          GradientColor_2="AliceBlue" GradientTransition="DodgerBlue"
-                                          ForegroundIcon="Black" VerticalAlignment="Top"
-                                          HorizontalAlignment="Right" Margin="0,-10,-5,0"/>
+                        <button:AM_button IconName="Save" Width="27" Height="27"
+                                          GradientColor_2="Steelblue" GradientTransition="DodgerBlue"
+                                          ForegroundIcon="Aliceblue" VerticalAlignment="Top"
+                                          HorizontalAlignment="Right" Margin="0,-25,0,0"/>
                         <StackPanel Orientation="Vertical">
                             <AMCase:Case_newitem DataContext="{Binding Path=SelectedCase}"/>
                             <Border>
@@ -37,10 +40,10 @@
                                         <ItemsControl ItemsSource="{Binding Path=SelectedCase.ElementComposition}" Margin="10">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <StackPanel Orientation="Vertical"
+                                                    <WrapPanel Orientation="Horizontal"
                                                    MaxWidth="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}, Path=ActualWidth}">
 
-                                                    </StackPanel>
+                                                    </WrapPanel>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
 
@@ -48,7 +51,7 @@
                                                 <DataTemplate>
                                                     <Grid Margin="2">
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="105"/>
+                                                            <ColumnDefinition Width="50"/>
                                                             <ColumnDefinition Width="50"/>
                                                             <ColumnDefinition Width="25"/>
                                                             <ColumnDefinition Width="110"/>
@@ -90,15 +93,16 @@
                                         <TextBlock Text="Phases" HorizontalAlignment="Left"
                                    VerticalAlignment="Top" Margin="20,5,5,10"/>
 
-                                        <button:ConfirmButton Width="120" Height="50" Text="Edit Phases" WarningText="Warning, calulations will be deleted!"
-                                                          ToolTip="Select phases, this will delete all previous calculations" ClickButton="Phase_select_handle"/>
+                                        <button:ConfirmButton Width="120" Height="35" Text="Edit Phases" WarningText="Warning, calulations will be deleted!"
+                                                              ToolTip="Select phases, this will delete all previous calculations" ClickButton="Phase_select_handle"
+                                                              CornerRadius="5"/>
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="1">
                                         <ItemsControl ItemsSource="{Binding Path=SelectedCase.SelectedPhases, UpdateSourceTrigger=PropertyChanged}" Margin="10">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Vertical"
+                                                    <WrapPanel Orientation="Horizontal"
                                                    MaxWidth="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}, Path=ActualWidth}">
 
                                                     </WrapPanel>
@@ -136,7 +140,8 @@
                 </GroupBox>
 
                 
-                <GroupBox Header="Step-Equilibrium calculations configuration" FontWeight="DemiBold" Margin="5" BorderThickness="2" BorderBrush="Black">
+                <GroupBox Header="Step-Equilibrium calculations configuration" FontWeight="DemiBold" 
+                          Margin="5" BorderThickness="2" BorderBrush="Black" Style="{StaticResource AM_Groupbox}">
                     <Grid>
                         <button:AM_button IconName="Save" Width="35" Height="35"
                                           GradientColor_2="AliceBlue" GradientTransition="DodgerBlue"
@@ -231,131 +236,12 @@
                     </Grid>
                     
                 </GroupBox>
-                <GroupBox Header="Step-Scheil calculations configuration" FontWeight="DemiBold" Margin="5" BorderThickness="2" BorderBrush="Black">
-                    <Grid>
-                        <button:AM_button IconName="Save" Width="35" Height="35"
-                                          GradientColor_2="AliceBlue" GradientTransition="DodgerBlue"
-                                          ForegroundIcon="Black" VerticalAlignment="Top"
-                                          HorizontalAlignment="Right" Margin="0,-10,-5,0"/>
-                        
-                        <StackPanel>
-                            <Border Margin="0,10,0,0">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="150" />
-                                        <ColumnDefinition Width="1*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border BorderBrush="Silver" BorderThickness="0,0,0,1" Grid.ColumnSpan="2"
-                                Margin="20,0,20,0"/>
-
-                                    <TextBlock Text="Temperature Range" Grid.Column="0" HorizontalAlignment="Left"
-                                   VerticalAlignment="Top" Margin="20,5,10,10"/>
-                                    <StackPanel Orientation="Vertical" Grid.Column="1">
-                                        <Grid Margin="2" HorizontalAlignment="Left">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="105"/>
-                                                <ColumnDefinition Width="50"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="Start" Grid.Column="0"
-                                                   Margin="5"
-                                                   HorizontalAlignment="Right"
-                                                   VerticalAlignment="Center"/>
-                                            <TextBox Width="40" Grid.Column="1"
-                                                 Margin="1,5,5,5"
-                                                 VerticalAlignment="Center"
-                                                 HorizontalAlignment="Left"
-                                                 Style="{StaticResource AM_RoundedTextbox}"
-                                                 Text="{Binding Path=SelectedCase.ScheilConfiguration.StartTemperature, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </Grid>
-                                        <Grid Margin="2" HorizontalAlignment="Left">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="105"/>
-                                                <ColumnDefinition Width="50"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="End" Grid.Column="0"
-                                                   Margin="5"
-                                                   HorizontalAlignment="Right"
-                                                   VerticalAlignment="Center"/>
-                                            <TextBox Width="40" Grid.Column="1"
-                                                 Margin="1,5,5,5"
-                                                 VerticalAlignment="Center"
-                                                 HorizontalAlignment="Left"
-                                                 Style="{StaticResource AM_RoundedTextbox}"
-                                                 Text="{Binding Path=SelectedCase.ScheilConfiguration.EndTemperature, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </Grid>
-                                        <Grid Margin="2" HorizontalAlignment="Left">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="105"/>
-                                                <ColumnDefinition Width="50"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="Step size" Grid.Column="0"
-                                                   Margin="5"
-                                                   HorizontalAlignment="Right"
-                                                   VerticalAlignment="Center"/>
-                                            <TextBox Width="40" Grid.Column="1"
-                                                 Margin="1,5,5,5"
-                                                 VerticalAlignment="Center"
-                                                 HorizontalAlignment="Left"
-                                                 Style="{StaticResource AM_RoundedTextbox}"
-                                                 Text="{Binding Path=SelectedCase.ScheilConfiguration.StepSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </Grid>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                            <Border>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="150" />
-                                        <ColumnDefinition Width="1*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border BorderBrush="Silver" BorderThickness="0,0,0,1" Grid.ColumnSpan="2"
-                                Margin="20,0,20,0"/>
-
-                                    <TextBlock Text="Dependent phase" Grid.Column="0" HorizontalAlignment="Left"
-                                   VerticalAlignment="Top" Margin="20,5,10,10"/>
-                                    <StackPanel Grid.Column="1" Width="200" HorizontalAlignment="Left">
-                                        <Grid Margin="1" Width="160" >
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="110"/>
-                                                <ColumnDefinition Width="50"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBlock Grid.Column="0" Text="Min. liquid fraction" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                            <TextBox Grid.Column="1" Margin="5,5,5,5" Width="40" 
-                                                 Text="{Binding Path=SelectedCase.ScheilConfiguration.MinLiquidFraction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </Grid>
-                                        <Button Content="{Binding Path=SelectedCase.ScheilConfiguration.DependentPhaseName}" 
-                                            Margin="5,5,5,10" ToolTip="Select dependent phase"/>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                            <Border>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="150" />
-                                        <ColumnDefinition Width="1*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border BorderBrush="Silver" BorderThickness="0,0,0,0" Grid.ColumnSpan="2"
-                                Margin="20,0,20,0"/>
-
-                                    <TextBlock Text="Calculations" Grid.Column="0" HorizontalAlignment="Left"
-                                   VerticalAlignment="Top" Margin="20,5,10,10"/>
-                                    <StackPanel Grid.Column="1" Width="200" HorizontalAlignment="Left">
-                                        <Button Content="Calculate" Margin="5" Command="{Binding Run_equilibrium}"/>
-                                        <Button Content="Run script" Margin="5"/>
-                                        <Button Content="Values" Margin="5"/>
-                                        <Button Content="Export values" Margin="5"/>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </StackPanel>
-                    </Grid>
-                    
+                <GroupBox Header="Solidification simulation" FontWeight="DemiBold" 
+                          Margin="5" BorderThickness="2" BorderBrush="Black" Style="{StaticResource AM_Groupbox}">
+                    <scheil:Scheil_configuration_General DataContext="{Binding Path=ScheilConfigurationsController}"/>
                 </GroupBox>
-                <GroupBox Header="Precipitation calculations" FontWeight="DemiBold" Margin="5" BorderThickness="2" BorderBrush="Black">
+                <GroupBox Header="Kinetic simulation" FontWeight="DemiBold" Margin="5" 
+                          BorderThickness="2" BorderBrush="Black" Style="{StaticResource AM_Groupbox}">
                     <Grid>
                         <button:AM_button IconName="Save" Width="35" Height="35"
                                           GradientColor_2="AliceBlue" GradientTransition="DodgerBlue"
@@ -363,16 +249,12 @@
                                           HorizontalAlignment="Right" Margin="0,-10,-5,0"/>
 
                         <StackPanel>
-                            <GroupBox Header="Precipitation domain">
-
-                            </GroupBox>
-                            <GroupBox Header="Precipitation phase">
-
-                            </GroupBox>
+                            
                         </StackPanel>
                     </Grid>
                 </GroupBox>
-                <GroupBox x:Name="TemplateBox" Header="Template options" FontWeight="DemiBold" BorderBrush="Black" BorderThickness="2">
+                <GroupBox x:Name="TemplateBox" Header="Template options" FontWeight="DemiBold" 
+                          BorderBrush="Black" BorderThickness="2" Style="{StaticResource AM_Groupbox}">
                     <Grid>
                         <StackPanel>
                             <Border Margin="0,10,0,0">

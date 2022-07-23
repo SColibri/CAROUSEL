@@ -31,7 +31,18 @@ namespace AMFramework.Controller
         #endregion
 
         #region Data
-        List<Model.Model_ScheilPhaseFraction> _equilibrium;
+        private int _phaseFraction_DataCount = 0;
+        public int PhaseFraction_DataCount 
+        { 
+            get { return _phaseFraction_DataCount; } 
+            set 
+            { 
+                _phaseFraction_DataCount = value;
+                OnPropertyChanged("PhaseFraction_DataCount");
+            }
+        }
+
+        List<Model.Model_ScheilPhaseFraction> _equilibrium = new();
         public List<Model.Model_ScheilPhaseFraction> Equilibrium
         {
             get { return _equilibrium; }
@@ -89,6 +100,17 @@ namespace AMFramework.Controller
             {
                 casey.ScheilPhaseFractions = new();
             }
+        }
+
+        public int Phase_fraction_Data_Count_Load(int IDCase) 
+        {
+            string Query = "database_table_custom_query SELECT COUNT(*) FROM SelectedPhases WHERE IDCase = " + IDCase;
+            string outCommand = _AMCore_Socket.run_lua_command(Query, "");
+            List<string> rowItems = outCommand.Split("\n").ToList();
+
+            if(!rowItems[0].All(char.IsNumber)) return 0;
+
+            return Convert.ToInt32(rowItems[0]);
         }
         #endregion
     }

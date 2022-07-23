@@ -119,9 +119,11 @@ namespace AMFramework.Controller
             public int IDCase;
             public List<Model.Model_Phase> Phases;
             public List<List<double>> Values;
+            public string Name;
 
             public SpyderDataStructure() 
             {
+                Name = "New series";
                 IDCase = -1;
                 Phases = new List<Model.Model_Phase>();
                 Values = new List<List<double>>();
@@ -148,6 +150,14 @@ namespace AMFramework.Controller
             SpyderDataStructure dataPlotItem = new();
             dataPlotItem.IDCase = IDCase;
             dataPlotItem.Phases = Used_Phases_inCases;
+            dataPlotItem.Name = "";
+
+            foreach (var item in model.ElementComposition)
+            {
+                if(dataPlotItem.Name.Length > 0) { dataPlotItem.Name += " || "; }
+                dataPlotItem.Name += item.ElementName + ":" + item.Value;
+            }
+
             foreach (Model.Model_Phase phaseModel in Used_Phases_inCases)
             {
                 List<Model.Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractions.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);

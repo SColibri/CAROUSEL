@@ -208,6 +208,17 @@ int AM_Project::get_reference_element_ByID()
 	return -1;
 }
 
+std::vector<std::string> AM_Project::get_activePhases_ElementComposition()
+{
+	std::vector<std::string> out;
+
+	for (DBS_ActivePhases_ElementComposition*& var : _ativePhases_composition)
+	{
+		out.push_back(std::to_string(var->Value));
+	}
+
+	return out;
+}
 #pragma endregion
 
 #pragma region Project_data
@@ -227,6 +238,7 @@ void AM_Project::refresh_data()
 	load_singlePixel_Cases();
 	load_DBS_selectedElements();
 	load_DBS_CALPHAD();
+	load_DBS_activePhases_composition();
 }
 #pragma endregion
 

@@ -103,7 +103,6 @@ namespace AMFramework.Components.Charting
             RADAR3D
         }
 
-
         public ChartingWindow()
         {
             this.Background = new SolidColorBrush(Colors.White);
@@ -113,6 +112,7 @@ namespace AMFramework.Components.Charting
             this.SizeChanged += HandleTab;
             this.VisualEdgeMode = EdgeMode.Aliased;
             SnapsToDevicePixels = true;
+           
         }
 
         #region getters_setters
@@ -152,7 +152,7 @@ namespace AMFramework.Components.Charting
                 Axes tempAxe = new(axy);
                 tempAxe.MinValue = 0;
                 tempAxe.MaxValue = maxValues[IndexTemp];
-                tempAxe.Interval = tempAxe.MaxValue/10;
+                tempAxe.Interval = tempAxe.MaxValue/3;
 
                 _AxesList.Add(tempAxe);
                 IndexTemp += 1;
@@ -237,7 +237,7 @@ namespace AMFramework.Components.Charting
                 BaseLine.Stroke = _AxesColor;
                 BaseLine.Effect = new System.Windows.Media.Effects.BlurEffect
                 {
-                    Radius = 1
+                    Radius = 0
                 };
 
                 BaseLine.X1 = CenterX;
@@ -289,8 +289,8 @@ namespace AMFramework.Components.Charting
                         {
                             Line TestLine = new Line();
                             TestLine.Stroke = _AxesColor;
-                            TestLine.StrokeThickness = _AxeThickness - 1;
-                            
+                            TestLine.Fill = _AxesColor;
+                            TestLine.StrokeThickness = 0.1;//_AxeThickness - 1;
 
 
 
@@ -301,21 +301,22 @@ namespace AMFramework.Components.Charting
                             TestLine.Y2 = Y_Calc - perpendicular_vector.Y * 7;
 
                             double valuePosition = (obj.MinValue) + obj.Interval * n1;
-                            FormattedText formattedText = new System.Windows.Media.FormattedText(Math.Round(valuePosition, 2).ToString(),
+                            FormattedText formattedText = new System.Windows.Media.FormattedText(valuePosition.ToString("0.0E0"),
                                         CultureInfo.GetCultureInfo("en-us"),
                                         FlowDirection.RightToLeft,
                                         new Typeface(
-                                        new FontFamily(),
+                                        new FontFamily("Arial"),
                                         FontStyles.Normal,
                                         FontWeights.Normal,
                                         FontStretches.Condensed),
-                                        11, Brushes.Black, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+                                        15, Brushes.Black, VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
                             Geometry geometry = formattedText.BuildGeometry(new Point(TestLine.X2-12, TestLine.Y2-12));
                             Path PT01 = new Path();
                             PT01.Data = geometry;
                             PT01.Stroke = _AxesColor;
-                            PT01.StrokeThickness = _AxeThickness - 1;
+                            PT01.Fill = _AxesColor;
+                            PT01.StrokeThickness = 0.1;//_AxeThickness - 1;
     
                             this.Children.Add(TestLine);
                             this.Children.Add(PT01);
@@ -330,23 +331,24 @@ namespace AMFramework.Components.Charting
                                         CultureInfo.GetCultureInfo("en-us"),
                                         FlowDirection.RightToLeft,
                                         new Typeface(
-                                        new FontFamily(),
+                                        new FontFamily("Arial"),
                                         FontStyles.Normal,
                                         FontWeights.Normal,
-                                        FontStretches.Condensed),
-                                        11, Brushes.Black, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+                                        FontStretches.Normal),
+                                        12, Brushes.Black, VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-
-                                Geometry geometryAxisName = formattedAxisName.BuildGeometry(new Point(TestLine.X2, TestLine.Y2));
+                                Geometry geometryAxisName = formattedAxisName.BuildGeometry(new Point(BaseLine.X2, BaseLine.Y2));
 
                                 double textOffset = 60;
                                 geometryAxisName.Transform = new TranslateTransform(geometryAxisName.Bounds.Width / 2 - unit_vector.X * textOffset, -unit_vector.Y * textOffset);
-
+                                
 
                                 Path PT02 = new Path();
                                 PT02.Data = geometryAxisName;
                                 PT02.Stroke = _AxesColor;
-                                PT02.StrokeThickness = _AxeThickness - 1;
+                                PT02.Fill = _AxesColor;
+                                PT02.StrokeThickness = 0.1;//_AxeThickness - 1;
+                                
                                 this.Children.Add(PT02);
                             }
                         }
@@ -426,17 +428,21 @@ namespace AMFramework.Components.Charting
 
         private void BuidDataPoints_usingStructure() 
         {
+            int Index_pallette = 0;
             for (int n1 = 0; n1 < _series.Count; n1++)
             {
                 Polygon polygon = new();
                 polygon.Stroke = _AxesColor;
                 polygon.StrokeThickness = 1;
-                polygon.Fill = _PalleteData[n1];
+                polygon.Fill = _PalleteData[Index_pallette];
                 polygon.Opacity = 0.5;
                 polygon.Effect = new System.Windows.Media.Effects.BlurEffect
                 {
                     Radius = 3
                 };
+
+                Index_pallette += 1;
+                if(Index_pallette > _PalleteData.Count - 1) { Index_pallette = 0; }
 
                 int Index = 0;
                 int IndexVisible = 0;
@@ -472,7 +478,7 @@ namespace AMFramework.Components.Charting
                 this.Children.Add(polygon);
                 SpyderSeriesData seriesData = Series[0];
                 seriesData.polygonObj = polygon;
-                Series[n1] = seriesData;
+                //Series[n1] = seriesData;
             }
 
         }
@@ -521,6 +527,11 @@ namespace AMFramework.Components.Charting
 
                 LegendStackPanel.Children.Add(seriesGrid);
                 Index += 1;
+
+                if(Index >= _PalleteData.Count) 
+                {
+                    Index = 0;
+                }
             }
             LegendExpander.Content = LegendStackPanel;
 
@@ -689,6 +700,7 @@ namespace AMFramework.Components.Charting
         {
             Axes tempAxe = _AxesList[(int)((Border)sender).Tag];
             tempAxe.IsVisible = !tempAxe.IsVisible;
+            Show_all_series();
             UpdateImage();
         }
         #endregion

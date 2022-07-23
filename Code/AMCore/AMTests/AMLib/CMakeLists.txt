@@ -14,10 +14,11 @@ set(TEST_SET
     AM_pixel_parameters_Test
     AM_lua_Test
     AM_Threading_Test
+    AM_lua_script_Test
 )
 
 foreach(target ${TEST_SET})
-    add_executable(${target} "Tests/${target}.cpp")
+    add_executable(${target} "Tests/${target}.cpp" "Tests/AM_lua_script_Test.cpp")
 	set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
     target_compile_features(${target} PUBLIC cxx_std_17)
     target_compile_options(${target} PRIVATE ${DEFAULT_COMPILER_OPTIONS_AND_WARNINGS})

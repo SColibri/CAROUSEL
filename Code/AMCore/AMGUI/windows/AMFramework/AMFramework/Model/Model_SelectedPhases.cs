@@ -71,6 +71,17 @@ namespace AMFramework.Model
                 OnPropertyChanged("IsSelected");
             }
         }
+
+        private bool _isDependentPhase = false;
+        public bool IsDependentPhase
+        {
+            get { return _isDependentPhase; }
+            set
+            {
+                _isDependentPhase = value;
+                OnPropertyChanged("IsDependentPhase");
+            }
+        }
         #endregion
         #region Interfaces
         public event PropertyChangedEventHandler PropertyChanged;

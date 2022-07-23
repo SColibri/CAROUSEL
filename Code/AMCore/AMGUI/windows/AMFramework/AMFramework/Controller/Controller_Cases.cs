@@ -30,6 +30,8 @@ namespace AMFramework.Controller
             _equilibriumConfigurations = new(ref socket, this);
             _scheilConfigurations = new(ref socket, this);
             _scheilPhaseFractions = new(ref socket, this);
+            _PrecipitationPhase = new(ref socket, this);
+            _PrecipitationDomain = new(ref socket, this);
         }
 
         public Controller_Cases()
@@ -91,6 +93,11 @@ namespace AMFramework.Controller
             set 
             {
                 _selected_case = value;
+                _selectedIDCase = _selected_case.ID;
+                _ControllerProjects.get_phase_selection_from_current_case();
+                _ControllerProjects.set_phase_selection_ifActive();
+                _selectedPhases.refresh();
+                _scheilConfigurations.Model = _scheilConfigurations.get_scheil_configuration_case(_selected_case.ID);
                 OnPropertyChanged("SelectedCase");
                 OnPropertyChanged("SelectedPhases");
                 OnPropertyChanged("ElementComposition");
@@ -161,6 +168,7 @@ namespace AMFramework.Controller
             _selectedPhases.fill_models_with_selectedPhases();
             _elementComposition.fill_models_with_composition();
             _equilibriumConfigurations.fill_models_with_equilibroiumConfiguration();
+            _PrecipitationPhase.fill_models_with_precipitation_phases();
             OnPropertyChanged("Cases");
             return outy;
         }
@@ -180,20 +188,21 @@ namespace AMFramework.Controller
 
         #region Controllers
         private Controller.Controller_Selected_Phases _selectedPhases;
-        public List<Model.Model_SelectedPhases> SelectedPhases { get { return _selectedPhases.Phases; } }
-
         private Controller.Controller_ElementComposition _elementComposition;
-        public List<Model.Model_ElementComposition> ElementComposition { get { return _elementComposition.Composition; } }
-
         private Controller.Controller_EquilibriumConfiguration _equilibriumConfigurations;
         private Controller.Controller_EquilibriumPhaseFraction _equilibriumPhaseFractions;
-        public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }
-
         private Controller.Controller_ScheilConfiguration _scheilConfigurations;
         private Controller.Controller_ScheilPhaseFraction _scheilPhaseFractions;
+        private Controller.Controller_PrecipitationPhase _PrecipitationPhase;
+        private Controller.Controller_PrecipitationDomain _PrecipitationDomain;
+        public List<Model.Model_SelectedPhases> SelectedPhases { get { return _selectedPhases.Phases; } }
+        public List<Model.Model_ElementComposition> ElementComposition { get { return _elementComposition.Composition; } }
+        public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }
         public List<Model.Model_ScheilPhaseFraction> ScheilPhaseFraction { get { return _scheilPhaseFractions.Equilibrium; } }
 
-
+        public Controller.Controller_PrecipitationPhase PrecipitationPhaseController { get { return _PrecipitationPhase; } }
+        public Controller.Controller_ScheilConfiguration ScheilConfigurationsController { get { return _scheilConfigurations; } }
+        public Controller.Controller_ScheilPhaseFraction ScheilPhaseFractionsController { get { return _scheilPhaseFractions; } }
         #endregion
 
         #region Templates

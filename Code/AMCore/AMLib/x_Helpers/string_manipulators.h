@@ -7,7 +7,12 @@
 
 namespace string_manipulators
 {
-
+    /// <summary>
+    /// Split csv string into std::vector<string>
+    /// </summary>
+    /// <param name="csv_text"></param>
+    /// <param name="delimiter"></param>
+    /// <returns></returns>
     static std::vector<std::string> split_text(std::string const& csv_text, std::string delimiter)
     {
         size_t start;
@@ -16,8 +21,29 @@ namespace string_manipulators
 
         while ((start = csv_text.find_first_not_of(delimiter, end)) != std::string::npos)
         {
+            // We check if other delimiters did not contain an empty value, if so
+            // we add a string of length 0 into our output vector, this will return
+            // a vector of correct length for the object
+            if (start - end > 1) 
+            {
+                for(int n1 = 1; n1 < start - end; n1++)
+                {
+                    out.push_back("");
+                }
+            }
+
             end = csv_text.find(delimiter, start);
             out.push_back(csv_text.substr(start, end - start));
+        }
+
+        // Check if we did not jump to the last csv data (empty case)
+        if (end == std::string::npos) return out;
+        if (csv_text.size() - end > 1)
+        {
+            for (int n1 = 1; n1 < csv_text.size() - end; n1++)
+            {
+                out.push_back("");
+            }
         }
 
         return out;

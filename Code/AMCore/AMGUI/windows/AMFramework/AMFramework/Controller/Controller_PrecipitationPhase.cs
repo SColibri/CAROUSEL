@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace AMFramework.Controller
 {
-    internal class Controller_PrecipitationPhase : INotifyPropertyChanged
+    public class Controller_PrecipitationPhase : INotifyPropertyChanged
     {
 
         #region Socket
@@ -43,14 +43,14 @@ namespace AMFramework.Controller
         {
             List<Model.Model_PrecipitationPhase> model = new();
 
-            string Query = "SELECT PrecipitationPhase.* FROM PrecipitationPhase WHERE IDCase=" + IDCase;
+            string Query = "SELECT PrecipitationPhase.* , Phase.Name AS PhaseName, PrecipitationDomain.Name FROM PrecipitationPhase INNER JOIN Phase ON Phase.ID=PrecipitationPhase.IDPhase LEFT JOIN PrecipitationDomain ON PrecipitationDomain.ID=PrecipitationPhase.IDPrecipitationDomain WHERE IDCase=" + IDCase;
             string outCommand = comm.run_lua_command("database_table_custom_query", Query);
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string rowItem in rowItems)
             {
                 List<string> columnItems = rowItem.Split(",").ToList();
-                if (columnItems.Count < 13) continue;
+                if (columnItems.Count < 14) continue;
 
                 model.Add(FillModel(columnItems));
             }
@@ -60,7 +60,7 @@ namespace AMFramework.Controller
 
         private static Model.Model_PrecipitationPhase FillModel(List<string> DataRaw)
         {
-            if (DataRaw.Count < 13) throw new Exception("Error: Element RawData is wrong");
+            if (DataRaw.Count < 14) throw new Exception("Error: Element RawData is wrong");
 
             Model.Model_PrecipitationPhase model = new Model.Model_PrecipitationPhase();
             model.ID = Convert.ToInt32(DataRaw[0]);
@@ -76,14 +76,34 @@ namespace AMFramework.Controller
             model.MaxRadius = Convert.ToDouble(DataRaw[10]);
             model.StdDev = Convert.ToDouble(DataRaw[11]);
             model.PrecipitateDistribution = DataRaw[12];
+            model.PhaseName = DataRaw[13];
 
             return model;
         }
 
-        public static void Save(Core.IAMCore_Comm AMCore_Socket, Model.Model_PrecipitationDomain model)
+        public static void Save(Core.IAMCore_Comm AMCore_Socket, Model.Model_PrecipitationPhase model)
         {
             AMCore_Socket.run_lua_command("spc_precipitation_phase_save", model.Get_csv());
         }
+
+        public void fill_models_with_precipitation_phases()
+        {
+            foreach (Model.Model_Case casey in _CaseController.Cases)
+            {
+                casey.PrecipitationPhases = Get_model(_AMCore_Socket, casey.ID);
+            }
+        }
+
+        #region Handles
+        public void Handle_ClickOnSave_AMButton(object sender, EventArgs e) 
+        {
+            if (!sender.GetType().Equals(typeof(Components.Button.AM_button))) return;
+            if (!((Components.Button.AM_button)sender).Tag.GetType().Equals(typeof(Model.Model_PrecipitationPhase))) return;
+
+            Model.Model_PrecipitationPhase phase = (Model.Model_PrecipitationPhase)((Components.Button.AM_button)sender).Tag;
+            Save(_AMCore_Socket, phase);
+        }
+        #endregion
         #endregion
 
         #region Interfaces
