@@ -11,7 +11,7 @@ function Phase:new (o,ID,Name) --@Description Creates a new case,\n create new o
    self.Name = Name or ""
    self.Columns = {"ID","Name"}
 
-   if o.ID > -1 then
+   if o.ID > -1 or Name ~= "" then
     o:load()
    end
 
@@ -20,7 +20,14 @@ end
 
 -- load
 function Phase:load ()
-   sqlData = split(phase_loadID(self.ID))
+   local sqlData = {}
+
+   if self.ID > -1 then
+    sqlData = split(phase_loadID(self.ID),",")
+   else
+    sqlData = split(phase_load_ByName(self.Name),",")
+   end
+   
    load_data(self, sqlData)
 end
 

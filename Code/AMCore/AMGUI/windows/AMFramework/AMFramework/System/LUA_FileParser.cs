@@ -84,6 +84,30 @@ namespace AMFramework.AMSystem
             return keywords;
         }
 
+        public string Get_Global_variable_keywords()
+        {
+            string keywords = "";
+
+            List<ParseObject> refTemp = AMParser.FindAll(e => e.ObjectType == ParseObject.PTYPE.GLOBAL_VARIABLE);
+            foreach (var item in refTemp)
+            {
+                keywords += item.Name + " ";
+
+                foreach (var item2 in item.Parameters)
+                {
+                    keywords += item.Name + "." + item2 + " ";
+                }
+
+                foreach (var item2 in item.functions)
+                {
+                    keywords += item.Name + ":" + item2.Name + " ";
+                }
+            }
+
+            return keywords;
+        }
+
+
         /// <summary>
         /// File parse finds all classes, functions and it's parameters.
         /// 
@@ -105,6 +129,7 @@ namespace AMFramework.AMSystem
             List<string> file_classes = fileRows.FindAll(e => e.Contains("= {") == true || e.Contains("={") == true);
             List<string> file_classFunctions = fileRows.FindAll(e => e.Contains("function") == true && e.Contains(':') == true);
             List<string> file_functions = fileRows.FindAll(e => e.Contains("function") == true && e.Contains(':') == false);
+            List<string> file_global_variables = fileRows.FindAll(e => e.Contains("=") == true && e.Contains(":new") == true && e.Contains("local") == false && e.Contains("function") == false);
 
             // Modules
             foreach (var item in file_require)
@@ -165,6 +190,28 @@ namespace AMFramework.AMSystem
                 tempParse.Name = Get_function_name(item);
                 tempParse.ParametersType = Get_function_parameters(item);
                 tempParse.Parameters = Get_parameter_names(tempParse.ParametersType);
+                tempParse.Description = Get_description(item);
+                Parser.AMParser.Add(tempParse);
+            }
+
+            // functions
+            foreach (var item in file_global_variables)
+            {
+                string className = Get_class_name(item);
+                if (Parser.AMParser.Find(e => e.Name.CompareTo(item) == 0) != null) continue;
+
+                ParseObject tempParse = new ParseObject();
+                tempParse.ModuleName = modName;
+                tempParse.ObjectType = ParseObject.PTYPE.GLOBAL_VARIABLE;
+                tempParse.Name = Get_class_name(item);
+                tempParse.ParametersType = Get_variable_className(item);
+
+                tempParse.Parameters = Parser.AMParser.FindAll(e => e.Name.CompareTo(tempParse.ParametersType) == 0 && 
+                                                               e.ObjectType == ParseObject.PTYPE.CLASS).Select(e => e.Parameters).ToList().SelectMany(e => e).ToList();
+
+                tempParse.functions = Parser.AMParser.FindAll(e => e.Name.CompareTo(tempParse.ParametersType) == 0 &&
+                                                               e.ObjectType == ParseObject.PTYPE.FUNCTION).Select(e => e.functions).ToList().SelectMany(e => e).ToList();
+                
                 tempParse.Description = Get_description(item);
                 Parser.AMParser.Add(tempParse);
             }
@@ -325,7 +372,7 @@ namespace AMFramework.AMSystem
             // find key where class name ends
             int Indexstart = copyRowLine.IndexOf("function");
             int IndexEnd = copyRowLine.IndexOf("(");
-            if (Indexstart == -1 || IndexEnd == -1) return "";
+            if (Indexstart == -1 || IndexEnd == -1 || IndexEnd <= Indexstart) return "";
 
             // Jump to function name by removing the "function" keyword
             int keyLength = 8;
@@ -385,5 +432,27 @@ namespace AMFramework.AMSystem
 
             return NewParameterContent;
         }
+
+        /// <summary>
+        /// Get variable names from declaration of valid objects
+        /// </summary>
+        /// <param name="rowLine"></param>
+        /// <returns></returns>
+        private static string Get_variable_className(string rowLine) 
+        {
+            // copy string and remove spaces
+            string copyRowLine = rowLine;
+            copyRowLine.Replace(" ", "");
+
+            // find key where class name ends
+            int Index01 = copyRowLine.IndexOf('=');
+            int Index02 = copyRowLine.IndexOf(':');
+            if (Index01 == -1 || Index02 == -1) return "";
+
+
+
+            return copyRowLine.Substring(Index01 + 1, Index02 - Index01 -1).Trim();
+        }
+
     }
 }

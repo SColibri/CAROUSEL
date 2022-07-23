@@ -12,7 +12,8 @@ namespace AMFramework.AMSystem
         { 
             NONE,
             CLASS,
-            FUNCTION
+            FUNCTION,
+            GLOBAL_VARIABLE
         }
 
         public string ModuleName = "";

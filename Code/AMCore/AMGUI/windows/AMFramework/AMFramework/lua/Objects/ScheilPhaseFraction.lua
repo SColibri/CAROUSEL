@@ -8,7 +8,7 @@ function ScheilPhaseFraction:new (o,ID,IDCase,IDPhase,TypeComposition,Temperatur
    setmetatable(o, self)
    self.__index = self
    self.ID = ID or -1
-   self.IDCase = IDCase
+   self.IDCase = IDCase or -1
    self.IDPhase = IDPhase or 0
    self.TypeComposition = TypeComposition or "weight"
    self.Temperature = Temperature or 0
@@ -38,4 +38,9 @@ end
 function ScheilPhaseFraction:save()
     local saveString = join(self, ",")
     spc_scheil_phasefraction_save(saveString)
+end
+
+-- remove
+function ScheilPhaseFraction:remove()
+    spc_scheil_phasefraction_delete(self.ID)
 end

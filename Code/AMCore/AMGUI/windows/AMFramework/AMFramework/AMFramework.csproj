@@ -7930,6 +7930,7 @@
     <Folder Include="Components\NewFolder\" />
     <Folder Include="Components\Terminal\" />
     <Folder Include="Libraries\dll\" />
+    <Folder Include="lua\JSON\" />
     <Folder Include="Resources\img\" />
   </ItemGroup>
 
@@ -7969,13 +7970,40 @@
     <None Update="lua\Objects\Case.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="lua\Objects\Configuration.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\Element.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\ElementComposition.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="lua\Objects\EquilibriumConfig.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\EquilibriumPhaseFraction.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\Framework.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\Phase.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="lua\Objects\Project.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="lua\Objects\ScheilConfig.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\ScheilPhaseFraction.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\SelectedElement.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\SelectedPhase.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Icons\Logo.ico">

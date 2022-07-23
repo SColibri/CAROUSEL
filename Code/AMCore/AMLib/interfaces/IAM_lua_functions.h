@@ -171,7 +171,9 @@ protected:
 #pragma region Project
 		add_new_function(state, "project_save", "<INT> ID of new project", "project_save <string> csv format", Bind_Templated_Save<DBS_Project>);
 		add_new_function(state, "project_delete", "<String> OK", "Project_Delete <string> csv format", Bind_Templated_Delete<DBS_Project>);
-		add_new_function(state, "project_load_data", "<String> OK", "project_load_data <string> csv format", Bind_Templated_loadID<DBS_Project>);
+		add_new_function(state, "project_loadID", "<String> OK", "project_loadID <string> csv format", Bind_Templated_loadID<DBS_Project>);
+		add_new_function(state, "project_load_data", "<String> OK", "project_load_data <string> csv format", Bind_Project_LoadData);
+		add_new_function(state, "project_remove_dependentData", "<String> OK", "project_remove_dependentData <string> csv format", Bind_Project_Remove_projectData);
 #pragma endregion
 
 		//###-> Active phases
@@ -194,6 +196,7 @@ protected:
 		add_new_function(state, "phase_save", "<string> OK", "phase_save <INT> ID", Bind_Templated_Save<DBS_Phase>);
 		add_new_function(state, "phase_delete", "<string> OK", "phase_delete <INT> ID", Bind_Templated_Delete<DBS_Phase>);
 		add_new_function(state, "phase_loadID", "<string> OK", "phase_loadID <String> csv", Bind_Templated_loadID<DBS_Phase>);
+		add_new_function(state, "phase_load_ByName", "<string> OK", "phase_load_ByName <String> csv", Bind_Phase_Load_ByName);
 #pragma endregion
 
 		//###-> Elements
@@ -201,6 +204,7 @@ protected:
 		add_new_function(state, "element_save", "<string> OK", "element_save <INT> ID", Bind_Templated_Save<DBS_Element>);
 		add_new_function(state, "element_delete", "<string> OK", "element_delete <INT> ID", Bind_Templated_Delete<DBS_Element>);
 		add_new_function(state, "element_loadID", "<string> OK", "element_loadID <String> csv", Bind_Templated_loadID<DBS_Element>);
+		add_new_function(state, "element_load_ByName", "<string> OK", "element_load_ByName <String> csv", Bind_Element_Load_ByName);
 #pragma endregion
 
 		//###-> Selected Phases
@@ -224,7 +228,7 @@ protected:
 		add_new_function(state, "spc_elementcomposition_save", "<string> OK", "spc_elementcomposition_save <INT> ID", Bind_Templated_Save<DBS_ElementComposition>);
 		add_new_function(state, "spc_elementcomposition_delete", "<string> OK", "spc_elementcomposition_delete <INT> ID", Bind_Templated_Delete<DBS_ElementComposition>);
 		add_new_function(state, "spc_elementcomposition_load_id", "<string> OK", "spc_elementcomposition_load_id <String> csv", Bind_Templated_loadID<DBS_ElementComposition>);
-		add_new_function(state, "spc_elementcomposition_load_id_project", "<string> OK", "spc_elementcomposition_load_id_project <String> csv", Bind_ElementComposition_Load_CaseID);
+		add_new_function(state, "spc_elementcomposition_load_id_case", "<string> OK", "spc_elementcomposition_load_id_project <String> csv", Bind_ElementComposition_Load_CaseID);
 #pragma endregion
 
 		//###-> Precipitation
@@ -890,6 +894,27 @@ protected:
 		return 1;
 	}
 
+	/// <summary>
+	/// Removes al dependent data from project
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_Project_Remove_projectData(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// remove existing ID
+		if (std::stoi(csvF[0]) > -1)
+		{
+			DBS_Project::remove_project_data(_dbFramework->get_database(), std::stoi(csvF[0]));
+		}
+
+		lua_pushstring(state, "OK");
+		return 1;
+	}
+
 #pragma endregion
 #pragma region Load
 	/// <summary>
@@ -1430,9 +1455,13 @@ protected:
 		// get data
 		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_EquilibriumConfiguration());
 		DT.load_data("IDCase = " + parameters[0]);
-
+		if (DT.row_count() == 0)
+		{
+			lua_pushstring(state, "Error: no data was found");
+			return 1;
+		}
 		// send csv
-		lua_pushstring(state, DT.get_csv().c_str());
+		lua_pushstring(state, IAM_Database::csv_join_row(DT.get_row_data(0),",").c_str());
 		return 1;
 	}
 #pragma endregion
@@ -1512,9 +1541,14 @@ protected:
 		// get data
 		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_ScheilConfiguration());
 		DT.load_data("IDCase = " + parameters[0]);
+		if(DT.row_count() == 0)
+		{
+			lua_pushstring(state,"Error: no data was found");
+			return 1;
+		}
 
 		// send csv
-		lua_pushstring(state, DT.get_csv().c_str());
+		lua_pushstring(state, IAM_Database::csv_join_row(DT.get_row_data(0), ",").c_str());
 		return 1;
 	}
 #pragma endregion
@@ -1579,6 +1613,30 @@ protected:
 		lua_pushstring(state, DT.get_csv().c_str());
 		return 1;
 	}
+
+	/// <summary>
+	/// Load phase by Name
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_Phase_Load_ByName(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters = get_parameters(state);
+		if(parameters.size() == 0)
+		{
+			lua_pushstring(state, "Error: missing parameter -> Name");
+			return 1;
+		}
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_Phase());
+		DT.load_data("Name = '" + string_manipulators::trim_whiteSpace(parameters[0]) + "'");
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
 #pragma endregion
 #pragma endregion
 
@@ -1636,6 +1694,30 @@ protected:
 		// get data
 		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_Element());
 		DT.load_data("ID = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Load phase by Name
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_Element_Load_ByName(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters = get_parameters(state);
+		if (parameters.size() == 0)
+		{
+			lua_pushstring(state, "Error: missing parameter -> Name");
+			return 1;
+		}
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_Element());
+		DT.load_data("Name = '" + string_manipulators::trim_whiteSpace(parameters[0]) + "'");
 
 		// send csv
 		lua_pushstring(state, DT.get_csv().c_str());

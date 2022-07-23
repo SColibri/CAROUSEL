@@ -1,5 +1,9 @@
 ﻿
 function split(str, delim, maxNb)
+    if str == nil or delim == nil then
+        return {}
+    end
+
    -- Eliminate bad cases...
    if string.find(str, delim) == nil then
       return { str }
@@ -39,6 +43,10 @@ function join(tableObject, delim)
     return result
 end
 
+function trim(s)
+   return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
 function load_data(objectT, csvData)
     local index = 1
     for i , Item in ipairs(objectT.Columns) do
@@ -55,5 +63,16 @@ function load_data(objectT, csvData)
 
         ::continue::
         index = index + 1
+    end
+end
+
+function load_table_data(TableStore, ObjectType, csvTableData) --@Description Load table in csv format ( columns: ',' , Rows: '\n ') This function parses through the data and fills the objects. \n TableStore: Reference to table to store the data \n ObjectType: class type from which to call the new() function \n csvTableData: raw data in csv format  
+    for i, Item in ipairs(csvTableData) do
+        if string.len(Item) <= 1 then goto continue end
+        local csvData = split(Item,",")
+        TableStore[i] = ObjectType:new{}
+        load_data(TableStore[i], csvData)
+                
+        ::continue::
     end
 end

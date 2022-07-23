@@ -38,3 +38,8 @@ function EquilibriumPhaseFraction:save()
     local saveString = join(self, ",")
     spc_equilibrium_phasefraction_save(saveString)
 end
+
+-- remove
+function EquilibriumPhaseFraction:remove()
+    spc_equilibrium_phasefraction_delete(self.ID)
+end

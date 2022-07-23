@@ -26,10 +26,17 @@ end
 function ElementComposition:load ()
    sqlData = split(spc_elementcomposition_load_id(self.ID))
    load_data(self, sqlData)
+
+   self.element = Element:new{self.IDElement}
 end
 
 -- save
 function ElementComposition:save()
     local saveString = join(self, ",")
     spc_elementcomposition_save(saveString)
+end
+
+-- remove
+function ElementComposition:remove()
+    spc_elementcomposition_Delete(self.ID)
 end

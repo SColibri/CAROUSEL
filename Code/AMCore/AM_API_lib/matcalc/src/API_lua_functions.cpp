@@ -71,20 +71,28 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 	add_new_function(state, "run_command", "std::string filename", "command", bind_run_command);
 	add_new_function(state, "initialize_core", "std::string out", "void", bind_initializeCore_command);
 
+	// Database
+#pragma region Database
 	add_new_function(state, "get_elementNames", "std::string out", "void", bind_getElementNames_command);
 	add_new_function(state, "get_phaseNames", "std::string out", "void", bind_getPhaseNames_command);
+#pragma endregion
+	
 
-	//
-	add_new_function(state, "pixelcase_stepEquilibrium_IDProject", "std::string out", "<int IDProject> <int IDCase>", Bind_SPC_StepEquilibrium_ByProjectID);
-	add_new_function(state, "pixelcase_stepEquilibrium", "std::string out", "<int IDCase>", Bind_SPC_StepEquilibrium);
+	// Calculations
+#pragma region Calculations
 	add_new_function(state, "pixelcase_step_equilibrium_parallel", "std::string out", "<int ID project> <int IDCase (optional more than 1)>", Bind_SPC_Parallel_StepEquilibrium);
-	add_new_function(state, "pixelcase_stepScheil", "std::string out", "<int IDCase>", Bind_SPC_StepScheil);
 	add_new_function(state, "pixelcase_step_scheil_parallel", "std::string out", "<int ID project> <int IDCase (optional more than 1)>", Bind_SPC_Parallel_StepScheil);
 	add_new_function(state, "pixelcase_calculate_precipitate_distribution", "std::string out", "pixelcase_calculate_precipitate_distribution", Bind_SPC_parallel_calculate_precipitate_distribution);
+#pragma endregion
+
+	add_new_function(state, "pixelcase_stepEquilibrium_IDProject", "std::string out", "<int IDProject> <int IDCase>", Bind_SPC_StepEquilibrium_ByProjectID);
+	add_new_function(state, "pixelcase_stepEquilibrium", "std::string out", "<int IDCase>", Bind_SPC_StepEquilibrium);
+	
+	add_new_function(state, "pixelcase_stepScheil", "std::string out", "<int IDCase>", Bind_SPC_StepScheil);
+	
+	
 	add_new_function(state, "pixelcase_run_cases", "std::string out", "pixelcase_run_cases", Bind_SPC_run_cases);
 
-	// Bind_SPC_Parallel_StepEquilibrium
-	//add_new_function(state, "database_tableList", "std::string out", "void", AMBaseFunctions::baseBind_DatabaseTableList);
 }
 
 #pragma region lua_functions

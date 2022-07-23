@@ -152,6 +152,22 @@ TEST_CASE("IAM_lua_functions")
 		
 	}
 
+	SECTION("script test")
+	{
+
+		DBS_Case casey(main_setup::_db, -1);
+		casey.Name = "Generic name";
+		casey.save();
+
+		std::string result = main_setup::api->run_lua_script("C:\\Users\\drogo\\Desktop\\Homless\\tessave.lua");
+
+		DBS_Case casey2(main_setup::_db, 1);
+		casey2.load();
+		//REQUIRE(casey2.Name.compare("Hello world from Framework") == 0);
+
+
+	}
+
 	SECTION("constructor")
 		{
 			// lua functions

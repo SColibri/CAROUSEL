@@ -31,3 +31,8 @@ function SelectedElement:save()
     local saveString = join(self, ",")
     spc_selectedelement_save(saveString)
 end
+
+-- remove
+function SelectedElement:remove()
+    spc_selectedelement_delete(self.ID)
+end

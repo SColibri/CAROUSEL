@@ -29,7 +29,7 @@ public:
 	/// <param name="filename"></param>
 	void run_file(std::string filename)
 	{
-		luaL_dofile(_state, filename.c_str());
+		int result = luaL_dofile(_state, filename.c_str());
 	}
 
 	/// <summary>

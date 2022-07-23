@@ -48,8 +48,8 @@ namespace main_setup
 		//Create a new database file
 		std::string filename = configuration.get_directory_path(AM_FileManagement::FILEPATH::DATABASE) + "/" +
 			Database_Factory::get_schema() + ".db";
-		if (std::filesystem::exists(filename))
-			std::filesystem::remove(std::filesystem::path(filename));
+		//if (std::filesystem::exists(filename))
+		//	std::filesystem::remove(std::filesystem::path(filename));
 
 		_dbF = new AM_Database_Framework(&configuration);
 		_db = _dbF->get_database();

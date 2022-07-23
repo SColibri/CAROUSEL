@@ -69,6 +69,10 @@ namespace AMFramework.Components.Scripting
             scintilla.Styles[ScintillaNET.Style.Lua.Word3].ForeColor = System.Drawing.Color.LightPink;
             scintilla.Styles[ScintillaNET.Style.Lua.Word4].ForeColor = System.Drawing.Color.LightPink;
             scintilla.Styles[ScintillaNET.Style.Lua.Word5].ForeColor = System.Drawing.Color.LightPink;
+            scintilla.Styles[ScintillaNET.Style.Lua.Word6].ForeColor = System.Drawing.Color.DodgerBlue;
+            scintilla.Styles[ScintillaNET.Style.Lua.Word6].Bold = true;
+            scintilla.Styles[ScintillaNET.Style.Lua.Word7].ForeColor = System.Drawing.Color.DodgerBlue;
+            scintilla.Styles[ScintillaNET.Style.Lua.Word7].Bold = true;
             scintilla.Styles[ScintillaNET.Style.Lua.String].ForeColor = System.Drawing.Color.Red;
             scintilla.Styles[ScintillaNET.Style.Lua.Character].ForeColor = System.Drawing.Color.Red;
             scintilla.Styles[ScintillaNET.Style.Lua.LiteralString].ForeColor = System.Drawing.Color.Red;
@@ -223,6 +227,7 @@ namespace AMFramework.Components.Scripting
 
                 ((Scintilla)sender).SetKeywords(4, AMParser.Get_Classes_keywords());
                 ((Scintilla)sender).SetKeywords(5, AMParser.Get_Functions_keywords());
+                ((Scintilla)sender).SetKeywords(6, AMParser.Get_Global_variable_keywords());
 
                 return;
             }

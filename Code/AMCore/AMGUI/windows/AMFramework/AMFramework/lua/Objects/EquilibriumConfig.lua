@@ -15,6 +15,7 @@ function EquilibriumConfig:new (o,ID, IDCase, Temperature, StartTemperature, End
    self.TemperatureType = TemperatureType or "C"
    self.StepSize = StepSize or 25
    self.Pressure = Pressure or 101325
+   self.Columns = {"ID","IDCase","Temperature","StartTemperature","EndTemperature","TemperatureType","StepSize", "Pressure"}
    
    if o.ID > -1 then
     o:load()
@@ -33,4 +34,15 @@ end
 function EquilibriumConfig:save()
     local saveString = join(self, ",")
     spc_equilibrium_configuration_save(saveString)
+end
+
+-- Methods
+function EquilibriumConfig:run()
+    if self.IDCase > -1 then
+        if ID == -1 then self:save() end
+
+        local caseRef = Case:new{ID = self.IDCase}
+        pixelcase_step_equilibrium_parallel(caseRef.IDProject, tostring(self.IDCase) .. '-' .. tostring(self.IDCase))
+
+    end
 end

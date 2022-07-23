@@ -951,7 +951,7 @@ private:
 		int Index = 0;
 		std::vector<std::thread> threadList;
 		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
-		{
+		{	
 			std::vector<AM_pixel_parameters*> tempVector(pixel_parameters.begin() + Index, pixel_parameters.begin() + Index + threadWorkload[n1]);
 			threadList.push_back(std::thread(funcStep, mcc_comms[n1], tempVector, &Project));
 			Index += threadWorkload[n1];

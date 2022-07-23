@@ -36,3 +36,8 @@ function SelectedPhase:save()
     local saveString = join(self, ",")
     spc_selectedphase_save(saveString)
 end
+
+-- remove
+function SelectedPhase:remove()
+    spc_selectedphase_delete(self.ID)
+end
