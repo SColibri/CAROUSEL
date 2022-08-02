@@ -96,6 +96,31 @@ namespace string_manipulators
         return out;
     }
 
+    static std::string double_to_string(double Value, int precision = 16) 
+    {
+        std::ostringstream decimalString;
+        decimalString << std::fixed;
+        decimalString << std::setprecision(precision);
+        decimalString << Value;
+
+        return decimalString.str();
+    }
+
+    static void remove_empty_entries(std::vector<std::string>& vectorItem) 
+    {
+        std::vector<std::string> tempVector;
+        for (auto& item : vectorItem)
+        {
+            if (item.length() > 0) tempVector.push_back(item);
+        }
+
+        vectorItem.clear();
+        for (auto& item : tempVector)
+        {
+            vectorItem.push_back(item);
+
+        }
+    }
 #pragma region string_format
     /// <summary>
     /// Returns a string with the formatted value types usedin in the string formatter
@@ -179,6 +204,8 @@ namespace string_manipulators
         iStream.close();
         return out;
     }
+
+
 #pragma endregion
 
 }

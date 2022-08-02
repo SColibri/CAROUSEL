@@ -46,7 +46,7 @@ namespace AMFramework.Components.Scripting
         private void setupMain(Scintilla scintilla)
         {
             // Extracted from the Lua Scintilla lexer and SciTE .properties file
-            var alphaChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.:";
+            var alphaChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             var numericChars = "0123456789";
             var accentedChars = "ŠšŒœŸÿÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïÐðÑñÒòÓóÔôÕõÖØøÙùÚúÛûÜüÝýÞþßö";
 
@@ -164,6 +164,13 @@ namespace AMFramework.Components.Scripting
             // Enable automatic folding
             scintilla.AutomaticFold = (AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change);
 
+            // Images
+            scintilla.RegisterRgbaImage(0, AMsystem.AMFramework_ImageSource.Get_faIcon_bitmap("variable"));
+            scintilla.RegisterRgbaImage(1, AMsystem.AMFramework_ImageSource.Get_faIcon_bitmap("math-function"));
+            scintilla.RegisterRgbaImage(2, AMsystem.AMFramework_ImageSource.Get_faIcon_bitmap("tool"));
+            scintilla.RegisterRgbaImage(3, AMsystem.AMFramework_ImageSource.Get_faIcon_bitmap("box"));
+            scintilla.AutoCIgnoreCase = false;
+
             //Enable Drag drop
             scintilla.AllowDrop = true;
             scintilla.DragEnter += ScintillaDragEnter_handle;
@@ -212,22 +219,67 @@ namespace AMFramework.Components.Scripting
         #region Handles
         private void Scripting_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
-            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) { e.SuppressKeyPress = true; e.Handled = true; }
-            else if(e.Modifiers == Keys.Control && e.KeyCode == Keys.S) 
-            { 
-                e.SuppressKeyPress = true; 
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) 
+            {
+                var pos = ((Scintilla)sender).CurrentPosition;
+                var word = ((Scintilla)sender).GetWordFromPosition(pos);
+                Show_autocomplete(word, (Scintilla)sender);
+                e.SuppressKeyPress = true; e.Handled = true; 
+            }
+            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.S)
+            {
+                e.SuppressKeyPress = true;
                 e.Handled = true;
                 ((Components.Scripting.Scripting_ViewModel)DataContext).save();
             }
+            else if (e.KeyCode == Keys.Back) 
+            {
+                string CurrentLineT = ((Scintilla)sender).Lines[((Scintilla)sender).CurrentLine].Text;
+
+                if (CurrentLineT[CurrentLineT.Length - 1] == '.' || 
+                    CurrentLineT[CurrentLineT.Length - 1] == ':') 
+                { 
+                    if (Anchor_StringBuild.Count > 0) 
+                    {
+                        Anchor_StringBuild.RemoveAt(Anchor_StringBuild.Count - 1);
+                    }
+
+                    if (CurrentLineT.LastIndexOf('.') != -1)
+                    {
+                        string VariablesNames = AMParser.Get_Global_variable_parameters(Anchor_StringBuild);
+                        AutoCompleteList.AddRange(VariablesNames.Split(" ").ToList());
+                        Anchor_Parameters = true;
+                    }
+                    else 
+                    {
+                        string FunctionNames = AMParser.Get_Global_variable_functions(Anchor_StringBuild);
+                        AutoCompleteList.AddRange(FunctionNames.Split(" ").ToList());
+                        Anchor_Functions = true;
+                    }
+                }
+                else if(CurrentLineT.Contains('.') == false && CurrentLineT.Contains(':') == false) 
+                {
+                    Anchor_Functions = false;
+                    Anchor_Parameters = false;
+                    Anchor_StringBuild.Clear();
+                }
+            }
+            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) 
+            {
+                var pos = ((Scintilla)sender).CurrentPosition;
+                var word = ((Scintilla)sender).GetWordFromPosition(pos);
+                Show_autocomplete(word, (Scintilla)sender);
+                e.Handled = true;
+            }
             else if (e.KeyCode == Keys.Space) { return; }
-            else if (e.KeyCode == Keys.Enter) 
+            else if (e.KeyCode == Keys.Enter)
             {
                 AMSystem.LUA_FileParser.Remove_module("Local", AMParser);
                 AMSystem.LUA_FileParser.File_parse(((Scintilla)sender).Text, AMParser, "Local");
 
-                ((Scintilla)sender).SetKeywords(4, AMParser.Get_Classes_keywords());
-                ((Scintilla)sender).SetKeywords(5, AMParser.Get_Functions_keywords());
-                ((Scintilla)sender).SetKeywords(6, AMParser.Get_Global_variable_keywords());
+                ((Scintilla)sender).SetKeywords(4, AMParser.Remove_Icon_tags(AMParser.Get_Classes_keywords().Replace("?3","")));
+                ((Scintilla)sender).SetKeywords(5, AMParser.Remove_Icon_tags(AMParser.Get_Functions_keywords().Replace("?1", "")));
+                ((Scintilla)sender).SetKeywords(6, AMParser.Remove_Icon_tags(AMParser.Get_Global_variable_keywords().Replace("?0", "")));
 
                 return;
             }
@@ -278,71 +330,68 @@ namespace AMFramework.Components.Scripting
         }
 
         private List<string> AutoCompleteList = new();
+        private bool Anchor_Parameters = false;
+        private bool Anchor_Functions = false;
+        private int Anchor_line = -1;
+        private List<string> Anchor_StringBuild = new();
         public void AutoCompleter(object sender, ScintillaNET.CharAddedEventArgs e)
         {
             var scintilla = sender as Scintilla;
             var pos = scintilla.CurrentPosition;
             var word = scintilla.GetWordFromPosition(pos);
 
-            AutoCompleteList.Clear();
-            if (word == string.Empty) return;
-            if (word.Contains("."))
+            if (Anchor_line != scintilla.CurrentLine) 
             {
-                int IndexPoint = word.IndexOf('.');
-                List<AMSystem.ParseObject> words = AMParser.AMParser.FindAll(e => e.Name.CompareTo(word.Substring(0, IndexPoint)) == 0).ToList();
-                foreach (var item in words)
-                {
-                    AutoCompleteList.AddRange(item.Parameters);
-                }
-                for (int i = 0; i < AutoCompleteList.Count; i++)
-                {
-                    AutoCompleteList[i] = word.Substring(0, IndexPoint) + "." + AutoCompleteList[i];
-                }
-
+                Anchor_Parameters = false;
+                Anchor_Functions = false;
+                Anchor_StringBuild.Clear();
+                Anchor_line = scintilla.CurrentLine;
             }
-            else if (word.Contains(":"))
+
+            if (e.Char == '.') 
             {
-                int IndexPoint = word.IndexOf(':');
-                List<AMSystem.ParseObject> words = AMParser.AMParser.FindAll(e => e.Name.CompareTo(word.Substring(0, IndexPoint)) == 0).ToList();
-                foreach (var item in words)
-                {
-                    AutoCompleteList.AddRange(item.functions.Select(e => e.Name).ToList());
-                }
-                for (int i = 0; i < AutoCompleteList.Count; i++)
-                {
-                    AutoCompleteList[i] = word.Substring(0, IndexPoint) + ":" + AutoCompleteList[i];
-                }
+                AutoCompleteList.Clear();
+                word = scintilla.GetWordFromPosition(pos-1);
+                if (Anchor_StringBuild.Contains(word) == false) Anchor_StringBuild.Add(word);
+
+                string VariablesNames = AMParser.Get_Global_variable_parameters(Anchor_StringBuild);
+                AutoCompleteList.AddRange(VariablesNames.Split(" ").ToList());
+                Anchor_Parameters = true;
+            }
+            else if (e.Char == ':')
+            {
+                AutoCompleteList.Clear();
+                word = scintilla.GetWordFromPosition(pos - 1);
+                if (Anchor_StringBuild.Contains(word) == false) Anchor_StringBuild.Add(word);
+
+                string FunctionNames = AMParser.Get_Global_variable_functions(Anchor_StringBuild);
+                AutoCompleteList.AddRange(FunctionNames.Split(" ").ToList());
+                Anchor_Functions = true;
+            }
+            else if (Anchor_Functions == true || Anchor_Parameters == true) 
+            { 
+            
             }
             else
             {
-                foreach (var item in AMParser.AMParser)
+                AutoCompleteList.Clear();
+                foreach (var item in AMParser.Get_Classes_keywords().Split(" ").ToList())
                 {
-                    AutoCompleteList.Add(item.Name);
+                    if(AutoCompleteList.Contains(item) == false) AutoCompleteList.Add(item);
+                }
+
+                foreach (var item in AMParser.Get_Functions_keywords().Split(" ").ToList())
+                {
+                    if (AutoCompleteList.Contains(item) == false) AutoCompleteList.Add(item);
+                }
+
+                foreach (var item in AMParser.Get_Global_variable_keywords().Split(" ").ToList())
+                {
+                    if (AutoCompleteList.Contains(item) == false) AutoCompleteList.Add(item);
                 }
             }
 
-            AutoCompleteList.Sort();
-
-            var list = AutoCompleteList.FindAll(delegate (string item)
-            {
-                return item.StartsWith(word);
-            });
-
-            string TextList = "";
-            foreach (var item in AutoCompleteList)
-            {
-                if (TextList.Length != 0) { TextList += scintilla.AutoCSeparator.ToString(); }
-                TextList += item;
-            }
-
-            if (AutoCompleteList.Count > 0)
-            {
-                scintilla.AutoCShow(word.Length, TextList);
-            }
-            else
-            {
-                scintilla.AutoCCancel();
-            }
+            Show_autocomplete(word, scintilla);
         }
 
         public void MouseMove(object sender, System.Windows.Forms.MouseEventArgs e) 
@@ -422,7 +471,51 @@ namespace AMFramework.Components.Scripting
         #endregion
 
         #region Loaders
-        
+
+        #endregion
+
+        #region Methods
+        private void Show_autocomplete(string word, Scintilla scintilla) 
+        {
+            AutoCompleteList.Sort();
+
+            var list = AutoCompleteList.FindAll(delegate (string item)
+            {
+                return item.StartsWith(word);
+            });
+
+            string TextList = "";
+            foreach (var item in list)
+            {
+                if (TextList.Length != 0) { TextList += scintilla.AutoCSeparator.ToString(); }
+                TextList += item;
+            }
+
+            if (AutoCompleteList.Count > 0)
+            {
+                scintilla.AutoCShow(word.Length, TextList);
+            }
+            else
+            {
+                scintilla.AutoCCancel();
+            }
+        }
+
+        private string Get_previousWord(int position, Scintilla sender) 
+        {
+            int startPosition = sender.WordStartPosition(position - 1, true);
+            int endPosition = sender.WordEndPosition(position - 1, true);
+
+            return sender.GetTextRange(startPosition, endPosition - startPosition); ;
+        }
+
+        private string Get_currentWord(int position, Scintilla sender)
+        {
+            int startPosition = sender.WordStartPosition(position, true);
+            int endPosition = sender.WordEndPosition(position, true);
+
+            return sender.GetTextRange(startPosition, endPosition - startPosition); ;
+        }
         #endregion
 
     }

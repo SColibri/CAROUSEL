@@ -55,19 +55,20 @@ namespace AMFramework.AMSystem
             List<ParseObject> refTemp = AMParser.FindAll(e => e.ObjectType == ParseObject.PTYPE.CLASS);
             foreach (var item in refTemp)
             {
-                keywords += item.Name + " ";
+                keywords += item.Name + "?3 ";
 
                 foreach (var item2 in item.Parameters)
                 {
-                    keywords += item.Name + "." + item2 + " ";
+                    keywords += item.Name + "." + item2 + "?2 ";
                 }
 
                 foreach (var item2 in item.functions)
                 {
-                    keywords += item.Name + ":" + item2.Name + " ";
+                    keywords += item.Name + ":" + item2.Name + "?1 ";
                 }
             }
 
+            keywords = keywords.Trim();
             return keywords;
         }
 
@@ -78,9 +79,10 @@ namespace AMFramework.AMSystem
             List<ParseObject> refTemp = AMParser.FindAll(e => e.ObjectType == ParseObject.PTYPE.FUNCTION);
             foreach (var item in refTemp)
             {
-                keywords += item.Name + " ";
+                keywords += item.Name + "?1 ";
             }
 
+            keywords = keywords.Trim();
             return keywords;
         }
 
@@ -91,22 +93,102 @@ namespace AMFramework.AMSystem
             List<ParseObject> refTemp = AMParser.FindAll(e => e.ObjectType == ParseObject.PTYPE.GLOBAL_VARIABLE);
             foreach (var item in refTemp)
             {
-                keywords += item.Name + " ";
-
-                foreach (var item2 in item.Parameters)
-                {
-                    keywords += item.Name + "." + item2 + " ";
-                }
-
-                foreach (var item2 in item.functions)
-                {
-                    keywords += item.Name + ":" + item2.Name + " ";
-                }
+                keywords += item.Name + "?0 ";
             }
 
+            keywords = keywords.Trim();
             return keywords;
         }
 
+        public string Get_Global_variable_parameters(List<string> variableLine) 
+        {
+            if (variableLine.Count == 0) return "";
+
+            string keywords = "";
+            ParseObject refTemp = AMParser.Find(e => e.Name.CompareTo(variableLine[0]) == 0);
+            if (refTemp is null) return "";
+
+            if (variableLine.Count > 1)
+            {
+                ParseObject ref_leve2 = null;
+                string currentClass = variableLine[0];
+
+                foreach (var item in variableLine.Skip(1))
+                {
+                    ref_leve2 = refTemp.functions.Find(e => e.Name.CompareTo(currentClass) == 0);
+                    if (ref_leve2 == null) break;
+                    currentClass = ref_leve2.Name;
+                }
+
+                if (ref_leve2 == null) return "";
+                foreach (var item in ref_leve2.Parameters)
+                {
+                    keywords += item + "?2 ";
+                }
+            }
+            else 
+            {
+                foreach (var item in refTemp.Parameters)
+                {
+                    keywords += item + "?2 ";
+                }
+            }
+
+            keywords = keywords.Trim();
+            return keywords;
+        }
+
+        public string Get_Global_variable_functions(List<string> variableLine)
+        {
+            if (variableLine.Count == 0) return "";
+
+            string keywords = "";
+            ParseObject refTemp = AMParser.Find(e => e.Name.CompareTo(variableLine[0]) == 0);
+            if (refTemp is null) return "";
+
+            if (variableLine.Count > 1)
+            {
+                ParseObject ref_leve2 = null;
+                string currentClass = variableLine[0];
+
+                foreach (var item in variableLine.Skip(1))
+                {
+                    ref_leve2 = refTemp.functions.Find(e => e.Name.CompareTo(currentClass) == 0);
+                    if (ref_leve2 == null) break;
+                    currentClass = ref_leve2.Name;
+                }
+
+                if (ref_leve2 == null) return "";
+                foreach (var item in ref_leve2.functions)
+                {
+                    keywords += item.Name + "?1 ";
+                }
+            }
+            else
+            {
+                foreach (var item in refTemp.functions)
+                {
+                    keywords += item.Name + "?1 ";
+                }
+
+                ParseObject refTemp_Class = AMParser.Find(e => e.Name.CompareTo(refTemp.ParametersType) == 0);
+                if (refTemp_Class != null) 
+                {
+                    foreach (var item in refTemp_Class.functions)
+                    {
+                        keywords += item.Name + "?1 ";
+                    }
+                }
+            }
+
+            keywords = keywords.Trim();
+            return keywords;
+        }
+
+        public string Remove_Icon_tags(string keywords) 
+        {
+            return keywords.Replace("?0","").Replace("?1", "").Replace("?2", "").Replace("?3", "");
+        }
 
         /// <summary>
         /// File parse finds all classes, functions and it's parameters.
@@ -447,7 +529,7 @@ namespace AMFramework.AMSystem
             // find key where class name ends
             int Index01 = copyRowLine.IndexOf('=');
             int Index02 = copyRowLine.IndexOf(':');
-            if (Index01 == -1 || Index02 == -1) return "";
+            if (Index01 == -1 || Index02 == -1 || Index02 < Index01 + 1) return "";
 
 
 

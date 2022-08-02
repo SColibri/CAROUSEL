@@ -9,8 +9,8 @@ class DBS_ScheilConfiguration : public IAM_DBS
 public:
 	int IDCase{ -1 };
 	double StartTemperature{ 700 };
-	double EndTemperature{ 700 };
-	double StepSize{ -25 };
+	double EndTemperature{ 25 };
+	double StepSize{ 1 };
 	int DependentPhase{ -1 };
 	double minimumLiquidFraction{ 0.01 };
 

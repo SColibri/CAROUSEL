@@ -1,5 +1,4 @@
-﻿
--- AMFramework objects
+﻿-- AMFramework objects
 -- require"json.json"
 require"Objects.AM_StringManipulators"
 require"Objects.Configuration"
@@ -14,7 +13,14 @@ require"Objects.SelectedElement"
 require"Objects.SelectedPhase"
 require"Objects.Case"
 require"Objects.Project"
+require"Objects.ActivePhases"
+require"Objects.ActivePhasesConfig"
+require"Objects.ActivePhasesElementComposition"
+require"Objects.PrecipitateSimulationData"
+require"Objects.PrecipitationPhase"
+require"Objects.PrecipitationDomain"
+require"Objects.HeatTreatment"
+require"Objects.HeatTreatmentProfile"
+require"Objects.HeatTreatmentSegment"
 require"Objects.Framework"
-
-
 

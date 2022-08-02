@@ -1,5 +1,6 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
+#include "../../../x_Helpers/string_manipulators.h"
 
 class DBS_PrecipitationDomain : public IAM_DBS
 {
@@ -8,13 +9,13 @@ public:
 	int IDCase{ -1 }; // ID case
 	std::string Name{ "" }; // domain name
 	int IDPhase {-1}; // Thermodynamic matrix phase
-	double InitialGrainDiameter{ 0.00005 }; // Initial grain diameter
+	double InitialGrainDiameter{ 100.0e-6 }; // Initial grain diameter
 	double EquilibriumDiDe{ 100000000000 }; // Equilibrium dislocation density
 
 	// Vacancies
-	std::string VacancyEvolutionModel{ "" }; // Vacancy evolution model
+	std::string VacancyEvolutionModel{ "FSAK-dynamics" }; // Vacancy evolution model
 	int ConsiderExVa{ 0 }; // Consider excess vacancy
-	double ExcessVacancyEfficiency{ 0.0 }; // Excess vacancy efficiency
+	double ExcessVacancyEfficiency{ 1.0 }; // Excess vacancy efficiency
 	
 	DBS_PrecipitationDomain(IAM_Database* database, int id) :
 		IAM_DBS(database)
@@ -28,13 +29,14 @@ public:
 	virtual std::vector<std::string> get_input_vector() override
 	{
 		std::vector<std::string> input{ std::to_string(_id),
+										std::to_string(IDCase),
 										Name,
 										std::to_string(IDPhase),
 										std::to_string(InitialGrainDiameter),
 										std::to_string(EquilibriumDiDe),
 										VacancyEvolutionModel,
 										std::to_string(ConsiderExVa),
-										std::to_string(ExcessVacancyEfficiency) };
+										string_manipulators::double_to_string(ExcessVacancyEfficiency) };
 		return input;
 	}
 
@@ -54,14 +56,16 @@ public:
 		_id = -1;
 		if (rawData.size() < _tableStructure.columnNames.size()) return 1;
 
-		set_id(std::stoi(rawData[0]));
-		Name = rawData[1];
-		IDPhase = std::stoi(rawData[2]);
-		InitialGrainDiameter = std::stold(rawData[3]);
-		EquilibriumDiDe = std::stold(rawData[4]);
-		VacancyEvolutionModel = rawData[5];
-		ConsiderExVa = std::stoi(rawData[6]);
-		ExcessVacancyEfficiency = std::stold(rawData[7]);
+		int index = 0;
+		set_id(std::stoi(rawData[index++]));
+		IDCase = std::stoi(rawData[index++]);
+		Name = rawData[index++];
+		IDPhase = std::stoi(rawData[index++]);
+		InitialGrainDiameter = std::stold(rawData[index++]);
+		EquilibriumDiDe = std::stold(rawData[index++]);
+		VacancyEvolutionModel = rawData[index++];
+		ConsiderExVa = std::stoi(rawData[index++]);
+		ExcessVacancyEfficiency = std::stold(rawData[index++]);
 		return 0;
 	}
 

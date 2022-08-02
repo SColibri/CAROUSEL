@@ -34,5 +34,5 @@ end
 -- save
 function Phase:save()
     local saveString = join(self, ",")
-    phase_save(saveString)
+    self.ID = tonumber(phase_save(saveString)) or -1
 end

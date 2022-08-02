@@ -203,6 +203,50 @@ namespace AMLIB
 		return out;
 	}
 
+#pragma region HeatTreatment
+
+	static AM_Database_TableStruct TN_HeatTreatment()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
+		out.add_new("IDCase", "INTEGER"); // ID case corresponding to 
+		out.add_new("Name", "TEXT"); // Name of heat treatment
+		out.add_new("MaxTemperatureStep", "INTEGER"); // matcalc specific
+		out.add_new("IDPrecipitationDomain", "INTEGER"); // Precipitation domain
+		out.add_new("StartTemperature", "INTEGER");
+		out.tableName = "HeatTreatment";
+
+		return out;
+	}
+
+	static AM_Database_TableStruct TN_HeatTreatmentSegments()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
+		out.add_new("stepIndex", "INTEGER"); // segments are done in order and defined by stepIndex (sorted by)
+		out.add_new("IDHeatTreatment", "INTEGER"); // ID to which heat treatment it corresponds
+		out.add_new("IDPrecipitationDomain", "INTEGER"); // ID to precipitation domain
+		out.add_new("EndTemperature", "REAL"); // ID to precipitation domain
+		out.add_new("TemperatureGradient", "REAL"); // ID to precipitation domain
+		out.add_new("Duration", "REAL"); // ID to precipitation domain
+		out.tableName = "HeatTreatmentSegments";
+
+		return out;
+	}
+
+	static AM_Database_TableStruct TN_HeatTreatmentProfile()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
+		out.add_new("IDHeatTreatment", "REAL");
+		out.add_new("Time", "REAL"); // 
+		out.add_new("Temperature", "REAL"); // 
+		out.tableName = "HeatTreatmentProfile";
+
+		return out;
+	}
+
+#pragma endregion
 
 #pragma region Equilibrium
 	/// <summary>
@@ -315,6 +359,7 @@ namespace AMLIB
 	{
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
+		out.add_new("IDCase", "INTEGER"); // Autoincrement ID
 		out.add_new("Name", "TEXT"); // Domain name
 		out.add_new("IDPhase", "INTEGER"); // Thermodynamic matrix phase
 		out.add_new("InitialGrainDiameter", "REAL"); // Initial grain diameter
@@ -352,6 +397,26 @@ namespace AMLIB
 
 		return out;
 	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	static AM_Database_TableStruct TN_PrecipitateSimulationData()
+	{
+		AM_Database_TableStruct out;
+		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
+		out.add_new("IDPrecipitationPhase", "INTEGER"); // segments are done in order and defined by stepIndex (sorted by)
+		out.add_new("IDHeatTreatment", "INTEGER");
+		out.add_new("Time", "INTEGER"); 
+		out.add_new("PhaseFraction", "REAL");
+		out.add_new("NumberDensity", "REAL");
+		out.add_new("MeanRadius", "REAL");
+
+		out.tableName = "PrecipitateSimulationData";
+
+		return out;
+	}
 #pragma endregion
 
 #pragma endregion
@@ -383,6 +448,10 @@ namespace AMLIB
 		out.push_back(TN_ActivePhases_ElementComposition());
 		out.push_back(TN_PrecipitationDomain());
 		out.push_back(TN_PrecipitationPhase());
+		out.push_back(TN_HeatTreatment());
+		out.push_back(TN_HeatTreatmentSegments());
+		out.push_back(TN_PrecipitateSimulationData());
+		out.push_back(TN_HeatTreatmentProfile());
 
 
 		return out;

@@ -27,6 +27,22 @@ public:
 		_tableStructure = AMLIB::TN_PrecipitationPhase();
 	}
 
+	static int remove_selection_data(IAM_Database* database, long int CaseID)
+	{
+		std::string query = AMLIB::TN_PrecipitationPhase().columnNames[0] +
+			" = " + std::to_string(CaseID);
+
+		return database->remove_row(&AMLIB::TN_PrecipitationPhase(), query);
+	}
+
+	static int remove_case_data(IAM_Database* database, long int projectID)
+	{
+		std::string query = AMLIB::TN_PrecipitationPhase().columnNames[1] +
+			" = " + std::to_string(projectID);
+
+		return database->remove_row(&AMLIB::TN_PrecipitationPhase(), query);
+	}
+
 #pragma region implementation
 
 	virtual std::vector<std::string> get_input_vector() override
@@ -76,6 +92,24 @@ public:
 		MaxRadius = std::stold(rawData[10]);
 		StdDev = std::stold(rawData[11]);
 		PrecipitateDistribution = rawData[12];
+
+		return 0;
+	}
+
+	virtual int check_before_save() override
+	{
+		// check if is unique
+		if (id() == -1)
+		{
+			AM_Database_Datatable checkData(_db, &AMLIB::TN_ActivePhases());
+			checkData.load_data("IDCase = " + std::to_string(IDCase) + " AND Name = \'" + Name + "\'");
+
+			// found a coincidence, set Id and subtitute that data instead
+			if (checkData.row_count() == 1) 
+			{
+				set_id(std::stoi(checkData(0, 0)));
+			}
+		}
 
 		return 0;
 	}

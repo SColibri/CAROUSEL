@@ -35,7 +35,7 @@ end
 function Element:save()
     self.Name = string.upper(self.Name)
     local saveString = join(self, ",")
-    element_save(saveString)
+    self.ID = tonumber(element_save(saveString)) or -1
 end
 
 -- remove

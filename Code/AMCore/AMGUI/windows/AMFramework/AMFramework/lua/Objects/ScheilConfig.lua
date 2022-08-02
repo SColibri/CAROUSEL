@@ -12,7 +12,7 @@ function ScheilConfig:new (o, ID, IDCase, StartTemperature, EndTemperature, Step
    self.StartTemperature = StartTemperature or 700
    self.EndTemperature = EndTemperature or 25
    self.StepSize = StepSize or 25
-   self.DependentPhase = Pressure or 101325
+   self.DependentPhase = DependentPhase or -1
    self.Min_Liquid_Fraction = Min_Liquid_Fraction or 0.01
    self.Columns = {"ID","IDCase","StartTemperature","EndTemperature","StepSize","DependentPhase","Min_Liquid_Fraction"}
 
@@ -27,28 +27,39 @@ end
 
 -- load
 function ScheilConfig:load ()
-   sqlData = split(spc_scheil_configuration_loadID(self.ID),",")
+   local sqlData = split(spc_scheil_configuration_loadID(self.ID),",")
    load_data(self, sqlData)
 end
 
 function ScheilConfig:loadByCase ()
-   sqlData = split(spc_scheil_configuration_load_caseID(self.IDCase),",")
+   local sqlData = split(spc_scheil_configuration_load_caseID(self.IDCase),",")
    load_data(self, sqlData)
 end
 
 -- save
 function ScheilConfig:save()
+    -- If IDCase is not defined we do not save this configuration
+    if self.IDCase == -1 then goto continue end
+
+    -- Check if a configuration has been defined for this case
+    if self.ID == -1 then
+        local tempE = ScheilConfig:new{IDCase=self.IDCase}
+        if tempE.ID > -1 then self.ID = tempE.ID end
+    end
+
+    -- Save data
     local saveString = join(self, ",")
-    spc_scheil_configuration_save(saveString)
+    self.ID = tonumber(spc_scheil_configuration_save(saveString)) or -1
+
+    ::continue::
 end
 
 -- Methods
 function ScheilConfig:run()
     if self.IDCase > -1 then
-        if ID == -1 then self:save() end
+        if self.ID == -1 then self:save() end
 
         local caseRef = Case:new{ID = self.IDCase}
         pixelcase_step_scheil_parallel(caseRef.IDProject, tostring(self.IDCase) .. '-' .. tostring(self.IDCase))
-
     end
 end

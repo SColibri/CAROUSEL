@@ -46,7 +46,7 @@ public:
 		std::string query = AMLIB::TN_SelectedElements().columnNames[0] +
 			" = " + std::to_string(CaseID);
 
-		int results[8];
+		int results[11];
 		results[0] = database->remove_row(&AMLIB::TN_EquilibriumConfiguration(), 
 						AMLIB::TN_EquilibriumConfiguration().columnNames[1] +
 						" = " + std::to_string(CaseID));
@@ -71,6 +71,12 @@ public:
 		results[7] = database->remove_row(&AMLIB::TN_Case(),
 						AMLIB::TN_Case().columnNames[0] +
 						" = " + std::to_string(CaseID));
+		results[8] = database->remove_row(&AMLIB::TN_PrecipitationPhase(),
+			AMLIB::TN_PrecipitationPhase().columnNames[0] +
+			" = " + std::to_string(CaseID));
+		results[9] = database->remove_row(&AMLIB::TN_PrecipitationDomain(),
+			AMLIB::TN_PrecipitationDomain().columnNames[0] +
+			" = " + std::to_string(CaseID));
 
 		return 0;
 	}
@@ -79,15 +85,12 @@ public:
 	{
 		DBS_ScheilConfiguration new001(database,-1);
 		DBS_EquilibriumConfiguration new002(database, -1);
-		DBS_PrecipitationDomain new003(database, -1);
-		
+
 		new001.IDCase = CaseID;
 		new002.IDCase = CaseID;
-		new003.IDCase = CaseID;
 
 		new001.save();
 		new002.save();
-		new003.save();
 
 		return 1;
 	}

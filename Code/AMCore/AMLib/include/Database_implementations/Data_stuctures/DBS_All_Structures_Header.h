@@ -19,4 +19,9 @@
 #include "DBS_ActivePhases_ElementComposition.h"
 #include "DBS_PrecipitationDomain.h"
 #include "DBS_PrecipitationPhase.h"
+#include "DBS_HeatTreatment.h"
+#include "DBS_HeatTreatmentSegment.h"
+#include "DBS_HeatTreatmentProfile.h"
+#include "DBS_PrecipitateSimulationData.h"
+
 

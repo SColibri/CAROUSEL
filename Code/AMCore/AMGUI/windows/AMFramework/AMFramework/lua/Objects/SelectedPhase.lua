@@ -22,7 +22,7 @@ end
 
 -- load
 function SelectedPhase:load ()
-   sqlData = split(spc_selectedphase_load_id(self.IDCase))
+   local sqlData = split(spc_selectedphase_load_id(self.IDCase))
    load_data(self, sqlData)
 
    if self.ID > -1 then
@@ -34,7 +34,7 @@ end
 -- save
 function SelectedPhase:save()
     local saveString = join(self, ",")
-    spc_selectedphase_save(saveString)
+    self.ID = tonumber(spc_selectedphase_save(saveString)) or -1
 end
 
 -- remove

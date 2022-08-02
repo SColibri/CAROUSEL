@@ -143,6 +143,83 @@ TEST_CASE("Database", "[classic]")
 		REQUIRE(ScheilFracDBL.IDCase == ScheilFracDB.IDCase);
 		REQUIRE(ScheilFracDBL.Value == ScheilFracDB.Value);
 
+		DBS_PrecipitationPhase precipPhase(db01, -1);
+		precipPhase.IDCase = 1;
+		precipPhase.IDPhase = 1;
+		precipPhase.Name = "_P0";
+		precipPhase.save();
+		REQUIRE(precipPhase.id() > -1);
+
+		DBS_PrecipitationPhase precipPhaseDBL(db01, precipPhase.id());
+		precipPhaseDBL.load();
+		REQUIRE(precipPhaseDBL.id() == precipPhase.id());
+		REQUIRE(precipPhaseDBL.IDCase == 1);
+		REQUIRE(precipPhaseDBL.IDPhase == 1);
+		REQUIRE(precipPhaseDBL.Name.compare("_P0") == 0);
+
+		DBS_HeatTreatment HT(db01, -1);
+		HT.Name = "HT01";
+		HT.IDPrecipitationDomain = 1;
+		HT.MaxTemperatureStep = 25;
+		HT.StartTemperature = 356.7;
+		HT.save();
+		REQUIRE(HT.Name.compare("HT01") == 0);
+		REQUIRE(HT.id() > -1);
+
+		DBS_HeatTreatment HT_load(db01, HT.id());
+		HT_load.load();
+		REQUIRE(HT_load.id() > -1);
+		REQUIRE(HT_load.Name.compare("HT01") == 0);
+		REQUIRE(HT_load.IDPrecipitationDomain == HT.IDPrecipitationDomain);
+		REQUIRE(HT_load.MaxTemperatureStep == HT.MaxTemperatureStep);
+		REQUIRE(HT_load.StartTemperature == HT.StartTemperature);
+
+		DBS_HeatTreatmentSegment HS(db01, -1);
+		HS.Duration = 60 * 60 * 6;
+		HS.EndTemperature = 25;
+		HS.stepIndex = 1;
+		HS.save();
+		REQUIRE(HS.id() > -1);
+
+		DBS_HeatTreatmentSegment HS_load(db01, HS.id());
+		HS_load.load();
+		REQUIRE(HS_load.Duration == HS.Duration);
+		REQUIRE(HS_load.EndTemperature == HS.EndTemperature);
+		REQUIRE(HS_load.stepIndex == HS.stepIndex);
+
+		DBS_PrecipitateSimulationData PPF(db01, -1);
+		PPF.IDPrecipitationPhase = 1;
+		PPF.PhaseFraction = 0.0000001;
+		PPF.MeanRadius = 0.0000001;
+		PPF.NumberDensity = 0.0000001;
+		PPF.Time = 1e-10;
+		PPF.save();
+		REQUIRE(PPF.id() > -1);
+
+		DBS_PrecipitateSimulationData PPF_load(db01, PPF.id());
+		PPF_load.load();
+		REQUIRE(PPF_load.id() > -1);
+		REQUIRE(PPF_load.IDPrecipitationPhase == PPF.IDPrecipitationPhase);
+		REQUIRE(PPF_load.PhaseFraction == PPF.PhaseFraction);
+		REQUIRE(PPF_load.MeanRadius == PPF.MeanRadius);
+		REQUIRE(PPF_load.NumberDensity == PPF.NumberDensity);
+		REQUIRE(PPF_load.Time == PPF.Time);
+
+		DBS_HeatTreatmentProfile HP(db01, -1);
+		HP.IDHeatTreatment = 1;
+		HP.Temperature = 350.0019;
+		HP.Time = 0.000001;
+		HP.save();
+		REQUIRE(HP.id() > -1);
+
+		DBS_HeatTreatmentProfile HP_load(db01, HP.id());
+		HP_load.load();
+		REQUIRE(HP_load.id() == HP.id());
+		REQUIRE(HP_load.IDHeatTreatment == HP.IDHeatTreatment);
+		REQUIRE(HP_load.Temperature == HP.Temperature);
+		REQUIRE(HP_load.Time == HP.Time);
+
+
 
 	}
 

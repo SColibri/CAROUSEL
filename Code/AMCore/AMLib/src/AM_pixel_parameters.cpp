@@ -48,8 +48,18 @@ AM_pixel_parameters::AM_pixel_parameters(const AM_pixel_parameters& toCopy)
 void AM_pixel_parameters::save()
 {
 	if (!_allowSave) return;
+	
+	int flagCaseNew = 0;
+	if (_case->id() == -1) { flagCaseNew = 1; }
+	
 	_case->save();
 
+	if (flagCaseNew == 1) 
+	{
+		load_DBS_ScheilConfig(_case->id());
+		load_DBS_EquilibriumConfig(_case->id());
+	}
+	
 	_scheilConfiguration->IDCase = _case->id();
 	_scheilConfiguration->save();
 

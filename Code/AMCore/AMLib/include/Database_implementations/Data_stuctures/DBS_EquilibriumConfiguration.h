@@ -10,9 +10,9 @@ public:
 	int IDCase{ -1 };
 	double Temperature{ 700 };
 	double StartTemperature{ 700 };
-	double EndTemperature{ 700 };
+	double EndTemperature{ 25 };
 	std::string TemperatureType{ "C" };
-	double StepSize{ 25 };
+	double StepSize{ 1 };
 	double Pressure{ 101325 };
 
 	DBS_EquilibriumConfiguration(IAM_Database* database, int id) :

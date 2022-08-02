@@ -19,6 +19,8 @@ function EquilibriumConfig:new (o,ID, IDCase, Temperature, StartTemperature, End
    
    if o.ID > -1 then
     o:load()
+   elseif o.IDCase > -1 then
+    o:loadByCase()
    end
 
    return o
@@ -26,23 +28,40 @@ end
 
 -- load
 function EquilibriumConfig:load ()
-   sqlData = split(spc_equilibrium_configuration_load_caseID(self.IDCase))
+   local sqlData = split(spc_equilibrium_configuration_loadID(self.ID))
+   load_data(self, sqlData)
+end
+
+function EquilibriumConfig:loadByCase ()
+   local sqlData = split(spc_equilibrium_configuration_load_caseID(self.IDCase),",")
    load_data(self, sqlData)
 end
 
 -- save
 function EquilibriumConfig:save()
+    -- If IDCase is not defined we do not save this configuration
+    if self.IDCase == -1 then goto continue end
+
+    -- Check if a configuration has been defined for this case
+    if self.ID == -1 then
+        local tempE = EquilibriumConfig:new{IDCase=self.IDCase}
+        if tempE.ID > -1 then self.ID = tempE.ID end
+    end
+
+    -- Save data
     local saveString = join(self, ",")
-    spc_equilibrium_configuration_save(saveString)
+    self.ID = tonumber(spc_equilibrium_configuration_save(saveString)) or -1
+
+    ::continue::
 end
 
 -- Methods
 function EquilibriumConfig:run()
     if self.IDCase > -1 then
-        if ID == -1 then self:save() end
+        if self.ID == -1 then self:save() end
 
         local caseRef = Case:new{ID = self.IDCase}
         pixelcase_step_equilibrium_parallel(caseRef.IDProject, tostring(self.IDCase) .. '-' .. tostring(self.IDCase))
-
+        
     end
 end

@@ -429,13 +429,11 @@ private:
 			}
 
 		}
-		run_command(state, "msgbox", std::vector<std::string>{IAM_Database::csv_join_row(listPhases, " ")});
 
 		// This was not possible because of the number of phases we called, thus we obtain active phases by looking into the IPC ouput of
 		// the calculated equilibrium
 		//std::vector<std::string> BufferRows = read_matcalc_calcphase_buffer(bufferRowEntries.size() - 1, API_Scripting::script_get_phase_equilibrium_scheil_variable_name(listPhases), mcc_comms);
 
-		run_command(state, "msgbox", std::vector<std::string>{"OkbufferRaw"});
 		// Store found values
 		std::vector<IAM_DBS*> activePhases;
 		for(int n1 = 0; n1 < listPhases.size(); n1++)
@@ -969,7 +967,7 @@ private:
 		}
 		mcc_comms.clear();
 
-		std::string outCommand_1 = "";
+		std::string outCommand_1 = "OK";
 		lua_pushstring(state, outCommand_1.c_str());
 		return 1;
 	}
@@ -1106,7 +1104,206 @@ private:
 		}
 		mcc_comms.clear();
 
-		std::string outCommand_1 = "";
+		std::string outCommand_1 = "OK";
+		lua_pushstring(state, outCommand_1.c_str());
+		return 1;
+	}
+
+	static int Bind_SPC_parallel_calculate_heat_treatment(lua_State* state)
+	{
+		// Check and get parameters
+		if (check_parameters(state, lua_gettop(state), 3, "usage: <ID project> <ID Cases> <Heat treatment name>") != 0) return 1;
+		std::vector<std::string> parameters = get_parameters(state);
+
+		// Initialize AM_project object, this is used for checking if cases belong to the project
+		AM_Project Project(_dbFramework->get_database(), _configuration, std::stoi(parameters[0]));
+		std::vector<AM_pixel_parameters*> pixel_parameters;
+
+		// Get pointers for all cases
+		std::vector<std::string> rangeIDCase = string_manipulators::split_text(parameters[1], "-");
+		int start = std::stoi(rangeIDCase[0]);
+		int end = std::stoi(rangeIDCase[1]);
+		int range = end - start;
+
+		for (int n1 = 0; n1 < range + 1; n1++)
+		{
+			pixel_parameters.push_back(Project.get_pixelCase(start + n1));
+			if (pixel_parameters[n1] == nullptr)
+			{
+				std::string ErrorOut = "Error: Selected ID case is not part of this project!";
+				lua_pushstring(state, ErrorOut.c_str());
+				return 1;
+			}
+		}
+
+		// Create communication to mcc for each thread
+		std::vector<int> threadWorkload = AMThreading::thread_workload_distribution(_configuration->get_max_thread_number(), pixel_parameters.size());
+		std::wstring externalPath = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(_configuration->get_apiExternal_path() + "/mcc.exe");
+		std::vector<IPC_winapi*> mcc_comms;
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
+		{
+			mcc_comms.push_back(new IPC_winapi(externalPath));
+			mcc_comms[n1]->set_endflag("MC:");
+			runVectorCommands(std::vector<string>{API_Scripting::script_initialize_core()}, mcc_comms[n1]);
+		}
+
+		// define the parallel function
+		auto funcStep = [](IPC_winapi* mccComm, std::vector<AM_pixel_parameters*> PixelList, AM_Project* projectM, std::string& HeatTreatmentName)
+		{
+			for (AM_pixel_parameters* pixel_parameters : PixelList)
+			{
+				if (pixel_parameters->get_precipitation_phases().size() == 0) continue;
+				// create all script commands
+				std::vector<std::string> ScriptInstructions;
+				std::vector<std::string> FileList;
+				API_Scripting::Script_run_heat_treatment(_dbFramework->get_database(), _configuration, HeatTreatmentName, ScriptInstructions, FileList);
+
+				//Run script commands
+				std::string commandToString = IAM_Database::csv_join_row(ScriptInstructions, "\n");
+				std::string outCommand_1 = runVectorCommands(ScriptInstructions, mccComm);
+
+				// Load csv file into database
+				// "%12.2d  %12.6f  %12.6d" variable-name="StepValue t$c r_mean$AL3TI_L_P0"
+				DBS_HeatTreatment tempRef(_dbFramework->get_database(), -1);
+				tempRef.load_by_name(HeatTreatmentName);
+
+				AM_Database_Datatable phasesTable(_dbFramework->get_database(), &AMLIB::TN_PrecipitationPhase());
+				phasesTable.load_data("IDCase = " + std::to_string(pixel_parameters->get_caseID()));
+
+				if (phasesTable.row_count() == 0) continue;
+				std::string stringFormat = "%12.2g %12.2f ";
+				std::string variableName = "StepValue t$c ";
+
+				std::vector<DBS_PrecipitationPhase> phaseList;
+				for (int n1 = 0; n1 < phasesTable.row_count(); n1++)
+				{
+					phaseList.push_back(DBS_PrecipitationPhase(_dbFramework->get_database(), -1));
+					phaseList.back().load(phasesTable.get_row_data(n1));
+
+					stringFormat += "%12.2g %12.2g %12.2g ";
+					variableName += "NUM_PREC$" + phaseList.back().Name + " ";
+					variableName += "F_PREC$" + phaseList.back().Name + " ";
+					variableName += "R_MEAN$" + phaseList.back().Name + " ";
+				}
+
+				int totalVariables = phasesTable.row_count() * 3 + 2; 
+
+				// create script for loading data into text  file
+				std::string loadscript = API_Scripting::Buffer_to_variable_V02(_configuration, stringFormat, variableName, "");
+				std::string datafilename = loadscript;
+				string_manipulators::replace_token(datafilename, ".mcs", ".Framework");
+
+				// load from matcalc into textfile
+				std::string getVariablesCommand = runVectorCommands(std::vector<std::string> {API_Scripting::script_runScript(loadscript)}, mccComm);
+
+				// load from textfile
+				if (!std::filesystem::exists(datafilename)) return;
+
+				std::ifstream iStream(datafilename);
+				
+				std::string tempString;
+				std::vector<IAM_DBS*> saveVector;
+				int saveInterval = 100;
+				while (std::getline(iStream, tempString)) {
+					std::vector<std::string> tempVector = string_manipulators::split_text(tempString," ");
+					string_manipulators::remove_empty_entries(tempVector);
+					if (tempVector.size() != totalVariables) continue;
+					int index = 0;
+
+					DBS_HeatTreatmentProfile* newProfile = new DBS_HeatTreatmentProfile(_dbFramework->get_database(), -1);
+					newProfile->IDHeatTreatment = tempRef.id();
+					newProfile->Time = std::stod(tempVector[index++]);
+					newProfile->Temperature = std::stod(tempVector[index++]);
+					saveVector.push_back(newProfile);
+
+					for (auto& item : phaseList)
+					{
+						DBS_PrecipitateSimulationData* phaseyTemp = new DBS_PrecipitateSimulationData(_dbFramework->get_database(), -1);
+						phaseyTemp->IDHeatTreatment = tempRef.id();
+						phaseyTemp->IDPrecipitationPhase = item.id();
+						phaseyTemp->NumberDensity = std::stod(tempVector[index++]);
+						phaseyTemp->PhaseFraction = std::stod(tempVector[index++]);
+						phaseyTemp->MeanRadius = std::stod(tempVector[index++]);
+
+						saveVector.push_back(phaseyTemp);
+					}
+
+					if (saveVector.size() > saveInterval)
+					{
+						IAM_DBS::save(saveVector);
+
+						for (auto& item : saveVector) 
+						{
+							delete item;
+						}
+
+						saveVector.clear();
+					}
+
+				}
+
+				if (saveVector.size() > 0)
+				{
+					IAM_DBS::save(saveVector);
+
+					for (auto& item : saveVector)
+					{
+						delete item;
+					}
+
+					saveVector.clear();
+				}
+
+#pragma region TempFile_cleanup
+				// clear temp files
+				for (auto& item : FileList) 
+				{
+					try
+					{
+						filesystem::remove(item);
+					}
+					catch (const std::exception&)
+					{
+						// temp file was not possible to remove
+					}
+				}
+
+				try
+				{
+					filesystem::remove(loadscript);
+					filesystem::remove(datafilename);
+				}
+				catch (const std::exception&)
+				{
+
+				}
+#pragma endregion
+			}
+		};
+
+
+		int Index = 0;
+		std::vector<std::thread> threadList;
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
+		{
+			std::vector<AM_pixel_parameters*> tempVector(pixel_parameters.begin() + Index, pixel_parameters.begin() + Index + threadWorkload[n1]);
+			threadList.push_back(std::thread(funcStep, mcc_comms[n1], tempVector, &Project, parameters[2]));
+			Index += threadWorkload[n1];
+		}
+
+		for (int n1 = 0; n1 < threadList.size(); n1++)
+		{
+			threadList[n1].join();
+		}
+
+		for (int n1 = 0; n1 < threadList.size(); n1++)
+		{
+			mcc_comms[n1]->send_command("exit\r\n");
+			delete mcc_comms[n1];
+		}
+		mcc_comms.clear();
+
+		std::string outCommand_1 = "OK";
 		lua_pushstring(state, outCommand_1.c_str());
 		return 1;
 	}

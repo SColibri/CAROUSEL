@@ -24,7 +24,7 @@ end
 
 -- load
 function EquilibriumPhaseFraction:load ()
-   sqlData = split(spc_equilibrium_phasefraction_loadID(self.ID))
+   local sqlData = split(spc_equilibrium_phasefraction_loadID(self.ID))
    load_data(self, sqlData)
 
    if self.ID > -1 then
@@ -36,7 +36,7 @@ end
 -- save
 function EquilibriumPhaseFraction:save()
     local saveString = join(self, ",")
-    spc_equilibrium_phasefraction_save(saveString)
+    self.ID = tonumber(spc_equilibrium_phasefraction_save(saveString)) or -1
 end
 
 -- remove

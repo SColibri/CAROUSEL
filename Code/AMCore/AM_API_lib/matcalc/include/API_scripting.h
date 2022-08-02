@@ -7,6 +7,7 @@
 #include "../../../AMLib/include/AM_Config.h"
 #include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
 #include "../../../AMLib/x_Helpers/string_manipulators.h"
+#include "../../../AMLib/include/AM_Project.h"
 
 namespace API_Scripting
 {
@@ -25,7 +26,7 @@ namespace API_Scripting
 		return out;
 	}
 #pragma endregion
-	
+
 	std::vector<std::string> static Script_initialize(AM_Config* configuration) 
 	{
 		
@@ -204,9 +205,39 @@ namespace API_Scripting
 		return out;
 	}
 
-	std::string static Script_create_new_phase(std::string PhaseName)
+	std::string static Script_precipitation_domain_set_vacancy_evolution_parameters(std::string DomainP, std::string vacancyParameter)
+	{
+		std::string out = "set-precipitation-parameter " + DomainP + " microstructure-evolution vacancies vacancy-evolution-parameters " + vacancyParameter + "\n";
+		return out;
+	}
+
+	std::string static Script_precipitation_domain_set_initial_grain_diameter(std::string DomainP, std::string grainParameter)
+	{
+		std::string out = "set-precipitation-parameter " + DomainP + " initial-grain-diameter=" + grainParameter + "\n";
+		return out;
+	}
+
+	std::string static Script_precipitation_domain_set_equilibrium_dislocation_density(std::string DomainP, std::string dislocDensity)
+	{
+		std::string out = "set-precipitation-parameter " + DomainP + " equilibrium-dislocation-density=" + dislocDensity + "\n";
+		return out;
+	}
+
+	std::string static Script_create_new_phase_fromScheil(std::string PhaseName)
 	{
 		std::string out = "create-new-phase parent-phase=" + PhaseName + "_S precipitate " + PhaseName + "(primary)\n";
+		return out;
+	}
+
+	std::string static Script_create_new_phase(std::string PhaseName)
+	{
+		std::string out = "create-new-phase parent-phase=" + PhaseName + " precipitate " + PhaseName + "(primary)\n";
+		return out;
+	}
+
+	std::string static Script_create_new_phase_secondary(std::string PhaseName)
+	{
+		std::string out = "create-new-phase parent-phase=" + PhaseName + " precipitate " + PhaseName + "(sec)\n";
 		return out;
 	}
 
@@ -238,6 +269,11 @@ namespace API_Scripting
 	}
 
 #pragma region Kinetics
+
+#pragma region HeatTreatment
+	
+#pragma endregion
+
 	std::string static Script_set_simulation_parameters(std::string kineticParameters)
 	{
 		std::string out = "set-precipitation-parameter " + kineticParameters;
@@ -249,8 +285,22 @@ namespace API_Scripting
 		std::string out = "start-precipitate-simulation " + kineticParameters;
 		return out;
 	}
+
+	std::string static Script_restrict_precipitation_nucleation(std::string DomainP, std::string PhaseName)
+	{
+		std::string out = "set-precipitation-parameter precipitate-or-domain-name=" + PhaseName + " restrict-nucleation-to-precipitation-domain=" + DomainP + "\n";
+		return out;
+	}
+
+	std::string static Script_import_precipitate_distribution(std::string filename, std::string PhaseName)
+	{
+		std::string out = "import-precipitate-distribution " + PhaseName + " " + filename + "\n";
+		return out;
+	}
 #pragma endregion
 #pragma endregion
+
+
 #pragma region MatcalcBUFFER
 	std::string static script_buffer_listContent()
 	{
@@ -332,6 +382,38 @@ namespace API_Scripting
 	}
 #pragma endregion
 
+#pragma endregion
+
+#pragma region generic
+	static void GenericScript_Database(IAM_Database* db, AM_Config* configuration, int projectID, int caseID, std::vector<std::string>& outVector)
+	{
+		AM_Project tempProj(db, configuration, projectID);
+
+		outVector.push_back(script_set_thermodynamic_database(configuration->get_ThermodynamicDatabase_path()));
+		outVector.push_back(Script_selectElements(tempProj.get_selected_elements_ByName()));
+
+		AM_pixel_parameters* tempPixel = tempProj.get_pixelCase(caseID);
+		if (tempPixel == nullptr) return;
+
+		std::vector<std::string> Phases = tempPixel->get_selected_phases_ByName();
+		if (Phases.size() < 11)
+		{
+			outVector.push_back(Script_selectPhases(Phases));
+		}
+		else
+		{
+			int Index = 0;
+			for (int n1 = Index; n1 < Phases.size(); n1++)
+			{
+				outVector.push_back(Script_selectPhases(std::vector<std::string>{Phases[n1]}));
+			}
+		}
+
+		outVector.push_back(Script_readThermodynamicDatabase());
+		outVector.push_back(Script_readMobilityDatabase(configuration));
+		outVector.push_back(Script_readPhysicalDatabase(configuration));
+		outVector.push_back(Script_setReferenceElement(tempProj.get_reference_element_ByName()));
+	}
 #pragma endregion
 
 	std::string static Script_setupScheilGulliver()
@@ -440,6 +522,7 @@ namespace API_Scripting
 		std::vector<DBS_PrecipitationPhase*> precipitationPhases,
 		std::string TempDirectoryPath)
 	{
+		
 		// Add precipitation phases
 		// TODO: optimize! here we call at each loop the database to load the phase item, we can create a vector pointer for this :)
 		for(auto& item: precipitationPhases)
@@ -447,7 +530,7 @@ namespace API_Scripting
 			DBS_Phase tempPhase(db,item->IDPhase);
 			tempPhase.load();
 
-			stepScheilScript.push_back(Script_create_new_phase(tempPhase.Name));
+			stepScheilScript.push_back(Script_create_new_phase_fromScheil(tempPhase.Name));
 			stepScheilScript.push_back(Script_set_precipitation_parameter(tempPhase.Name, "nucleation-sites=none"));
 		}
 		
@@ -470,6 +553,154 @@ namespace API_Scripting
 			stepScheilScript.push_back(Script_export_precipitate_distribution(tempPhase.Name, TempDirectoryPath + "/" + std::to_string(item->id()) + "_" + tempPhase.Name + ".txt"));
 		}
 	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="db"></param>
+	/// <param name="configuration"></param>
+	/// <param name="IDCase"></param>
+	/// <param name="outVector"></param>
+	/// <param name="storedFiles"></param>
+	void static Script_run_heat_treatment(IAM_Database* db, AM_Config* configuration, std::string heatTreatmentName,
+		std::vector<std::string>& outVector, std::vector<std::string>& storedFiles)
+	{
+		// get reference to the heat treatment object
+		DBS_HeatTreatment HeatTreatment(db, -1);
+		HeatTreatment.load_by_name(heatTreatmentName);
+		if (HeatTreatment.id() == -1 || HeatTreatment.IDPrecipitationDomain == -1) return;
+
+		// We use the file management of the system to store temporal text files used for the calculations
+		AM_FileManagement fman(configuration->get_working_directory());
+
+		// Link the datbase from configuration template
+		DBS_Case tempCase(db, HeatTreatment.IDCase);
+		tempCase.load();
+		GenericScript_Database(db, configuration, tempCase.IDProject, HeatTreatment.IDCase, outVector);
+
+		// get precipitation domain that will be used
+#pragma region Matcalc_precipitationDomain_declaration
+
+		DBS_PrecipitationDomain PrecipitationDomain(db, HeatTreatment.IDPrecipitationDomain);
+		PrecipitationDomain.load();
+		
+		DBS_Phase tempPhase(db, PrecipitationDomain.IDPhase);
+		tempPhase.load();
+
+		outVector.push_back("create-precipitation-domain " + PrecipitationDomain.Name);
+		outVector.push_back("set-precipitation-parameter " + PrecipitationDomain.Name + " thermodynamic-matrix-phase=" + tempPhase.Name);
+		outVector.push_back("set-precipitation-parameter " + PrecipitationDomain.Name + " microstructure-evolution vacancies vacancy-evolution-model=" + PrecipitationDomain.VacancyEvolutionModel);
+		outVector.push_back("set-precipitation-parameter " + PrecipitationDomain.Name + " microstructure-evolution vacancies vacancy-evolution-parameters excess-vacancy-efficiency-in-diffusion=" + std::to_string(PrecipitationDomain.ExcessVacancyEfficiency));
+		outVector.push_back("set-precipitation-parameter " + PrecipitationDomain.Name + " initial-grain-diameter=" + std::to_string(PrecipitationDomain.InitialGrainDiameter));
+		outVector.push_back("set-precipitation-parameter " + PrecipitationDomain.Name + " equilibrium-dislocation-density=" + std::to_string(PrecipitationDomain.EquilibriumDiDe));
+
+#pragma endregion
+		
+
+		// get all primary/secondary precipitation phases and load into matcalc
+#pragma region Matcalc_precipitationPhases_creation
+
+		AM_Database_Datatable precipitationPhases(db, &AMLIB::TN_PrecipitationPhase());
+		precipitationPhases.load_data("IDCase = " + std::to_string(HeatTreatment.IDCase) + " AND Name LIKE \'%P0%\'");
+
+		if (precipitationPhases.row_count() == 0) return; // there is nothing to calculate first define primary precipitates
+
+		for (int n1 = 0; n1 < precipitationPhases.row_count(); n1++)
+		{
+			DBS_PrecipitationPhase tempRef(db, -1);
+			tempRef.load(precipitationPhases.get_row_data(n1));
+
+			DBS_Phase tempPhase(db, tempRef.IDPhase);
+			tempPhase.load();
+
+			outVector.push_back(Script_create_new_phase(tempPhase.Name));
+			outVector.push_back(Script_set_simulation_parameters(tempRef.Name + " number-of-size-classes=" + std::to_string(tempRef.NumberSizeClasses)));
+			outVector.push_back(Script_set_simulation_parameters(tempRef.Name + " nucleation-sites=" + tempRef.NucleationSites));
+			outVector.push_back(Script_set_simulation_parameters(tempRef.Name + " restrict-nucleation-to-precipitation-domain=" + PrecipitationDomain.Name));
+
+			storedFiles.push_back(fman.save_file(AM_FileManagement::FILEPATH::TEMP,tempRef.Name + ".txt", tempRef.PrecipitateDistribution));
+			outVector.push_back(Script_import_precipitate_distribution(storedFiles[storedFiles.size() - 1], tempRef.Name));
+		}
+
+		// Create secondary precipitates
+		precipitationPhases.load_data("IDCase = " + std::to_string(HeatTreatment.IDCase) + " AND Name LIKE \'%P1%\'");
+		if (precipitationPhases.row_count() == 0) return;
+		
+		for (int n1 = 0; n1 < precipitationPhases.row_count(); n1++)
+		{
+			DBS_PrecipitationPhase tempRef(db, -1);
+			tempRef.load(precipitationPhases.get_row_data(n1));
+
+			DBS_Phase tempPhase(db, tempRef.IDPhase);
+			tempPhase.load();
+
+			outVector.push_back(Script_create_new_phase_secondary(tempPhase.Name));
+			outVector.push_back(Script_set_simulation_parameters(tempRef.Name + " number-of-size-classes=" + std::to_string(tempRef.NumberSizeClasses)));
+			outVector.push_back(Script_set_simulation_parameters(tempRef.Name + " nucleation-sites=" + tempRef.NucleationSites));
+			outVector.push_back(Script_set_simulation_parameters(tempRef.Name + " restrict-nucleation-to-precipitation-domain=" + PrecipitationDomain.Name));
+		}
+
+#pragma endregion
+
+		// set heat treatment segments
+#pragma region Matcalc_HeatTreatmentSegments
+
+		// declare new buffer name
+		std::string bufferName = "HT_Buf";
+		std::string newStateName = "NSN";
+		outVector.push_back("create-calc-state new-state-name=" + newStateName);
+		outVector.push_back("rename-current-buffer " + bufferName);
+		outVector.push_back("create-tm-treatment tm-treatment-name=" + HeatTreatment.Name);
+
+		// load segments
+		AM_Database_Datatable HTSegments(db, &AMLIB::TN_HeatTreatmentSegments());
+		HTSegments.load_data("IDHeatTreatment = " + std::to_string(HeatTreatment.id()) + " ORDER BY stepIndex");
+		if (HTSegments.row_count() == 0) 
+		{
+			outVector.clear(); 
+			outVector.push_back("There are no segments for this heat treatment!");
+			return;
+		}
+
+		// first setup line
+		outVector.push_back("append-tmt-segment " + HeatTreatment.Name);
+		outVector.push_back("edit-tmt-segment tm-treatment-name=" + HeatTreatment.Name + " tm-treatment-segment=. precipitation-domain=" + PrecipitationDomain.Name);
+		outVector.push_back("edit-tmt-segment tm-treatment-name=" + HeatTreatment.Name + " tm-treatment-segment=. segment-start-temperature=" + std::to_string(HeatTreatment.StartTemperature));
+
+		for (int n2 = 0; n2 < HTSegments.row_count(); n2++)
+		{
+			DBS_HeatTreatmentSegment tempSeg(db, -1);
+			tempSeg.load(HTSegments.get_row_data(n2));
+
+			if (tempSeg.TemperatureGradient > 0)
+			{
+				outVector.push_back("edit-tmt-segment tm-treatment-name=" + HeatTreatment.Name + " tm-treatment-segment=. T_end+T_dot segment-end-temperature=" + std::to_string(tempSeg.EndTemperature) +
+					" temperature-gradient=" + std::to_string(tempSeg.TemperatureGradient));
+
+			}
+			else if (tempSeg.Duration > 0)
+			{
+				outVector.push_back("edit-tmt-segment tm-treatment-name=" + HeatTreatment.Name + " tm-treatment-segment=. T_end+delta_t segment-end-temperature=" + std::to_string(tempSeg.EndTemperature) +
+					" segment-delta-time=" + std::to_string(tempSeg.Duration));
+			}
+
+			if (n2 != HTSegments.row_count() - 1)
+			{
+				outVector.push_back("append-tmt-segment " + HeatTreatment.Name);
+			}
+
+		}
+
+		outVector.push_back("set-simulation-parameter temperature-control tm-treatment-name=" + HeatTreatment.Name);
+		outVector.push_back("set-simulation-parameter max-temperature-step=" + std::to_string(HeatTreatment.MaxTemperatureStep));
+
+#pragma endregion
+
+		outVector.push_back("set-simulation-parameter starting-conditions=" + newStateName); // use same buffername for data extraction
+		outVector.push_back("start-precipitate-simulation");
+	}
+
+
 #pragma endregion
 
 
@@ -504,7 +735,35 @@ namespace API_Scripting
 
 		return fileName;
 	}
+
+	std::string static Buffer_to_variable_V02(AM_Config* configuration, std::string FORMATTEDSTRING, std::string VARIABLES, std::string HEADER)
+	{
+		// create filenames
+		std::string tempName = "TempFile" + std::to_string(std::rand() + get_uniqueNumber());
+		std::string matcalfFilename = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "/" + tempName + ".Framework";
+
+		// create script
+		std::string scriptTemplate = "export-open-file file-name=\"" + matcalfFilename + "\" \n";
+
+		// Add Header if added
+		if (HEADER.length() > 0) 
+		{
+			scriptTemplate += "export-file-variables format-string=" + HEADER + "\n";
+		}
+		
+		scriptTemplate += "export-file-buffer format-string=\"" + FORMATTEDSTRING + "\" variable-name=" + VARIABLES + "\n";
+		scriptTemplate += "export-close-file \n";
+
+		// Save script
+		std::string fileName = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "/" + tempName + ".mcs";
+		std::ofstream striptFile(fileName);
+		striptFile << scriptTemplate.c_str() << std::endl;
+		striptFile.close();
+
+		return fileName;
+	}
 #pragma endregion
+
 
 
 }

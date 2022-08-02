@@ -154,7 +154,7 @@ TEST_CASE("IAM_lua_functions")
 
 	SECTION("script test")
 	{
-
+		/*
 		DBS_Case casey(main_setup::_db, -1);
 		casey.Name = "Generic name";
 		casey.save();
@@ -164,7 +164,7 @@ TEST_CASE("IAM_lua_functions")
 		DBS_Case casey2(main_setup::_db, 1);
 		casey2.load();
 		//REQUIRE(casey2.Name.compare("Hello world from Framework") == 0);
-
+		*/
 
 	}
 
@@ -188,7 +188,7 @@ TEST_CASE("IAM_lua_functions")
 
 		// Repeat all previous tests (ok not all, but those that check the data) 
 		// checking that the info was saved and loaded correctly
-		REQUIRE(main_setup::api->run_lua_command("project_loadID",
+		REQUIRE(main_setup::api->run_lua_command("project_loadID_L",
 			std::vector<std::string> {"1"}).compare("OK") == 0);
 
 		REQUIRE(string_manipulators::find_index_of_keyword(
@@ -198,8 +198,9 @@ TEST_CASE("IAM_lua_functions")
 		REQUIRE(string_manipulators::find_index_of_keyword(
 			main_setup::api->run_lua_command("project_getData"), "TestProject") != std::string::npos);
 
-		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_selectElements",
-			std::vector<std::string> {"AL", "MG", "SI", "TI", "CU", "CR", "FE", "MN", "ZN", "VA"}), "Error") == std::string::npos);
+		std::string selectedElementsOut = main_setup::api->run_lua_command("project_selectElements",
+			std::vector<std::string> {"AL", "MG", "SI", "TI", "CU", "FE", "ZN", "VA"});
+		REQUIRE(string_manipulators::find_index_of_keyword(selectedElementsOut, "Error") == std::string::npos);
 
 		REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("project_getSelectedElements",
 			std::vector<std::string> {""}), "1") != std::string::npos);
@@ -221,15 +222,14 @@ TEST_CASE("IAM_lua_functions")
 			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("template_pixelcase_new",
 				std::vector<std::string> {""}), "OK") != std::string::npos);
 
-			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("template_pixelcase_setComposition",
+			std::string compositionOut = main_setup::api->run_lua_command("template_pixelcase_setComposition",
 				std::vector<std::string> {	"MG", "1.0",
-											"SI", "0.6",
-											"TI", "1.0",
-											"CU", "0.3",
-											"CR", "0.1",
-											"FE", "0.001",
-											"MN", "0.001",
-											"ZN", "0.001"}), "1.00") != std::string::npos);
+				"SI", "0.6",
+				"TI", "1.0",
+				"CU", "0.2",
+				"FE", "0.3",
+				"ZN", "0.2"});
+			REQUIRE(string_manipulators::find_index_of_keyword(compositionOut, "1.0") != std::string::npos);
 
 			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("template_pixelcase_getComposition",
 				std::vector<std::string> {""}), "AL") != std::string::npos);
@@ -242,14 +242,14 @@ TEST_CASE("IAM_lua_functions")
 				std::vector<std::string> {"LIQUID"}), "OK") != std::string::npos);
 
 			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("template_pixelcase_selectPhases",
-				std::vector<std::string> {"LIQUID", "FCC_A1", "AL13CR4SI4", "ALCRFEMNSI_A", "AL12MN", "AL3TI_L",
-				"MG2SI_B", "S_PHASE", "THETA_AL2CU" }), "OK") != std::string::npos);
+				std::vector<std::string> {"LIQUID", "FCC_A1", "AL3TI_L",
+				"AL13FE4", "ALFESI_T5", "ALFESI_T6", "MG2SI_B", "SI_DIAMOND_A4" }), "OK") != std::string::npos);
 
 			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("template_pixelcase_getSelectPhases",
 				std::vector<std::string> {""}), "LIQUID") != std::string::npos);
 
 			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("template_pixelcase_getSelectPhases",
-				std::vector<std::string> {""}), "THETA_AL2CU") != std::string::npos);
+				std::vector<std::string> {""}), "SI_DIAMOND_A4") != std::string::npos);
 
 
 			// Equilibrium
@@ -273,8 +273,8 @@ TEST_CASE("IAM_lua_functions")
 			// Create cases from template
 			REQUIRE(string_manipulators::find_index_of_keyword(main_setup::api->run_lua_command("template_pixelcase_concentrationVariant",
 				std::vector<std::string> {"FE", "0.001", "10",
-											"MN", "0.001", "5",
-											"ZN", "0.001", "3"}), "OK") != std::string::npos);
+											"MG", "0.001", "5",
+											"ZN", "0.001", "3"}), "OK") != std::string::npos); // TODO this function takes way too much
 
 			//IPC_pipe::IPC_pipe tempOne("C:/Program Files/MatCalc 6/mcc.exe");
 			//tempOne.send_command("use-module core \r\n");
@@ -367,20 +367,92 @@ TEST_CASE("IAM_lua_functions")
 				std::vector<std::string> {	"1" }), "Error") == std::string::npos);
 
 			std::string outAll_sheil = main_setup::api->run_lua_command("pixelcase_step_scheil_parallel",
-				std::vector<std::string> {"1", "1-150"});
+				std::vector<std::string> {"1", "1-1"});
 
 			std::string outAll = main_setup::api->run_lua_command("pixelcase_step_equilibrium_parallel",
-				std::vector<std::string> {"1","1-150"});
+				std::vector<std::string> {"1","1-1"});
 
-			/*
-			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,36,25,AL3TI_L_P0,none,-1,normal,0.000001,0.000002,0.000003,0.05, "});
+			// "LIQUID", "FCC_A1", "AL3TI_L",
+			// "AL13FE4", "ALFESI_T5", "ALFESI_T6", "MG2SI_B", "SI_DIAMOND_A4"
+			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,36,25,AL3TI_L_P0,none,-1,normal,0.000001,0.000002,0.000003,0.05,_"});
+			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,24,25,AL13FE4_P0,none,-1,normal,0.000001,0.000002,0.000003,0.05,_ "});
+			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,28,25,ALFESI_T6_P0,none,-1,normal,0.000001,0.000002,0.000003,0.05,_ "});
+			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,40,25,MG2SI_B_P0,none,-1,normal,0.000001,0.000002,0.000003,0.05,_ "});
+			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,11,25,SI_DIAMOND_A4_P0,none,-1,normal,0.000001,0.000002,0.000003,0.05,_ "});
+
 			DBS_PrecipitationPhase temppPhase(main_setup::_db, 1);
 			temppPhase.load();
 			REQUIRE(temppPhase.id() == 1);
 
 			std::string outAll_precipitation = main_setup::api->run_lua_command("pixelcase_calculate_precipitate_distribution",
 				std::vector<std::string> {"1", "1-1"});
-			*/
+			REQUIRE(outAll_precipitation.compare("OK") == 0);
+
+			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,36,25,AL3TI_L_P1,none,-1,normal,0.000001,0.000002,0.000003,0.05,_ "});
+			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,24,25,AL13FE4_P1,none,-1,normal,0.000001,0.000002,0.000003,0.05,_ "});
+			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,28,25,ALFESI_T6_P1,none,-1,normal,0.000001,0.000002,0.000003,0.05,_ "});
+			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,40,25,MG2SI_B_P1,none,-1,normal,0.000001,0.000002,0.000003,0.05,_ "});
+			main_setup::api->run_lua_command("spc_precipitation_phase_save", std::vector<std::string> {"-1,1,11,25,SI_DIAMOND_A4_P1,none,-1,normal,0.000001,0.000002,0.000003,0.05,_ "});
+
+			DBS_PrecipitationDomain PD(main_setup::_db, -1);
+			PD.Name = "Precip";
+			PD.IDCase = 1;
+			PD.IDPhase = 2;
+			PD.InitialGrainDiameter = 100.0e-6;
+			PD.EquilibriumDiDe = 1.0e11;
+			PD.save();
+
+			DBS_HeatTreatment nT(main_setup::_db, -1);
+			nT.Name = "ht01";
+			nT.StartTemperature = 570;
+			nT.IDCase = 1;
+			nT.IDPrecipitationDomain = PD.id();
+			nT.save();
+
+			DBS_HeatTreatmentSegment sT_01(main_setup::_db, -1);
+			sT_01.IDHeatTreatment = nT.id();
+			sT_01.stepIndex = 1;
+			sT_01.EndTemperature = 25;
+			sT_01.TemperatureGradient = 10.2;
+			sT_01.save();
+
+			DBS_HeatTreatmentSegment sT_02(main_setup::_db, -1);
+			sT_02.IDHeatTreatment = nT.id();
+			sT_02.stepIndex = 1;
+			sT_02.EndTemperature = 400;
+			sT_02.TemperatureGradient = 400/60;
+			sT_02.save();
+
+			DBS_HeatTreatmentSegment sT_03(main_setup::_db, -1);
+			sT_03.IDHeatTreatment = nT.id();
+			sT_03.stepIndex = 1;
+			sT_03.EndTemperature = 400;
+			sT_03.Duration = 6*60*60;
+			sT_03.save();
+
+			DBS_HeatTreatmentSegment sT_04(main_setup::_db, -1);
+			sT_04.IDHeatTreatment = nT.id();
+			sT_04.stepIndex = 1;
+			sT_04.EndTemperature = 25;
+			sT_04.TemperatureGradient = 400 / 60;
+			sT_04.save();
+
+			DBS_HeatTreatmentSegment sT_05(main_setup::_db, -1);
+			sT_05.IDHeatTreatment = nT.id();
+			sT_05.stepIndex = 1;
+			sT_05.EndTemperature = 25;
+			sT_05.Duration = 24*60*60;
+			sT_05.save();
+
+			AM_Database_Datatable amdt(main_setup::_db, &AMLIB::TN_HeatTreatmentSegments());
+			amdt.load_data("IDHeatTreatment = " + std::to_string(nT.id()));
+			REQUIRE(amdt.row_count() == 5);
+
+			std::string outAll_HT = main_setup::api->run_lua_command("pixelcase_calculate_heat_treatment",
+				std::vector<std::string> {"1", "1-1", nT.Name});
+			REQUIRE(outAll_HT.compare("OK") == 0);
+
+
 			/*
 			for (int n1 = 0; n1 < tempProject.get_singlePixel_Cases().size(); n1++)
 			{

@@ -7935,6 +7935,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.2" />
     <PackageReference Include="fernandreu.ScintillaNET.WPF" Version="3.1.0" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />
@@ -7962,6 +7963,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="lua\AMFramework.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\ActivePhases.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\ActivePhasesConfig.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\ActivePhasesElementComposition.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="lua\Objects\AM_StringManipulators.lua">

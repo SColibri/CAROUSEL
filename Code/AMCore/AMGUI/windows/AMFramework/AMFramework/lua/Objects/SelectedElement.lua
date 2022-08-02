@@ -12,6 +12,7 @@ function SelectedElement:new (o,ID,IDProject,IDElement,IsReferenceElement) --@De
    self.IDElement = IDElement or -1
    self.IsReferenceElement = IsReferenceElement or 0
    self.Columns = {"ID","IDProject","IDElement","IsReferenceElement"}
+   self.Name = ""
 
    if o.ID > -1 then
     o:load()
@@ -22,14 +23,17 @@ end
 
 -- load
 function SelectedElement:load ()
-   sqlData = split(spc_selectedelement_load_id(self.ID))
+   local sqlData = split(spc_selectedelement_load_id(self.ID))
    load_data(self, sqlData)
+
+   local tempRef = Element:new{ID = IDElement}
+   self.Name = tempRef.Name
 end
 
 -- save
 function SelectedElement:save()
     local saveString = join(self, ",")
-    spc_selectedelement_save(saveString)
+    self.ID = tonumber(spc_selectedelement_save(saveString)) or -1
 end
 
 -- remove

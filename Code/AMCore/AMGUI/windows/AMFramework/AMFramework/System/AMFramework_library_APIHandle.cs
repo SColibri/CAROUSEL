@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 namespace AMFramework.AMsystem
 {
     /// <summary>
-    /// Link to the library instead of using IPC. This can make it faster for data access.
+    /// Link to the library instead of using IPC. This can make it faster for data access. [Deprecated, we use Core.IAMCore_comm]
     /// </summary>
     public class AMFramework_library_APIHandle
     {

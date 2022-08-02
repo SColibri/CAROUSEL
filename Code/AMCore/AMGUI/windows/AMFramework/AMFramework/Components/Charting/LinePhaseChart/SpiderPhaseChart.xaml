@@ -29,7 +29,7 @@
                   Grid.Row="1"
                   Grid.ColumnSpan="1">
             <StackPanel>
-                <spy:ChartingWindow x:Name="MainChart" Visibility="Visible" Height="500"/>
+                <spy:ChartingWindow x:Name="MainChart" Visibility="Collapsed" Height="500"/>
                 <WpfPlot x:Name="SpyderPlot" Visibility="Visible" Height="500"/>
             </StackPanel>
             

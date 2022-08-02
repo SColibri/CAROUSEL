@@ -1,8 +1,8 @@
 ﻿-- Case
-Case = {ID = -1, IDProject=-1, IDGroup=0, Name="NewCase", Script="", Date="", PosX=0, PosY=0, PosZ=0, EquilibriumConfiguration=EquilibriumConfig:new{}, ScheilConfiguration={}, equilibriumPhaseFraction={}, scheilPhaseFraction={}, selectedPhases={}, elementComposition={}} --@Description Case object. \n Each case contains all calculations and configurations for the ccurrent element composition
+Case = {ID = -1, IDProject=-1, IDGroup=0, Name="NewCase", Script="", Date="", PosX=0, PosY=0, PosZ=0, EquilibriumConfiguration=EquilibriumConfig:new{}, ScheilConfiguration={}, equilibriumPhaseFraction={}, scheilPhaseFraction={}, selectedPhases={}, elementComposition={}, precipitationPhases = {}, precipitationDomain = {} } --@Description Case object. \n Each case contains all calculations and configurations for the ccurrent element composition
 
 -- Constructor
-function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, PosZ, SelectedPhases, EquilibriumConfiguration, ScheilConfiguration, equilibriumPhaseFraction, scheilPhaseFraction, selectedPhases, elementComposition) --@Description Creates a new case,\n create new object by calling newVar = Case:new{ID = -1}, use ID = -1 when you want to create a new case item
+function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, PosZ, SelectedPhases, EquilibriumConfiguration, ScheilConfiguration, equilibriumPhaseFraction, scheilPhaseFraction, selectedPhases, elementComposition, precipitationPhases, precipitationDomain) --@Description Creates a new case,\n create new object by calling newVar = Case:new{ID = -1}, use ID = -1 when you want to create a new case item
    local o = o or {}
 
    setmetatable(o, self)
@@ -24,6 +24,9 @@ function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, Pos
    self.scheilPhaseFraction = scheilPhaseFraction or  {}
    self.selectedPhases = selectedPhases or {}
    self.elementComposition = elementComposition or {}
+   self.precipitationPhases = precipitationPhases or {}
+   self.precipitationDomain = precipitationDomain or {}
+
 
    if o.ID > -1 then
     o:load()
@@ -38,33 +41,42 @@ function Case:load()
    local sqlData = split(spc_case_load_id(self.ID),",")
    load_data(self, sqlData)
 
+   if self.ID == -1 then goto continue end
+
    -- Load Selected Phases
-   if self.ID > -1 then
-    local sqlData = split(spc_case_load_id(self.ID),",")
-   end
+   local sqlData = split(spc_case_load_id(self.ID),",")
 
    -- Load Equilibrium Configuration
-   if self.ID > -1 then
-    local sqlData_equilibrium = split(spc_equilibrium_configuration_load_caseID(self.ID),",")
-    self.EquilibriumConfiguration = EquilibriumConfig:new{}
-    load_data(self.EquilibriumConfiguration, sqlData_equilibrium)
-   end
+   local sqlData_equilibrium = split(spc_equilibrium_configuration_load_caseID(self.ID),",")
+   self.EquilibriumConfiguration = EquilibriumConfig:new{}
+   load_data(self.EquilibriumConfiguration, sqlData_equilibrium)
 
    -- Load Scheil Configuration
-   if self.ID > -1 then
-    local sqlData_scheil = split(spc_scheil_configuration_load_caseID(self.ID),",")
-    self.ScheilConfiguration = ScheilConfig:new{}
-    load_data(self.ScheilConfiguration, sqlData_scheil)
-   end
+   local sqlData_scheil = split(spc_scheil_configuration_load_caseID(self.ID),",")
+   self.ScheilConfiguration = ScheilConfig:new{}
+   load_data(self.ScheilConfiguration, sqlData_scheil)
 
    -- Load Element composition
     local sqlData_eComp = split(spc_elementcomposition_load_id_case(self.ID),"\n")
+    self.elementComposition = {}
     for i,Item in ipairs(sqlData_eComp) do
         local sqlData_eComp_cells = split(Item,",")
         self.elementComposition[i] = ElementComposition:new{}
         load_data(self.elementComposition[i], sqlData_eComp)
     end
 
+    -- load precipitation phases
+    local sqlData_PP = split(spc_precipitation_phase_load_caseID(self.ID),"\n")
+    self.precipitationPhases = {}
+    load_table_data(self.precipitationPhases, PrecipitationPhase, sqlData_PP)
+
+    -- load precipitation domains
+    local sqlData_PD = split(spc_precipitation_domain_load_caseID(self.ID),"\n")
+    self.precipitationDomain = {}
+    load_table_data(self.precipitationDomain, PrecipitationDomain, sqlData_PD)
+
+
+    ::continue::
 end
 
 function Case:load_phase_fractions() --@Description This loads data for the phase diagram.
@@ -93,7 +105,7 @@ function Case:save()
     local saveOut = spc_case_save(saveString)
 
     if tonumber(saveOut) ~= nil then
-        self.ID = tonumber(saveOut)
+        self.ID = tonumber(saveOut) or -1
 
         self.EquilibriumConfiguration.IDCase = self.ID
         self.EquilibriumConfiguration:save()
@@ -116,12 +128,20 @@ function Case:save()
             self.selectedPhases[i]:save()
         end
         
+        for i,Item in ipairs(self.elementComposition) do
+            self.elementComposition[i].IDCase = self.ID
+            self.elementComposition[i]:save()
+        end
+        
     end
 end
 
 -- Methods
 function Case:select_phases(In)
     local Etable = split(In," ")
+
+    -- Save before adding selected phases
+    if self.ID == -1 then self:save() end
     if #Etable > 0 then
         self:clear_selected_phases()
         self.selectedPhases = {}
@@ -133,12 +153,8 @@ function Case:select_phases(In)
             end
             
             self.selectedPhases[i] = SelectedPhase:new{IDPhase = phasey.ID, IDCase = self.ID}
-
-            -- Check if self has been saved before saving the selected cases
-            if self.ID == -1 then goto continue end
             self.selectedPhases[i]:save()
 
-            ::continue::
         end
     end
 end
@@ -146,7 +162,7 @@ end
 function Case:set_composition(In)
     local Etable = split(In," ")
 
-    if #self.elementComposition == 0 then
+    if #self.elementComposition ~= #Etable then
         self:clear_elementComposition()
 
         if #self.elementComposition == 0 then 
@@ -156,13 +172,15 @@ function Case:set_composition(In)
 
     if #Etable > 0 then
         for i,Item in ipairs(Etable) do
-            if tonumber(Etable[i]) ~= nil then
-                self.elementComposition[i].value = tonumber(ETable[i])
+            if tonumber(Item) ~= nil then
+                self.elementComposition[i].value = tonumber(Item)
+                self.elementComposition[i]:save()
             else
                 local STable = split(Etable[i],"=")
                 if #STable > 1 then 
                     local tempRef = self:find_composition_ByName(STable[1])
                     tempRef.value = tonumber(STable[2])
+                    tempRef:save()
                 end
             end
         end
@@ -197,18 +215,32 @@ function Case:clear_scheilPhaseFraction()
     end
 end
 
-function Case:clear_elementComposition()
+function Case:clear_elementComposition(projectObject)
     for i,Item in ipairs(self.elementComposition) do
         self.elementComposition[i]:remove()
     end
 
     self.elementComposition = {}
     if self.IDProject > -1 then
-        local Pobject = Project:new{ID = self.IDproject}
-
+        local Pobject = projectObject or Project:new{ID = self.IDproject}
         for i,Item in ipairs(Pobject.selectedElements) do 
             self.elementComposition[i] = ElementComposition:new{IDCase = self.ID, 
-                                                                IDElement = Pobject.selectedElements[i].ID}
+                                                                IDElement = Pobject.selectedElements[i].IDElement}
+
         end
     end
+end
+
+function Case:clear_precipitationPhases()
+    for i,Item in ipairs(self.precipitationPhases) do
+        self.precipitationPhases[i]:remove()
+    end
+    self.precipitationPhases = {}
+end
+
+function Case:clear_precipitationDomains()
+    for i,Item in ipairs(self.precipitationDomain) do
+        self.precipitationDomain[i]:remove()
+    end
+    self.precipitationDomain = {}
 end

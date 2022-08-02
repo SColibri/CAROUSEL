@@ -2,6 +2,7 @@
 #include "../../../interfaces/IAM_DBS.h"
 #include "DBS_Case.h"
 #include "DBS_ActivePhases_ElementComposition.h"
+#include "DBS_ActivePhases.h"
 
 /// <summary>
 /// Implements IAM_DBS.h interface, this is a project
@@ -37,6 +38,7 @@ public:
 	{
 		// Remove active phases element composition
 		DBS_ActivePhases_ElementComposition::remove_project_data(database, projectID);
+		DBS_ActivePhases::remove_project_data(database, projectID);
 
 		// get selected Elements from project
 		std::string query = AMLIB::TN_SelectedElements().columnNames[1] +
