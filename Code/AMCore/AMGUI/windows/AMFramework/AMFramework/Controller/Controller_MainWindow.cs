@@ -29,6 +29,8 @@ namespace AMFramework.Controller
             _Config = new();
             _coreSocket = Controller.Controller_Config.ApiHandle;
 
+            AMSystem.AMFramework_startup.Start(ref _coreSocket);
+
             _AMCore = new(_coreSocket);
             _AMView = new();
 

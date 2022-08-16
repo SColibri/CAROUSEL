@@ -54,85 +54,15 @@ namespace AMFramework.Model
         /// LUA command to be executed, see Core project for more information
         /// </summary>
         public string Command_instruction { get; set; } = "";
-        /// <summary>
-        /// Parameter to be passed , only as a line of string
-        /// in csv format
-        /// </summary>
-        public string Command_parameters { get; set; } = "";
-
 
         public object? Tag { get; set; }
 
-        private string _coreOutput = "";
-        public string CoreOutput
-        {
-            get { return _coreOutput; }
-        }
-
-        private bool _isEnabled = false;
-        public bool IsEnabled
-        {
-            get { return _isEnabled; }
-        }
-
         public Type ObjectType { get; set; }
-        public int Command_Type { get; set; }
+        public Type Executor_Type { get; set; }
 
         #endregion
 
-        #region CommandActions
-        private ICommand? _coreCommand;
-        /// <summary>
-        /// Icommand that runs the currtent stored command
-        /// </summary>
-        public ICommand CoreCommand
-        {
-            get 
-            {
-                if (_coreCommand == null) 
-                {
-                    _coreCommand = new Controller.RelayCommand(
-                        param => this.DoAction(),
-                        param => this.CheckBeforeAction()
-                    );
-                }
 
-                return _coreCommand;
-            }
-        }
-
-        /// <summary>
-        /// calls core command and stores the output in coreOutput.
-        /// </summary>
-        public void DoAction() 
-        {
-            if (!CheckBeforeAction()) return;
-            _coreOutput = _coreComm.run_lua_command(Command_lua, Command_paramters);
-        }
-
-        /// <summary>
-        /// Checks for additional requirements 
-        /// </summary>
-        /// <returns></returns>
-        public bool CheckBeforeAction() 
-        {
-            bool Result = true;
-            
-            if (Command_instruction.Length == 0) 
-            {
-                _coreOutput = "Error: No command specified!";
-                Result = false;
-            }
-
-            if (!_isEnabled) 
-            {
-                _coreOutput = "Error: Not enabled!";
-                Result = false;
-            }
-            return Result;
-        }
-
-        #endregion
 
     }
 }

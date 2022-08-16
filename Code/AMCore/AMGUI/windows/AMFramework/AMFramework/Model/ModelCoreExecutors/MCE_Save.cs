@@ -10,8 +10,8 @@ namespace AMFramework.Model.ModelCoreExecutors
     {
         public MCE_Save(ref Core.IAMCore_Comm comm,
                         ref Interfaces.Model_Interface ModelObject,
-                        int CommandType) : base(ref comm, ref ModelObject, CommandType)
-        {}
+                        Type ExecutorType) : base(ref comm, ref ModelObject, ExecutorType)
+        { }
 
         #region Implementation Abstract class
         public override void DoAction()

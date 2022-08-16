@@ -16,16 +16,6 @@ namespace AMFramework
         private MainWindow_ViewModel viewModel = new();
         public MainWindow()
         {
-            Model.Model_Element testM = new();
-            List<string> ListItem = new();
-            ListItem.Add("10");
-            ListItem.Add("Element Name with space");
-
-            testM.Load_csv(ListItem);
-            string testcsv = testM.Get_csv();
-
-            AMsystem.AMFramework_library_APIHandle TestWindow = new("C:/Users/drogo/Documents/TUM/Thesis/Framework/AMFramework/Code/AMCore/out/build/x64-debug/AM_API_lib/matcalc/AM_MATCALC_Lib.dll");
-            string outTest = TestWindow.run_lua_command("configuration_set_working_directory", "C:/Users/drogo/Desktop/Homless");
 
             InitializeComponent();
             DataContext = new Controller.Controller_MainWindow();

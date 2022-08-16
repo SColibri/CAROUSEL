@@ -187,13 +187,9 @@ namespace AMFramework.Model
         /// <param name="ModelObject"></param>
         /// <param name="commands"></param>
         /// <returns></returns>
-        public static Interfaces.CoreCommand_Interface? Get_command(object ModelObject, ModelCoreCommand.Commands commands) 
+        public static Interfaces.CoreCommand_Interface? Get_command<T>(object ModelObject) 
         {
-            var item = _commandList.Find(e => e.ObjectType.Equals(ModelObject.GetType()) & e.Command_Type == (int)commands);
-            var TVar = Add_command;
-            Core.IAMCore_Comm TSock = new Core.AMCore_libHandle(""); ;
-            TVar(new ModelCoreCommand(ref TSock));
-
+            var item = _commandList.Find(e => e.ObjectType.Equals(ModelObject.GetType()) & e.Executor_Type.Equals(typeof(T)));
             return item;
         }
 

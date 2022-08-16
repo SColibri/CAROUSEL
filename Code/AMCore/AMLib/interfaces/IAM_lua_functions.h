@@ -104,10 +104,11 @@ public:
 		std::string function_name,
 		std::string output,
 		std::string usage,
-		int (*newFunction)(lua_State*))
+		int (*newFunction)(lua_State*),
+		std::string command_specs = "")
 	{
 		lua_register(state, function_name.c_str(), newFunction);
-		add_to_definition(function_name, output, usage);
+		add_to_definition(function_name, output, usage, command_specs);
 	}
 
 	AM_Database_Framework* get_dbFramework()
@@ -124,6 +125,7 @@ protected:
 	inline static std::vector<std::string> _functionNames; // Function names
 	inline static std::vector<std::string> _functionParameters; // Parameters as input
 	inline static std::vector<std::string> _functionDescription; // Description
+	inline static std::vector<std::string> _functionCommandSpecs; // Command specifications (for gui)
 
 	/// <summary>
 	/// Adds all functions defines on the implementation
@@ -169,11 +171,11 @@ protected:
 #pragma region Item_Data
 		//###-> Project
 #pragma region Project
-		add_new_function(state, "project_save", "<INT> ID of new project", "project_save <string> csv format", Bind_Templated_Save<DBS_Project>);
-		add_new_function(state, "project_delete", "<String> OK", "Project_Delete <string> csv format", Bind_Templated_Delete<DBS_Project>);
-		add_new_function(state, "project_loadID", "<String> OK", "project_loadID <string> csv format", Bind_Templated_loadID<DBS_Project>);
-		add_new_function(state, "project_load_data", "<String> OK", "project_load_data <string> csv format", Bind_Project_LoadData);
-		add_new_function(state, "project_remove_dependentData", "<String> OK", "project_remove_dependentData <string> csv format", Bind_Project_Remove_projectData);
+		add_new_function(state, "project_save", "<INT> ID of new project", "project_save <string> csv format", Bind_Templated_Save<DBS_Project>, "Model_Projects||Save");
+		add_new_function(state, "project_delete", "<String> OK", "Project_Delete <string> csv format", Bind_Templated_Delete<DBS_Project>, "Model_Projects||Delete");
+		add_new_function(state, "project_loadID", "<String> OK", "project_loadID <string> csv format", Bind_Templated_loadID<DBS_Project>, "Model_Projects||LoadByID");
+		add_new_function(state, "project_load_data", "<String> OK", "project_load_data <string> csv format", Bind_Project_LoadData, "Model_Projects||LoadInCore");
+		add_new_function(state, "project_remove_dependentData", "<String> OK", "project_remove_dependentData <string> csv format", Bind_Project_Remove_projectData, "Model_Projects||RemoveDependentData");
 #pragma endregion
 
 		//###-> Active phases
@@ -373,15 +375,18 @@ protected:
 	/// <param name="fDescription"></param>
 	static void add_to_definition(std::string fName,
 		std::string fParameters,
-		std::string fDescription)
+		std::string fDescription,
+		std::string fCommandspecs = "")
 	{
 		_functionNames.push_back(fName);
 		_functionParameters.push_back(fParameters);
 		_functionDescription.push_back(fDescription);
+		_functionCommandSpecs.push_back(fCommandspecs);
 
 		functionsList_addEntry(std::vector<std::string>{fName, 
 														fParameters, 
-														fDescription });
+														fDescription, 
+														fCommandspecs });
 	}
 
 	
