@@ -43,7 +43,7 @@ public:
 
 	virtual std::string get_load_string() override
 	{
-		if (_loadString.length() == 0) _loadString = " ID = \'" + std::to_string(_id) + " \' ";
+		if (_loadString.length() == 0) _loadString = " ID = " + std::to_string(_id) + " ";
 		return _loadString;
 	}
 

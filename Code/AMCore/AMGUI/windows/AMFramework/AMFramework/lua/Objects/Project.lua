@@ -138,9 +138,11 @@ function Project:set_reference_element(refElement)
     if indexNum > -1 then
         for i,Item in ipairs(self.selectedElements) do
             Item.IsReferenceElement = 0
+            Item:save()
         end
 
         self.selectedElements[indexNum].IsReferenceElement = 1
+        self.selectedElements[indexNum]:save()
     end
 end
 
@@ -148,6 +150,7 @@ function Project:get_element_index(elementName)
     if #self.selectedElements > 0 then
         
         for i,Item in ipairs(self.selectedElements) do
+            if string.len(self.selectedElements[i].Name) == 0 then self.selectedElements[i]:load() end
             if string.upper(self.selectedElements[i].Name) == string.upper(elementName) then
                 return i
             end

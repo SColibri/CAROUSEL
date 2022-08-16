@@ -168,6 +168,7 @@ private:
         HANDLE hParentStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
         _stdout = "";
 
+        
         // read all data from pipe
         for (;;)
         {
@@ -175,16 +176,16 @@ private:
             PeekNamedPipe(si->child_out_r, 0, 0, 0, &dwAvail, &dwleft);
             if (dwAvail == 0 &&
                 string_manipulators::find_index_of_keyword(_stdout.substr(_stdout.size() - dwRead, _stdout.size()), _endflag) != string::npos) break;
-
+            
             WaitForInputIdle(process_info.child_in_w, INFINITE);
+            if (dwAvail == 0) { std::this_thread::sleep_for(std::chrono::microseconds(1000)); continue; }
+            
             // read pipe content
             fill(std::begin(_buffer), std::end(_buffer), '\0');
             bSuccess = ReadFile(si->child_out_r, _buffer, BUFSIZE, &dwRead, NULL);
             if (dwRead == 0) break;
 
             string s(_buffer, dwRead);  
-            std::this_thread::sleep_for(std::chrono::microseconds(50));
-            //cout << s << endl;
             _stdout += string(_buffer, dwRead);
         }
 

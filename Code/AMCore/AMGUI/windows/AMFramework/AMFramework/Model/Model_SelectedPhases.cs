@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_SelectedPhases : INotifyPropertyChanged
+    public class Model_SelectedPhases : ModelAbstract
     {
         private int _ID = -1;
+        [Order]
         public int ID
         {
             get { return _ID; }
@@ -21,6 +24,7 @@ namespace AMFramework.Model
         }
 
         private int _IDCase = -1;
+        [Order]
         public int IDCase
         {
             get { return _IDCase; }
@@ -32,6 +36,7 @@ namespace AMFramework.Model
         }
 
         private int _IDPhase = -1;
+        [Order]
         public int IDPhase
         {
             get { return _IDPhase; }
@@ -43,6 +48,7 @@ namespace AMFramework.Model
         }
 
         private string _PhaseName = "";
+        [Order]
         public string PhaseName
         {
             get { return _PhaseName; }
@@ -53,25 +59,8 @@ namespace AMFramework.Model
             }
         }
 
-
-        public string get_csv()
-        {
-            string outy = ID + "," + IDCase + "," + IDPhase;
-            return outy;
-        }
-
         #region Other_properties
-        private bool _isSelected = false;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                _isSelected = value;
-                OnPropertyChanged("IsSelected");
-            }
-        }
-
+        
         private bool _isDependentPhase = false;
         public bool IsDependentPhase
         {
@@ -84,12 +73,35 @@ namespace AMFramework.Model
         }
         #endregion
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
+        {
+            return ModelAbstract.Get_parameters<Model_SelectedPhases>();
+        }
 
-    private void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public override string Get_save_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_delete_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_Table_Name()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
-    #endregion
-}
 }

@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_ActivePhasesElementComposition : Interfaces.Model_Interface
+    public class Model_ActivePhasesElementComposition : ModelAbstract
     {
         private int _id = -1;
+        [Order]
         public int ID
         {
             get { return _id; }
@@ -21,6 +24,7 @@ namespace AMFramework.Model
         }
 
         private int _idProject = -1;
+        [Order]
         public int IDProject
         {
             get { return _idProject; }
@@ -32,6 +36,7 @@ namespace AMFramework.Model
         }
 
         private int _idElement = -1;
+        [Order]
         public int IDElement
         {
             get { return _idElement; }
@@ -43,6 +48,7 @@ namespace AMFramework.Model
         }
 
         private double _value = -1;
+        [Order]
         public double Value
         {
             get { return _value; }
@@ -51,12 +57,6 @@ namespace AMFramework.Model
                 _value = value;
                 OnPropertyChanged("Value");
             }
-        }
-
-        public string Get_csv()
-        {
-            string outy = ID + "," + IDProject + "," + IDElement + "," + Value;
-            return outy;
         }
 
         #region Other
@@ -73,11 +73,34 @@ namespace AMFramework.Model
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return ModelAbstract.Get_parameters<Model_ActivePhasesElementComposition>();
+        }
+
+        public override string Get_save_command()
+        {
+            return "project_active_phases_element_composition_save";
+        }
+
+        public override string Get_load_command()
+        {
+            return "project_active_phases_element_composition_loadID";
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            return "project_active_phases_element_composition_load_IDProject";
+        }
+
+        public override string Get_delete_command()
+        {
+            return "project_active_phases_element_composition_delete";
+        }
+
+        public override string Get_Table_Name()
+        {
+            return "ActivePhases_ElementComposition";
         }
         #endregion
     }

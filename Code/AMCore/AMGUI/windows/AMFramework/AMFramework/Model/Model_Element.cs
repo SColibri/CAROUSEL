@@ -4,13 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_Element : INotifyPropertyChanged
+    public class Model_Element : ModelAbstract
     {
-
+     
         private int _id = -1;
+        [Order]
         public int ID
         {
             get { return _id; }
@@ -22,6 +25,7 @@ namespace AMFramework.Model
         }
 
         private string _name = "";
+        [Order]
         public string Name
         {
             get { return _name; }
@@ -32,23 +36,7 @@ namespace AMFramework.Model
             }
         }
 
-        private bool _isSelected = false;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                _isSelected = value;
-                OnPropertyChanged("IsSelected");
-            }
-        }
-
-        public string get_csv()
-        {
-            string outy = ID + "," + Name.Replace(" ", "#");
-            return outy;
-        }
-
+        #region Other_parameters
         private bool _isReferenceElement = false;
         public bool IsReferenceElement
         {
@@ -59,13 +47,37 @@ namespace AMFramework.Model
                 OnPropertyChanged("IsReferenceElement");
             }
         }
+        #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list() 
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return ModelAbstract.Get_parameters<Model_Element>();
+        }
+
+        public override string Get_save_command()
+        {
+            return "element_save";
+        }
+
+        public override string Get_load_command()
+        {
+            return "element_loadID";
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_delete_command()
+        {
+            return "element_delete";
+        }
+
+        public override string Get_Table_Name()
+        {
+            return "Element";
         }
         #endregion
 

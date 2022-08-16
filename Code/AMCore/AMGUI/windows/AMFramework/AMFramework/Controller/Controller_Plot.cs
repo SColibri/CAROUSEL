@@ -285,7 +285,19 @@ namespace AMFramework.Controller
         }
         #endregion
 
-
+        private Model.Model_HeatTreatment _heatModel = new();
+        public Model.Model_HeatTreatment HeatModel 
+        {
+            get { return _heatModel; } 
+            set 
+            {
+                _heatModel = value;
+                _heatModel.HeatTreatmentProfile.Clear();
+                _heatModel.PrecipitationData.Clear();
+                Controller.Controller_HeatTreatmentProfile.fill_heatTreatment_model(ref _AMCore_Socket, _heatModel);
+                Controller.Controller_PrecipitateSimulationData.fill_heatTreatment_model(ref _AMCore_Socket, _heatModel);
+            }
+        }
 
     }
 }

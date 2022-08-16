@@ -26,7 +26,7 @@ function SelectedElement:load ()
    local sqlData = split(spc_selectedelement_load_id(self.ID))
    load_data(self, sqlData)
 
-   local tempRef = Element:new{ID = IDElement}
+   local tempRef = Element:new{ID = self.IDElement}
    self.Name = tempRef.Name
 end
 

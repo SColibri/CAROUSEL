@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_SelectedElements : INotifyPropertyChanged
+    public class Model_SelectedElements : ModelAbstract
     {
         private int _ID = -1;
+        [Order]
         public int ID 
         { 
             get { return _ID; }
@@ -21,6 +24,7 @@ namespace AMFramework.Model
         }
 
         private int _IDProject = -1;
+        [Order]
         public int IDProject
         {
             get { return _IDProject; }
@@ -32,6 +36,7 @@ namespace AMFramework.Model
         }
 
         private int _IDElement = -1;
+        [Order]
         public int IDElement
         {
             get { return _IDElement; }
@@ -43,6 +48,7 @@ namespace AMFramework.Model
         }
 
         private string _ElementName = "";
+        [Order]
         public string ElementName
         {
             get { return _ElementName; }
@@ -56,6 +62,7 @@ namespace AMFramework.Model
 
 
         private int _isReferenceElement = -1;
+        [Order]
         public int ISReferenceElement
         {
             get { return _isReferenceElement; }
@@ -70,14 +77,9 @@ namespace AMFramework.Model
             }
         }
 
-        public string get_csv()
-        {
-            string outy = ID + "," + IDProject + "," + IDElement + "," + ISReferenceElement;
-            return outy;
-        }
-
         #region Other_properties
         private bool _isSelected = false;
+        [Order]
         public bool IsSelected
         {
             get { return _isSelected; }
@@ -89,6 +91,7 @@ namespace AMFramework.Model
         }
 
         private bool _isReferenceElement_bool = false;
+        [Order]
         public bool ISReferenceElementBool
         {
             get { return _isReferenceElement_bool; }
@@ -101,11 +104,33 @@ namespace AMFramework.Model
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return ModelAbstract.Get_parameters<Model_SelectedElements>();
+        }
+
+        public override string Get_save_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_delete_command()
+        {
+            throw new NotImplementedException();
+        }
+        public override string Get_Table_Name()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

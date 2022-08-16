@@ -63,45 +63,72 @@
                               Tag="Single pixel cases">
                     <TreeViewItem.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Tag="{Binding}">
-                                
-                                <Image Width="15" 
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal" Tag="{Binding}">
+
+                                    <Image Width="15" 
                                            Margin="3" 
                                            Source="{Binding RelativeSource={RelativeSource 
                                                                 Mode=FindAncestor, 
                                                                 AncestorType={x:Type StackPanel}}, 
                                                                 Path=Tag,
                                                                 Converter={x:Static converters:HeaderToImageConverter.Instance}}"/>
-                                <CheckBox Margin="3" IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                <ItemsControl ItemsSource="{Binding Path=ElementComposition}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal"
+                                    <CheckBox Margin="3" IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <ItemsControl ItemsSource="{Binding Path=ElementComposition}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal"
                                                MaxWidth="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}, Path=ActualWidth}">
 
-                                            </WrapPanel>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Background="#F3F2F1" Margin="1" BorderBrush="Silver" BorderThickness="1" >
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="auto"/>
-                                                        <ColumnDefinition Width="auto"/>
-                                                        <ColumnDefinition Width="auto"/>
-                                                    </Grid.ColumnDefinitions>
+                                                </WrapPanel>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#F3F2F1" Margin="1" BorderBrush="Silver" BorderThickness="1" >
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto"/>
+                                                            <ColumnDefinition Width="auto"/>
+                                                            <ColumnDefinition Width="auto"/>
+                                                        </Grid.ColumnDefinitions>
 
-                                                    <TextBlock Text="{Binding Path=ElementName}" Margin="1" Height="Auto" Width="Auto" Grid.Column="0" FontWeight="Normal"></TextBlock>
-                                                    <TextBlock Text=":" Margin="1" Height="Auto" Width="Auto" Grid.Column="1"></TextBlock>
-                                                    <TextBlock Text="{Binding Path=Value}" Margin="1" Height="Auto" Width="Auto" Grid.Column="2"></TextBlock>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Path=Name}" Tag="{Binding}" />
+                                                        <TextBlock Text="{Binding Path=ElementName}" Margin="1" Height="Auto" Width="Auto" Grid.Column="0" FontWeight="Normal"></TextBlock>
+                                                        <TextBlock Text=":" Margin="1" Height="Auto" Width="Auto" Grid.Column="1"></TextBlock>
+                                                        <TextBlock Text="{Binding Path=Value}" Margin="1" Height="Auto" Width="Auto" Grid.Column="2"></TextBlock>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding Path=Name}" Tag="{Binding}" />
+                                </StackPanel>
+                                
+                                
+                                <TreeView Background="AliceBlue" Margin="2,2,2,5">
+                                    <TreeViewItem Header="Precipitation kinetics">
+                                        <TreeViewItem Header="Heat treatments" ItemsSource="{Binding Path=HeatTreatments}">
+                                            <TreeViewItem.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <TextBlock Text="{Binding Path=Name}"/>
+                                                        <Border MouseDown="Border_MouseDown" Background="Black" Tag="{Binding}" Width="100" Height="100">
+                                                            <TextBlock Text="{Binding Path=Name}"/>
+                                                        </Border>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </TreeViewItem.ItemTemplate>
+                                        </TreeViewItem>
+                                        <TreeViewItem Header="Precipitation phases">
+
+                                        </TreeViewItem>
+                                        <TreeViewItem Header="Precipitation domain">
+
+                                        </TreeViewItem>
+                                    </TreeViewItem>
+                                </TreeView>
                             </StackPanel>
+                            
                         </DataTemplate>
                     </TreeViewItem.ItemTemplate>
 

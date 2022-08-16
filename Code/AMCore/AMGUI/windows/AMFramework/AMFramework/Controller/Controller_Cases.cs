@@ -32,6 +32,8 @@ namespace AMFramework.Controller
             _scheilPhaseFractions = new(ref socket, this);
             _PrecipitationPhase = new(ref socket, this);
             _PrecipitationDomain = new(ref socket, this);
+            _Controller_HeatTreatment = new(ref socket, this);
+            _Controller_PrecipitateSimulationData = new(ref socket, _Controller_HeatTreatment);
         }
 
         public Controller_Cases()
@@ -70,7 +72,7 @@ namespace AMFramework.Controller
 
         public void save(Model.Model_Case model)
         {
-            string outComm = _AMCore_Socket.run_lua_command("singlepixel_case_save", model.get_csv());
+            string outComm = _AMCore_Socket.run_lua_command("singlepixel_case_save", model.Get_csv());
             if (outComm.CompareTo("OK") != 0)
             {
                 MainWindow.notify.ShowBalloonTip(5000, "Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);
@@ -162,6 +164,7 @@ namespace AMFramework.Controller
                     model.PosZ = Convert.ToDouble(columnItems[8]);
                     model.ElementComposition = new();
                     _cases.Add(model);
+                    Controller_HeatTreatment.fill_case_model(ref _AMCore_Socket, model);
                 }
             }
 
@@ -195,6 +198,9 @@ namespace AMFramework.Controller
         private Controller.Controller_ScheilPhaseFraction _scheilPhaseFractions;
         private Controller.Controller_PrecipitationPhase _PrecipitationPhase;
         private Controller.Controller_PrecipitationDomain _PrecipitationDomain;
+        private Controller.Controller_PrecipitateSimulationData _Controller_PrecipitateSimulationData;
+        private Controller.Controller_HeatTreatment _Controller_HeatTreatment;
+
         public List<Model.Model_SelectedPhases> SelectedPhases { get { return _selectedPhases.Phases; } }
         public List<Model.Model_ElementComposition> ElementComposition { get { return _elementComposition.Composition; } }
         public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }

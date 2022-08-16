@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_PrecipitationDomain : Interfaces.Model_Interface
+    public class Model_PrecipitationDomain : ModelAbstract
     {
         private int _ID = -1;
+        [Order]
         public int ID
         {
             get { return _ID; }
@@ -21,6 +24,7 @@ namespace AMFramework.Model
         }
 
         private string _name = "";
+        [Order]
         public string Name
         {
             get { return _name; }
@@ -32,6 +36,7 @@ namespace AMFramework.Model
         }
 
         private int _IDPhase = -1;
+        [Order]
         public int IDPhase
         {
             get { return _IDPhase; }
@@ -43,6 +48,7 @@ namespace AMFramework.Model
         }
 
         private double _initialGrainDiameter = 0.00005;
+        [Order]
         public double InitialGrainDiameter
         {
             get { return _initialGrainDiameter; }
@@ -54,6 +60,7 @@ namespace AMFramework.Model
         }
 
         private double _equilibriumDiDe = 100000000000;
+        [Order]
         public double EquilibriumDiDe
         {
             get { return _equilibriumDiDe; }
@@ -65,6 +72,7 @@ namespace AMFramework.Model
         }
 
         private string _vacancyEvolutionModel = "";
+        [Order]
         public string VacancyEvolutionModel
         {
             get { return _vacancyEvolutionModel; }
@@ -76,6 +84,7 @@ namespace AMFramework.Model
         }
 
         private int _considerExVa = 0;
+        [Order]
         public int ConsiderExVa
         {
             get { return _considerExVa; }
@@ -87,6 +96,7 @@ namespace AMFramework.Model
         }
 
         private double _excessVacancyEfficiency = 0.0;
+        [Order]
         public double ExcessVacancyEfficiency
         {
             get { return _excessVacancyEfficiency; }
@@ -97,38 +107,41 @@ namespace AMFramework.Model
             }
         }
 
-        public string Get_csv()
-        {
-            string outy = ID + "," +
-                        Name + "," +
-                        IDPhase + "," +
-                        InitialGrainDiameter + "," +
-                        EquilibriumDiDe + "," +
-                        VacancyEvolutionModel + "," +
-                        ConsiderExVa + "," +
-                        ExcessVacancyEfficiency;
-            return outy;
-        }
+
 
         #region Other_properties
-        private bool _isSelected = false;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                _isSelected = value;
-                OnPropertyChanged("IsSelected");
-            }
-        }
+
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return ModelAbstract.Get_parameters<Model_PrecipitationDomain>();
+        }
+
+        public override string Get_save_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_delete_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_Table_Name()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

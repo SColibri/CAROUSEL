@@ -4,14 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_ScheilPhaseFraction : INotifyPropertyChanged
+    public class Model_ScheilPhaseFraction : ModelAbstract
     {
 
 
         private int _ID = -1;
+        [Order]
         public int ID
         {
             get { return _ID; }
@@ -23,6 +26,7 @@ namespace AMFramework.Model
         }
 
         private int _IDCase = -1;
+        [Order]
         public int IDCase
         {
             get { return _IDCase; }
@@ -34,6 +38,7 @@ namespace AMFramework.Model
         }
 
         private int _IDPhase = -1;
+        [Order]
         public int IDPhase
         {
             get { return _IDPhase; }
@@ -45,6 +50,7 @@ namespace AMFramework.Model
         }
 
         private string _typeComposition = "";
+        [Order]
         public string TypeComposition
         {
             get { return _typeComposition; }
@@ -56,6 +62,7 @@ namespace AMFramework.Model
         }
 
         private double _Temperature = -1;
+        [Order]
         public double Temperature
         {
             get { return _Temperature; }
@@ -67,6 +74,7 @@ namespace AMFramework.Model
         }
 
         private double _value = -1;
+        [Order]
         public double Value
         {
             get { return _value; }
@@ -75,12 +83,6 @@ namespace AMFramework.Model
                 _value = value;
                 OnPropertyChanged("Value");
             }
-        }
-
-        public string get_csv()
-        {
-            string outy = ID + "," + IDCase + "," + Temperature + "," + Value;
-            return outy;
         }
 
         #region Other
@@ -97,11 +99,34 @@ namespace AMFramework.Model
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return ModelAbstract.Get_parameters<Model_ScheilPhaseFraction>();
+        }
+
+        public override string Get_save_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_delete_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_Table_Name()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

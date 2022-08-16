@@ -4,13 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_Projects : INotifyPropertyChanged
+    public class Model_Projects : ModelAbstract
     {
 
         private int _id = -1;
+        [Order]
         public int ID 
         { 
             get { return _id; } 
@@ -22,6 +25,7 @@ namespace AMFramework.Model
         }
 
         private string _name = "New Name";
+        [Order]
         public string Name
         {
             get { return _name; }
@@ -34,6 +38,7 @@ namespace AMFramework.Model
 
 
         private string _apiName = "";
+        [Order]
         public string APIName
         {
             get { return _apiName; }
@@ -45,30 +50,38 @@ namespace AMFramework.Model
         }
 
         #region Other_properties
-        private bool _isSelected = false;
-        public bool IsSelected 
-        {
-            get { return _isSelected; }
-            set
-            {
-                _isSelected = value;
-                OnPropertyChanged("IsSelected");
-            }
-        }
+
         #endregion
 
-        public string get_csv() 
+        #region Interfaces
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
         {
-            string outy =  ID + "," + Name.Replace(" ","#") + "," + APIName ;
-            return outy;
+            return ModelAbstract.Get_parameters<Model_Projects>();
         }
 
-        #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        public override string Get_save_command()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_delete_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_Table_Name()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

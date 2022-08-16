@@ -43,7 +43,7 @@ namespace AMFramework.Controller
 
         public void save(Model.Model_ScheilConfiguration model)
         {
-            string outComm = _AMCore_Socket.run_lua_command("spc_scheil_configuration_save", model.get_csv());
+            string outComm = _AMCore_Socket.run_lua_command("spc_scheil_configuration_save", model.Get_csv());
             if (!outComm.All(char.IsDigit))
             {
                 MainWindow.notify.ShowBalloonTip(5000, "Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);

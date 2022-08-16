@@ -48,8 +48,8 @@ namespace main_setup
 		//Create a new database file
 		std::string filename = configuration.get_directory_path(AM_FileManagement::FILEPATH::DATABASE) + "/" +
 			Database_Factory::get_schema() + ".db";
-		//if (std::filesystem::exists(filename))
-		//	std::filesystem::remove(std::filesystem::path(filename));
+		if (std::filesystem::exists(filename))
+			std::filesystem::remove(std::filesystem::path(filename));
 
 		_dbF = new AM_Database_Framework(&configuration);
 		_db = _dbF->get_database();
@@ -146,10 +146,12 @@ TEST_CASE("lua scripting")
 		main_setup::Object_test(OBJ12, "project_active_phases_element_composition_save", "project_active_phases_element_composition_loadID", "project_active_phases_element_composition_delete");
 
 		DBS_PrecipitationDomain OBJ13(main_setup::_db, -1);
+		OBJ13.Name = "DomainName";
 		main_setup::Object_test(OBJ13, "spc_precipitation_domain_save", "spc_precipitation_domain_loadID", "spc_precipitation_domain_delete");
-		
+
 		DBS_PrecipitationPhase OBJ14(main_setup::_db, -1);
 		main_setup::Object_test(OBJ14, "spc_precipitation_phase_save", "spc_precipitation_phase_loadID", "spc_precipitation_phase_delete");
+
 
 	}
 

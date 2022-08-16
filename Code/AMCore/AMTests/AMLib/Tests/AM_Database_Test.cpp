@@ -156,9 +156,45 @@ TEST_CASE("Database", "[classic]")
 		REQUIRE(precipPhaseDBL.IDCase == 1);
 		REQUIRE(precipPhaseDBL.IDPhase == 1);
 		REQUIRE(precipPhaseDBL.Name.compare("_P0") == 0);
+		precipPhaseDBL.set_id(-1);
+		precipPhaseDBL.save();
+
+		AM_Database_Datatable Pecipph(db01, &AMLIB::TN_PrecipitationPhase());
+		Pecipph.load_data("Name = \'" + precipPhaseDBL.Name + "\'");
+		REQUIRE(Pecipph.row_count() == 1);
+
+
+		DBS_PrecipitationDomain PD(db01, -1);
+		PD.ConsiderExVa = 1;
+		PD.EquilibriumDiDe = 1;
+		PD.ExcessVacancyEfficiency = 1;
+		PD.IDCase = 1;
+		PD.InitialGrainDiameter = 0.00000001;
+		PD.Name = "DomainName";
+		PD.VacancyEvolutionModel = "EvolModel";
+		PD.save();
+		REQUIRE(PD.id() > -1);
+
+		DBS_PrecipitationDomain PD_load(db01, PD.id());
+		PD_load.load();
+		REQUIRE(PD_load.id() == PD.id());
+		REQUIRE(PD_load.ConsiderExVa == PD.ConsiderExVa);
+		REQUIRE(PD_load.EquilibriumDiDe == PD.EquilibriumDiDe);
+		REQUIRE(PD_load.ExcessVacancyEfficiency == PD.ExcessVacancyEfficiency);
+		REQUIRE(PD_load.IDCase == PD.IDCase);
+		REQUIRE(PD_load.InitialGrainDiameter == PD.InitialGrainDiameter);
+		REQUIRE(PD_load.Name.compare(PD.Name) == 0);
+		REQUIRE(PD_load.VacancyEvolutionModel.compare(PD.VacancyEvolutionModel) == 0);
+		PD_load.set_id(-1);
+		PD_load.save();
+
+		AM_Database_Datatable PecipDom(db01, &AMLIB::TN_PrecipitationDomain());
+		PecipDom.load_data("Name = \'" + PD.Name + "\'");
+		REQUIRE(PecipDom.row_count() == 1);
 
 		DBS_HeatTreatment HT(db01, -1);
 		HT.Name = "HT01";
+		HT.IDCase = 151;
 		HT.IDPrecipitationDomain = 1;
 		HT.MaxTemperatureStep = 25;
 		HT.StartTemperature = 356.7;
@@ -173,6 +209,23 @@ TEST_CASE("Database", "[classic]")
 		REQUIRE(HT_load.IDPrecipitationDomain == HT.IDPrecipitationDomain);
 		REQUIRE(HT_load.MaxTemperatureStep == HT.MaxTemperatureStep);
 		REQUIRE(HT_load.StartTemperature == HT.StartTemperature);
+
+		DBS_HeatTreatment HT_loadBN(db01, HT.id());
+		HT_loadBN.load_by_name("HT01");
+		REQUIRE(HT_loadBN.id() > -1);
+		REQUIRE(HT_loadBN.Name.compare("HT01") == 0);
+		REQUIRE(HT_loadBN.IDPrecipitationDomain == HT.IDPrecipitationDomain);
+		REQUIRE(HT_loadBN.MaxTemperatureStep == HT.MaxTemperatureStep);
+		REQUIRE(HT_loadBN.StartTemperature == HT.StartTemperature);
+
+		DBS_HeatTreatment HT_New(db01, -1);
+		HT_New.Name = "HT01";
+		HT_New.IDCase = 151;
+		HT_New.save();
+
+		AM_Database_Datatable HeatTreat(db01, &AMLIB::TN_HeatTreatment());
+		HeatTreat.load_data("Name = \'HT01\'");
+		REQUIRE(HeatTreat.row_count() == 1);
 
 		DBS_HeatTreatmentSegment HS(db01, -1);
 		HS.Duration = 60 * 60 * 6;

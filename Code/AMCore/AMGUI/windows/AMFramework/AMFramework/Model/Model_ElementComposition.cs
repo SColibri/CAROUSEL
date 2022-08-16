@@ -4,13 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_ElementComposition : INotifyPropertyChanged
+    public class Model_ElementComposition : ModelAbstract
     {
 
         private int _id = -1;
+        [Order]
         public int ID
         {
             get { return _id; }
@@ -22,6 +25,7 @@ namespace AMFramework.Model
         }
 
         private int _id_case = -1;
+        [Order]
         public int IDCase
         {
             get { return _id_case; }
@@ -33,6 +37,7 @@ namespace AMFramework.Model
         }
 
         private int _id_element = -1;
+        [Order]
         public int IDElement
         {
             get { return _id_element; }
@@ -44,6 +49,7 @@ namespace AMFramework.Model
         }
 
         private string _typeComposition = "";
+        [Order]
         public string TypeComposition
         {
             get { return _typeComposition; }
@@ -55,6 +61,7 @@ namespace AMFramework.Model
         }
 
         private double _value = -1;
+        [Order]
         public double Value
         {
             get { return _value; }
@@ -67,6 +74,7 @@ namespace AMFramework.Model
 
         #region Other
         private string _ElementName = "";
+        [Order]
         public string ElementName
         {
             get { return _ElementName; }
@@ -78,18 +86,36 @@ namespace AMFramework.Model
         }
         #endregion
 
-        public string get_csv()
-        {
-            string outy = ID + "," + IDCase + "," + IDElement + "," + TypeComposition.Replace(" ", "#") + "," + Value;
-            return outy;
-        }
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return ModelAbstract.Get_parameters<Model_ElementComposition>();
+        }
+
+        public override string Get_save_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_delete_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_Table_Name()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

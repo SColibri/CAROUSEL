@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_ActivePhasesConfiguration : Interfaces.Model_Interface
+    public class Model_ActivePhasesConfiguration : ModelAbstract
     {
         private int _id = -1;
+        [Order]
         public int ID
         {
             get { return _id; }
@@ -21,6 +24,7 @@ namespace AMFramework.Model
         }
 
         private int _idProject = -1;
+        [Order]
         public int IDProject
         {
             get { return _idProject; }
@@ -32,6 +36,7 @@ namespace AMFramework.Model
         }
 
         private int _startTemp = -1;
+        [Order]
         public int StartTemp
         {
             get { return _startTemp; }
@@ -43,6 +48,7 @@ namespace AMFramework.Model
         }
 
         private int _endTemp = -1;
+        [Order]
         public int EndTemp
         {
             get { return _endTemp; }
@@ -54,6 +60,7 @@ namespace AMFramework.Model
         }
 
         private int _stepSize = -1;
+        [Order]
         public int StepSize
         {
             get { return _stepSize; }
@@ -63,18 +70,37 @@ namespace AMFramework.Model
                 OnPropertyChanged("StepSize");
             }
         }
-        public string Get_csv()
-        {
-            string outy = ID + "," + IDProject + "," + StartTemp + "," + EndTemp + "," + StepSize;
-            return outy;
-        }
+
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return ModelAbstract.Get_parameters<Model_ActivePhasesConfiguration>();
+        }
+
+        public override string Get_save_command()
+        {
+            return "project_active_phases_configuration_save";
+        }
+
+        public override string Get_load_command()
+        {
+            return "project_active_phases_configuration_loadID";
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            return "project_active_phases_configuration_load_IDProject";
+        }
+
+        public override string Get_delete_command()
+        {
+            return "project_active_phases_configuration_delete";
+        }
+
+        public override string Get_Table_Name()
+        {
+            return "ActivePhases_Configuration";
         }
         #endregion
     }

@@ -76,6 +76,21 @@ public:
 	{
 		if (Name.length() == 0) return 1;
 
+		//check if this already exists
+		if (_id == -1) 
+		{
+			AM_Database_Datatable tempTable(_db, &AMLIB::TN_HeatTreatment());
+			tempTable.load_data("IDCase = " + std::to_string(IDCase) + " AND Name = \'" + Name + "\'");
+			if (tempTable.row_count() > 0)
+			{
+				this->set_id(std::stoi(tempTable(0, 0)));
+				save();
+
+				return 1;
+			}
+		}
+		
+
 		return 0;
 	}
 

@@ -38,7 +38,7 @@ namespace AMFramework.Controller
 
         public void save(Model.Model_EquilibriumConfiguration model)
         {
-            string outComm = _AMCore_Socket.run_lua_command("singlepixel_equilibrium_config_save " + model.get_csv(),"");
+            string outComm = _AMCore_Socket.run_lua_command("singlepixel_equilibrium_config_save " + model.Get_csv(),"");
             if (outComm.CompareTo("OK") != 0)
             {
                 MainWindow.notify.ShowBalloonTip(5000, "Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);

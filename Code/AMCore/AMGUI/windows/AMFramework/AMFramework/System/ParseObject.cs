@@ -23,6 +23,7 @@ namespace AMFramework.AMSystem
         public string ParametersType = "";
         public List<string> Parameters = new();
         public List<ParseObject> functions = new();
+        public Interfaces.Model_Interface? ObjectModel = null;
 
     }
 }

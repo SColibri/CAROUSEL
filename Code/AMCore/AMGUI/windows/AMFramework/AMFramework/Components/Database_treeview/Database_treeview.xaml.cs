@@ -30,5 +30,12 @@ namespace AMFramework.Components.Database_treeview
             DataContext = amCore;
         }
 
+
+        public event EventHandler click_heat_treatment;
+        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Model.Model_HeatTreatment heatTreatment = (Model.Model_HeatTreatment)(((Border)sender).Tag);
+            click_heat_treatment?.Invoke(heatTreatment, new EventArgs());
+        }
     }
 }

@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_Case : INotifyPropertyChanged
+    public class Model_Case : ModelAbstract
     {
         private int _id = -1;
+        [Order]
         public int ID
         {
             get { return _id; }
@@ -21,6 +24,7 @@ namespace AMFramework.Model
         }
 
         private int _id_project = -1;
+        [Order]
         public int IDProject
         {
             get { return _id_project; }
@@ -32,6 +36,7 @@ namespace AMFramework.Model
         }
 
         private int _id_group = -1;
+        [Order]
         public int IDGroup
         {
             get { return _id_group; }
@@ -43,6 +48,7 @@ namespace AMFramework.Model
         }
 
         private string _name = "";
+        [Order]
         public string Name
         {
             get { return _name; }
@@ -54,6 +60,7 @@ namespace AMFramework.Model
         }
 
         private string _script = "";
+        [Order]
         public string Script
         {
             get { return _script; }
@@ -65,6 +72,7 @@ namespace AMFramework.Model
         }
 
         private string _date = "";
+        [Order]
         public string Date
         {
             get { return _date; }
@@ -76,6 +84,7 @@ namespace AMFramework.Model
         }
 
         private double _pos_x = 0.0;
+        [Order]
         public double PosX
         {
             get { return _pos_x; }
@@ -87,6 +96,7 @@ namespace AMFramework.Model
         }
 
         private double _pos_y = 0.0;
+        [Order]
         public double PosY
         {
             get { return _pos_y; }
@@ -98,6 +108,7 @@ namespace AMFramework.Model
         }
 
         private double _pos_z = 0.0;
+        [Order]
         public double PosZ
         {
             get { return _pos_z; }
@@ -107,20 +118,7 @@ namespace AMFramework.Model
                 OnPropertyChanged("PosZ");
             }
         }
-
-        public string get_csv()
-        {
-            string outy = ID + ","  + 
-                          IDProject + "," + 
-                          IDGroup  + "," + 
-                          Name.Replace(" ", "#") + "," +
-                          Script.Replace(" ", "#") + "," +
-                          Date.Replace(" ", "#") + "," +
-                          PosX + "," +
-                          PosY + "," +
-                          PosZ + ",";
-            return outy;
-        }
+  
 
         #region Template
         public struct CaseTemplateStructure
@@ -177,16 +175,6 @@ namespace AMFramework.Model
         #endregion
 
         #region Other
-        private bool _isSelected = false;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                _isSelected = value;
-                OnPropertyChanged("IsSelected");
-            }
-        }
 
         private List<Model.Model_SelectedPhases> _SelectedPhases = new();
         public List<Model.Model_SelectedPhases> SelectedPhases
@@ -287,14 +275,49 @@ namespace AMFramework.Model
                 OnPropertyChanged("PrecipitationDomains");
             }
         }
+
+        List<Model.Model_HeatTreatment> _HeatTreatments = new();
+        public List<Model.Model_HeatTreatment> HeatTreatments
+        {
+            get { return _HeatTreatments; }
+            set
+            {
+                _HeatTreatments = value;
+                OnPropertyChanged("HeatTreatments");
+            }
+        }
+
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return ModelAbstract.Get_parameters<Model_Case>();
+        }
+
+        public override string Get_save_command()
+        {
+            return "spc_case_save";
+        }
+
+        public override string Get_load_command()
+        {
+            return "spc_case_load_id";
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            return "spc_case_load_project_id";
+        }
+
+        public override string Get_delete_command()
+        {
+            return "spc_case_delete";
+        }
+
+        public override string Get_Table_Name()
+        {
+            return "Case";
         }
         #endregion
 

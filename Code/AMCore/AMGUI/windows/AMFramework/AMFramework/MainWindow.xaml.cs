@@ -16,6 +16,14 @@ namespace AMFramework
         private MainWindow_ViewModel viewModel = new();
         public MainWindow()
         {
+            Model.Model_Element testM = new();
+            List<string> ListItem = new();
+            ListItem.Add("10");
+            ListItem.Add("Element Name with space");
+
+            testM.Load_csv(ListItem);
+            string testcsv = testM.Get_csv();
+
             AMsystem.AMFramework_library_APIHandle TestWindow = new("C:/Users/drogo/Documents/TUM/Thesis/Framework/AMFramework/Code/AMCore/out/build/x64-debug/AM_API_lib/matcalc/AM_MATCALC_Lib.dll");
             string outTest = TestWindow.run_lua_command("configuration_set_working_directory", "C:/Users/drogo/Desktop/Homless");
 
@@ -25,6 +33,7 @@ namespace AMFramework
             databaseView.DataContext = ((Controller.Controller_MainWindow)DataContext).get_project_controller();
             databaseView.Navigator.SelectedItemChanged += ((Controller.Controller_MainWindow)DataContext).Selected_treeview_item_Handle;
             databaseView.Navigator.SelectedItemChanged += Treeview_selectionChanged_Handle;
+            databaseView.click_heat_treatment += Select_kinetic_precipitation;
 
             ((Controller.Controller_MainWindow)DataContext).get_project_controller().PropertyChanged += OnProperty_changed_project;
             
@@ -189,6 +198,15 @@ namespace AMFramework
             MainTabControl.SelectedItem = MainTabControl.Items[MainTabControl.Items.Count - 1];
         }
 
+        private void Treeview_selected_heatTreatment(object sender, EventArgs e)
+        {
+
+
+
+            if (MainTabControl.Items.Count == 0) return;
+            MainTabControl.SelectedItem = MainTabControl.Items[MainTabControl.Items.Count - 1];
+        }
+
         #endregion
         #region project
         private void OnProperty_changed_project(object sender, PropertyChangedEventArgs propertyName)
@@ -321,6 +339,32 @@ namespace AMFramework
         private void Remove_cases_tab() 
         { 
         
+        }
+
+        private void Select_kinetic_precipitation(object sender, EventArgs e)
+        {
+            if (sender is null) return;
+            if (!sender.GetType().Equals(typeof(Model.Model_HeatTreatment))) return;
+            Model.Model_HeatTreatment refModel = (Model.Model_HeatTreatment)sender;
+
+            // clear all tabs and reload selection
+            Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+
+            for (int n1 = 0; n1 < MainTabControl.Items.Count; n1++)
+            {
+                if (((TabItem)MainTabControl.Items[n1]).Tag.GetType().Equals(typeof(Views.Precipitation_Kinetics.Precipitation_kinetics_plot)))
+                {
+                    controllerMain.Remove_tab_Item((TabItem)MainTabControl.Items[n1]);
+                    MainTabControl.Items.Refresh();
+                    break;
+                }
+            }
+
+            Controller.Controller_Plot refPlot = controllerMain.get_plot_Controller();
+            refPlot.HeatModel = refModel;
+            controllerMain.Add_Tab_Item(viewModel.get_kinetic_precipitation_itemTab(refPlot));
+            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+            MainTabControl.Items.Refresh();
         }
 
         #endregion

@@ -154,6 +154,29 @@ namespace AMFramework
             return result;
         }
 
+        public TabItem get_kinetic_precipitation_itemTab(Controller.Controller_Plot controllerPlot)
+        {
+            TabItem result = new TabItem();
+
+            string headerTitle = "kinetic precipitation: ";
+            Uri ImageUri = null; //TODO add lua Icon here
+            if (headerTitle.Length == 0)
+            {
+                result.Header = get_TabHeader("kinetic precipitation", ImageUri);
+            }
+            else
+            {
+                result.Header = get_TabHeader(headerTitle, ImageUri);
+            }
+
+            Views.Precipitation_Kinetics.Precipitation_kinetics_plot itemView = new(controllerPlot);
+
+            result.Content = itemView;
+            result.Tag = _caseView;
+
+            return result;
+        }
+
         #endregion
 
         #region Formatting

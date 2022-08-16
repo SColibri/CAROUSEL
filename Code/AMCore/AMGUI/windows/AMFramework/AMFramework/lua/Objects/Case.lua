@@ -1,8 +1,8 @@
 ﻿-- Case
-Case = {ID = -1, IDProject=-1, IDGroup=0, Name="NewCase", Script="", Date="", PosX=0, PosY=0, PosZ=0, EquilibriumConfiguration=EquilibriumConfig:new{}, ScheilConfiguration={}, equilibriumPhaseFraction={}, scheilPhaseFraction={}, selectedPhases={}, elementComposition={}, precipitationPhases = {}, precipitationDomain = {} } --@Description Case object. \n Each case contains all calculations and configurations for the ccurrent element composition
+Case = {ID = -1, IDProject=-1, IDGroup=0, Name="NewCase", Script="", Date="", PosX=0, PosY=0, PosZ=0, EquilibriumConfiguration=EquilibriumConfig:new{}, ScheilConfiguration={}, equilibriumPhaseFraction={}, scheilPhaseFraction={}, selectedPhases={}, elementComposition={}, precipitationPhases = {}, precipitationDomain = {}, heatTreatment = {} } --@Description Case object. \n Each case contains all calculations and configurations for the ccurrent element composition
 
 -- Constructor
-function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, PosZ, SelectedPhases, EquilibriumConfiguration, ScheilConfiguration, equilibriumPhaseFraction, scheilPhaseFraction, selectedPhases, elementComposition, precipitationPhases, precipitationDomain) --@Description Creates a new case,\n create new object by calling newVar = Case:new{ID = -1}, use ID = -1 when you want to create a new case item
+function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, PosZ, SelectedPhases, EquilibriumConfiguration, ScheilConfiguration, equilibriumPhaseFraction, scheilPhaseFraction, selectedPhases, elementComposition, precipitationPhases, precipitationDomain, heatTreatment) --@Description Creates a new case,\n create new object by calling newVar = Case:new{ID = -1}, use ID = -1 when you want to create a new case item
    local o = o or {}
 
    setmetatable(o, self)
@@ -26,7 +26,7 @@ function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, Pos
    self.elementComposition = elementComposition or {}
    self.precipitationPhases = precipitationPhases or {}
    self.precipitationDomain = precipitationDomain or {}
-
+   self.heatTreatment = heatTreatment or {}
 
    if o.ID > -1 then
     o:load()
@@ -74,7 +74,11 @@ function Case:load()
     local sqlData_PD = split(spc_precipitation_domain_load_caseID(self.ID),"\n")
     self.precipitationDomain = {}
     load_table_data(self.precipitationDomain, PrecipitationDomain, sqlData_PD)
-
+    
+    -- load heat treatments
+    local sqlData_HT = split(spc_heat_treatment_load_IDCase(self.ID),"\n")
+    self.heatTreatment = {}
+    load_table_data(self.heatTreatment, HeatTreatment, sqlData_HT)
 
     ::continue::
 end
@@ -131,6 +135,21 @@ function Case:save()
         for i,Item in ipairs(self.elementComposition) do
             self.elementComposition[i].IDCase = self.ID
             self.elementComposition[i]:save()
+        end
+        
+        for i,Item in ipairs(self.precipitationDomain) do
+            self.precipitationDomain[i].IDCase = self.ID
+            self.precipitationDomain[i]:save()
+        end
+        
+        for i,Item in ipairs(self.precipitationPhases) do
+            self.precipitationPhases[i].IDCase = self.ID
+            self.precipitationPhases[i]:save()
+        end
+        
+        for i,Item in ipairs(self.heatTreatment) do
+            self.heatTreatment[i].IDCase = self.ID
+            self.heatTreatment[i]:save()
         end
         
     end

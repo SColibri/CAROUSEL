@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Interfaces;
+using AMFramework.AMSystem.Attributes;
 
 namespace AMFramework.Model
 {
-    public class Model_ScheilConfiguration : INotifyPropertyChanged
+    public class Model_ScheilConfiguration : ModelAbstract
     {
         private int _id = -1;
+        [Order]
         public int ID
         {
             get { return _id; }
@@ -21,6 +24,7 @@ namespace AMFramework.Model
         }
 
         private int _IDCase = -1;
+        [Order]
         public int IDCase
         {
             get { return _IDCase; }
@@ -32,6 +36,7 @@ namespace AMFramework.Model
         }
 
         private double _startTemperature = -1;
+        [Order]
         public double StartTemperature
         {
             get { return _startTemperature; }
@@ -43,6 +48,7 @@ namespace AMFramework.Model
         }
 
         private double _endTemperature = -1;
+        [Order]
         public double EndTemperature
         {
             get { return _endTemperature; }
@@ -54,6 +60,7 @@ namespace AMFramework.Model
         }
 
         private string _temperatureType = "";
+        [Order]
         public string TemperatureType
         {
             get { return _temperatureType; }
@@ -65,6 +72,7 @@ namespace AMFramework.Model
         }
 
         private double _stepSize = -1;
+        [Order]
         public double StepSize
         {
             get { return _stepSize; }
@@ -76,6 +84,7 @@ namespace AMFramework.Model
         }
 
         private int _dependentPhase = -1;
+        [Order]
         public int DependentPhase
         {
             get { return _dependentPhase; }
@@ -87,6 +96,7 @@ namespace AMFramework.Model
         }
 
         private double _minLiquidFraction = -1;
+        [Order]
         public double MinLiquidFraction
         {
             get { return _minLiquidFraction; }
@@ -97,24 +107,9 @@ namespace AMFramework.Model
             }
         }
 
-        public string get_csv()
-        {
-            string outy = ID + "," + IDCase + "," + StartTemperature + "," + EndTemperature + "," + StepSize + "," + DependentPhase + "," + MinLiquidFraction;
-            return outy;
-        }
 
         #region Other
-        private bool _isSelected = false;
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                _isSelected = value;
-                OnPropertyChanged("IsSelected");
-            }
-        }
-
+       
         private string _dependentPhaseName = "";
         public string DependentPhaseName
         {
@@ -128,11 +123,34 @@ namespace AMFramework.Model
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return ModelAbstract.Get_parameters<Model_ScheilConfiguration>();
+        }
+
+        public override string Get_save_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_load_command_table(Model_Interface.SEARCH findType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_delete_command()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Get_Table_Name()
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

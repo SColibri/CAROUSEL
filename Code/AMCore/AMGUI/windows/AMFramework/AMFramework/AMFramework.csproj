@@ -7929,6 +7929,7 @@
   <ItemGroup>
     <Folder Include="Components\NewFolder\" />
     <Folder Include="Components\Terminal\" />
+    <Folder Include="Core\Database\" />
     <Folder Include="Libraries\dll\" />
     <Folder Include="lua\JSON\" />
     <Folder Include="Resources\img\" />
@@ -7998,7 +7999,25 @@
     <None Update="lua\Objects\Framework.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="lua\Objects\HeatTreatment.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\HeatTreatmentProfile.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\HeatTreatmentSegment.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="lua\Objects\Phase.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\PrecipitateSimulationData.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\PrecipitationDomain.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\PrecipitationPhase.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="lua\Objects\Project.lua">

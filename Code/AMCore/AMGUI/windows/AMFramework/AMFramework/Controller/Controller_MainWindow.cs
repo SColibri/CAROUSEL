@@ -388,6 +388,19 @@ namespace AMFramework.Controller
                 Add_Tab_Item(_treeview_selected_tab);
         }
 
+        public void Selected_kinetick_precipitation_heatT_Handle(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (!sender.GetType().Equals(typeof(Model.Model_HeatTreatment))) return;
+            Model.Model_HeatTreatment tempRef = (Model.Model_HeatTreatment)sender;
+            Controller.Controller_PrecipitateSimulationData.fill_heatTreatment_model(ref _coreSocket, tempRef);
+
+            //Remove old tab
+            if (_treeview_selected_tab != null) Remove_tab_Item(_treeview_selected_tab);
+            GC.Collect();
+
+            _treeview_selected_tab = _AMView.get_case_itemTab(_DBSProjects.ControllerCases);
+        }
+
         /// <summary>
         /// Adds tab item w.r.t the header text of the treeview item
         /// </summary>

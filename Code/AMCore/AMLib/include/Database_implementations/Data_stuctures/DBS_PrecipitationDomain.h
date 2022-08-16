@@ -32,7 +32,7 @@ public:
 										std::to_string(IDCase),
 										Name,
 										std::to_string(IDPhase),
-										std::to_string(InitialGrainDiameter),
+										string_manipulators::double_to_string(InitialGrainDiameter),
 										std::to_string(EquilibriumDiDe),
 										VacancyEvolutionModel,
 										std::to_string(ConsiderExVa),
@@ -42,7 +42,7 @@ public:
 
 	virtual std::string get_load_string() override
 	{
-		return std::string(" ID = \'" + std::to_string(_id) + " \' ");
+		return std::string(" ID = " + std::to_string(_id) + " ");
 	}
 
 	virtual int load() override
@@ -66,6 +66,28 @@ public:
 		VacancyEvolutionModel = rawData[index++];
 		ConsiderExVa = std::stoi(rawData[index++]);
 		ExcessVacancyEfficiency = std::stold(rawData[index++]);
+		return 0;
+	}
+
+	virtual int check_before_save() override
+	{
+		if (Name.length() == 0) return 1;
+
+		//check if this already exists
+		if (_id == -1)
+		{
+			AM_Database_Datatable tempTable(_db, &AMLIB::TN_PrecipitationDomain());
+			tempTable.load_data("IDCase = " + std::to_string(IDCase) + " AND Name = \'" + Name + "\'");
+			if (tempTable.row_count() > 0)
+			{
+				this->set_id(std::stoi(tempTable(0, 0)));
+				save();
+
+				return 1;
+			}
+		}
+
+
 		return 0;
 	}
 

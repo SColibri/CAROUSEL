@@ -65,7 +65,7 @@ public:
 
 	virtual std::string get_load_string() override
 	{
-		return std::string(" ID = \'" + std::to_string(_id) + " \' ");
+		return std::string(" ID = " + std::to_string(_id) + "  ");
 	}
 
 	virtual int load() override
@@ -99,15 +99,16 @@ public:
 	virtual int check_before_save() override
 	{
 		// check if is unique
-		if (id() == -1)
+		if (_id == -1)
 		{
-			AM_Database_Datatable checkData(_db, &AMLIB::TN_ActivePhases());
-			checkData.load_data("IDCase = " + std::to_string(IDCase) + " AND Name = \'" + Name + "\'");
-
-			// found a coincidence, set Id and subtitute that data instead
-			if (checkData.row_count() == 1) 
+			AM_Database_Datatable tempTable(_db, &AMLIB::TN_PrecipitationPhase());
+			tempTable.load_data("IDCase = " + std::to_string(IDCase) + " AND Name = \'" + Name + "\'");
+			if (tempTable.row_count() > 0)
 			{
-				set_id(std::stoi(checkData(0, 0)));
+				this->set_id(std::stoi(tempTable(0, 0)));
+				save();
+
+				return 1;
 			}
 		}
 
