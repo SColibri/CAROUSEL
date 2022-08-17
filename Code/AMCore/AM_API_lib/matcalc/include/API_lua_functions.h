@@ -869,7 +869,7 @@ private:
 			int IndexPixel = 0;
 			for (AM_pixel_parameters* pixel_parameters : PixelList)
 			{
-				_luaBUFFER += "scheil calculation:  IDCase -> " + std::to_string(pixel_parameters->get_caseID()) + " current " + std::to_string(IndexPixel) + " / " + std::to_string(PixelList.size());
+				_luaBUFFER += "scheil calculation:  IDCase -> " + std::to_string(pixel_parameters->get_caseID()) + " current " + std::to_string(IndexPixel) + " / " + std::to_string(PixelList.size()); IndexPixel++;
 				std::string outCommand_1 = runVectorCommands(API_Scripting::Script_run_stepScheilEquilibrium(_configuration,
 					pixel_parameters->get_EquilibriumConfiguration()->StartTemperature,
 					pixel_parameters->get_EquilibriumConfiguration()->EndTemperature,
@@ -939,14 +939,8 @@ private:
 					delete tempPhaseFraction[n1];
 					delete tempPhaseCumulativeFraction[n1];
 				}
-				//_mutex.unlock();
-
-				//mccComm->send_command("exit\r\n");
-				//delete mccComm;
-
-				//std::wstring externalPath = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(_configuration->get_apiExternal_path() + "/mcc.exe");
-				//mccComm = new IPC_winapi(externalPath);
-				//mccComm->set_endflag("MC:");
+				
+				if (_cancelCalculations) break;
 			}
 		};
 
@@ -973,6 +967,12 @@ private:
 		mcc_comms.clear();
 
 		std::string outCommand_1 = "OK";
+		if (_cancelCalculations) 
+		{
+			_cancelCalculations = false;
+			outCommand_1 = "Operation was cancelled";
+		}
+		
 		lua_pushstring(state, outCommand_1.c_str());
 		return 1;
 	}
@@ -1063,8 +1063,10 @@ private:
 		// define the parallel function
 		auto funcStep = [](IPC_winapi* mccComm, std::vector<AM_pixel_parameters*> PixelList, AM_Project* projectM)
 		{
+			int IndexPixel = 0;
 			for (AM_pixel_parameters* pixel_parameters : PixelList)
 			{
+				_luaBUFFER += "scheil calculation:  IDCase -> " + std::to_string(pixel_parameters->get_caseID()) + " current " + std::to_string(IndexPixel) + " / " + std::to_string(PixelList.size()); IndexPixel++;
 				if (pixel_parameters->get_precipitation_phases().size() == 0) continue;
 				// create all script commands
 				std::vector<std::string> ScriptInstructions = API_Scripting::Script_run_stepScheilEquilibrium(_configuration,
@@ -1088,6 +1090,8 @@ private:
 					ItempPhase->PrecipitateDistribution = IAM_Database::csv_join_row(string_manipulators::read_file_to_end(_configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "/" + std::to_string(ItempPhase->id()) + "_" + tempPhaseName.Name + ".txt"),"\n");
 					ItempPhase->save();
 				}
+				
+				if (_cancelCalculations) { break; }
 			}
 		};
 
@@ -1114,6 +1118,12 @@ private:
 		mcc_comms.clear();
 
 		std::string outCommand_1 = "OK";
+		if (_cancelCalculations)
+		{
+			_cancelCalculations = false;
+			outCommand_1 = "Operation was cancelled";
+		}
+
 		lua_pushstring(state, outCommand_1.c_str());
 		return 1;
 	}
@@ -1289,6 +1299,8 @@ private:
 
 				}
 #pragma endregion
+
+				if (_cancelCalculations) { break; }
 			}
 		};
 
@@ -1315,6 +1327,11 @@ private:
 		mcc_comms.clear();
 
 		std::string outCommand_1 = "OK";
+		if (_cancelCalculations)
+		{
+			_cancelCalculations = false;
+			outCommand_1 = "Operation was cancelled";
+		}
 		lua_pushstring(state, outCommand_1.c_str());
 		return 1;
 	}

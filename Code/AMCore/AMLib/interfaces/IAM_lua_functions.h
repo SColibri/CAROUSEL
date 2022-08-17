@@ -364,7 +364,8 @@ protected:
 		add_new_function(state, "configuration_get_mobility_database_path", "string", "configuration_get_mobility_database_path", Bind_configuration_getMobilityDatabasePath);
 		add_new_function(state, "configuration_set_mobility_database_path", "string", "configuration_set_mobility_database_path <string filename>", Bind_configuration_setMobilityDatabasePath);
 
-
+		//-------- SYSTEM
+		add_new_function(state, "core_cancel_calculations", "void", "core_cancel_calculations", Bind_CancelCalculations, "CoreMethods||CancelCalculations");
 	}
 
 protected:
@@ -3138,6 +3139,15 @@ protected:
 		lua_pop(state, 1);
 
 		return out;
+	}
+#pragma endregion
+
+#pragma region System
+	static int Bind_CancelCalculations(lua_State* state)
+	{
+		_cancelCalculations = true;
+		lua_pushstring(state, "Cancelling");
+		return 1;
 	}
 #pragma endregion
 
