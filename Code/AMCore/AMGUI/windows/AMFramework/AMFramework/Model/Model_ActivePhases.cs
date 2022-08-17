@@ -74,26 +74,6 @@ namespace AMFramework.Model
         {
             return ModelAbstract.Get_parameters<Model_ActivePhases>();
         }
-   
-        public override string Get_save_command()
-        {
-            return "project_active_phases_save";
-        }
-
-        public override string Get_load_command()
-        {
-            return "project_active_phases_loadID";
-        }
-
-        public override string Get_load_command_table(Model_Interface.SEARCH findType)
-        {
-            return "project_active_phases_load_IDProject";
-        }
-
-        public override string Get_delete_command()
-        {
-            return "project_active_phases_delete";
-        }
 
         public override string Get_Table_Name()
         {

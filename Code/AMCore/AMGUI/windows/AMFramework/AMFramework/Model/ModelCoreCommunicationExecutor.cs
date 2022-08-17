@@ -17,11 +17,11 @@ namespace AMFramework.Model
         public ModelCoreCommunicationExecutor(ref Core.IAMCore_Comm comm, 
                                               ref Interfaces.Model_Interface ModelObject)
         {
+            _modelObjects = new();
             _coreCommunication = comm;
             _modelObject = ModelObject;
             _commandReference = _modelObject.Get_commands().Find(e => e.Executor_Type.Equals(this.GetType()));
 
-            if (_commandReference == null) throw new Exception("Error: Command of type \'" + this.GetType().Name + "\' does not exist for this model!");
         }
         #endregion
 
@@ -116,7 +116,7 @@ namespace AMFramework.Model
 
                 // Create new object of type _modelObject, check for null.
                 Interfaces.Model_Interface? tempModel = (Model_Interface)Activator.CreateInstance(_modelObject.GetType());
-                if (tempModel == null) continue;
+                if (tempModel == null || cellItems.Count < 2) continue;
                 
                 // load into newly created model and add to
                 tempModel.Load_csv(cellItems);

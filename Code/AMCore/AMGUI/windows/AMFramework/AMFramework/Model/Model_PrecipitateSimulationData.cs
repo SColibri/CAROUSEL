@@ -116,26 +116,6 @@ namespace AMFramework.Model
             return ModelAbstract.Get_parameters<Model_PrecipitateSimulationData>();
         }
 
-        public override string Get_save_command()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string Get_load_command()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string Get_load_command_table(Model_Interface.SEARCH findType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string Get_delete_command()
-        {
-            throw new NotImplementedException();
-        }
-
         public override string Get_Table_Name()
         {
             throw new NotImplementedException();

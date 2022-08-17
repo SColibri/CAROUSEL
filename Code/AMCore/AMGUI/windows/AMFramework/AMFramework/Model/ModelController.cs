@@ -67,9 +67,13 @@ namespace AMFramework.Model
         /// Returns a list of model controllers IDProject
         /// </summary>
         /// <returns></returns>
-        public static List<ModelController<T>> LoadIDProject(ref Core.IAMCore_Comm comm)
+        public static List<ModelController<T>> LoadIDProject(ref Core.IAMCore_Comm comm, int IDproject)
         {
             Interfaces.Model_Interface tempRef = (Interfaces.Model_Interface)Activator.CreateInstance(typeof(T));
+
+            if (tempRef == null) return new List<ModelController<T>>();
+            tempRef.Get_parameter_list().ToList().Find(e => e.Name.CompareTo("IDProject") == 0)?.SetValue(tempRef, Convert.ToInt32(IDproject));
+
             Model.ModelCoreExecutors.MCE_LoadByIDProject tempMCE = new(ref comm, ref tempRef);
             tempMCE.DoAction();
 

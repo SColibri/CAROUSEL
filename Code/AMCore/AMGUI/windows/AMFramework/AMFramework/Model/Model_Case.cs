@@ -295,26 +295,6 @@ namespace AMFramework.Model
             return ModelAbstract.Get_parameters<Model_Case>();
         }
 
-        public override string Get_save_command()
-        {
-            return "spc_case_save";
-        }
-
-        public override string Get_load_command()
-        {
-            return "spc_case_load_id";
-        }
-
-        public override string Get_load_command_table(Model_Interface.SEARCH findType)
-        {
-            return "spc_case_load_project_id";
-        }
-
-        public override string Get_delete_command()
-        {
-            return "spc_case_delete";
-        }
-
         public override string Get_Table_Name()
         {
             return "Case";

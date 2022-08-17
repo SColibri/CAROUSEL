@@ -66,10 +66,6 @@ namespace AMFramework.Model
 
             return 0;
         }
-        public abstract string Get_save_command();
-        public abstract string Get_load_command();
-        public abstract string Get_load_command_table(Interfaces.Model_Interface.SEARCH findType);
-        public abstract string Get_delete_command();
         public abstract string Get_Table_Name();
         public virtual IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list() 
         { 

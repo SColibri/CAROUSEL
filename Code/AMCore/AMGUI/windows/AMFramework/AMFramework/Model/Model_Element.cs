@@ -55,26 +55,6 @@ namespace AMFramework.Model
             return ModelAbstract.Get_parameters<Model_Element>();
         }
 
-        public override string Get_save_command()
-        {
-            return "element_save";
-        }
-
-        public override string Get_load_command()
-        {
-            return "element_loadID";
-        }
-
-        public override string Get_load_command_table(Model_Interface.SEARCH findType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string Get_delete_command()
-        {
-            return "element_delete";
-        }
-
         public override string Get_Table_Name()
         {
             return "Element";

@@ -180,137 +180,137 @@ protected:
 
 		//###-> Active phases
 #pragma region ActivePhases_SaveDelete
-		add_new_function(state, "project_active_phases_save", "<ID> returns id of saved item", "project_active_phases_save <String> csv", Bind_Templated_Save<DBS_ActivePhases>);
-		add_new_function(state, "project_active_phases_delete", "<string> OK", "project_active_phases_delete <String> csv", Bind_Templated_Delete<DBS_ActivePhases>);
-		add_new_function(state, "project_active_phases_loadID", "<ID> returns id of saved item", "project_active_phases_loadID <String> csv", Bind_Templated_loadID<DBS_ActivePhases>);
-		add_new_function(state, "project_active_phases_load_IDProject", "<ID> returns id of saved item", "project_active_phases_load_IDProject <String> csv", Bind_ActivePhases_Load_ByIDProject);
+		add_new_function(state, "project_active_phases_save", "<ID> returns id of saved item", "project_active_phases_save <String> csv", Bind_Templated_Save<DBS_ActivePhases>,"Model_ActivePhases||Save");
+		add_new_function(state, "project_active_phases_delete", "<string> OK", "project_active_phases_delete <String> csv", Bind_Templated_Delete<DBS_ActivePhases>, "Model_ActivePhases||Delete");
+		add_new_function(state, "project_active_phases_loadID", "<ID> returns id of saved item", "project_active_phases_loadID <String> csv", Bind_Templated_loadID<DBS_ActivePhases>, "Model_ActivePhases||LoadByID");
+		add_new_function(state, "project_active_phases_load_IDProject", "<ID> returns id of saved item", "project_active_phases_load_IDProject <String> csv", Bind_ActivePhases_Load_ByIDProject, "Model_ActivePhases||LoadByIDProject");
 
-		add_new_function(state, "project_active_phases_element_composition_save", "<ID> returns id of saved item", "project_active_phases_element_composition_save <String> csv", Bind_Templated_Save<DBS_ActivePhases_ElementComposition>);
-		add_new_function(state, "project_active_phases_element_composition_delete", "<string> OK", "project_active_phases_element_composition_delete <String> csv", Bind_Templated_Delete<DBS_ActivePhases_ElementComposition>);
-		add_new_function(state, "project_active_phases_element_composition_loadID", "<string> OK", "project_active_phases_element_composition_loadID <String> csv", Bind_Templated_loadID<DBS_ActivePhases_ElementComposition>);
-		add_new_function(state, "project_active_phases_element_composition_load_IDProject", "<ID> returns id of saved item", "project_active_phases_element_composition_load_IDProject <String> csv", Bind_ActivePhasesElementComposition_Load_ByIDProject);
+		add_new_function(state, "project_active_phases_element_composition_save", "<ID> returns id of saved item", "project_active_phases_element_composition_save <String> csv", Bind_Templated_Save<DBS_ActivePhases_ElementComposition>, "Model_ActivePhasesElementComposition||Save");
+		add_new_function(state, "project_active_phases_element_composition_delete", "<string> OK", "project_active_phases_element_composition_delete <String> csv", Bind_Templated_Delete<DBS_ActivePhases_ElementComposition>, "Model_ActivePhasesElementComposition||Delete");
+		add_new_function(state, "project_active_phases_element_composition_loadID", "<string> OK", "project_active_phases_element_composition_loadID <String> csv", Bind_Templated_loadID<DBS_ActivePhases_ElementComposition>, "Model_ActivePhasesElementComposition||LoadByID");
+		add_new_function(state, "project_active_phases_element_composition_load_IDProject", "<ID> returns id of saved item", "project_active_phases_element_composition_load_IDProject <String> csv", Bind_ActivePhasesElementComposition_Load_ByIDProject, "Model_ActivePhasesElementComposition||LoadByIDProject");
 
-		add_new_function(state, "project_active_phases_configuration_save", "<ID> returns id of saved item", "project_active_phases_configuration_save <String> csv", Bind_Templated_Save<DBS_ActivePhases_Configuration>);
-		add_new_function(state, "project_active_phases_configuration_delete", "<string> ok", "project_active_phases_configuration_delete <String> csv", Bind_Templated_Delete<DBS_ActivePhases_Configuration>);
-		add_new_function(state, "project_active_phases_configuration_loadID", "<string> ok", "project_active_phases_configuration_loadID <String> csv", Bind_Templated_loadID<DBS_ActivePhases_Configuration>);
-		add_new_function(state, "project_active_phases_configuration_load_IDProject", "<ID> returns id of saved item", "project_active_phases_configuration_load_IDProject <String> csv", Bind_ActivePhasesConfiguration_Load_ByIDProject);
+		add_new_function(state, "project_active_phases_configuration_save", "<ID> returns id of saved item", "project_active_phases_configuration_save <String> csv", Bind_Templated_Save<DBS_ActivePhases_Configuration>, "Model_ActivePhasesConfiguration||Save");
+		add_new_function(state, "project_active_phases_configuration_delete", "<string> ok", "project_active_phases_configuration_delete <String> csv", Bind_Templated_Delete<DBS_ActivePhases_Configuration>, "Model_ActivePhasesConfiguration||Delete");
+		add_new_function(state, "project_active_phases_configuration_loadID", "<string> ok", "project_active_phases_configuration_loadID <String> csv", Bind_Templated_loadID<DBS_ActivePhases_Configuration>, "Model_ActivePhasesConfiguration||LoadByID");
+		add_new_function(state, "project_active_phases_configuration_load_IDProject", "<ID> returns id of saved item", "project_active_phases_configuration_load_IDProject <String> csv", Bind_ActivePhasesConfiguration_Load_ByIDProject, "Model_ActivePhasesConfiguration||LoadByIDProject");
 
 #pragma endregion
 
 		//###-> Phases
 #pragma region Phases
-		add_new_function(state, "phase_save", "<string> OK", "phase_save <INT> ID", Bind_Templated_Save<DBS_Phase>);
-		add_new_function(state, "phase_delete", "<string> OK", "phase_delete <INT> ID", Bind_Templated_Delete<DBS_Phase>);
-		add_new_function(state, "phase_loadID", "<string> OK", "phase_loadID <String> csv", Bind_Templated_loadID<DBS_Phase>);
-		add_new_function(state, "phase_load_ByName", "<string> OK", "phase_load_ByName <String> csv", Bind_Phase_Load_ByName);
+		add_new_function(state, "phase_save", "<string> OK", "phase_save <INT> ID", Bind_Templated_Save<DBS_Phase>,"Model_Phase||Save");
+		add_new_function(state, "phase_delete", "<string> OK", "phase_delete <INT> ID", Bind_Templated_Delete<DBS_Phase>, "Model_Phase||Delete");
+		add_new_function(state, "phase_loadID", "<string> OK", "phase_loadID <String> csv", Bind_Templated_loadID<DBS_Phase>, "Model_Phase||LoadByID");
+		add_new_function(state, "phase_load_ByName", "<string> OK", "phase_load_ByName <String> csv", Bind_Phase_Load_ByName, "Model_Phase||LoadByName");
 #pragma endregion
 
 		//###-> Elements
 #pragma region Elements 
-		add_new_function(state, "element_save", "<string> OK", "element_save <INT> ID", Bind_Templated_Save<DBS_Element>);
-		add_new_function(state, "element_delete", "<string> OK", "element_delete <INT> ID", Bind_Templated_Delete<DBS_Element>);
-		add_new_function(state, "element_loadID", "<string> OK", "element_loadID <String> csv", Bind_Templated_loadID<DBS_Element>);
-		add_new_function(state, "element_load_ByName", "<string> OK", "element_load_ByName <String> csv", Bind_Element_Load_ByName);
+		add_new_function(state, "element_save", "<string> OK", "element_save <INT> ID", Bind_Templated_Save<DBS_Element>, "Model_Element||Save");
+		add_new_function(state, "element_delete", "<string> OK", "element_delete <INT> ID", Bind_Templated_Delete<DBS_Element>, "Model_Element||Delete");
+		add_new_function(state, "element_loadID", "<string> OK", "element_loadID <String> csv", Bind_Templated_loadID<DBS_Element>, "Model_Element||LoadByID");
+		add_new_function(state, "element_load_ByName", "<string> OK", "element_load_ByName <String> csv", Bind_Element_Load_ByName, "Model_Element||LoadByIDCase");
 #pragma endregion
 
 		//###-> Selected Phases
 #pragma region SelectedPhases 
-		add_new_function(state, "spc_selectedphase_save", "<string> OK", "spc_selectedphase_save <INT> ID", Bind_Templated_Save<DBS_SelectedPhases>);
-		add_new_function(state, "spc_selectedphase_delete", "<string> OK", "spc_selectedphase_delete <INT> ID", Bind_Templated_Delete<DBS_SelectedPhases>);
-		add_new_function(state, "spc_selectedphase_load_id", "<string> OK", "spc_selectedphase_load_id <String> csv", Bind_Templated_loadID<DBS_SelectedPhases>);
-		add_new_function(state, "spc_selectedphase_load_id_case", "<string> OK", "spc_selectedphase_load_id_case <String> csv", Bind_SelectedPhase_Load_CaseID);
+		add_new_function(state, "spc_selectedphase_save", "<string> OK", "spc_selectedphase_save <INT> ID", Bind_Templated_Save<DBS_SelectedPhases>, "Model_SelectedPhases||Save");
+		add_new_function(state, "spc_selectedphase_delete", "<string> OK", "spc_selectedphase_delete <INT> ID", Bind_Templated_Delete<DBS_SelectedPhases>, "Model_SelectedPhases||Delete");
+		add_new_function(state, "spc_selectedphase_load_id", "<string> OK", "spc_selectedphase_load_id <String> csv", Bind_Templated_loadID<DBS_SelectedPhases>, "Model_SelectedPhases||LoadByID");
+		add_new_function(state, "spc_selectedphase_load_id_case", "<string> OK", "spc_selectedphase_load_id_case <String> csv", Bind_SelectedPhase_Load_CaseID, "Model_SelectedPhases||LoadByIDCase");
 #pragma endregion
 
 		//###-> Selected Elements
 #pragma region SelectedElements
-		add_new_function(state, "spc_selectedelement_save", "<string> OK", "spc_selectedelement_save <INT> ID", Bind_Templated_Save<DBS_SelectedElements>);
-		add_new_function(state, "spc_selectedelement_delete", "<string> OK", "spc_selectedelement_delete <INT> ID", Bind_Templated_Delete<DBS_SelectedElements>);
-		add_new_function(state, "spc_selectedelement_load_id", "<string> OK", "spc_selectedelement_load_id <String> csv", Bind_Templated_loadID<DBS_SelectedElements>);
-		add_new_function(state, "spc_selectedelement_load_id_project", "<string> OK", "spc_selectedelement_load_id_project <String> csv", Bind_SelectedElement_Load_ProjectID);
+		add_new_function(state, "spc_selectedelement_save", "<string> OK", "spc_selectedelement_save <INT> ID", Bind_Templated_Save<DBS_SelectedElements>, "Model_SelectedElements||Save");
+		add_new_function(state, "spc_selectedelement_delete", "<string> OK", "spc_selectedelement_delete <INT> ID", Bind_Templated_Delete<DBS_SelectedElements>, "Model_SelectedElements||Delete");
+		add_new_function(state, "spc_selectedelement_load_id", "<string> OK", "spc_selectedelement_load_id <String> csv", Bind_Templated_loadID<DBS_SelectedElements>, "Model_SelectedElements||LoadByID");
+		add_new_function(state, "spc_selectedelement_load_id_project", "<string> OK", "spc_selectedelement_load_id_project <String> csv", Bind_SelectedElement_Load_ProjectID, "Model_SelectedElements||LoadByIDProject");
 #pragma endregion
 
 		//###-> Selected Elements
 #pragma region ElementComposition 
-		add_new_function(state, "spc_elementcomposition_save", "<string> OK", "spc_elementcomposition_save <INT> ID", Bind_Templated_Save<DBS_ElementComposition>);
-		add_new_function(state, "spc_elementcomposition_delete", "<string> OK", "spc_elementcomposition_delete <INT> ID", Bind_Templated_Delete<DBS_ElementComposition>);
-		add_new_function(state, "spc_elementcomposition_load_id", "<string> OK", "spc_elementcomposition_load_id <String> csv", Bind_Templated_loadID<DBS_ElementComposition>);
-		add_new_function(state, "spc_elementcomposition_load_id_case", "<string> OK", "spc_elementcomposition_load_id_project <String> csv", Bind_ElementComposition_Load_CaseID);
+		add_new_function(state, "spc_elementcomposition_save", "<string> OK", "spc_elementcomposition_save <INT> ID", Bind_Templated_Save<DBS_ElementComposition>, "Model_ElementComposition||Save");
+		add_new_function(state, "spc_elementcomposition_delete", "<string> OK", "spc_elementcomposition_delete <INT> ID", Bind_Templated_Delete<DBS_ElementComposition>, "Model_ElementComposition||Delete");
+		add_new_function(state, "spc_elementcomposition_load_id", "<string> OK", "spc_elementcomposition_load_id <String> csv", Bind_Templated_loadID<DBS_ElementComposition>, "Model_ElementComposition||LoadByID");
+		add_new_function(state, "spc_elementcomposition_load_id_case", "<string> OK", "spc_elementcomposition_load_id_project <String> csv", Bind_ElementComposition_Load_CaseID, "Model_ElementComposition||LoadByIDProject");
 #pragma endregion
 
 		//###-> Precipitation
 #pragma region Precipitation_SaveDelete
-		add_new_function(state, "spc_precipitation_domain_save", "<string> OK", "spc_precipitation_domain_save <INT> ID", Bind_Templated_Save<DBS_PrecipitationDomain>);
-		add_new_function(state, "spc_precipitation_domain_delete", "<string> OK", "spc_precipitation_domain_delete <INT> ID", Bind_Templated_Delete<DBS_PrecipitationDomain>);
-		add_new_function(state, "spc_precipitation_domain_loadID", "<string> OK", "spc_precipitation_domain_loadID <INT> ID", Bind_Templated_loadID<DBS_PrecipitationDomain>);
-		add_new_function(state, "spc_precipitation_domain_load_caseID", "<string> OK", "spc_precipitation_domain_load_caseID <INT> ID", Bind_PrecipitationDomain_Load_CaseID);
+		add_new_function(state, "spc_precipitation_domain_save", "<string> OK", "spc_precipitation_domain_save <INT> ID", Bind_Templated_Save<DBS_PrecipitationDomain>, "Model_PrecipitationDomain||Save");
+		add_new_function(state, "spc_precipitation_domain_delete", "<string> OK", "spc_precipitation_domain_delete <INT> ID", Bind_Templated_Delete<DBS_PrecipitationDomain>, "Model_PrecipitationDomain||Delete");
+		add_new_function(state, "spc_precipitation_domain_loadID", "<string> OK", "spc_precipitation_domain_loadID <INT> ID", Bind_Templated_loadID<DBS_PrecipitationDomain>, "Model_PrecipitationDomain||LoadByID");
+		add_new_function(state, "spc_precipitation_domain_load_caseID", "<string> OK", "spc_precipitation_domain_load_caseID <INT> ID", Bind_PrecipitationDomain_Load_CaseID, "Model_PrecipitationDomain||LoadByIDCase");
 
-		add_new_function(state, "spc_precipitation_phase_save", "<string> OK", "spc_precipitation_phase_save <INT> ID", Bind_Templated_Save<DBS_PrecipitationPhase>);
-		add_new_function(state, "spc_precipitation_phase_delete", "<string> OK", "spc_precipitation_phase_delete <INT> ID", Bind_Templated_Delete<DBS_PrecipitationPhase>);
-		add_new_function(state, "spc_precipitation_phase_loadID", "<string> OK", "spc_precipitation_phase_loadID <INT> ID", Bind_Templated_loadID<DBS_PrecipitationPhase>);
-		add_new_function(state, "spc_precipitation_phase_load_caseID", "<string> OK", "spc_precipitation_phase_load_caseID <INT> ID", Bind_PrecipitationPhase_Load_CaseID);
+		add_new_function(state, "spc_precipitation_phase_save", "<string> OK", "spc_precipitation_phase_save <INT> ID", Bind_Templated_Save<DBS_PrecipitationPhase>, "Model_PrecipitationPhase||Save");
+		add_new_function(state, "spc_precipitation_phase_delete", "<string> OK", "spc_precipitation_phase_delete <INT> ID", Bind_Templated_Delete<DBS_PrecipitationPhase>, "Model_PrecipitationPhase||Delete");
+		add_new_function(state, "spc_precipitation_phase_loadID", "<string> OK", "spc_precipitation_phase_loadID <INT> ID", Bind_Templated_loadID<DBS_PrecipitationPhase>, "Model_PrecipitationPhase||LoadByID");
+		add_new_function(state, "spc_precipitation_phase_load_caseID", "<string> OK", "spc_precipitation_phase_load_caseID <INT> ID", Bind_PrecipitationPhase_Load_CaseID, "Model_PrecipitationPhase||LoadByIDCase");
 
-		add_new_function(state, "spc_precipitation_simulation_data_save", "<string> OK", "spc_precipitation_simulation_data_save <INT> ID", Bind_Templated_Save<DBS_PrecipitateSimulationData>);
-		add_new_function(state, "spc_precipitation_simulation_data_delete", "<string> OK", "spc_precipitation_simulation_data_delete <INT> ID", Bind_Templated_Delete<DBS_PrecipitateSimulationData>);
-		add_new_function(state, "spc_precipitation_simulation_data_loadID", "<string> OK", "spc_precipitation_simulation_data_loadID <INT> ID", Bind_Templated_loadID<DBS_PrecipitateSimulationData>);
-		add_new_function(state, "spc_precipitation_simulation_data_HeatTreatmentID", "<string> OK", "spc_precipitation_simulation_data_HeatTreatmentID <INT> ID", Bind_PrecipitationSimulationData_Load_CaseID);
+		add_new_function(state, "spc_precipitation_simulation_data_save", "<string> OK", "spc_precipitation_simulation_data_save <INT> ID", Bind_Templated_Save<DBS_PrecipitateSimulationData>, "Model_PrecipitationSimulationData||Save");
+		add_new_function(state, "spc_precipitation_simulation_data_delete", "<string> OK", "spc_precipitation_simulation_data_delete <INT> ID", Bind_Templated_Delete<DBS_PrecipitateSimulationData>, "Model_PrecipitationSimulationData||Delete");
+		add_new_function(state, "spc_precipitation_simulation_data_loadID", "<string> OK", "spc_precipitation_simulation_data_loadID <INT> ID", Bind_Templated_loadID<DBS_PrecipitateSimulationData>, "Model_PrecipitationSimulationData||LoadByID");
+		add_new_function(state, "spc_precipitation_simulation_data_HeatTreatmentID", "<string> OK", "spc_precipitation_simulation_data_HeatTreatmentID <INT> ID", Bind_PrecipitationSimulationData_Load_CaseID, "Model_PrecipitationSimulationData||LoadByIDHeatTreatment");
 #pragma endregion
 
 		//###-> Scheil
 #pragma region Scheil
 		// Configuration
-		add_new_function(state, "spc_scheil_configuration_save", "<string> OK", "spc_scheil_configuration_save <INT> ID", Bind_Templated_Save<DBS_ScheilConfiguration>);
-		add_new_function(state, "spc_scheil_configuration_delete", "<string> OK", "spc_scheil_configuration_delete <INT> ID", Bind_Templated_Delete<DBS_ScheilConfiguration>);
-		add_new_function(state, "spc_scheil_configuration_loadID", "<string> OK", "spc_scheil_configuration_loadID <INT> ID", Bind_Templated_loadID<DBS_ScheilConfiguration>);
-		add_new_function(state, "spc_scheil_configuration_load_caseID", "<string> OK", "spc_scheil_configuration_load_caseID <String> csv", Bind_ScheilConfiguration_Load_CaseID);
+		add_new_function(state, "spc_scheil_configuration_save", "<string> OK", "spc_scheil_configuration_save <INT> ID", Bind_Templated_Save<DBS_ScheilConfiguration>, "Model_ScheilConfiguration||Save");
+		add_new_function(state, "spc_scheil_configuration_delete", "<string> OK", "spc_scheil_configuration_delete <INT> ID", Bind_Templated_Delete<DBS_ScheilConfiguration>, "Model_ScheilConfiguration||Delete");
+		add_new_function(state, "spc_scheil_configuration_loadID", "<string> OK", "spc_scheil_configuration_loadID <INT> ID", Bind_Templated_loadID<DBS_ScheilConfiguration>, "Model_ScheilConfiguration||LoadByID");
+		add_new_function(state, "spc_scheil_configuration_load_caseID", "<string> OK", "spc_scheil_configuration_load_caseID <String> csv", Bind_ScheilConfiguration_Load_CaseID, "Model_ScheilConfiguration||LoadByIDCase");
 		
 		// Phase fractions
-		add_new_function(state, "spc_scheil_phasefraction_save", "<string> OK", "spc_scheil_phasefraction_save <INT> ID", Bind_Templated_Save<DBS_ScheilPhaseFraction>);
-		add_new_function(state, "spc_scheil_phasefraction_delete", "<string> OK", "spc_scheil_phasefraction_delete <INT> ID", Bind_Templated_Delete<DBS_ScheilPhaseFraction>);
-		add_new_function(state, "spc_scheil_phasefraction_loadID", "<string> OK", "spc_scheil_phasefraction_loadID <String> csv", Bind_Templated_loadID<DBS_ScheilPhaseFraction>);
-		add_new_function(state, "spc_scheil_phasefraction_load_caseID", "<string> OK", "spc_scheil_phasefraction_load_caseID <String> csv", Bind_ScheilPhaseFraction_Load_CaseID);
+		add_new_function(state, "spc_scheil_phasefraction_save", "<string> OK", "spc_scheil_phasefraction_save <INT> ID", Bind_Templated_Save<DBS_ScheilPhaseFraction>, "Model_ScheilPhaseFraction||Save");
+		add_new_function(state, "spc_scheil_phasefraction_delete", "<string> OK", "spc_scheil_phasefraction_delete <INT> ID", Bind_Templated_Delete<DBS_ScheilPhaseFraction>, "Model_ScheilPhaseFraction||Delete");
+		add_new_function(state, "spc_scheil_phasefraction_loadID", "<string> OK", "spc_scheil_phasefraction_loadID <String> csv", Bind_Templated_loadID<DBS_ScheilPhaseFraction>, "Model_ScheilPhaseFraction||LoadByID");
+		add_new_function(state, "spc_scheil_phasefraction_load_caseID", "<string> OK", "spc_scheil_phasefraction_load_caseID <String> csv", Bind_ScheilPhaseFraction_Load_CaseID, "Model_ScheilPhaseFraction||LoadByIDCase");
 #pragma endregion
 
 		//###-> Equilibrium
 #pragma region Equilibrium
 		// Equilibrium configurations
-		add_new_function(state, "spc_equilibrium_configuration_save", "<string> OK", "spc_equilibrium_configuration_save <INT> ID", Bind_Templated_Save<DBS_EquilibriumConfiguration>);
-		add_new_function(state, "spc_equilibrium_configuration_delete", "<string> OK", "spc_equilibrium_configuration_delete <INT> ID", Bind_Templated_Delete<DBS_EquilibriumConfiguration>);
-		add_new_function(state, "spc_equilibrium_configuration_loadID", "<string> OK", "spc_equilibrium_configuration_loadID <INT> ID", Bind_Templated_loadID<DBS_EquilibriumConfiguration>);
-		add_new_function(state, "spc_equilibrium_configuration_load_caseID", "<string> OK", "spc_equilibrium_configuration_load_caseID <String> csv", Bind_EquilibriumConfiguration_Load_CaseID);
+		add_new_function(state, "spc_equilibrium_configuration_save", "<string> OK", "spc_equilibrium_configuration_save <INT> ID", Bind_Templated_Save<DBS_EquilibriumConfiguration>, "Model_EquilibriumConfiguration||Save");
+		add_new_function(state, "spc_equilibrium_configuration_delete", "<string> OK", "spc_equilibrium_configuration_delete <INT> ID", Bind_Templated_Delete<DBS_EquilibriumConfiguration>, "Model_EquilibriumConfiguration||Delete");
+		add_new_function(state, "spc_equilibrium_configuration_loadID", "<string> OK", "spc_equilibrium_configuration_loadID <INT> ID", Bind_Templated_loadID<DBS_EquilibriumConfiguration>, "Model_EquilibriumConfiguration||LoadByID");
+		add_new_function(state, "spc_equilibrium_configuration_load_caseID", "<string> OK", "spc_equilibrium_configuration_load_caseID <String> csv", Bind_EquilibriumConfiguration_Load_CaseID, "Model_EquilibriumConfiguration||LoadByIDCase");
 
 		//Equilibrium Phase fractions
-		add_new_function(state, "spc_equilibrium_phasefraction_save", "<string> OK", "spc_equilibrium_phasefraction_save <INT> ID", Bind_Templated_Save<DBS_EquilibriumPhaseFraction>);
-		add_new_function(state, "spc_equilibrium_phasefraction_delete", "<string> OK", "spc_equilibrium_phasefraction_delete <INT> ID", Bind_Templated_Delete<DBS_EquilibriumPhaseFraction>);
-		add_new_function(state, "spc_equilibrium_phasefraction_loadID", "<string> OK", "spc_equilibrium_phasefraction_loadID <String> csv", Bind_Templated_loadID<DBS_EquilibriumPhaseFraction>);
-		add_new_function(state, "spc_equilibrium_phasefraction_load_caseID", "<string> OK", "spc_equilibrium_phasefraction_load_caseID <String> csv", Bind_EquilibriumPhaseFraction_Load_CaseID);
+		add_new_function(state, "spc_equilibrium_phasefraction_save", "<string> OK", "spc_equilibrium_phasefraction_save <INT> ID", Bind_Templated_Save<DBS_EquilibriumPhaseFraction>, "Model_EquilibriumPhaseFraction||Save");
+		add_new_function(state, "spc_equilibrium_phasefraction_delete", "<string> OK", "spc_equilibrium_phasefraction_delete <INT> ID", Bind_Templated_Delete<DBS_EquilibriumPhaseFraction>, "Model_EquilibriumPhaseFraction||Delete");
+		add_new_function(state, "spc_equilibrium_phasefraction_loadID", "<string> OK", "spc_equilibrium_phasefraction_loadID <String> csv", Bind_Templated_loadID<DBS_EquilibriumPhaseFraction>, "Model_EquilibriumPhaseFraction||LoadByID");
+		add_new_function(state, "spc_equilibrium_phasefraction_load_caseID", "<string> OK", "spc_equilibrium_phasefraction_load_caseID <String> csv", Bind_EquilibriumPhaseFraction_Load_CaseID, "Model_EquilibriumPhaseFraction||LoadByIDCase");
 #pragma endregion
 
 		//###-> Case
 #pragma region Case
 		//Bind_Case_LoadÎD
-		add_new_function(state, "spc_case_save", "<string> OK", "spc_case_save <String> csv", Bind_Templated_Save<DBS_Case>);
-		add_new_function(state, "spc_case_load_id", "<string> csv", "spc_case_load_id <INT> ID Case", Bind_Templated_loadID<DBS_Case>);
-		add_new_function(state, "spc_case_delete", "<string> OK", "spc_case_delete <String> csv", Bind_Templated_Delete<DBS_Case>);
-		add_new_function(state, "spc_case_load_project_id", "<string> csv table", "spc_case_load_project_id <INT> ID project", Bind_Case_Load_ProjectID);
+		add_new_function(state, "spc_case_save", "<string> OK", "spc_case_save <String> csv", Bind_Templated_Save<DBS_Case>, "Model_Case||Save");
+		add_new_function(state, "spc_case_load_id", "<string> csv", "spc_case_load_id <INT> ID Case", Bind_Templated_loadID<DBS_Case>, "Model_Case||LoadByID");
+		add_new_function(state, "spc_case_delete", "<string> OK", "spc_case_delete <String> csv", Bind_Templated_Delete<DBS_Case>, "Model_Case||Delete");
+		add_new_function(state, "spc_case_load_project_id", "<string> csv table", "spc_case_load_project_id <INT> ID project", Bind_Case_Load_ProjectID, "Model_Case||LoadByIDProject");
 #pragma endregion
 
 		//###-> Heat treatment
 #pragma region HeatTreatment
-		add_new_function(state, "spc_heat_treatment_save", "<string> OK", "spc_heat_treatment_save <String> csv", Bind_Templated_Save<DBS_HeatTreatment>);
-		add_new_function(state, "spc_heat_treatment_load_id", "<string> csv", "spc_heat_treatment_load_id <INT> ID Case", Bind_Templated_loadID<DBS_HeatTreatment>);
-		add_new_function(state, "spc_heat_treatment_delete", "<string> OK", "spc_heat_treatment_delete <String> csv", Bind_Templated_Delete<DBS_HeatTreatment>);
-		add_new_function(state, "spc_heat_treatment_load_ByName", "<string> OK", "spc_heat_treatment_load_ByName <String> csv", Bind_HeatTreatment_load_ByName);
-		add_new_function(state, "spc_heat_treatment_load_IDCase", "<string> OK", "spc_heat_treatment_load_IDCase <String> csv", Bind_HeatTreatment_load_IDCase);
+		add_new_function(state, "spc_heat_treatment_save", "<string> OK", "spc_heat_treatment_save <String> csv", Bind_Templated_Save<DBS_HeatTreatment>, "Model_HeatTreatment||Save");
+		add_new_function(state, "spc_heat_treatment_load_id", "<string> csv", "spc_heat_treatment_load_id <INT> ID Case", Bind_Templated_loadID<DBS_HeatTreatment>, "Model_HeatTreatment||LoadByID");
+		add_new_function(state, "spc_heat_treatment_delete", "<string> OK", "spc_heat_treatment_delete <String> csv", Bind_Templated_Delete<DBS_HeatTreatment>, "Model_HeatTreatment||Delete");
+		add_new_function(state, "spc_heat_treatment_load_ByName", "<string> OK", "spc_heat_treatment_load_ByName <String> csv", Bind_HeatTreatment_load_ByName, "Model_HeatTreatment||LoadByName");
+		add_new_function(state, "spc_heat_treatment_load_IDCase", "<string> OK", "spc_heat_treatment_load_IDCase <String> csv", Bind_HeatTreatment_load_IDCase, "Model_HeatTreatment||LoadByIDCase");
 
-		add_new_function(state, "spc_heat_treatment_segment_save", "<string> OK", "spc_heat_treatment_segment_save <String> csv", Bind_Templated_Save<DBS_HeatTreatmentSegment>);
-		add_new_function(state, "spc_heat_treatment_segment_load_id", "<string> csv", "spc_heat_treatment_segment_load_id <INT> ID Case", Bind_Templated_loadID<DBS_HeatTreatmentSegment>);
-		add_new_function(state, "spc_heat_treatment_segment_delete", "<string> OK", "spc_heat_treatment_segment_delete <String> csv", Bind_Templated_Delete<DBS_HeatTreatmentSegment>);
-		add_new_function(state, "spc_heat_treatment_segment_load_IDHeatTreatment", "<string> OK", "spc_heat_treatment_segment_load_IDHeatTreatment <String> csv", Bind_HeatTreatmentSegments_load_IDHeatTreatment);
+		add_new_function(state, "spc_heat_treatment_segment_save", "<string> OK", "spc_heat_treatment_segment_save <String> csv", Bind_Templated_Save<DBS_HeatTreatmentSegment>, "Model_HeatTreatmentSegment||Save");
+		add_new_function(state, "spc_heat_treatment_segment_load_id", "<string> csv", "spc_heat_treatment_segment_load_id <INT> ID Case", Bind_Templated_loadID<DBS_HeatTreatmentSegment>, "Model_HeatTreatmentSegment||LoadByID");
+		add_new_function(state, "spc_heat_treatment_segment_delete", "<string> OK", "spc_heat_treatment_segment_delete <String> csv", Bind_Templated_Delete<DBS_HeatTreatmentSegment>, "Model_HeatTreatmentSegment||Delete");
+		add_new_function(state, "spc_heat_treatment_segment_load_IDHeatTreatment", "<string> OK", "spc_heat_treatment_segment_load_IDHeatTreatment <String> csv", Bind_HeatTreatmentSegments_load_IDHeatTreatment, "Model_HeatTreatmentSegment||LoadByIDHeatTreatment");
 
-		add_new_function(state, "spc_heat_treatment_profile_save", "<string> OK", "spc_heat_treatment_profile_save <String> csv", Bind_Templated_Save<DBS_HeatTreatmentProfile>);
-		add_new_function(state, "spc_heat_treatment_profile_load_id", "<string> csv", "spc_heat_treatment_profile_load_id <INT> ID Case", Bind_Templated_loadID<DBS_HeatTreatmentProfile>);
-		add_new_function(state, "spc_heat_treatment_profile_delete", "<string> OK", "spc_heat_treatment_profile_delete <String> csv", Bind_Templated_Delete<DBS_HeatTreatmentProfile>);
-		add_new_function(state, "spc_heat_treatment_profile_load_IDHeatTreatment", "<string> OK", "spc_heat_treatment_profile_load_IDHeatTreatment <String> csv", Bind_HeatTreatmentProfile_load_IDHeatTreatment);
+		add_new_function(state, "spc_heat_treatment_profile_save", "<string> OK", "spc_heat_treatment_profile_save <String> csv", Bind_Templated_Save<DBS_HeatTreatmentProfile>, "Model_HeatTreatmentProfile||Save");
+		add_new_function(state, "spc_heat_treatment_profile_load_id", "<string> csv", "spc_heat_treatment_profile_load_id <INT> ID Case", Bind_Templated_loadID<DBS_HeatTreatmentProfile>, "Model_HeatTreatmentProfile||LoadByID");
+		add_new_function(state, "spc_heat_treatment_profile_delete", "<string> OK", "spc_heat_treatment_profile_delete <String> csv", Bind_Templated_Delete<DBS_HeatTreatmentProfile>, "Model_HeatTreatmentProfile||Delete");
+		add_new_function(state, "spc_heat_treatment_profile_load_IDHeatTreatment", "<string> OK", "spc_heat_treatment_profile_load_IDHeatTreatment <String> csv", Bind_HeatTreatmentProfile_load_IDHeatTreatment, "Model_HeatTreatmentProfile||LoadByIDHeatTreatment");
 
 #pragma endregion
 

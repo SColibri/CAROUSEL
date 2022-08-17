@@ -48,48 +48,6 @@ namespace AMFramework.Interfaces
         /// </summary>
         /// <returns></returns>
         public List<Interfaces.CoreCommand_Interface> Get_commands();
-        /// <summary>
-        /// Returns the lua command that saves the model and has
-        /// as input a stirng in csv format. The model does not get saved if
-        /// the input parameters do not have the same data size. When succesful
-        /// it returns the ID of the element, otherwise -1.
-        /// </summary>
-        /// <returns></returns>
-        public string Get_save_command();
-
-        /// <summary>
-        /// Returns the load command for loadByID that has input of integer value,
-        /// corresponding to the ID of the element, this is, for a single item
-        /// referenced by its ID. This command only loads one Item and returns it
-        /// in a csv formatted way.
-        /// </summary>
-        /// <returns></returns>
-        public string Get_load_command();
-
-        /// <summary>
-        /// How data should be searched for loading data into multiple models
-        /// </summary>
-        public enum SEARCH
-        {
-            BY_ID,
-            BY_NAME,
-            OTHER
-        }
-        /// <summary>
-        /// Command that loads multiple entries of certain model type, this
-        /// can be specified by parent ID, name or other. If not implemented
-        /// it will retunr and empty string.
-        /// </summary>
-        /// <param name="findType"></param>
-        /// <returns></returns>
-        public string Get_load_command_table(SEARCH findType);
-
-        /// <summary>
-        /// Returns the delete command for the model that has as input the ID of the model.
-        /// This command returns 'OK' when the command was succesful
-        /// </summary>
-        /// <returns></returns>
-        public string Get_delete_command();
 
         /// <summary>
         /// Returns the name of the table whre data related to this object is stored

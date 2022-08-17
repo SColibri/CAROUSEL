@@ -30,13 +30,7 @@ namespace AMFramework.Controller
             _coreSocket = Controller.Controller_Config.ApiHandle;
 
             AMSystem.AMFramework_startup.Start(ref _coreSocket);
-            Model.ModelController<Model.Model_Projects> tempController = new(ref _coreSocket);
-            tempController.ModelObject.ID = 1;
-            tempController.LoadByIDAction.DoAction();
-
-            List<Model.ModelController<Model.Model_Projects>> model_Projects_Pr = Model.ModelController<Model.Model_Projects>.LoadIDProject(ref _coreSocket);
-            List<Model.ModelController<Model.Model_Projects>> model_Projects = Model.ModelController<Model.Model_Projects>.LoadAll(ref _coreSocket);
-
+            
             _AMCore = new(_coreSocket);
             _AMView = new();
 
