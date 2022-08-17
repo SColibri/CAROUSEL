@@ -11,8 +11,7 @@ namespace AMFramework.Model.ModelCoreExecutors
         private string _query;
         public MCE_LoadByQuery(ref Core.IAMCore_Comm comm,
                     ref Interfaces.Model_Interface ModelObject,
-                    Type ExecutorType,
-                    string query) : base(ref comm, ref ModelObject, ExecutorType)
+                    string query) : base(ref comm, ref ModelObject)
         { _query = query; }
 
         #region Implementation Abstract class

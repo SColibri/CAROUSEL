@@ -15,12 +15,13 @@ namespace AMFramework.Model
         protected readonly Core.IAMCore_Comm _coreCommunication;
         protected readonly Interfaces.Model_Interface _modelObject;
         public ModelCoreCommunicationExecutor(ref Core.IAMCore_Comm comm, 
-                                              ref Interfaces.Model_Interface ModelObject, 
-                                              Type ExecutorType)
+                                              ref Interfaces.Model_Interface ModelObject)
         {
             _coreCommunication = comm;
             _modelObject = ModelObject;
-            _commandReference = _modelObject.Get_commands().Find(e => e.Executor_Type.Equals(ExecutorType));
+            _commandReference = _modelObject.Get_commands().Find(e => e.Executor_Type.Equals(this.GetType()));
+
+            if (_commandReference == null) throw new Exception("Error: Command of type \'" + this.GetType().Name + "\' does not exist for this model!");
         }
         #endregion
 
@@ -91,6 +92,7 @@ namespace AMFramework.Model
         protected readonly Interfaces.CoreCommand_Interface? _commandReference;
 
         protected List<Interfaces.Model_Interface> _modelObjects;
+        public List<Interfaces.Model_Interface> ModelObjects { get { return _modelObjects ?? (_modelObjects = new List<Interfaces.Model_Interface>()); } }
         public string LoadQuery { get; set; } = "";
 
         /// <summary>

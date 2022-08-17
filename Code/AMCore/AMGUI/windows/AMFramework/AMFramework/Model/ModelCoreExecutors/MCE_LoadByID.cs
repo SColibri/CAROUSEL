@@ -9,8 +9,7 @@ namespace AMFramework.Model.ModelCoreExecutors
     public class MCE_LoadByID: Model.ModelCoreCommunicationExecutor
     {
         public MCE_LoadByID(ref Core.IAMCore_Comm comm,
-                        ref Interfaces.Model_Interface ModelObject,
-                        Type ExecutorType) : base(ref comm, ref ModelObject, ExecutorType)
+                        ref Interfaces.Model_Interface ModelObject) : base(ref comm, ref ModelObject)
         { }
 
         #region Implementation Abstract class

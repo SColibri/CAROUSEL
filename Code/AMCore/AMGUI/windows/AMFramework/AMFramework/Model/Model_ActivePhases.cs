@@ -18,15 +18,6 @@ namespace AMFramework.Model
         
         }
 
-        private void Add_allCommands(Core.IAMCore_Comm comm) 
-        {
-            Type thisType = this.GetType();
-
-            ModelCoreCommand MCC = new(ref comm);
-            MCC.ObjectType = this.GetType();
-            MCC.Command_instruction = "project_active_phases_save";
-        }
-
         #endregion
 
         private int _id = -1;

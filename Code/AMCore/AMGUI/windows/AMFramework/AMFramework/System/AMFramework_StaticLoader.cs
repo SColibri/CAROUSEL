@@ -47,7 +47,7 @@ namespace AMFramework.AMSystem
                 Type? ModelT = Model.ModelFactory.Get_Type(CommandSpecs[0]);
                 if (ExecutorT == null || ModelT == null) continue;
 
-                Model.ModelCoreCommand tempCommand = new(ref comm) { Command_instruction = LineCommand[0],
+                Model.ModelCoreCommand tempCommand = new() { Command_instruction = LineCommand[0],
                                                                      ObjectType = ModelT,
                                                                      Executor_Type = ExecutorT};
 

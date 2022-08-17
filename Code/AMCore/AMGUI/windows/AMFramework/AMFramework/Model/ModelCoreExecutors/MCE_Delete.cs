@@ -9,8 +9,7 @@ namespace AMFramework.Model.ModelCoreExecutors
     internal class MCE_Delete:Model.ModelCoreCommunicationExecutor
     {
         public MCE_Delete(ref Core.IAMCore_Comm comm,
-                        ref Interfaces.Model_Interface ModelObject,
-                        Type ExecutorType) : base(ref comm, ref ModelObject, ExecutorType)
+                        ref Interfaces.Model_Interface ModelObject) : base(ref comm, ref ModelObject)
         { }
 
         #region Implementation Abstract class

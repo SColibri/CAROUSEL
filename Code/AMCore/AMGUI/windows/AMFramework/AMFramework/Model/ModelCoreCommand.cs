@@ -25,31 +25,13 @@ namespace AMFramework.Model
         /// <summary>
         /// Constructor, this class needs core communication for running commands
         /// </summary>
-        public ModelCoreCommand(ref Core.IAMCore_Comm comm)
+        public ModelCoreCommand()
         {
-            Set_CoreCommunication(comm);
         }
-
-        public void Set_CoreCommunication(Core.IAMCore_Comm comm) { _coreComm = comm; }
 
         #endregion
 
         #region Parameters
-        /// <summary>
-        /// Enum that holds all available options on datamodels
-        /// </summary>
-        public enum Commands
-        {
-            NONE,
-            TABLENAME,
-            SAVE_ID,
-            LOAD_ID,
-            LOAD_BYNAME,
-            LOAD_IDPROJECT,
-            LOAD_ALL,
-            DELTE_ID
-        }
-
         /// <summary>
         /// LUA command to be executed, see Core project for more information
         /// </summary>

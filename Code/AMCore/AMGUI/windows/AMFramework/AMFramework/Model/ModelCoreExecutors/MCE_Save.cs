@@ -9,8 +9,7 @@ namespace AMFramework.Model.ModelCoreExecutors
     public class MCE_Save:Model.ModelCoreCommunicationExecutor
     {
         public MCE_Save(ref Core.IAMCore_Comm comm,
-                        ref Interfaces.Model_Interface ModelObject,
-                        Type ExecutorType) : base(ref comm, ref ModelObject, ExecutorType)
+                        ref Interfaces.Model_Interface ModelObject) : base(ref comm, ref ModelObject)
         { }
 
         #region Implementation Abstract class
@@ -18,7 +17,7 @@ namespace AMFramework.Model.ModelCoreExecutors
         {
             Command_parameters = _modelObject.Get_csv();
             CoreOutput = _coreCommunication.run_lua_command(_commandReference.Command_instruction, Command_parameters);
-            _modelObject.Get_parameter_list().ToList().Find(e => e.Name.CompareTo("ID") == 0)?.SetValue(_modelObject, Convert.ToInt64(CoreOutput));
+            _modelObject.Get_parameter_list().ToList().Find(e => e.Name.CompareTo("ID") == 0)?.SetValue(_modelObject, Convert.ToInt32(CoreOutput));
         }
         #endregion
     }
