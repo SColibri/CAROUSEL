@@ -824,6 +824,8 @@ private:
 	}
 	static int Bind_SPC_Parallel_StepScheil(lua_State* state) 
 	{
+		_luaBUFFER = "";
+
 		// Check and get parameters
 		if (check_parameters(state, lua_gettop(state), 2, "usage: <ID project> <ID Cases>") != 0) return 1;
 		std::vector<std::string> parameters = get_parameters(state);
@@ -860,11 +862,14 @@ private:
 			runVectorCommands(std::vector<string>{API_Scripting::script_initialize_core()}, mcc_comms[n1]);
 		}
 
+		_luaBUFFER = "Communication to matcalc established, calculating \n";
 		// define the parallel function
 		auto funcStep = [](IPC_winapi* mccComm, std::vector<AM_pixel_parameters*> PixelList, AM_Project* projectM)
 		{
+			int IndexPixel = 0;
 			for (AM_pixel_parameters* pixel_parameters : PixelList)
 			{
+				_luaBUFFER += "scheil calculation:  IDCase -> " + std::to_string(pixel_parameters->get_caseID()) + " current " + std::to_string(IndexPixel) + " / " + std::to_string(PixelList.size());
 				std::string outCommand_1 = runVectorCommands(API_Scripting::Script_run_stepScheilEquilibrium(_configuration,
 					pixel_parameters->get_EquilibriumConfiguration()->StartTemperature,
 					pixel_parameters->get_EquilibriumConfiguration()->EndTemperature,
@@ -979,6 +984,8 @@ private:
 	/// <returns></returns>
 	static int Bind_SPC_run_cases(lua_State* state)
 	{
+		_luaBUFFER = "";
+
 		std::vector<std::string> parameters;
 		if (check_global_using_openProject(state, lua_gettop(state), 0,
 			" No input required ",
@@ -1015,6 +1022,8 @@ private:
 	/// <returns></returns>
 	static int Bind_SPC_parallel_calculate_precipitate_distribution(lua_State* state)
 	{
+		_luaBUFFER = "";
+
 		// Check and get parameters
 		if (check_parameters(state, lua_gettop(state), 2, "usage: <ID project> <ID Cases>") != 0) return 1;
 		std::vector<std::string> parameters = get_parameters(state);
@@ -1111,6 +1120,8 @@ private:
 
 	static int Bind_SPC_parallel_calculate_heat_treatment(lua_State* state)
 	{
+		_luaBUFFER = "";
+
 		// Check and get parameters
 		if (check_parameters(state, lua_gettop(state), 3, "usage: <ID project> <ID Cases> <Heat treatment name>") != 0) return 1;
 		std::vector<std::string> parameters = get_parameters(state);

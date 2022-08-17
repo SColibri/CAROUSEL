@@ -236,6 +236,7 @@ namespace AMFramework.Components.Scripting
             {
                 string CurrentLineT = ((Scintilla)sender).Lines[((Scintilla)sender).CurrentLine].Text;
 
+                if (CurrentLineT.Length == 0) return;
                 if (CurrentLineT[CurrentLineT.Length - 1] == '.' || 
                     CurrentLineT[CurrentLineT.Length - 1] == ':') 
                 { 
@@ -339,6 +340,9 @@ namespace AMFramework.Components.Scripting
             var scintilla = sender as Scintilla;
             var pos = scintilla.CurrentPosition;
             var word = scintilla.GetWordFromPosition(pos);
+
+            // Check if there is something to complete or not
+            if (word.Length == 0) return;
 
             if (Anchor_line != scintilla.CurrentLine) 
             {

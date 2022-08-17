@@ -331,7 +331,19 @@ namespace AMFramework.Controller
         private void run_script(object sender, EventArgs e) 
         {
             RibbonMenuItem itemy = (RibbonMenuItem)sender;
-            _AMCore.Run_command("run_lua_script " + itemy.Tag);
+            CurrentRunningScript = (string)itemy.Tag;
+
+            ScriptRunning = true;
+            TabControlVisible = false;
+            System.Threading.Thread TH01 = new(run_script_async);
+            TH01.Start();
+        }
+
+        private void run_script_async() 
+        {
+            _AMCore.Run_command("run_lua_script " + CurrentRunningScript);
+            TabControlVisible = true;
+            ScriptRunning = false;
         }
 
         public System.Windows.Controls.TabItem scriptView_new_lua_script(string filename = "") 
@@ -340,6 +352,19 @@ namespace AMFramework.Controller
             OnPropertyChanged("OpenScripts");
             return Tabby;
         }
+
+        private bool _scriptRunning = false;
+        public bool ScriptRunning
+        {
+            get { return _scriptRunning; }
+            set 
+            { 
+                _scriptRunning = value;
+                OnPropertyChanged("ScriptRunning");
+            }
+        }
+
+        public string CurrentRunningScript { get; set; } = "";
         #endregion
 
         #region Plotting

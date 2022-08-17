@@ -126,6 +126,8 @@ protected:
 	inline static std::vector<std::string> _functionParameters; // Parameters as input
 	inline static std::vector<std::string> _functionDescription; // Description
 	inline static std::vector<std::string> _functionCommandSpecs; // Command specifications (for gui)
+	inline static std::string _luaBUFFER {""};
+	inline static bool _cancelCalculations{ false };
 
 	/// <summary>
 	/// Adds all functions defines on the implementation
