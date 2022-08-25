@@ -156,6 +156,13 @@ function Case:save()
 end
 
 -- Methods
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+-- .......................................................................................
+--                                       Selected phases
+-- .......................................................................................
+
 function Case:select_phases(In)
     local Etable = split(In," ")
 
@@ -167,6 +174,12 @@ function Case:select_phases(In)
         for i,Item in ipairs(Etable) do
             
             local phasey = Phase:new{Name = Item}
+
+            if phasey.ID == -1 then
+                get_phaseNames()
+                phasey = Phase:new{Name = Item}
+            end
+
             if phasey.ID == -1 then
                 error("select_phases: The phase \'" .. Item .. "\' is not contained in the database! :(")
             end
@@ -178,6 +191,33 @@ function Case:select_phases(In)
     end
 end
 
+function Case:clear_selected_phases()
+    for i,Item in ipairs(self.selectedPhases) do
+        self.selectedPhases[i]:remove()
+    end
+end
+
+-- .......................................................................................
+--                                Equilibrium/Scheil Phase fractions
+-- .......................................................................................
+
+function Case:clear_equilibriumPhaseFractions()
+    for i,Item in ipairs(self.equilibriumPhaseFraction) do
+        self.equilibriumPhaseFraction[i]:remove()
+    end
+end
+
+function Case:clear_scheilPhaseFraction()
+    for i,Item in ipairs(self.scheilPhaseFraction) do
+        self.scheilPhaseFraction[i]:remove()
+    end
+end
+
+-- .......................................................................................
+--                                       Element composition
+-- .......................................................................................
+
+-- Set composition
 function Case:set_composition(In)
     local Etable = split(In," ")
 
@@ -206,6 +246,7 @@ function Case:set_composition(In)
     end
 end
 
+-- Composition by name
 function Case:find_composition_ByName(nameObj)
     for i,Item in ipairs(self.elementComposition) do
         if self.elementComposition[i].element.Name == nameObj then
@@ -216,24 +257,7 @@ function Case:find_composition_ByName(nameObj)
     return nil
 end
 
-function Case:clear_selected_phases()
-    for i,Item in ipairs(self.selectedPhases) do
-        self.selectedPhases[i]:remove()
-    end
-end
-
-function Case:clear_equilibriumPhaseFractions()
-    for i,Item in ipairs(self.equilibriumPhaseFraction) do
-        self.equilibriumPhaseFraction[i]:remove()
-    end
-end
-
-function Case:clear_scheilPhaseFraction()
-    for i,Item in ipairs(self.scheilPhaseFraction) do
-        self.scheilPhaseFraction[i]:remove()
-    end
-end
-
+-- Clear all element compositions
 function Case:clear_elementComposition(projectObject)
     for i,Item in ipairs(self.elementComposition) do
         self.elementComposition[i]:remove()
@@ -250,6 +274,9 @@ function Case:clear_elementComposition(projectObject)
     end
 end
 
+-- .......................................................................................
+--                                      Precipitation Phases
+-- .......................................................................................
 function Case:clear_precipitationPhases()
     for i,Item in ipairs(self.precipitationPhases) do
         self.precipitationPhases[i]:remove()
@@ -257,9 +284,95 @@ function Case:clear_precipitationPhases()
     self.precipitationPhases = {}
 end
 
+function Case:add_precipitation_phase(pPhase) 
+    -- check before applying
+    assert(type(pPhase) == "table", "add_precipitation_phase only accepts as input an object of PrecipitationPhase")
+    assert(#pPhase.Name > 0, "Precipitation phase does not have a name")
+
+    -- core before saving checks if phase exists, and if so it only updates the entry
+    self.precipitationPhases[#self.precipitationPhases + 1] = pPhase
+    self.precipitationPhases[#self.precipitationPhases].ID = -1
+    self.precipitationPhases[#self.precipitationPhases].IDCase = self.ID
+    self.precipitationPhases[#self.precipitationPhases]:save()
+
+    -- reload Data
+    self:load()
+end
+
+-- .......................................................................................
+--                                      Precipitation Domains
+-- .......................................................................................
 function Case:clear_precipitationDomains()
     for i,Item in ipairs(self.precipitationDomain) do
         self.precipitationDomain[i]:remove()
     end
     self.precipitationDomain = {}
+end
+
+function Case:add_precipitation_domain(pDomain)
+    -- check before applying
+    assert(type(pDomain) == "table", "add_precipitation_domain only accepts as input an object of PrecipitationDomain")
+    assert(#pDomain.Name > 0, "Precipitation domain does not have a name")
+
+    -- core before saving checks if phase exists, and if so it only updates the entry
+    self.precipitationDomain[#self.precipitationDomain + 1] = pDomain
+    self.precipitationDomain[#self.precipitationDomain].ID = -1
+    self.precipitationDomain[#self.precipitationDomain].IDCase = self.ID
+    self.precipitationDomain[#self.precipitationDomain]:save()
+
+    -- reload Data
+    self:load()
+end
+
+-- .......................................................................................
+--                                       Heat treatment
+-- .......................................................................................
+
+function Case:clear_heat_treatments()
+    for i,Item in ipairs(self.heatTreatment) do
+        self.heatTreatment[i]:remove()
+    end
+    self.heatTreatment = {}
+end
+
+function Case:add_heat_treatment(hTreatment)
+    -- check before applying
+    assert(type(hTreatment) == "table", "add_heat_treatment only accepts as input an object of HeatTreatment")
+    assert(#hTreatment.Name > 0, "Heat treatment does not have a name")
+
+     -- core before saving checks if phase exists, and if so it only updates the entry
+    self.heatTreatment[#self.heatTreatment + 1] = hTreatment
+    self.heatTreatment[#self.heatTreatment].ID = -1
+    self.heatTreatment[#self.heatTreatment].IDCase = self.ID
+    self.heatTreatment[#self.heatTreatment]:save()
+
+    -- reload
+    self:load()
+end
+
+
+-- Calculations
+-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+-- .......................................................................................
+--                             Calculate precipitate distribution
+-- .......................................................................................
+
+-- Single case calculation (for parallel implementation check project level/object)
+function Case:calculate_heat_treatment(HeatTreatment_Name)
+    -- Check input
+    assert(type(HeatTreatment_Name) == "string", "calculate_precipitate_distribution requires a string as an input")
+
+    -- find specific heat treatment
+    for i,Item in ipairs(self.heatTreatment) do
+        if Item.Name == HeatTreatment_Name then
+            Item:run_kinetic_simulation()
+            goto ENDCALC
+        end
+    end
+
+    ::ENDCALC::
+    -- reload
+    self:load()
 end

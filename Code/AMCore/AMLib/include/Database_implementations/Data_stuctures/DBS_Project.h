@@ -8,11 +8,14 @@
 /// Implements IAM_DBS.h interface, this is a project
 /// object structure.
 /// </summary>
-class DBS_Project: public IAM_DBS
+class DBS_Project : public IAM_DBS
 {
 public:
+	// [DBS_Parameter] Project Name
 	std::string Name{""};
+	// [DBS_Parameter] Name API used by the framework to communicate with the external software (e.g. AM_API_matcalc)
 	std::string APIName{""};
+	// [DBS_Parameter] name of External software API (e.g. Matcalc )
 	std::string External_APIName{ "" };
 
 	DBS_Project(IAM_Database* database, int id): 

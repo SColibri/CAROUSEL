@@ -33,7 +33,7 @@ function HeatTreatment:load()
    if self.ID > -1 then
     sqlData = split(spc_heat_treatment_load_id(self.ID),",")
    elseif string.len(self.Name) > 0 then
-    sqlData = split(spc_heat_treatment_load_ByName(self.Name),",")
+    sqlData = split(spc_heat_treatment_load_ByName("-1,"..self.Name..","..self.IDCase),",")
    end
    
    load_data(self, sqlData)
@@ -43,6 +43,10 @@ function HeatTreatment:load()
       self.Segments = {}
       local sqlDataSegments = split(spc_heat_treatment_segment_load_IDHeatTreatment(self.ID),"\n")
       load_table_data(self.Segments, HeatTreatmentSegment, sqlDataSegments)
+
+      -- Note: we do not load temperature profile and simulation data because this should only
+      -- be loaded by demand only (a lot of data to load :) ) -> refer to load_temperature_profile
+      -- and load_simulation_data
    end
 end
 
@@ -57,36 +61,62 @@ function HeatTreatment:remove()
     spc_heat_treatment_delete(self.ID)
 end
 
---Methods
+-- Methods
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+-- .......................................................................................
+--                                       Self
+-- .......................................................................................
+
+-- Clear all related data
 function HeatTreatment:clear_all()
+
+    self:load_temperature_profile() -- first load, since it is on demand data
     for i,Item in ipairs(self.TemperatureProfile) do
-      Item.remove()
+      Item:remove()
     end
     self.TemperatureProfile = {}
     
+    self:load_simulation_data() -- first load, since it is on demand data
     for i,Item in ipairs(self.SimulationData) do
-      Item.remove()
+      Item:remove()
     end
     self.SimulationData = {}
     
     for i,Item in ipairs(self.Segments) do
-      Item.remove()
+      Item:remove()
     end
     self.Segments = {}
 end
 
+-- .......................................................................................
+--                                       Load
+-- .......................................................................................
+
+-- load temperature profile
 function HeatTreatment:load_temperature_profile()
   local sqlData = split(spc_heat_treatment_profile_load_IDHeatTreatment(self.ID),"\n")
   self.TemperatureProfile = {}
   load_table_data(self.TemperatureProfile, HeatTreatmentProfile, sqlData)
 end
 
+-- load calculation data from simulation
 function HeatTreatment:load_simulation_data()
   local sqlData = split(spc_precipitation_simulation_data_HeatTreatmentID(self.ID),"\n")
   self.SimulationData = {}
   load_table_data(self.SimulationData, PrecipitateSimulationData, sqlData)
 end
 
+-- Calculations
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+-- .......................................................................................
+--                                       Heat treatment
+-- .......................................................................................
+
+-- run heat treatment calculations
 function HeatTreatment:run_kinetic_simulation()
   local caseRef = Case:new{ID = self.IDCase}
   pixelcase_calculate_heat_treatment(caseRef.IDProject, caseRef.ID.."-"..caseRef.ID, self.Name)

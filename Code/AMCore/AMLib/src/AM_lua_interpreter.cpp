@@ -41,9 +41,17 @@ std::string AM_lua_interpreter::run_command(std::string command, std::vector<std
 	}
 
 	lua_call(_state, parameters.size(), 1);
-
-	std::string out(lua_tostring(_state, -1));
+	
+	std::string out{ "" };
+	try
+	{
+		out = lua_tostring(_state, -1);
+	}
+	catch (const std::exception&)
+	{
+		out = "Command not recognized!";
+	}
+	
 	lua_pop(_state, 1);
-
 	return out;
 }

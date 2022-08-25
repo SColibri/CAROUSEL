@@ -523,9 +523,18 @@ namespace API_Scripting
 		std::string TempDirectoryPath)
 	{
 		
+		std::vector<DBS_PrecipitationPhase*> tempPhases;
+		for (auto& item : precipitationPhases)
+		{
+			if (string_manipulators::find_index_of_keyword(item->Name,"P0") != std::string::npos)
+			{
+				tempPhases.push_back(item);
+			}
+		}
+
 		// Add precipitation phases
 		// TODO: optimize! here we call at each loop the database to load the phase item, we can create a vector pointer for this :)
-		for(auto& item: precipitationPhases)
+		for(auto& item: tempPhases)
 		{
 			DBS_Phase tempPhase(db,item->IDPhase);
 			tempPhase.load();
@@ -537,7 +546,7 @@ namespace API_Scripting
 		stepScheilScript.push_back(Script_stepEquilibrium());
 		stepScheilScript.push_back(script_buffer_loadState(-1));
 
-		for (auto& item : precipitationPhases)
+		for (auto& item : tempPhases)
 		{
 			DBS_Phase tempPhase(db, item->IDPhase);
 			tempPhase.load();
@@ -545,7 +554,7 @@ namespace API_Scripting
 			stepScheilScript.push_back(Script_generate_precipitate_distribution(tempPhase.Name, item->CalcType, item->MinRadius, item->MeanRadius, item->MaxRadius, item->StdDev));
 		}
 
-		for (auto& item : precipitationPhases)
+		for (auto& item : tempPhases)
 		{
 			DBS_Phase tempPhase(db, item->IDPhase);
 			tempPhase.load();
@@ -578,6 +587,10 @@ namespace API_Scripting
 		tempCase.load();
 		GenericScript_Database(db, configuration, tempCase.IDProject, HeatTreatment.IDCase, outVector);
 
+		AM_Project Project(db, configuration, tempCase.IDProject);
+		DBS_Project tempProject(db, Project.get_project_ID());
+		AM_pixel_parameters TempPixel(db, &tempProject, tempCase.id());
+		outVector.push_back(Script_setComposition_weight(Project.get_selected_elements_ByName(), TempPixel.get_composition_string()));
 		// get precipitation domain that will be used
 #pragma region Matcalc_precipitationDomain_declaration
 

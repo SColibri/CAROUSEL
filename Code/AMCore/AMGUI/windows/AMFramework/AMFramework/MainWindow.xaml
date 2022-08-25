@@ -58,7 +58,7 @@
                                    Click="RibbonButton_Click_2"
                                    SmallImageSource="Resources/Icons/tablerIcons/file-search.png"/>
                 </RibbonGroup>
-                
+
                 <!-- Database-->
                 <RibbonGroup x:Name="Database" Header="Database">
                     <RibbonMenuButton  Label="Connection" 
@@ -71,7 +71,7 @@
                                    KeyTip="C"
                                    SmallImageSource="Resources/Icons/tablerIcons/table.png"/>
                 </RibbonGroup>
-                
+
                 <!-- Charting-->
                 <RibbonGroup x:Name="Charting" Header="Charting">
                     <RibbonButton  Label="New chart" 
@@ -79,10 +79,10 @@
                                    Click="RibbonButton_Click" 
                                    SmallImageSource="Resources/Icons/tablerIcons/chart-radar.png"/>
                 </RibbonGroup>
-                
+
                 <!-- LUA -->
                 <RibbonGroup x:Name="LUA_options" Header="Scripting">
-                    
+
                     <RibbonMenuButton  Label="lua_script"
                                        SmallImageSource="Resources/Icons/tablerIcons/file-typography.png">
                         <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click_new_luaFile"/>
@@ -104,7 +104,12 @@
                                    SmallImageSource="Resources/Icons/tablerIcons/player-play.png">
 
                     </RibbonMenuButton>
-                    
+
+                    <RibbonButton Label="Cancel" Visibility="{Binding Path=ScriptRunning, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}"
+                                      SmallImageSource="Resources/Icons/tablerIcons/braces-off.png" Click="RibbonButton_Click_3">
+
+                    </RibbonButton>
+
                 </RibbonGroup>
             </RibbonTab>
         </Ribbon>
@@ -116,9 +121,9 @@
                 <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-         
+
             <local2:Database_treeview x:Name="databaseView">
-                
+
             </local2:Database_treeview>
             <TabControl x:Name="MainTabControl" Grid.Column="2" ItemsSource="{Binding Path=TabItems, UpdateSourceTrigger=PropertyChanged}"
                         Visibility="{Binding Path=TabControlVisible, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}">
@@ -249,11 +254,11 @@
                         <DropShadowEffect />
                     </Border.Effect>
                 </Border>
-                <TextBlock Grid.Row="1" Text="Running script..." HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="15"/>
+                <TextBlock Grid.Row="1" Text="{Binding Path=RunningScriptOutput}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="15" Margin="0,12,0,0"/>
                 <fa:ImageAwesome Icon="Spinner" Spin="True" SpinDuration="2" Margin="5" Width="50"/>
             </Grid>
         </Grid>
-        
+
         <Grid Grid.Row="2" Margin="2" Panel.ZIndex="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
@@ -272,7 +277,7 @@
 
         <Grid x:Name="ProjectWorking" Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}}" Grid.ColumnSpan="4" Grid.RowSpan="4">
             <Border Opacity="70" Background="Black" Grid.RowSpan="4">
-                
+
             </Border>
         </Grid>
     </Grid>

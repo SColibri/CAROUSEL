@@ -5,7 +5,9 @@ VisualStudioVersion = 17.2.32210.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMFramework", "AMFramework\AMFramework.csproj", "{43C84DA8-985E-46AE-8603-7B2F76F5C12E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMFRamework_Components", "AMFRamework_Components\AMFRamework_Components.csproj", "{04D927BC-F1EC-4F0D-A0FF-CC8FB0D33906}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMFRamework_Components", "AMFRamework_Components\AMFRamework_Components.csproj", "{04D927BC-F1EC-4F0D-A0FF-CC8FB0D33906}"
+EndProject
+Project("{5697748A-77EF-44CA-8824-4F5637E5945B}") = "lua", "AMFramework\lua.luaproj", "{E439935D-B2A2-46AE-856D-2AA408428F33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,8 @@ Global
 		{04D927BC-F1EC-4F0D-A0FF-CC8FB0D33906}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04D927BC-F1EC-4F0D-A0FF-CC8FB0D33906}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04D927BC-F1EC-4F0D-A0FF-CC8FB0D33906}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E439935D-B2A2-46AE-856D-2AA408428F33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E439935D-B2A2-46AE-856D-2AA408428F33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

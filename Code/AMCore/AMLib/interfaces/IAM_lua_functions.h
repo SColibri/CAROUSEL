@@ -365,7 +365,8 @@ protected:
 		add_new_function(state, "configuration_set_mobility_database_path", "string", "configuration_set_mobility_database_path <string filename>", Bind_configuration_setMobilityDatabasePath);
 
 		//-------- SYSTEM
-		add_new_function(state, "core_cancel_calculations", "void", "core_cancel_calculations", Bind_CancelCalculations, "CoreMethods||CancelCalculations");
+		add_new_function(state, "core_cancel_operation", "void", "core_cancel_operation", Bind_CancelCalculations, "CoreMethods||CancelOperation");
+		add_new_function(state, "core_buffer", "string", "core_buffer", Bind_GetBUFFER, "CoreMethods||GetBuffer");
 	}
 
 protected:
@@ -603,7 +604,16 @@ protected:
 	{
 		int noParameters = lua_gettop(state);
 		std::string parameter = lua_tostring(state, 1);
-		bool outy = luaL_dofile(state, parameter.c_str());
+
+		try
+		{
+			bool outy = luaL_dofile(state, parameter.c_str());
+		}
+		catch (const std::exception&)
+		{
+			lua_pushstring(state, "Error: Something went wrong while running trying to run the script! is it still there?");
+		}
+		
 		return 1;
 	}
 
@@ -2396,10 +2406,15 @@ protected:
 		// check input
 		std::vector<std::string> parameters, csvF;
 		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+		if (csvF.size() < 3) 
+		{
+			lua_pushstring(state, "Error, missing parameters in Bind_HeatTreatment_load_ByName");
+			return 1;
+		}
 
 		// get data
 		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_HeatTreatment());
-		DT.load_data("Name = " + parameters[0]);
+		DT.load_data("Name = \'" + csvF[1] + "\' AND IDCase = " + csvF[2]);
 
 		// send csv
 		lua_pushstring(state, DT.get_csv().c_str());
@@ -3147,6 +3162,12 @@ protected:
 	{
 		_cancelCalculations = true;
 		lua_pushstring(state, "Cancelling");
+		return 1;
+	}
+
+	static int Bind_GetBUFFER(lua_State* state)
+	{
+		lua_pushstring(state, _luaBUFFER.c_str());
 		return 1;
 	}
 #pragma endregion

@@ -386,7 +386,7 @@ namespace AMFramework.AMSystem
             if (IndexStart == -1 || IndexEnd == -1) return "";
 
             // get parameters only
-            copyRowLine = copyRowLine.Substring(IndexStart + 1, IndexEnd);
+            copyRowLine = copyRowLine.Substring(IndexStart + 1, IndexEnd - (IndexStart +1));
 
             return Get_parameters(copyRowLine);
         }

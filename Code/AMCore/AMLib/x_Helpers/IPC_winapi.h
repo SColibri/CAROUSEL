@@ -178,7 +178,7 @@ private:
                 string_manipulators::find_index_of_keyword(_stdout.substr(_stdout.size() - dwRead, _stdout.size()), _endflag) != string::npos) break;
             
             WaitForInputIdle(process_info.child_in_w, INFINITE);
-            if (dwAvail == 0) { std::this_thread::sleep_for(std::chrono::microseconds(1000)); continue; }
+            if (dwAvail == 0) { std::this_thread::sleep_for(std::chrono::microseconds(20000)); continue; }
             
             // read pipe content
             fill(std::begin(_buffer), std::end(_buffer), '\0');

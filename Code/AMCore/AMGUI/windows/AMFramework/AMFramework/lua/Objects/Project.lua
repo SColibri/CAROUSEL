@@ -92,6 +92,14 @@ function Project:save()
 end
 
 -- Methods
+-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+-- .......................................................................................
+--                                   Self
+-- .......................................................................................
+
+-- clear all related data
 function Project:clear()
     if self.ID == -1 then goto continue end
     project_remove_dependentData(self.ID)
@@ -102,6 +110,11 @@ function Project:clear()
     ::continue::
 end
 
+-- .......................................................................................
+--                                   Elements
+-- .......................................................................................
+
+-- select active elements
 function Project:select_elements(In)
     local Etable = split(In," ")
     if #Etable > 0 then
@@ -110,6 +123,12 @@ function Project:select_elements(In)
         for i,Item in ipairs(Etable) do
             
             local elemy = Element:new{Name = Item}
+
+            if elemy.ID == -1 then
+                get_elementNames()
+                elemy = Element:new{Name = Item}
+            end
+
             if elemy.ID == -1 then
                 error("select_elements: The element \'" .. Item .. "\' is not contained in the database! :(")
             end
@@ -126,12 +145,14 @@ function Project:select_elements(In)
     end
 end
 
+-- remove all selected elements
 function Project:clear_selected_elements()
     for i,Item in ipairs(self.selectedElements) do
         self.selectedElements[i]:remove()
     end
 end
 
+-- set reference element
 function Project:set_reference_element(refElement)
     local indexNum = self:get_element_index(refElement)
     
@@ -146,6 +167,7 @@ function Project:set_reference_element(refElement)
     end
 end
 
+-- return element index in object list
 function Project:get_element_index(elementName)
     if #self.selectedElements > 0 then
         
@@ -164,6 +186,7 @@ function Project:get_element_index(elementName)
     return -1
 end
 
+-- return element index that is set as referencce element
 function Project:get_reference_element_index(elementName)
     if #self.selectedElements > 0 then
         
@@ -180,12 +203,19 @@ function Project:get_reference_element_index(elementName)
     return -1
 end
 
+-- .......................................................................................
+--                                   Cases
+-- .......................................................................................
+
+-- add case
 function Project:add_case(caseObject)
     table.insert(self.cases, caseObject)
     caseObject.IDProject = self.ID
     caseObject:clear_elementComposition(self)
+    self:save()
 end
 
+-- not sure if we ever use this, TODO: check for removal
 function Project:update_cases()
 
     for i,Item in ipairs(self.cases) do
@@ -198,6 +228,11 @@ function Project:update_cases()
 
 end
 
+-- .......................................................................................
+--                                   Active phases
+-- .......................................................................................
+
+-- get active phases based on current configuration
 function Project:update_active_phases()
     
     -- Remove all previously calculated active phases
@@ -211,13 +246,14 @@ function Project:update_active_phases()
 
 end
 
+-- Active phases element composition configuration update objects to hold the ccorrect ID's
 function Project:update_active_phases_element_composition()
     for i,Item in ipairs(self.ActivePhasesElementComposition) do
         self.ActivePhasesElementComposition[i]:remove()
     end
     self.ActivePhasesElementComposition = {}
     
-    if self.ID == -1 then error("update_active_phases: Project is not saved") end
+    assert(self.ID ~= -1,"update_active_phases: Project is not saved")
     for i,Item in ipairs(self.selectedElements) do
        self.ActivePhasesElementComposition[i] = ActivePhasesElementComposition:new{IDProject = self.ID, IDElement = Item.IDElement}
        self.ActivePhasesElementComposition[i].IDProject = self.ID
@@ -225,6 +261,7 @@ function Project:update_active_phases_element_composition()
     end
 end
 
+--  Active phases set composition for calculation
 function Project:active_phases_set_composition(In)
     local Etable = split(In," ")
 
@@ -257,6 +294,7 @@ function Project:active_phases_set_composition(In)
     self:composition_setReference()
 end
 
+-- Active phases find composition by element name
 function Project:find_composition_ByName(nameObj)
     for i,Item in ipairs(self.ActivePhasesElementComposition) do
         if self.ActivePhasesElementComposition[i].element.Name == nameObj then
@@ -267,6 +305,7 @@ function Project:find_composition_ByName(nameObj)
     return nil
 end
 
+-- Active phases set reference element
 function Project:composition_setReference() --@Description Uses the reference element to sum all compositions up to 100% (weight percentage)
     local IDReferenceElement = -1
 
@@ -294,7 +333,16 @@ function Project:composition_setReference() --@Description Uses the reference el
 
 end
 
-function Project:get_active_phases()
+-- Calculations
+-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+-- ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+-- .......................................................................................
+--                                   Active phases
+-- .......................................................................................
+
+-- Calculation get active phases
+function Project:get_active_phases() --@Description Using scheil method returns a list of active phases
     if self.ID == -1 then error("get_active_phases: Project does not exist! save the project before doing any calculations!") end
     get_active_phases(self.ID)
 end

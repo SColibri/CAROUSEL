@@ -11,6 +11,7 @@ file(GLOB AMCORE_H "include/*.hpp")
 file(GLOB AMLIBRARY "../AMLib/include/*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../AMGUI/windows/AMFramework/AMFramework/lua
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
+message(${CMAKE_CURRENT_BINARY_DIR})
 
 set(TEST_SET 
 	API_lua_functions_Test

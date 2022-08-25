@@ -36,3 +36,29 @@ function Phase:save()
     local saveString = join(self, ",")
     self.ID = tonumber(phase_save(saveString)) or -1
 end
+
+-- Methods
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+-- |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+-- .......................................................................................
+--                                            Phase
+-- .......................................................................................
+
+function Phase:get_name_fromID(IDPhase)
+    assert(type(IDPhase) == "number", "Phase:get_name_fromID; IDPhase has to be an integer")
+    
+    local phasey = Phase:new{ID = IDPhase}
+    assert(phasey.ID == IDPhase, "Phase:get_name_fromID; Looks like this phase does not exist in the database")
+
+    return phasey.Name
+end
+
+function Phase:get_name_fromName(PhaseName)
+    assert(type(PhaseName) == "string", "Phase:get_name_fromName; Name has to be string")
+    
+    local phasey = Phase:new{Name = PhaseName}
+    assert(phasey.ID == -1, "Phase:get_name_fromName; Looks like this phase does not exist in the database")
+
+    return phasey.Name
+end

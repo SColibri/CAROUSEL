@@ -24,6 +24,7 @@ namespace AMFramework
             databaseView.Navigator.SelectedItemChanged += ((Controller.Controller_MainWindow)DataContext).Selected_treeview_item_Handle;
             databaseView.Navigator.SelectedItemChanged += Treeview_selectionChanged_Handle;
             databaseView.click_heat_treatment += Select_kinetic_precipitation;
+             
 
             ((Controller.Controller_MainWindow)DataContext).get_project_controller().PropertyChanged += OnProperty_changed_project;
             
@@ -372,6 +373,11 @@ namespace AMFramework
             Pw.PopupWindowClosed += ClosePopup;
 
             PopupFrame.Navigate(Pw);
+        }
+
+        private void RibbonButton_Click_3(object sender, RoutedEventArgs e)
+        {
+            ((Controller.Controller_MainWindow)DataContext).Cancel_Script();
         }
     }
 }

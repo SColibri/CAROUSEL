@@ -337,6 +337,10 @@ namespace AMFramework.Controller
             TabControlVisible = false;
             System.Threading.Thread TH01 = new(run_script_async);
             TH01.Start();
+
+            System.Threading.Thread TH02 = new(Check_for_core_output_script);
+            TH02.Priority = System.Threading.ThreadPriority.Lowest;
+            TH02.Start();
         }
 
         private void run_script_async() 
@@ -344,6 +348,16 @@ namespace AMFramework.Controller
             _AMCore.Run_command("run_lua_script " + CurrentRunningScript);
             TabControlVisible = true;
             ScriptRunning = false;
+        }
+
+        private void Check_for_core_output_script() 
+        { 
+            while (_scriptRunning) 
+            {
+                //RunningScriptOutput = _AMCore.Run_command("core_buffer ");
+                System.Threading.Thread.Sleep(100);
+                break;
+            }
         }
 
         public System.Windows.Controls.TabItem scriptView_new_lua_script(string filename = "") 
@@ -364,7 +378,24 @@ namespace AMFramework.Controller
             }
         }
 
-        public string CurrentRunningScript { get; set; } = "";
+        public string CurrentRunningScript { get; set; } = "Running script";
+        
+        private string _runningScriptOutput = "";
+        public string RunningScriptOutput 
+        { 
+            get { return _runningScriptOutput; }
+            set 
+            {
+                _runningScriptOutput = value;
+                OnPropertyChanged("RunningScriptOutput");
+            } 
+        }
+
+        public void Cancel_Script() 
+        {
+            CurrentRunningScript = "Cancelling....";
+            _AMCore.Run_command("core_cancel_operation ");
+        }
         #endregion
 
         #region Plotting

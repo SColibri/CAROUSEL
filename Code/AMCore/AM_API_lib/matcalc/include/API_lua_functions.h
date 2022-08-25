@@ -969,6 +969,7 @@ private:
 		std::string outCommand_1 = "OK";
 		if (_cancelCalculations) 
 		{
+			Core_CancelExecution(state);
 			_cancelCalculations = false;
 			outCommand_1 = "Operation was cancelled";
 		}
@@ -1022,6 +1023,7 @@ private:
 	/// <returns></returns>
 	static int Bind_SPC_parallel_calculate_precipitate_distribution(lua_State* state)
 	{
+
 		_luaBUFFER = "";
 
 		// Check and get parameters
@@ -1034,6 +1036,12 @@ private:
 
 		// Get pointers for all cases
 		std::vector<std::string> rangeIDCase = string_manipulators::split_text(parameters[1], "-");
+		if (rangeIDCase.size() < 2) 
+		{
+			lua_pushstring(state, "Bind_SPC_parallel_calculate_precipitate_distribution: No range has been specified e.g. 1-1");
+			return 1;
+		}
+
 		int start = std::stoi(rangeIDCase[0]);
 		int end = std::stoi(rangeIDCase[1]);
 		int range = end - start;
@@ -1066,19 +1074,20 @@ private:
 			int IndexPixel = 0;
 			for (AM_pixel_parameters* pixel_parameters : PixelList)
 			{
-				_luaBUFFER += "scheil calculation:  IDCase -> " + std::to_string(pixel_parameters->get_caseID()) + " current " + std::to_string(IndexPixel) + " / " + std::to_string(PixelList.size()); IndexPixel++;
+				_luaBUFFER += "precipitate distribution calculation:  IDCase -> " + std::to_string(pixel_parameters->get_caseID()) + " current " + std::to_string(IndexPixel) + " / " + std::to_string(PixelList.size()); IndexPixel++;
 				if (pixel_parameters->get_precipitation_phases().size() == 0) continue;
 				// create all script commands
 				std::vector<std::string> ScriptInstructions = API_Scripting::Script_run_stepScheilEquilibrium(_configuration,
-					pixel_parameters->get_EquilibriumConfiguration()->StartTemperature,
-					pixel_parameters->get_EquilibriumConfiguration()->EndTemperature,
-					25,
+					pixel_parameters->get_ScheilConfiguration()->StartTemperature,
+					pixel_parameters->get_ScheilConfiguration()->EndTemperature,
+					pixel_parameters->get_ScheilConfiguration()->StepSize,
 					projectM->get_selected_elements_ByName(),
 					pixel_parameters->get_composition_string(),
 					pixel_parameters->get_selected_phases_ByName());
 				API_Scripting::Script_run_ScheilPrecipitation(_dbFramework->get_database(), ScriptInstructions, pixel_parameters->get_precipitation_phases(), _configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP));
 
 				//Run script commands
+				std::string commandToString = IAM_Database::csv_join_row(ScriptInstructions, "\n");
 				std::string outCommand_1 = runVectorCommands(ScriptInstructions, mccComm);
 
 				// Load csv file into database
@@ -1120,6 +1129,7 @@ private:
 		std::string outCommand_1 = "OK";
 		if (_cancelCalculations)
 		{
+			Core_CancelExecution(state);
 			_cancelCalculations = false;
 			outCommand_1 = "Operation was cancelled";
 		}
@@ -1130,6 +1140,7 @@ private:
 
 	static int Bind_SPC_parallel_calculate_heat_treatment(lua_State* state)
 	{
+
 		_luaBUFFER = "";
 
 		// Check and get parameters
@@ -1329,6 +1340,7 @@ private:
 		std::string outCommand_1 = "OK";
 		if (_cancelCalculations)
 		{
+			Core_CancelExecution(state);
 			_cancelCalculations = false;
 			outCommand_1 = "Operation was cancelled";
 		}
@@ -1390,6 +1402,12 @@ private:
 		return out;
 	}
 #pragma endregion
+
+	static void Core_CancelExecution(lua_State* state)
+	{
+		std::string _exceptionString = "assert(false,\"Execution has been cancelled.\")";
+		std::string outputCanel = run_command(state, _exceptionString);
+	}
 
 };
 /** @}*/
