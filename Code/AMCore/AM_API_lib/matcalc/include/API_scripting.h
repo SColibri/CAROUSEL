@@ -591,6 +591,7 @@ namespace API_Scripting
 		DBS_Project tempProject(db, Project.get_project_ID());
 		AM_pixel_parameters TempPixel(db, &tempProject, tempCase.id());
 		outVector.push_back(Script_setComposition_weight(Project.get_selected_elements_ByName(), TempPixel.get_composition_string()));
+		outVector.push_back(Script_setStartValues());
 		// get precipitation domain that will be used
 #pragma region Matcalc_precipitationDomain_declaration
 

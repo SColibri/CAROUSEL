@@ -106,7 +106,7 @@ public:
 		query = AMLIB::TN_HeatTreatmentProfile().columnNames[1] +
 			" = " + std::to_string(id());
 
-		return _db->remove_row(&AMLIB::TN_HeatTreatmentSegments(), query);
+		return _db->remove_row(&AMLIB::TN_HeatTreatmentProfile(), query);
 	}
 
 #pragma endregion

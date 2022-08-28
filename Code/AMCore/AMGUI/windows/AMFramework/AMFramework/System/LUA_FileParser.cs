@@ -110,32 +110,65 @@ namespace AMFramework.AMSystem
 
             if (variableLine.Count > 1)
             {
-                ParseObject ref_leve2 = null;
-                string currentClass = variableLine[0];
-
-                foreach (var item in variableLine.Skip(1))
-                {
-                    ref_leve2 = refTemp.functions.Find(e => e.Name.CompareTo(currentClass) == 0);
-                    if (ref_leve2 == null) break;
-                    currentClass = ref_leve2.Name;
-                }
-
-                if (ref_leve2 == null) return "";
-                foreach (var item in ref_leve2.Parameters)
-                {
-                    keywords += item + "?2 ";
-                }
+                keywords = Get_recursive_parameters_keywords(refTemp, variableLine, 1);
             }
             else 
             {
                 foreach (var item in refTemp.Parameters)
                 {
-                    keywords += item + "?2 ";
+                    keywords += item.Name + "?2 ";
                 }
             }
 
             keywords = keywords.Trim();
             return keywords;
+        }
+
+        /// <summary>
+        /// From a string that has a variable trail form, finds all parameters.
+        /// </summary>
+        /// <param name="ClassObject"></param>
+        /// <param name="VariableTrail"></param>
+        /// <param name="Index"></param>
+        /// <returns></returns>
+        public string Get_recursive_parameters_keywords(ParseObject ClassObject, List<string> VariableTrail, int Index) 
+        {
+
+            // Check if parameter is contained in current class object
+            string CurrentParameter = VariableTrail[Index];
+            Remove_bracket_from_parameter(ref CurrentParameter);
+
+            ParseObject? parseObject = ClassObject.Parameters.Find(e => e.Name.CompareTo(CurrentParameter) == 0);
+            if (parseObject == null) return "";
+
+            // Check if current parameter is a class
+            ParseObject? parseClasses = AMParser.Find(e => e.Name.CompareTo(parseObject.ParametersType) == 0);
+            if (parseClasses == null) return "";
+
+            // check if the trail has more entries and if not, return list of parameters for the current
+            // class
+            if (VariableTrail.Count - 1 > Index)
+            {
+                return Get_recursive_parameters_keywords(parseClasses, VariableTrail, Index++);
+            }
+            else 
+            {
+                string keywords = "";
+                foreach (var item in parseClasses.Parameters)
+                {
+                    keywords += item.Name + "?2 ";
+                }
+                return keywords;
+            }
+        }
+
+        private void Remove_bracket_from_parameter(ref string ParamName) 
+        { 
+            int IndexOpen = ParamName.IndexOf('[');
+            int IndexClose = ParamName.IndexOf(']');
+            if (IndexOpen == -1 || IndexClose == -1 || IndexClose <= IndexOpen) return;
+
+            ParamName = ParamName.Substring(0, IndexOpen);
         }
 
         public string Get_Global_variable_functions(List<string> variableLine)
@@ -212,6 +245,7 @@ namespace AMFramework.AMSystem
             List<string> file_classFunctions = fileRows.FindAll(e => e.Contains("function") == true && e.Contains(':') == true);
             List<string> file_functions = fileRows.FindAll(e => e.Contains("function") == true && e.Contains(':') == false);
             List<string> file_global_variables = fileRows.FindAll(e => e.Contains("=") == true && e.Contains(":new") == true && e.Contains("local") == false && e.Contains("function") == false);
+            List<string> file_parameter_types = fileRows.FindAll(e => e.Contains("--@TYPE",StringComparison.OrdinalIgnoreCase) == true);
 
             // Modules
             foreach (var item in file_require)
@@ -242,6 +276,7 @@ namespace AMFramework.AMSystem
                 tempParse.Name = Get_class_name(item);
                 tempParse.ParametersType = Get_Class_parameters_type(item);
                 tempParse.Parameters = Get_parameter_names(tempParse.ParametersType);
+                Get_parameter_type(file_parameter_types, tempParse.Parameters);
                 tempParse.Description = Get_description(item);
                 Parser.AMParser.Add(tempParse);
 
@@ -381,9 +416,12 @@ namespace AMFramework.AMSystem
             copyRowLine.Replace(" ", "");
 
             // find parameter values
-            int IndexStart = copyRowLine.IndexOf('{');
-            int IndexEnd = copyRowLine.IndexOf('}');
-            if (IndexStart == -1 || IndexEnd == -1) return "";
+            List<int> closingBrakets = Find_all_occurrences(copyRowLine, "}");
+            List<int> openingBrakets = Find_all_occurrences(copyRowLine, "{");
+
+            int IndexStart = openingBrakets[0];
+            int IndexEnd = closingBrakets[closingBrakets.Count - 1];
+            if (IndexStart == -1 || IndexEnd == -1 || IndexEnd <= IndexStart) return "";
 
             // get parameters only
             copyRowLine = copyRowLine.Substring(IndexStart + 1, IndexEnd - (IndexStart +1));
@@ -392,25 +430,52 @@ namespace AMFramework.AMSystem
         }
 
         /// <summary>
+        /// finds all occurrences in a string 
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="ToFind"></param>
+        /// <returns>List of indexes</returns>
+        public static List<int> Find_all_occurrences(string content, string ToFind) 
+        { 
+            List<int> ocurrences = new List<int>();
+
+            for (int n1 = 0; n1 < content.Length; n1++) 
+            {
+                n1 = content.IndexOf(ToFind, n1);
+                if (n1 == -1) break;
+
+                ocurrences.Add(n1);
+            }
+
+            if (ocurrences.Count == 0) ocurrences.Add(-1);
+            return ocurrences;
+        }
+
+        /// <summary>
         /// Using the output of the function Get_Class_parameters_type as input
         /// we obtain the parameter names.
         /// </summary>
         /// <param name="parameters_type"></param>
         /// <returns></returns>
-        private static List<string> Get_parameter_names(string parameters_type)
+        private static List<ParseObject> Get_parameter_names(string parameters_type)
         {
             // get parameter row
             List<string> parameterRow = parameters_type.Split(",").ToList();
 
             // return value
-            List<string> classParameters = new();
+            List<ParseObject> classParameters = new();
 
             // get parameter names
             foreach (string item in parameterRow) 
             {
                 int IndexEqSgn = item.IndexOf('=');
                 if (IndexEqSgn == -1) continue;
-                classParameters.Add(item.Substring(0, IndexEqSgn).Trim());
+                
+                ParseObject tempObj = new();
+                tempObj.ObjectType = ParseObject.PTYPE.LOCAL_VARIABLE;
+                tempObj.Name = item.Substring(0, IndexEqSgn).Trim();
+
+                classParameters.Add(tempObj);
             }
 
             return classParameters;
@@ -513,6 +578,53 @@ namespace AMFramework.AMSystem
             }
 
             return NewParameterContent;
+        }
+
+        /// <summary>
+        /// Updates the vector Params with the parameter type. Type is specified in the lua script
+        /// of the object wit the --@TYPE "Parameter type"
+        /// </summary>
+        /// <param name="LineContent"></param>
+        /// <param name="Params"></param>
+        private static void Get_parameter_type(List<string> LineContent, List<ParseObject> Params) 
+        {
+            foreach (var item in LineContent)
+            {
+                // indexes for star and end of word search and size
+                int WordStart, WordEnd, WordSize;
+
+                // -----------------------------------------------------------------
+                //                   Find the parameter name
+                // -----------------------------------------------------------------
+                WordStart = item.IndexOf("self.");
+                WordEnd = item.IndexOf("=");
+                if (WordEnd <= WordStart || (WordStart == -1 || WordEnd == -1)) continue;
+                WordStart += 5; // start after self.
+
+                WordSize = WordEnd - WordStart;
+                string parameterName = item.Substring(WordStart, WordSize).Trim();
+
+                // -----------------------------------------------------------------
+                //                   Find the Type name
+                // -----------------------------------------------------------------
+                WordStart = item.ToUpper().IndexOf("--@TYPE");
+                WordEnd = item.Length;
+                if (WordEnd <= WordStart || (WordStart == -1 || WordEnd == -1)) continue;
+                WordStart += 7; // start after TYPE.
+
+                WordSize = WordEnd - WordStart;
+                string parameterType = item.Substring(WordStart, WordSize).Trim();
+
+                // -----------------------------------------------------------------
+                //        Search for parameter name and update the type
+                // -----------------------------------------------------------------
+                ParseObject? parObject = Params.Find(e => e.Name.CompareTo(parameterName) == 0);
+                if (parObject == null) continue;
+                parObject.ObjectType = ParseObject.PTYPE.CLASS;
+                parObject.ParametersType = parameterType;
+
+            }
+
         }
 
         /// <summary>

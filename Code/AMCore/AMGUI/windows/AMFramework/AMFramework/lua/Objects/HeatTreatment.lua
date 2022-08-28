@@ -119,5 +119,10 @@ end
 -- run heat treatment calculations
 function HeatTreatment:run_kinetic_simulation()
   local caseRef = Case:new{ID = self.IDCase}
-  pixelcase_calculate_heat_treatment(caseRef.IDProject, caseRef.ID.."-"..caseRef.ID, self.Name)
+  local outText = pixelcase_calculate_heat_treatment(caseRef.IDProject, caseRef.ID.."-"..caseRef.ID, self.Name)
+
+  local file = io.open("C:/Users/drogo/Downloads/hmmTest.lua", "a")
+  io.output(file)
+  io.write(outText)
+  io.close(file)
 end

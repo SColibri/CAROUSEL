@@ -3,6 +3,8 @@
 #include "DBS_ScheilConfiguration.h"
 #include "DBS_EquilibriumConfiguration.h"
 #include "DBS_PrecipitationDomain.h"
+#include "DBS_PrecipitationPhase.h"
+#include "DBS_HeatTreatment.h"
 
 /// <summary>
 /// Implements IAM_DBS.h interface, this is a phase
@@ -43,10 +45,13 @@ public:
 
 	static int remove_case_data(IAM_Database* database, int CaseID)
 	{
+		//TODO: if you have time some day, refactor this mess. The me of the
+		// future will hate the past me.
+
 		std::string query = AMLIB::TN_SelectedElements().columnNames[0] +
 			" = " + std::to_string(CaseID);
 
-		int results[11];
+		int results[12];
 		results[0] = database->remove_row(&AMLIB::TN_EquilibriumConfiguration(), 
 						AMLIB::TN_EquilibriumConfiguration().columnNames[1] +
 						" = " + std::to_string(CaseID));
@@ -71,12 +76,41 @@ public:
 		results[7] = database->remove_row(&AMLIB::TN_Case(),
 						AMLIB::TN_Case().columnNames[0] +
 						" = " + std::to_string(CaseID));
-		results[8] = database->remove_row(&AMLIB::TN_PrecipitationPhase(),
-			AMLIB::TN_PrecipitationPhase().columnNames[0] +
+
+		// Precipitation
+		std::string queryPrecipitation = AMLIB::TN_PrecipitationPhase().columnNames[1] +
+			" = " + std::to_string(CaseID);
+		AM_Database_Datatable Pphase(database, &AMLIB::TN_PrecipitationPhase());
+		Pphase.load_data(queryPrecipitation);
+
+		for (int n1 = 0; n1 < Pphase.row_count(); n1++)
+		{
+			DBS_PrecipitationPhase tempPp(database, -1);
+			tempPp.load(Pphase.get_row_data(n1));
+
+			tempPp.remove_dependent_data();
+			tempPp.remove();
+		}
+
+		// precipitation domain
+		results[8] = database->remove_row(&AMLIB::TN_PrecipitationDomain(),
+			AMLIB::TN_PrecipitationDomain().columnNames[1] +
 			" = " + std::to_string(CaseID));
-		results[9] = database->remove_row(&AMLIB::TN_PrecipitationDomain(),
-			AMLIB::TN_PrecipitationDomain().columnNames[0] +
-			" = " + std::to_string(CaseID));
+
+		// Heat treatment
+		std::string queryHt = AMLIB::TN_HeatTreatment().columnNames[1] +
+			" = " + std::to_string(CaseID);
+		AM_Database_Datatable Htreat(database, &AMLIB::TN_HeatTreatment());
+		Htreat.load_data(queryHt);
+
+		for (int n1 = 0; n1 < Htreat.row_count(); n1++)
+		{
+			DBS_HeatTreatment tempPp(database, -1);
+			tempPp.load(Htreat.get_row_data(n1));
+
+			tempPp.remove_dependent_data();
+			tempPp.remove();
+		}
 
 		return 0;
 	}

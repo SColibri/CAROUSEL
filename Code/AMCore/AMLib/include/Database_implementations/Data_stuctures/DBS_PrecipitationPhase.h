@@ -115,5 +115,19 @@ public:
 		return 0;
 	}
 
+	virtual int remove_dependent_data() override
+	{
+		//Nothing to do
+		if (_id == -1) return 1;
+		
+		// Remove Sim Data
+		std::string query = AMLIB::TN_PrecipitateSimulationData().columnNames[1] +
+			" = " + std::to_string(id());
+
+		_db->remove_row(&AMLIB::TN_PrecipitateSimulationData(), query);
+
+		return 0;
+	}
+
 #pragma endregion
 };

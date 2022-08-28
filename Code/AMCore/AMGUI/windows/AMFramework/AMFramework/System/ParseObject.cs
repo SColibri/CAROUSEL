@@ -13,7 +13,8 @@ namespace AMFramework.AMSystem
             NONE,
             CLASS,
             FUNCTION,
-            GLOBAL_VARIABLE
+            GLOBAL_VARIABLE,
+            LOCAL_VARIABLE
         }
 
         public string ModuleName = "";
@@ -21,7 +22,7 @@ namespace AMFramework.AMSystem
         public string Name = "";
         public string Description = "";
         public string ParametersType = "";
-        public List<string> Parameters = new();
+        public List<ParseObject> Parameters = new();
         public List<ParseObject> functions = new();
         public Interfaces.Model_Interface? ObjectModel = null;
 

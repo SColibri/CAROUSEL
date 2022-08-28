@@ -85,11 +85,11 @@
 
                     <RibbonMenuButton  Label="lua_script"
                                        SmallImageSource="Resources/Icons/tablerIcons/file-typography.png">
-                        <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click_new_luaFile"/>
-                        <RibbonMenuItem  Header="load" Click="RibbonMenuItem_Click_LoadLuaFile"/>
+                        <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click_new_luaFile" ImageSource="Resources/Icons/tablerIcons/folder-plus.png"/>
+                        <RibbonMenuItem  Header="load" Click="RibbonMenuItem_Click_LoadLuaFile" ImageSource="Resources/Icons/tablerIcons/device-floppy.png"/>
                     </RibbonMenuButton>
                     <RibbonMenuButton  Label="api_script"
-                                       SmallImageSource="Resources/Icons/tablerIcons/file-symlink.png">
+                                       SmallImageSource="Resources/Icons/tablerIcons/file-symlink.png" Visibility="Collapsed">
                         <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click_new_luaFile"/>
                         <RibbonMenuItem  Header="load" Click="RibbonMenuItem_Click_loadApi"/>
                     </RibbonMenuButton>
@@ -276,7 +276,7 @@
         </Grid>
 
         <Grid x:Name="ProjectWorking" Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}}" Grid.ColumnSpan="4" Grid.RowSpan="4">
-            <Border Opacity="70" Background="Black" Grid.RowSpan="4">
+            <Border Opacity="70" Background="Black" Visibility="Hidden" Grid.RowSpan="4">
 
             </Border>
         </Grid>

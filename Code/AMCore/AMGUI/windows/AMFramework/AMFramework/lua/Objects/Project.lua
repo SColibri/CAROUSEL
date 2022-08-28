@@ -13,10 +13,10 @@ function Project:new (o,ID,Name,API,ExternalAPI,selectedElements,cases) --@Descr
 
    self.Columns = {"ID","Name","API","ExternalAPI"}
    self.selectedElements = selectedElements or {}
-   self.cases = cases or {}
+   self.cases = cases or {} --@TYPE Case
 
    --Active Phases
-   self.ActivePhases = {}
+   self.ActivePhases = {} --@TYPE ActivePhases
    self.ActivePhasesConfig = {}
    self.ActivePhasesElementComposition = {}
 

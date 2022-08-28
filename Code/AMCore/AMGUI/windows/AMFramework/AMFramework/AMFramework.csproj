@@ -7931,7 +7931,6 @@
     <Folder Include="Components\Terminal\" />
     <Folder Include="Core\Database\" />
     <Folder Include="Libraries\dll\" />
-    <Folder Include="lua\JSON\" />
     <Folder Include="Resources\img\" />
   </ItemGroup>
 
@@ -7949,6 +7948,9 @@
 
   <ItemGroup>
     <None Update="Components\Scripting\Templates\for.scriptTemplate">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Components\Scripting\Templates\NewScript.AMFramework">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Components\Scripting\Templates\repeat_until.scriptTemplate">

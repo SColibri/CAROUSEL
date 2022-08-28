@@ -12,12 +12,13 @@ function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, Pos
    self.IDGroup = IDGroup or 0
    self.Name = Name or "Empty project"
    self.Script = Script or ""
-   self.Date = Date or ""
+   self.Date = Date or os.date("%x %X")
    self.PosX = PosX or 0
    self.PosY = PosY or 0
    self.PosZ = PosZ or 0
    self.SelectedPhases = SelectedPhases or {}
    self.Columns = {"ID", "IDProject", "IDGroup", "Name", "Script", "Date", "PosX", "PosY", "PosZ"}
+
    self.EquilibriumConfiguration = EquilibriumConfiguration or EquilibriumConfig:new{}
    self.ScheilConfiguration = ScheilConfiguration or  ScheilConfig:new{}
    self.equilibriumPhaseFraction = equilibriumPhaseFraction or  {} 

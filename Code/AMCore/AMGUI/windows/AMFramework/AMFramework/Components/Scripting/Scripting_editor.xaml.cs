@@ -28,6 +28,10 @@ namespace AMFramework.Components.Scripting
         public Scripting_editor()
         {
             InitializeComponent();
+
+            string filename = "Components/Scripting/Templates/NewScript.AMFramework";
+            if (!System.IO.File.Exists(filename)) return;
+            Scripting.Text = System.IO.File.ReadAllText(filename);
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -40,6 +44,7 @@ namespace AMFramework.Components.Scripting
             if (File.Exists(filename)) 
             {
                 ((Scripting_ViewModel)DataContext).load(Scripting, filename);
+                Update_Highlight(Scripting);
             }
         }
         #region Initialization
@@ -73,6 +78,8 @@ namespace AMFramework.Components.Scripting
             scintilla.Styles[ScintillaNET.Style.Lua.Word6].Bold = true;
             scintilla.Styles[ScintillaNET.Style.Lua.Word7].ForeColor = System.Drawing.Color.DodgerBlue;
             scintilla.Styles[ScintillaNET.Style.Lua.Word7].Bold = true;
+            scintilla.Styles[ScintillaNET.Style.Lua.Word8].ForeColor = System.Drawing.Color.LightGreen;
+            scintilla.Styles[ScintillaNET.Style.Lua.Word8].Bold = true;
             scintilla.Styles[ScintillaNET.Style.Lua.String].ForeColor = System.Drawing.Color.Red;
             scintilla.Styles[ScintillaNET.Style.Lua.Character].ForeColor = System.Drawing.Color.Red;
             scintilla.Styles[ScintillaNET.Style.Lua.LiteralString].ForeColor = System.Drawing.Color.Red;
@@ -275,13 +282,7 @@ namespace AMFramework.Components.Scripting
             else if (e.KeyCode == Keys.Space) { return; }
             else if (e.KeyCode == Keys.Enter)
             {
-                AMSystem.LUA_FileParser.Remove_module("Local", AMParser);
-                AMSystem.LUA_FileParser.File_parse(((Scintilla)sender).Text, AMParser, "Local");
-
-                ((Scintilla)sender).SetKeywords(4, AMParser.Remove_Icon_tags(AMParser.Get_Classes_keywords().Replace("?3","")));
-                ((Scintilla)sender).SetKeywords(5, AMParser.Remove_Icon_tags(AMParser.Get_Functions_keywords().Replace("?1", "")));
-                ((Scintilla)sender).SetKeywords(6, AMParser.Remove_Icon_tags(AMParser.Get_Global_variable_keywords().Replace("?0", "")));
-
+                Update_Highlight(sender);
                 return;
             }
             /*
@@ -318,6 +319,16 @@ namespace AMFramework.Components.Scripting
             ((Scripting_ViewModel)DataContext).ChangesMade = true;
         }
 
+        private void Update_Highlight(object sender) 
+        {
+            AMSystem.LUA_FileParser.Remove_module("Local", AMParser);
+            AMSystem.LUA_FileParser.File_parse(((Scintilla)sender).Text, AMParser, "Local");
+
+            ((Scintilla)sender).SetKeywords(4, AMParser.Remove_Icon_tags(AMParser.Get_Classes_keywords().Replace("?3", "")));
+            ((Scintilla)sender).SetKeywords(5, AMParser.Remove_Icon_tags(AMParser.Get_Functions_keywords().Replace("?1", "")));
+            ((Scintilla)sender).SetKeywords(6, AMParser.Remove_Icon_tags(AMParser.Get_Global_variable_keywords().Replace("?0", "")));
+        }
+
 
         private void Scripting_AutoCCompleted(object sender, AutoCSelectionEventArgs e)
         {
@@ -342,7 +353,7 @@ namespace AMFramework.Components.Scripting
             var word = scintilla.GetWordFromPosition(pos);
 
             // Check if there is something to complete or not
-            if (word.Length == 0) return;
+            if (word.Length == 0 && (e.Char != 46 && e.Char != 58)) return;
 
             if (Anchor_line != scintilla.CurrentLine) 
             {

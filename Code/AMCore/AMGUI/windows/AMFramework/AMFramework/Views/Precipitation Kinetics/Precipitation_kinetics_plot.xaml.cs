@@ -50,6 +50,7 @@ namespace AMFramework.Views.Precipitation_Kinetics
                 temperature__[n1] = ControllerPlot.HeatModel.HeatTreatmentProfile[n1].Temperature;
             }
 
+            if (time_________.Length == 0) return;
             var handl_01 = plot01.Plot.AddScatterLines(time_________, temperature__);
 
             List<int> distinctIDphase = ControllerPlot.HeatModel.PrecipitationData.Select(x => x.IDPrecipitationPhase).Distinct().ToList();
@@ -78,7 +79,7 @@ namespace AMFramework.Views.Precipitation_Kinetics
 
                 var handl_02 = plot02.Plot.AddScatterLines(time_________, listData02[listData02.Count-1], label: SlectedMod[0].PrecipitationName);
                 var handl_03 = plot03.Plot.AddScatterLines(time_________, listData03[listData03.Count - 1], label: SlectedMod[0].PrecipitationName);
-                var handl_04 = plot04.Plot.AddScatterLines(time_________, listData04[listData04.Count - 1], label: SlectedMod[0].PrecipitationName);
+                var handl_04 = plot04.Plot.AddScatterLines(time_________, ScottPlot.Tools.Log10(listData04[listData04.Count - 1]), label: SlectedMod[0].PrecipitationName);
             }
             
 

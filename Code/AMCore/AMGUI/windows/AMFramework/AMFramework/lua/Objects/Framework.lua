@@ -7,7 +7,7 @@ function Framework:new (o,configuration) --@Description Creates a new Element,\n
 
    setmetatable(o, self)
    self.__index = self
-   self.configuration = configuration or {}
+   self.configuration = configuration or {} --@TYPE Configuration
    o:load()
 
    return o

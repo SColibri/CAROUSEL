@@ -1,0 +1,10 @@
+﻿require"AMFramework"
+
+-- You can modify configurations in the Framework object, e.g.
+framework = Framework:new{}
+msgbox(framework.configuration.Working_directory)
+-- framework.Configuration.Thermodynamic_database = "Path to database"
+
+-- Load/create a project
+-- Projects can be loaded by name or by ID number
+project = Project:new{Name = "New_project"}
