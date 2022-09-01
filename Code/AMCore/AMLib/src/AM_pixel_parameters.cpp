@@ -283,7 +283,7 @@ std::vector<std::string> AM_pixel_parameters::get_composition_string()
 
 	for (DBS_ElementComposition*& var : _elementComposition)
 	{
-		out.push_back(std::to_string(var->Value));
+		out.push_back(string_manipulators::double_to_string(var->Value));
 	}
 
 	return out;

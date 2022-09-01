@@ -32,6 +32,7 @@ end
 
 -- save
 function ElementComposition:save()
+    assert(self.IDElement ~= -1, "Wrong id element for: "..self.element.Name.." and value: "..self.value)
     if self.IDElement == -1 then error("wrong id element") end
 
     local saveString = join(self, ",")    

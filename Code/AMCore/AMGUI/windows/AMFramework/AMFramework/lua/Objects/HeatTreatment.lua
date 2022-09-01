@@ -120,9 +120,12 @@ end
 function HeatTreatment:run_kinetic_simulation()
   local caseRef = Case:new{ID = self.IDCase}
   local outText = pixelcase_calculate_heat_treatment(caseRef.IDProject, caseRef.ID.."-"..caseRef.ID, self.Name)
+  
+  local dbRows = database_rowNumbers("HeatTreatmentProfile","IDHeatTreatment="..self.ID)
 
-  local file = io.open("C:/Users/drogo/Downloads/hmmTest.lua", "a")
-  io.output(file)
-  io.write(outText)
-  io.close(file)
+  local framework = Framework:new{}
+  local logFilename =  framework.configuration.Working_directory.."/Logs/HeatTreatment__run_kinetic_simulation_"..os.date("%d%m%Y%H%M%S")..".txt"
+  write_to_file(logFilename, outText.."\n Profile data enties: "..dbRows.."\n Query used: ".."IDHeatTreatment="..self.ID)
+
+  assert(dbRows ~= "0", "HeatTreatment:run_kinetic_simulation; No results where obtained, output log available->"..logFilename)
 end

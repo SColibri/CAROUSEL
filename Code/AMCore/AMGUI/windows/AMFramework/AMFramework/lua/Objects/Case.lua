@@ -374,6 +374,7 @@ function Case:calculate_heat_treatment(HeatTreatment_Name)
     end
 
     ::ENDCALC::
+
     -- reload
     self:load()
 end

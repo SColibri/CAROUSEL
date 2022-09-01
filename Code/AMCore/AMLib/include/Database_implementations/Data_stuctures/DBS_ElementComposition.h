@@ -37,7 +37,7 @@ public:
 										std::to_string(IDCase),
 										std::to_string(IDElement),
 										TypeComposition,
-										std::to_string(Value)};
+										string_manipulators::double_to_string(Value)};
 		return input;
 	}
 

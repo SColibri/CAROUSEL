@@ -1087,6 +1087,25 @@ private:
 					pixel_parameters->get_composition_string(),
 					pixel_parameters->get_selected_phases_ByName());
 				API_Scripting::Script_run_ScheilPrecipitation(_dbFramework->get_database(), ScriptInstructions, pixel_parameters->get_precipitation_phases(), _configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP));
+				
+				std::vector<std::string> selectedPhases = pixel_parameters->get_selected_phases_ByName();
+				std::string formatted{ "%12.2f" };
+				for(auto& item: selectedPhases)
+				{
+					if (item.compare("LIQUID") == 0) 
+					{
+						item = "F$" + string_manipulators::trim_whiteSpace(item) + "";
+					}
+					else 
+					{
+						item = "F$" + string_manipulators::trim_whiteSpace(item) + "_S";
+					}
+					formatted += " %12.2g";
+				}
+				
+				std::string varNames = " T " + IAM_Database::csv_join_row(selectedPhases, " ");
+				//COMMAND_export_variables Exporter(mccComm, _configuration, _configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "/Scheil.txt", formatted, varNames, "");
+				//Exporter.DoAction();
 
 				//Run script commands
 				std::string commandToString = IAM_Database::csv_join_row(ScriptInstructions, "\n");
@@ -1197,6 +1216,7 @@ private:
 				std::string commandToString = IAM_Database::csv_join_row(ScriptInstructions, "\n");
 				std::string outCommand_1 = runVectorCommands(ScriptInstructions, mccComm);
 				_luaBUFFER = outCommand_1;
+				_luaBUFFER += "\n\n ----- COMMANDS -----\n\n" + commandToString;
 				// Load csv file into database
 				// "%12.2d  %12.6f  %12.6d" variable-name="StepValue t$c r_mean$AL3TI_L_P0"
 				DBS_HeatTreatment tempRef(_dbFramework->get_database(), -1);

@@ -51,6 +51,9 @@
 		case FILEPATH::TEMP:
 			response = _workingDirectory + "/Temp";
 			break;
+		case FILEPATH::LOGS:
+			response = _workingDirectory + "/Logs";
+			break;
 		default:
 			response = "";
 			break;
@@ -67,6 +70,21 @@
 
 		return response;
 	}
+
+	void AM_FileManagement::setup_working_directory() 
+	{
+		if (std::filesystem::is_directory(_workingDirectory))
+		{
+			for (auto& dir : filepath_names) 
+			{
+				std::string tempDir = _workingDirectory + "/" + dir;
+				if (!std::filesystem::exists(std::filesystem::status(tempDir.c_str())))
+				{
+					std::filesystem::create_directory(tempDir);
+				}
+			}
+		}
+	}
 #pragma endregion Methods
 
 //getters and setters
@@ -76,7 +94,7 @@
 	void AM_FileManagement::set_workingDirectory(std::string workDirectory)
 	{
 		_workingDirectory = workDirectory;
-		//TODO create directories
+		setup_working_directory();
 	}
 
 #pragma endregion Getters_Setters

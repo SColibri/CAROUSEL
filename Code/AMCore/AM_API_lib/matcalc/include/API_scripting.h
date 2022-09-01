@@ -543,6 +543,7 @@ namespace API_Scripting
 			stepScheilScript.push_back(Script_set_precipitation_parameter(tempPhase.Name, "nucleation-sites=none"));
 		}
 		
+		stepScheilScript.push_back(Script_setStartValues());
 		stepScheilScript.push_back(Script_stepEquilibrium());
 		stepScheilScript.push_back(script_buffer_loadState(-1));
 

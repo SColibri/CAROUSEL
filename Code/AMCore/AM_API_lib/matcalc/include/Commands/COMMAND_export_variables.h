@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <mutex>
+#include <iostream>
+#include <fstream>
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
 #include "COMMAND_run_script.h"
@@ -56,6 +58,10 @@ public:
 	virtual std::string DoAction() override
 	{
 		std::string output{""};
+
+		std::ofstream tempFile(_scriptFilename);
+		tempFile << _script << std::endl;
+		tempFile.close();
 
 		for (auto& item : _commandList) 
 		{

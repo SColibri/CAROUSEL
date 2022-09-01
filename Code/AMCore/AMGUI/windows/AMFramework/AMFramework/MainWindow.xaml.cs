@@ -27,7 +27,7 @@ namespace AMFramework
              
 
             ((Controller.Controller_MainWindow)DataContext).get_project_controller().PropertyChanged += OnProperty_changed_project;
-            
+
             
 
         }

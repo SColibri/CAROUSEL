@@ -149,7 +149,8 @@ protected:
 		add_new_function(state, "database_tableQuery", "string, csv format, delimiter comma char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
 		add_new_function(state, "database_table_custom_query", "string, csv format, delimiter comma char", "database_tableFullQuery <Full query>", baseBind_DatabaseByQuery);
 		add_new_function(state, "database_tableList", "string, csv format, delimiter comma char", "database_tableList", baseBind_DatabaseTableList);
-		
+		add_new_function(state, "database_rowNumbers", "int", "database_rowNumbers <TableName> <Where Query - optional>", baseBind_DatabaseRowNumber);
+
 		//Data controller
 		add_new_function(state, "dataController_csv", "string, csv format, delimiter comma char", "dataController_csv <enum::DATATABLES>", Bind_dataController_csv);
 
@@ -587,6 +588,29 @@ protected:
 		out = IAM_Database::csv_join_row(_dbFramework->get_database()->get_tableNames(), IAM_Database::Delimiter);
 
 		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	static int baseBind_DatabaseRowNumber(lua_State* state)
+	{
+		std::vector<std::string> parameters = get_parameters(state);
+		if (parameters.size() == 0)
+		{
+			lua_pushstring(state, "baseBind_DatabaseRowNumber: <TableName> <WHERE Query> as input parameters missing");
+		}
+
+		std::vector<std::vector<std::string>> outTable = std::vector<std::vector<std::string>>{ std::vector<std::string>{"0"}};
+
+		if (parameters.size() == 2)
+		{
+			outTable = _dbFramework->get_database()->get_fromQuery("SELECT COUNT(*) FROM " + parameters[0] + " WHERE " + parameters[1]);
+		}
+		else 
+		{
+			outTable = _dbFramework->get_database()->get_fromQuery("SELECT COUNT(*) FROM " + parameters[0]);
+		}
+
+		lua_pushstring(state, outTable[0][0].c_str());
 		return 1;
 	}
 

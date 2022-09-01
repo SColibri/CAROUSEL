@@ -333,6 +333,9 @@ namespace AMFramework.Controller
             RibbonMenuItem itemy = (RibbonMenuItem)sender;
             CurrentRunningScript = (string)itemy.Tag;
 
+            Components.Scripting.Scripting_ViewModel? modelScript = _scriptModel.OpenScripts.Find(e => e.Filename.CompareTo(CurrentRunningScript) == 0);
+            if (modelScript != null) modelScript.save();
+
             ScriptRunning = true;
             TabControlVisible = false;
             System.Threading.Thread TH01 = new(run_script_async);
@@ -483,6 +486,7 @@ namespace AMFramework.Controller
             }
             else if (selectedHeader.ToUpper().Contains("SINGLE"))
             {
+                if (get_plot_Controller().SelectedProject == null) return;
                 _treeview_selected_tab = _AMView.get_case_list_tab(get_plot_Controller());
             }
             else if (selectedHeader.ToUpper().Contains("CASEITEM"))

@@ -76,3 +76,20 @@ function load_table_data(TableStore, ObjectType, csvTableData) --@Description Lo
         ::continue::
     end
 end
+
+function write_to_file(filename, Content, writeMode)
+  -- common modes:
+  -- w: write and overwrite
+  -- a: append
+
+  assert(filename ~= nil, "AM_StringManipulators:write_to_file; filename was not given!")
+
+  local Text = Content or "AM_StringManipulators:write_to_file;  Empty content"
+  local wMode = writeMode or "w"
+ 
+  file = assert(io.open(filename, wMode))
+  file:write(Text)
+  file:close()
+
+  ::ENDFUNCTION::
+end

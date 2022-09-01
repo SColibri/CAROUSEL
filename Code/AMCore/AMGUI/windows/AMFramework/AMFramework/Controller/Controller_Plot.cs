@@ -299,5 +299,59 @@ namespace AMFramework.Controller
             }
         }
 
+        public List<Tuple<double,Tuple<string, string>>> Get_heat_map_phaseFraction_kinetics() 
+        {
+            // This function was only built for test purposes, we should optimize and refactor this part of code after testing
+            List<Tuple<double, Tuple<string, string>>> result = new();
+            List<double> phaseFractions = new List<double>();
+
+            string Query = "SELECT a.ID, a.IDHeatTreatment, a.IDPrecipitationPhase, a.PhaseFraction, PrecipitationPhase.Name, HeatTreatment.Name AS htName FROM (SELECT ID, IDHeatTreatment, IDPrecipitationPhase, PhaseFraction FROM PrecipitateSimulationData ORDER BY IDHeatTreatment, ID DESC) AS a INNER JOIN PrecipitationPhase ON PrecipitationPhase.ID = a.IDPrecipitationPhase INNER JOIN HeatTreatment ON HeatTreatment.ID = a.IDHeatTreatment GROUP BY IDHeatTreatment, IDPrecipitationPhase";
+            string RawData = _AMCore_Socket.run_lua_command("database_table_custom_query", Query);
+
+            List<string> RowData = RawData.Split("\n").ToList();
+            if (RowData.Count == 0) return result;
+
+            foreach (var row in RowData)
+            {
+                List<string> cell = row.Split(",").ToList();
+                if (cell.Count < 6) continue;
+
+                double phaseFraction = 0;
+                if (!double.TryParse(cell[3],out phaseFraction)) continue;
+                
+                Tuple<double, Tuple<string, string>> tempItem = Tuple.Create(phaseFraction, Tuple.Create(cell[4], cell[5]));
+                result.Add(tempItem);
+            }
+
+            return result;
+        }
+
+        public List<Tuple<double, Tuple<string, string>>> Get_heat_map_grainSize_kinetics()
+        {
+            // This function was only built for test purposes, we should optimize and refactor this part of code after testing
+            List<Tuple<double, Tuple<string, string>>> result = new();
+            List<double> phaseFractions = new List<double>();
+
+            string Query = "SELECT a.ID, a.IDHeatTreatment, a.IDPrecipitationPhase, a.MeanRadius, PrecipitationPhase.Name, HeatTreatment.Name AS htName FROM (SELECT ID, IDHeatTreatment, IDPrecipitationPhase, MeanRadius FROM PrecipitateSimulationData ORDER BY IDHeatTreatment, ID DESC) AS a INNER JOIN PrecipitationPhase ON PrecipitationPhase.ID = a.IDPrecipitationPhase INNER JOIN HeatTreatment ON HeatTreatment.ID = a.IDHeatTreatment GROUP BY IDHeatTreatment, IDPrecipitationPhase";
+            string RawData = _AMCore_Socket.run_lua_command("database_table_custom_query", Query);
+
+            List<string> RowData = RawData.Split("\n").ToList();
+            if (RowData.Count == 0) return result;
+
+            foreach (var row in RowData)
+            {
+                List<string> cell = row.Split(",").ToList();
+                if (cell.Count < 6) continue;
+
+                double phaseFraction = 0;
+                if (!double.TryParse(cell[3], out phaseFraction)) continue;
+
+                Tuple<double, Tuple<string, string>> tempItem = Tuple.Create(phaseFraction, Tuple.Create(cell[4], cell[5]));
+                result.Add(tempItem);
+            }
+
+            return result;
+        }
+
     }
 }

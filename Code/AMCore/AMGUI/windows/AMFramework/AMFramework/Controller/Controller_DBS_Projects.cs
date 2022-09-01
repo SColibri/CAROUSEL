@@ -598,6 +598,7 @@ namespace AMFramework.Controller
                 if (DB_projects[n1].IsSelected) 
                 {
                     SelectedProject = DB_projects[n1];
+
                     break;
                 }
             }

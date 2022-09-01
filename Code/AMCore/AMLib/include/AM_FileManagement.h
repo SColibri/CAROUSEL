@@ -17,15 +17,17 @@ class AM_FileManagement:IStringify {
 							PROJECTS, 
 							SCRIPTS, 
 							DATABASE,
-							TEMP};
+							TEMP,
+							LOGS};
 
-		std::string filepath_names[6] = {"None",
+		std::string filepath_names[7] = {"None",
 										"System"
 										"General",
 										"Projects",
 										"Scripts", 
 										"Database",
-										"temp"};
+										"temp"
+										"Logs"};
 
 	// Constructors, destructors and other
 	// -------------------------------------------------------------------------------------
@@ -54,6 +56,11 @@ class AM_FileManagement:IStringify {
 		/// <param name="option_"></param>
 		/// <returns></returns>
 		std::string get_filePath(FILEPATH option_);
+
+		/// <summary>
+		/// Creates all working folders for the project
+		/// </summary>
+		void setup_working_directory();
 
 	#pragma endregion Methods
 
