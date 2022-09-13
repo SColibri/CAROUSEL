@@ -2,6 +2,7 @@
 #include <sstream>
 #include "../../include/Database_implementations/Database_Factory.h"
 
+
 Database_Sqlite3::~Database_Sqlite3() {
 	if (_connectionOpen == true) {
 		sqlite3_close(db);

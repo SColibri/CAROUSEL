@@ -7943,6 +7943,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AMControls\AMControls.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
@@ -7966,6 +7970,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="lua\AMFramework.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Calculations\Precipitation_Calculations.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="lua\Objects\ActivePhases.lua">

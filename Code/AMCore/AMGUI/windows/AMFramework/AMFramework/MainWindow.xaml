@@ -74,7 +74,7 @@
 
                 <!-- Charting-->
                 <RibbonGroup x:Name="Charting" Header="Charting">
-                    <RibbonButton  Label="New chart" 
+                    <RibbonButton  Label="Project Map" 
                                    KeyTip="X" 
                                    Click="RibbonButton_Click" 
                                    SmallImageSource="Resources/Icons/tablerIcons/chart-radar.png"/>

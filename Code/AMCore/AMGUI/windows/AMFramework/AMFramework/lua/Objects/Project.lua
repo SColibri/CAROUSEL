@@ -187,7 +187,7 @@ function Project:get_element_index(elementName)
 end
 
 -- return element index that is set as referencce element
-function Project:get_reference_element_index(elementName)
+function Project:get_reference_element_index()
     if #self.selectedElements > 0 then
         
         for i,Item in ipairs(self.selectedElements) do
@@ -201,6 +201,17 @@ function Project:get_reference_element_index(elementName)
     end
 
     return -1
+end
+
+-- returns the reference element
+function Project:get_reference_element()
+    local refIndex = self:get_reference_element_index()
+
+    if refIndex > -1 then
+        return self.selectedElements[refIndex]
+    end
+
+    return nil
 end
 
 -- .......................................................................................

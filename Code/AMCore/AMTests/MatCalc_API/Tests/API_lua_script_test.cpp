@@ -42,9 +42,9 @@ namespace main_setup
 
 		// NOTE: when passing paths to matcalc we have to pass with escape characters, otherwise this will not work
 		// when passing the argument to matcalc.
-		configuration.set_ThermodynamicDatabase_path("C:/Program\\ Files/MatCalc\\ 6/database/thermodynamic/ME-Al1.2.tdb");
-		configuration.set_PhysicalDatabase_path("C:/Program\\ Files/MatCalc\\ 6/database/physical/physical_data.pdb");
-		configuration.set_MobilityDatabase_path("C:/Program\\ Files/MatCalc\\ 6/database/diffusion/mc_al.ddb");
+		configuration.set_ThermodynamicDatabase_path("C:/Program Files/MatCalc 6/database/thermodynamic/ME-Al1.2.tdb");
+		configuration.set_PhysicalDatabase_path("C:/Program Files/MatCalc 6/database/physical/physical_data.pdb");
+		configuration.set_MobilityDatabase_path("C:/Program Files/MatCalc 6/database/diffusion/mc_al.ddb");
 
 		char pBuf[256];
 		size_t len = sizeof(pBuf);
@@ -74,6 +74,8 @@ TEST_CASE("IAM_lua_functions")
 {
 	SECTION("")
 	{
+		// C:/Users/drogo/Desktop/Homless/QueryCommand.lua
+		// C:\\Users\\drogo\\Desktop\\Homless\\AAA_Implementation.lua
 		std::string outScript = main_setup::api->run_lua_command("run_lua_script", std::vector <std::string>{ "C:\\Users\\drogo\\Desktop\\Homless\\AAA_Implementation.lua" });
 		REQUIRE(string_manipulators::find_index_of_keyword(outScript, "Error") == std::string::npos);
 		bool stopHere = true;

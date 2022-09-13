@@ -91,6 +91,30 @@ namespace AMFramework
             return result;
         }
 
+        public TabItem Get_projectMap_plot(Controller.Controller_Plot plotController)
+        {
+            TabItem result = new TabItem();
+
+            string headerTitle = "Project Map";
+            Uri ImageUri = null; //TODO add lua Icon here
+            if (headerTitle.Length == 0)
+            {
+                result.Header = get_TabHeader("Project Map", ImageUri);
+            }
+            else
+            {
+                result.Header = get_TabHeader(headerTitle, ImageUri);
+            }
+            
+
+            Views.Project_Map.Project_Map pM = new(plotController);
+
+            result.Content = pM;
+            result.Tag = new Components.Charting.Charting_ViewModel();
+
+            return result;
+        }
+
         public TabItem get_project_tab(Controller.Controller_DBS_Projects projectController) 
         {
             TabItem result = new TabItem();

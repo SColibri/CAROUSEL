@@ -109,7 +109,14 @@ namespace AMFramework
         {
 
             Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
-            controllerMain.Add_Tab_Item(viewModel.get_new_plot());
+            
+            if (controllerMain.Projects.Count == 0) 
+            {
+                notify.ShowBalloonTip(5000,"No open project","Please select a project",System.Windows.Forms.ToolTipIcon.Info);
+                return;
+            }
+            
+            controllerMain.Add_Tab_Item(viewModel.Get_projectMap_plot(controllerMain.get_plot_Controller()));
             MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
             MainTabControl.Items.Refresh();
         }

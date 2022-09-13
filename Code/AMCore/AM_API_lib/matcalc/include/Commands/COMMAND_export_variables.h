@@ -110,6 +110,7 @@ public:
 		return output;
 	}
 
+
 private:
 	std::string _command{ "" };
 	std::string _filename{ "" };

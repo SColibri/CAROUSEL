@@ -9,6 +9,8 @@ public:
 	COMMAND_set_composition(IPC_winapi* mccComm, AM_Config* configuration, std::vector<std::string> Elements, std::vector<double> Composition) :
 		COMMAND_abstract(mccComm, configuration)
 	{
+		if(Elements.size() != Composition.size()) return;
+
 		_scriptContent = _command;
 		for (int n1 = 1; n1 < Elements.size(); n1++)
 		{

@@ -1088,28 +1088,14 @@ private:
 					pixel_parameters->get_selected_phases_ByName());
 				API_Scripting::Script_run_ScheilPrecipitation(_dbFramework->get_database(), ScriptInstructions, pixel_parameters->get_precipitation_phases(), _configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP));
 				
-				std::vector<std::string> selectedPhases = pixel_parameters->get_selected_phases_ByName();
-				std::string formatted{ "%12.2f" };
-				for(auto& item: selectedPhases)
-				{
-					if (item.compare("LIQUID") == 0) 
-					{
-						item = "F$" + string_manipulators::trim_whiteSpace(item) + "";
-					}
-					else 
-					{
-						item = "F$" + string_manipulators::trim_whiteSpace(item) + "_S";
-					}
-					formatted += " %12.2g";
-				}
-				
-				std::string varNames = " T " + IAM_Database::csv_join_row(selectedPhases, " ");
-				//COMMAND_export_variables Exporter(mccComm, _configuration, _configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "/Scheil.txt", formatted, varNames, "");
-				//Exporter.DoAction();
+				matcalc::CALCULATION_scheil calcScheil(_dbFramework->get_database(), mccComm, _configuration, pixel_parameters->get_ScheilConfiguration(), projectM, pixel_parameters);
+				calcScheil.Calculate();
+				calcScheil.Save_to_database(_dbFramework->get_database(), pixel_parameters);
 
 				//Run script commands
-				std::string commandToString = IAM_Database::csv_join_row(ScriptInstructions, "\n");
-				std::string outCommand_1 = runVectorCommands(ScriptInstructions, mccComm);
+				//std::string commandToString = IAM_Database::csv_join_row(ScriptInstructions, "\n");
+				//std::string outCommand_1 = runVectorCommands(ScriptInstructions, mccComm);
+				
 
 				// Load csv file into database
 				for(auto& ItempPhase: pixel_parameters->get_precipitation_phases())
