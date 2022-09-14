@@ -27,13 +27,15 @@ namespace matcalc
 
 		virtual std::string Calculate() override 
 		{
-			std::string output{""};
+			BeforeCalculation();
+
 			for (auto& comm : _commandList) 
 			{
-				output += comm->DoAction();
+				_output += comm->DoAction();
 			}
 
-			return output;
+			AfterCalculation();
+			return _output;
 		}
 
 		virtual std::string Get_script_text() override 
@@ -53,5 +55,6 @@ namespace matcalc
 
 	protected:
 		std::vector<IAM_Command*> _commandList;
+		std::string _output{ "" };
 	};
 }

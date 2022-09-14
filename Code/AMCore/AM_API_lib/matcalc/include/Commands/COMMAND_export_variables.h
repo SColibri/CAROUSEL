@@ -104,7 +104,7 @@ public:
 		// retrieve data form file
 		for (auto& row : rowEntries)
 		{
-			output.push_back(string_manipulators::split_text(row, ","));
+			output.push_back(string_manipulators::split_text(row, " "));
 		}
 
 		return output;

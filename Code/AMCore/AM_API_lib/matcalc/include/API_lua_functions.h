@@ -13,7 +13,7 @@
 #include "../../../AMLib/include/AM_Threading.h"
 #include "API_matcalc_lib.h"
 #include "../include/Commands/COMMAND_ALL.h"
-#include "../include/Calculations/CALCULATION_ALL.h"
+#include "Calculations/CALCULATION_ALL.h"
 
 /** \addtogroup AM_API_lib
   *  @{
@@ -1098,6 +1098,7 @@ private:
 				
 
 				// Load csv file into database
+				if (1 == 1) continue;
 				for(auto& ItempPhase: pixel_parameters->get_precipitation_phases())
 				{
 					DBS_Phase tempPhaseName(_dbFramework->get_database(), ItempPhase->IDPhase);
@@ -1192,6 +1193,13 @@ private:
 		{
 			for (AM_pixel_parameters* pixel_parameters : PixelList)
 			{
+				DBS_HeatTreatment tempRef(_dbFramework->get_database(), -1);
+				tempRef.load_by_name(HeatTreatmentName);
+
+				matcalc::CALCULATION_scheilPrecipitation_heatTreatment hT_calc(_dbFramework->get_database(), mccComm, _configuration, projectM, pixel_parameters, &tempRef);
+				std::string output = hT_calc.Calculate();
+				std::string scripty = hT_calc.Get_script_text();
+				if (1 == 1) continue;
 				if (pixel_parameters->get_precipitation_phases().size() == 0) continue;
 				// create all script commands
 				std::vector<std::string> ScriptInstructions;
@@ -1205,7 +1213,7 @@ private:
 				_luaBUFFER += "\n\n ----- COMMANDS -----\n\n" + commandToString;
 				// Load csv file into database
 				// "%12.2d  %12.6f  %12.6d" variable-name="StepValue t$c r_mean$AL3TI_L_P0"
-				DBS_HeatTreatment tempRef(_dbFramework->get_database(), -1);
+				//DBS_HeatTreatment tempRef(_dbFramework->get_database(), -1);
 				tempRef.load_by_name(HeatTreatmentName);
 
 				AM_Database_Datatable phasesTable(_dbFramework->get_database(), &AMLIB::TN_PrecipitationPhase());

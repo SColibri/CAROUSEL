@@ -13,7 +13,7 @@ namespace matcalc
 
 		CALCULATION_scheilPrecipitation_heatTreatment(IAM_Database* db, IPC_winapi* mccComm, AM_Config* configuration, AM_Project* project, 
 			AM_pixel_parameters* pixel_parameters, DBS_HeatTreatment* heatTreatment) : _db(db), _mccComm(mccComm), _configuration(configuration), 
-																					   _heatTreatment(heatTreatment)
+																					   _heatTreatment(heatTreatment), _pixel_parameters(pixel_parameters)
 		{
 			// decorator object
 			_calculation = new CALCULATION_scheilPrecipitation_distribution(db, mccComm, configuration, pixel_parameters->get_ScheilConfiguration(), project, pixel_parameters);
@@ -50,7 +50,7 @@ namespace matcalc
 				DBS_Phase tempPhase(db, tempRef.IDPhase);
 				tempPhase.load();
 
-				_commandList.push_back(new COMMAND_create_new_phase(mccComm, configuration, &tempRef, tempPhase.Name, "precipitate", "(primary)"));
+				//_commandList.push_back(new COMMAND_create_new_phase(mccComm, configuration, &tempRef, tempPhase.Name, "precipitate", "(primary)"));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " number-of-size-classes=" + std::to_string(tempRef.NumberSizeClasses)));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " nucleation-sites=" + tempRef.NucleationSites));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " restrict-nucleation-to-precipitation-domain=" + pDomain.Name));
@@ -89,7 +89,52 @@ namespace matcalc
 			delete _calculation;
 		}
 
-		virtual void AfterCalculation() override { }
+		virtual void AfterCalculation() override 
+		{ 
+			// save into database
+			std::vector<std::vector<std::string>> table = COMMAND_export_variables::Get_data_from_file(_filename);
+
+			std::vector<IAM_DBS*> saveVector;
+			int saveInterval = 1000;
+			for (int n1 = 0; n1 < table.size(); n1++)
+			{
+				std::vector<std::string> tempVector = table[n1];
+				string_manipulators::remove_empty_entries(tempVector);
+				if (tempVector.size() != _totalVariables) continue;
+				int index = 0;
+
+				DBS_HeatTreatmentProfile* newProfile = new DBS_HeatTreatmentProfile(_db, -1);
+				newProfile->IDHeatTreatment = _heatTreatment->id();
+				newProfile->Time = std::stod(tempVector[index++]);
+				newProfile->Temperature = std::stod(tempVector[index++]);
+				saveVector.push_back(newProfile);
+
+				for (auto& item : _phaseList)
+				{
+					DBS_PrecipitateSimulationData* phaseyTemp = new DBS_PrecipitateSimulationData(_db, -1);
+					phaseyTemp->IDHeatTreatment = _heatTreatment->id();
+					phaseyTemp->IDPrecipitationPhase = item.id();
+					phaseyTemp->NumberDensity = std::stod(tempVector[index++]);
+					phaseyTemp->PhaseFraction = std::stod(tempVector[index++]);
+					phaseyTemp->MeanRadius = std::stod(tempVector[index++]);
+
+					saveVector.push_back(phaseyTemp);
+				}
+
+				if (saveVector.size() > saveInterval || n1 == table.size() - 1)
+				{
+					IAM_DBS::save(saveVector);
+
+					for (auto& item : saveVector)
+					{
+						delete item;
+					}
+
+					saveVector.clear();
+				}
+			}
+
+		}
 
 		virtual void AfterDecoratorCalculation() override
 		{
@@ -130,13 +175,43 @@ namespace matcalc
 				}
 			}
 			
-			_commandList.push_back(new COMMAND_set_simulation_parameter(_mccComm, _configuration, "set-simulation-parameter temperature-control tm-treatment-name=" + _heatTreatment->Name));
-			_commandList.push_back(new COMMAND_set_simulation_parameter(_mccComm, _configuration, "set-simulation-parameter max-temperature-step=" + std::to_string(_heatTreatment->MaxTemperatureStep)));
-			_commandList.push_back(new COMMAND_set_simulation_parameter(_mccComm, _configuration, "set-simulation-parameter starting-conditions=" + newStateName));
+			_commandList.push_back(new COMMAND_set_simulation_parameter(_mccComm, _configuration, "temperature-control tm-treatment-name=" + _heatTreatment->Name));
+			_commandList.push_back(new COMMAND_set_simulation_parameter(_mccComm, _configuration, "max-temperature-step=" + std::to_string(_heatTreatment->MaxTemperatureStep)));
+			_commandList.push_back(new COMMAND_set_simulation_parameter(_mccComm, _configuration, "starting-conditions=" + newStateName));
 			_commandList.push_back(new COMMAND_start_precipitate_simulation(_mccComm, _configuration));
 
 #pragma endregion
+
+#pragma region Export_data
+
+			AM_Database_Datatable phasesTable(_db, &AMLIB::TN_PrecipitationPhase());
+			phasesTable.load_data("IDCase = " + std::to_string(_pixel_parameters->get_caseID()));
+
+			if (phasesTable.row_count() == 0) throw new exception("No phases selected for id case: ");
+			std::string stringFormat = "%12.2g %12.2f ";
+			std::string variableName = "StepValue t$c ";
+
+			for (int n1 = 0; n1 < phasesTable.row_count(); n1++)
+			{
+				_phaseList.push_back(DBS_PrecipitationPhase(_db, -1));
+				_phaseList.back().load(phasesTable.get_row_data(n1));
+
+				stringFormat += "%12.2g %12.2g %12.2g ";
+				variableName += "NUM_PREC$" + _phaseList.back().Name + " ";
+				variableName += "F_PREC$" + _phaseList.back().Name + " ";
+				variableName += "R_MEAN$" + _phaseList.back().Name + " ";
+			}
+
+			_totalVariables = phasesTable.row_count() * 3 + 2;
+
+			_filename = _configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "/" + std::to_string(COMMAND_export_variables::get_uniqueNumber()) + "_Data.pSimulation";
+			_commandList.push_back(new COMMAND_export_variables(_mccComm, _configuration, _filename, stringFormat, variableName, ""));
+
+			std::string thisScript = this->Get_script_text();
+			bool stophere = true;
+#pragma endregion
 		}
+
 
 
 	private:
@@ -144,8 +219,11 @@ namespace matcalc
 		IPC_winapi* _mccComm;
 		AM_Config* _configuration;
 		AM_pixel_parameters* _pixel_parameters;
+
+		std::vector<DBS_PrecipitationPhase> _phaseList;
 		DBS_HeatTreatment* _heatTreatment;
 		std::string _precipitationDomainName;
-
+		std::string _filename;
+		int _totalVariables{0};
 	};
 }

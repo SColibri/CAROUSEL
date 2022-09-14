@@ -9,7 +9,7 @@ public:
 	COMMAND_append_tmt_segment(IPC_winapi* mccComm, AM_Config* configuration, std::string htName) :
 		COMMAND_abstract(mccComm, configuration)
 	{
-		_scriptContent = _command + htName + "\n";
+		_scriptContent = _command + " " + htName + "\n";
 	}
 
 	virtual std::string DoAction() override

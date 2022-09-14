@@ -22,7 +22,7 @@ namespace matcalc
 				
 				// string format
 				std::string variableNames{ "T " }; // by default we leave temperature
-				std::string variableType{ "\"%12.2f" };
+				std::string variableType{ "%12.2f" };
 				for (auto& phase : selectedPhase)
 				{
 					if(string_manipulators::trim_whiteSpace(phase).compare("LIQUID") != 0)
@@ -34,9 +34,9 @@ namespace matcalc
 						variableNames += "F$" + string_manipulators::trim_whiteSpace(phase) + " ";
 					}
 					
-					variableType += ",%12.2g";
+					variableType += " %12.2g";
 				}
-				variableType += "\"";
+				variableType += "";
 
 				// set filename
 				_filename = configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "/" + std::to_string(COMMAND_export_variables::get_uniqueNumber()) + "_scheilCalculation.AMFramework";
@@ -93,6 +93,7 @@ namespace matcalc
 				std::vector<int> phasesID = pixel_parameters->get_selected_phases_ByID();
 				for(auto& row: TBdATA)
 				{
+					string_manipulators::remove_empty_entries(row);
 					for(int n1 = 1; n1 < row.size(); n1++)
 					{
 						DBS_ScheilPhaseFraction* SPF = new DBS_ScheilPhaseFraction(db, -1);

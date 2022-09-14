@@ -16,7 +16,7 @@ public:
 		{
 			_scriptContent += Elements[n1] + "=" + std::to_string(Composition[n1]) + " ";
 		}
-		_scriptContent += "\"";
+		_scriptContent += "\"\n";
 	}
 
 	virtual std::string DoAction() override

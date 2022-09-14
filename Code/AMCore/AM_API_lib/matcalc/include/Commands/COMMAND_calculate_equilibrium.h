@@ -9,7 +9,7 @@ public:
 	COMMAND_calculate_equilibrium(IPC_winapi* mccComm, AM_Config* configuration, double Temperature) :
 		COMMAND_abstract(mccComm, configuration)
 	{
-		_command = "set-temperature-celsius " + std::to_string(Temperature) + " \n calculate-equilibrium";
+		_command = "set-temperature-celsius " + std::to_string(Temperature) + " \n calculate-equilibrium \n";
 		_scriptContent = _command;
 	}
 

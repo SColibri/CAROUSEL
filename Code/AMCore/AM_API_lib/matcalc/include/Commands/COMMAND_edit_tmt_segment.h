@@ -10,7 +10,7 @@ public:
 	COMMAND_edit_tmt_segment(IPC_winapi* mccComm, AM_Config* configuration, std::string htName, std::string treatemtSegment, std::string startTemperature) :
 		COMMAND_abstract(mccComm, configuration)
 	{
-		_scriptContent = _command + " tm-treatment-name=" + htName + " tm-treatment-segment=." + treatemtSegment + " segment-start-temperature=" + endTemperature + "\n";
+		_scriptContent = _command + " tm-treatment-name=" + htName + " tm-treatment-segment=." + treatemtSegment + " segment-start-temperature=" + startTemperature + "\n";
 	}
 
 	COMMAND_edit_tmt_segment(IPC_winapi* mccComm, AM_Config* configuration, std::string htName, std::string precipitationDomainName) :

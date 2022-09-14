@@ -187,6 +187,8 @@ private:
 
             string s(_buffer, dwRead);  
             _stdout += string(_buffer, dwRead);
+
+            if (_stdout.size() > 20) { dwRead = 19; }
         }
 
     }

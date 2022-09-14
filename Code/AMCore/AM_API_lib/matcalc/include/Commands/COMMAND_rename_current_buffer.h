@@ -9,7 +9,7 @@ public:
 	COMMAND_rename_current_buffer(IPC_winapi* mccComm, AM_Config* configuration, std::string bufferName) :
 		COMMAND_abstract(mccComm, configuration)
 	{
-		_scriptContent = _command + bufferName + "\n";
+		_scriptContent = _command + " " + bufferName + "\n";
 	}
 
 	virtual std::string DoAction() override

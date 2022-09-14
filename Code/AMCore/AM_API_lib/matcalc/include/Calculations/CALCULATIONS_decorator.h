@@ -19,15 +19,35 @@ namespace matcalc
 
 		virtual void BeforeCalculation() override 
 		{ 
-			_calculation->Calculate();
+			_output += _calculation->Calculate();
+			AfterDecoratorCalculation();
 		}
 
 		virtual void AfterCalculation() override = 0;
 
 		virtual void AfterDecoratorCalculation() = 0;
 
+		virtual std::string Get_script_text() override
+		{
+
+			std::string output{""};
+
+			if(_calculation != nullptr)
+			{
+				output = _calculation->Get_script_text();
+			}
+
+			for (auto& comm : _commandList)
+			{
+				output += comm->Get_Script_text();
+			}
+
+			return output;
+		}
+
 	protected:
 		CALCULATION_abstract* _calculation;
+		
 
 		void Set_Calculation(CALCULATION_abstract* calc)
 		{
