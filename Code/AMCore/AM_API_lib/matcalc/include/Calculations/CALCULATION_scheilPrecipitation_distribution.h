@@ -67,6 +67,8 @@ namespace matcalc
 			{
 				if (std::filesystem::exists(fname)) std::remove(fname.c_str());
 			}
+
+			delete _calculation;
 		}
 
 		virtual void AfterCalculation() override { }
@@ -89,6 +91,23 @@ namespace matcalc
 
 		const std::vector<std::string>& Get_files() { return _filenames; }
 
+		const std::string& Get_filename_from_phasename(std::string phasename) 
+		{
+			for (auto& item : _filenames)
+			{
+				if (string_manipulators::find_index_of_keyword(item, phasename) != std::string::npos)
+				{
+					return item;
+				}
+			}
+
+			return "";
+		}
+
+		const double& precipitationTemperature() 
+		{
+			return _precipitationTemperature;
+		}
 
 	private:
 		IAM_Database* _db;
@@ -96,7 +115,7 @@ namespace matcalc
 		std::vector<DBS_PrecipitationPhase*> _precipitationPhases;
 
 		std::vector<std::string> _filenames;
-		int _precipitationTemperature{ -1 };
+		double _precipitationTemperature{ -1 };
 
 		std::string Read_distribution(std::string phaseName) 
 		{
@@ -106,7 +125,7 @@ namespace matcalc
 				if(string_manipulators::find_index_of_keyword(item,phaseName) != std::string::npos)
 				{
 					if (!std::filesystem::exists(item)) break;
-					Result = string_manipulators::read_file_to_end(item);
+					Result = string_manipulators::read_file_content(item);
 					break;
 				}
 			}

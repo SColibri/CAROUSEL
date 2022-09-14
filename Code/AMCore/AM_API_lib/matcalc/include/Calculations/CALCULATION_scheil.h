@@ -60,6 +60,7 @@ namespace matcalc
 			{
 				// Remove text file if created
 				if (std::filesystem::exists(_filename)) std::remove(_filename.c_str());
+
 			}
 
 
@@ -82,7 +83,7 @@ namespace matcalc
 			/// <param name="db"></param>
 			/// <param name="pixel_parameters"></param>
 			/// <returns></returns>
-			int Save_to_database(IAM_Database* db, AM_pixel_parameters* pixel_parameters)
+			double Save_to_database(IAM_Database* db, AM_pixel_parameters* pixel_parameters)
 			{
 				// retrieve data from file
 				std::vector<std::vector<std::string>> TBdATA = Get_data();
@@ -119,7 +120,7 @@ namespace matcalc
 
 				entries.clear();
 
-				return std::stoi(TBdATA[TBdATA.size()-1][0]);
+				return std::stod(TBdATA[TBdATA.size()-1][0]);
 			}
 
 

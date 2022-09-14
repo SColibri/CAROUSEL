@@ -205,6 +205,22 @@ namespace string_manipulators
         return out;
     }
 
+    static std::string read_file_content(std::string fileName)
+    {
+        std::string Result{""};
+
+        if (!std::filesystem::exists(fileName)) return Result;
+
+        std::ifstream filetxt(fileName);
+        std::string tempString;
+        while(std::getline(filetxt, tempString))
+        {
+            Result += tempString;
+        }
+
+        return Result;
+    }
+
 
 #pragma endregion
 
