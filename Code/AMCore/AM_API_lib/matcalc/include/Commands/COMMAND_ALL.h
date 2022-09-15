@@ -14,6 +14,7 @@
 #include "COMMAND_heat_treatmet_configuration.h"
 #include "COMMAND_import_precipitate_distribution.h"
 #include "COMMAND_initialize_core.h"
+#include "COMMAND_load_buffer_state.h"
 #include "COMMAND_read_thermodynamic_database.h"
 #include "COMMAND_rename_current_buffer.h"
 #include "COMMAND_run_script.h"
@@ -32,3 +33,4 @@
 #include "COMMAND_set_themodynamic_database.h"
 #include "COMMAND_set_working_directory.h"
 #include "COMMAND_start_precipitate_simulation.h"
+#include "COMMAND_step_equilibrium.h"

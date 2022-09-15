@@ -1196,10 +1196,6 @@ private:
 				DBS_HeatTreatment tempRef(_dbFramework->get_database(), -1);
 				tempRef.load_by_name(HeatTreatmentName);
 
-				matcalc::CALCULATION_scheilPrecipitation_heatTreatment hT_calc(_dbFramework->get_database(), mccComm, _configuration, projectM, pixel_parameters, &tempRef);
-				std::string output = hT_calc.Calculate();
-				std::string scripty = hT_calc.Get_script_text();
-				if (1 == 1) continue;
 				if (pixel_parameters->get_precipitation_phases().size() == 0) continue;
 				// create all script commands
 				std::vector<std::string> ScriptInstructions;
@@ -1365,6 +1361,94 @@ private:
 		return 1;
 	}
 
+
+	static int Bind_SPC_parallel_calculate_heat_treatment_V02(lua_State* state)
+	{
+
+		_luaBUFFER = "";
+
+		// Check and get parameters
+		if (check_parameters(state, lua_gettop(state), 3, "usage: <ID project> <ID Cases> <Heat treatment name>") != 0) return 1;
+		std::vector<std::string> parameters = get_parameters(state);
+
+		// Initialize AM_project object, this is used for checking if cases belong to the project
+		AM_Project Project(_dbFramework->get_database(), _configuration, std::stoi(parameters[0]));
+		std::vector<AM_pixel_parameters*> pixel_parameters;
+
+		// Get pointers for all cases
+		std::vector<std::string> rangeIDCase = string_manipulators::split_text(parameters[1], "-");
+		int start = std::stoi(rangeIDCase[0]);
+		int end = std::stoi(rangeIDCase[1]);
+		int range = end - start;
+
+		for (int n1 = 0; n1 < range + 1; n1++)
+		{
+			pixel_parameters.push_back(Project.get_pixelCase(start + n1));
+			if (pixel_parameters[n1] == nullptr)
+			{
+				std::string ErrorOut = "Error: Selected ID case is not part of this project!";
+				lua_pushstring(state, ErrorOut.c_str());
+				return 1;
+			}
+		}
+
+		// Create communication to mcc for each thread
+		std::vector<int> threadWorkload = AMThreading::thread_workload_distribution(_configuration->get_max_thread_number(), pixel_parameters.size());
+		std::wstring externalPath = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(_configuration->get_apiExternal_path() + "/mcc.exe");
+		std::vector<IPC_winapi*> mcc_comms;
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
+		{
+			mcc_comms.push_back(new IPC_winapi(externalPath));
+			mcc_comms[n1]->set_endflag("MC:");
+			runVectorCommands(std::vector<string>{API_Scripting::script_initialize_core()}, mcc_comms[n1]);
+		}
+
+		_luaBUFFER = "";
+		// define the parallel function
+		auto funcStep = [](IPC_winapi* mccComm, std::vector<AM_pixel_parameters*> PixelList, AM_Project* projectM, std::string& HeatTreatmentName)
+		{
+			for (AM_pixel_parameters* pixel_parameters : PixelList)
+			{
+				DBS_HeatTreatment tempRef(_dbFramework->get_database(), -1);
+				tempRef.load_by_name(HeatTreatmentName);
+
+				matcalc::CALCULATION_scheilPrecipitation_heatTreatment hT_calc(_dbFramework->get_database(), mccComm, _configuration, projectM, pixel_parameters, &tempRef);
+				_luaBUFFER += hT_calc.Calculate() + "\n\n---COMMANDS---\n\n\n" + hT_calc.Get_script_text();
+			}
+		};
+
+
+		int Index = 0;
+		std::vector<std::thread> threadList;
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
+		{
+			std::vector<AM_pixel_parameters*> tempVector(pixel_parameters.begin() + Index, pixel_parameters.begin() + Index + threadWorkload[n1]);
+			threadList.push_back(std::thread(funcStep, mcc_comms[n1], tempVector, &Project, parameters[2]));
+			Index += threadWorkload[n1];
+		}
+
+		for (int n1 = 0; n1 < threadList.size(); n1++)
+		{
+			threadList[n1].join();
+		}
+
+		for (int n1 = 0; n1 < threadList.size(); n1++)
+		{
+			mcc_comms[n1]->send_command("exit\r\n");
+			delete mcc_comms[n1];
+		}
+		mcc_comms.clear();
+
+		std::string outCommand_1 = _luaBUFFER;
+		if (_cancelCalculations)
+		{
+			Core_CancelExecution(state);
+			_cancelCalculations = false;
+			outCommand_1 = "Operation was cancelled";
+		}
+		lua_pushstring(state, outCommand_1.c_str());
+		return 1;
+	}
 #pragma endregion
 
 #pragma endregion

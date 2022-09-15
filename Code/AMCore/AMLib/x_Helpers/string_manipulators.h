@@ -215,10 +215,18 @@ namespace string_manipulators
         std::string tempString;
         while(std::getline(filetxt, tempString))
         {
-            Result += tempString;
+            Result += tempString + "\n";
         }
 
         return Result;
+    }
+
+    static void write_to_file(std::string& fileName, std::string& content)
+    {
+        std::ofstream class_file;
+        class_file.open(fileName);
+        class_file << content;
+        class_file.close();
     }
 
 

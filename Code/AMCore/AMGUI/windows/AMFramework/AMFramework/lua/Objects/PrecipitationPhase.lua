@@ -10,7 +10,7 @@ function PrecipitationPhase:new (o,ID,IDCase,IDPhase,NumberSizeClasses,Name,Nucl
    self.ID = ID or -1
    self.IDCase = IDCase or -1 
    self.IDPhase = IDPhase or -1
-   self.NumberSizeClasses = NumberSizeClasses or -1 
+   self.NumberSizeClasses = NumberSizeClasses or 25 
    self.Name = Name or "" 
    self.NucleationSites = NucleationSites or "none" 
    self.IDPrecipitationDomain = IDPrecipitationDomain or -1 

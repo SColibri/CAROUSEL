@@ -14,7 +14,11 @@ public:
 		_scriptContent = _command;
 		for (int n1 = 1; n1 < Elements.size(); n1++)
 		{
-			_scriptContent += Elements[n1] + "=" + std::to_string(Composition[n1]) + " ";
+			std::string compValue;
+			if (Composition[n1] == 0) compValue = "0.0000000000000001";
+			else compValue = string_manipulators::double_to_string(Composition[n1]);
+
+			_scriptContent += Elements[n1] + "=" + compValue + " ";
 		}
 		_scriptContent += "\"\n";
 	}

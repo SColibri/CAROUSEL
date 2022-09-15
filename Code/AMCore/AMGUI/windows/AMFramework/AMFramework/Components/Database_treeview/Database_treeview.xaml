@@ -111,8 +111,7 @@
                                             <TreeViewItem.ItemTemplate>
                                                 <DataTemplate>
                                                     <Grid>
-                                                        <TextBlock Text="{Binding Path=Name}"/>
-                                                        <Border MouseDown="Border_MouseDown" Background="Black" Tag="{Binding}" Width="100" Height="100">
+                                                        <Border MouseDown="Border_MouseDown" Background="Transparent" Tag="{Binding}">
                                                             <TextBlock Text="{Binding Path=Name}"/>
                                                         </Border>
                                                     </Grid>

@@ -50,7 +50,7 @@ namespace matcalc
 				DBS_Phase tempPhase(db, tempRef.IDPhase);
 				tempPhase.load();
 
-				//_commandList.push_back(new COMMAND_create_new_phase(mccComm, configuration, &tempRef, tempPhase.Name, "precipitate", "(primary)"));
+				//_commandList.push_back(new COMMAND_create_new_phase(mccComm, configuration, &tempRef, tempPhase.Name, "precipitate", "(primary)")); Commented because this phase is already declared 
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " number-of-size-classes=" + std::to_string(tempRef.NumberSizeClasses)));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " nucleation-sites=" + tempRef.NucleationSites));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " restrict-nucleation-to-precipitation-domain=" + pDomain.Name));
@@ -71,7 +71,7 @@ namespace matcalc
 				DBS_Phase tempPhase(db, tempRef.IDPhase);
 				tempPhase.load();
 
-				_commandList.push_back(new COMMAND_create_new_phase(mccComm, configuration, &tempRef, tempPhase.Name, "precipitate", "(sec)"));
+				_commandList.push_back(new COMMAND_create_new_phase(mccComm, configuration, tempPhase.Name, tempPhase.Name, "precipitate", "(sec)"));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " number-of-size-classes=" + std::to_string(tempRef.NumberSizeClasses)));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " nucleation-sites=" + tempRef.NucleationSites));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " restrict-nucleation-to-precipitation-domain=" + pDomain.Name));
@@ -139,7 +139,9 @@ namespace matcalc
 		virtual void AfterDecoratorCalculation() override
 		{
 			CALCULATION_scheilPrecipitation_distribution* tempPointer = (CALCULATION_scheilPrecipitation_distribution*)_calculation;
-			
+			_heatTreatment->StartTemperature = tempPointer->precipitationTemperature();
+			_heatTreatment->save();
+
 			// Add heat treatment using as starting temperature
 #pragma region Heat_treatment
 			// declare new buffer name
@@ -152,7 +154,7 @@ namespace matcalc
 			_commandList.push_back(new COMMAND_create_tm_treatment(_mccComm, _configuration, _heatTreatment->Name));
 			_commandList.push_back(new COMMAND_append_tmt_segment(_mccComm, _configuration, _heatTreatment->Name));
 			_commandList.push_back(new COMMAND_edit_tmt_segment(_mccComm, _configuration, _heatTreatment->Name, _precipitationDomainName));
-			_commandList.push_back(new COMMAND_edit_tmt_segment(_mccComm, _configuration, _heatTreatment->Name, "", std::to_string(tempPointer->precipitationTemperature())));
+			_commandList.push_back(new COMMAND_edit_tmt_segment(_mccComm, _configuration, _heatTreatment->Name, "", std::to_string(_heatTreatment->StartTemperature)));
 
 			AM_Database_Datatable HTSegments(_db, &AMLIB::TN_HeatTreatmentSegments());
 			HTSegments.load_data("IDHeatTreatment = " + std::to_string(_heatTreatment->id()) + " ORDER BY stepIndex");

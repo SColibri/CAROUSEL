@@ -7,12 +7,12 @@ class COMMAND_create_new_phase : public COMMAND_abstract
 {
 public:
 	
-	COMMAND_create_new_phase(IPC_winapi* mccComm, AM_Config* configuration, DBS_PrecipitationPhase* precipitationPhase, std::string parentPhase, 
+	COMMAND_create_new_phase(IPC_winapi* mccComm, AM_Config* configuration, std::string phaseName, std::string parentPhase, 
 							 std::string phaseType, std::string other ) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 
-		_scriptContent = "create-new-phase parent-phase=" + parentPhase + " " + phaseType + " " + precipitationPhase->Name + " " + other + "\n";
+		_scriptContent = "create-new-phase parent-phase=" + parentPhase + " " + phaseType + " " + phaseName + "" + other + "\n";
 		_command = _scriptContent;
 	}
 
