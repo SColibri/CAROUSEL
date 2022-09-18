@@ -43,9 +43,9 @@ namespace AMFramework.Controller
         {
             List<Model.Model_PrecipitationPhase> model = new();
 
-            string Query = "SELECT PrecipitationPhase.* , Phase.Name AS PhaseName, PrecipitationDomain.Name FROM PrecipitationPhase INNER JOIN Phase ON Phase.ID=PrecipitationPhase.IDPhase LEFT JOIN PrecipitationDomain ON PrecipitationDomain.ID=PrecipitationPhase.IDPrecipitationDomain WHERE IDCase=" + IDCase;
+            string Query = "SELECT PrecipitationPhase.* , Phase.Name AS PhaseName, PrecipitationDomain.Name FROM PrecipitationPhase INNER JOIN Phase ON Phase.ID=PrecipitationPhase.IDPhase LEFT JOIN PrecipitationDomain ON PrecipitationDomain.ID=PrecipitationPhase.IDPrecipitationDomain WHERE PrecipitationPhase.IDCase=" + IDCase;
             string outCommand = comm.run_lua_command("database_table_custom_query", Query);
-            List<string> rowItems = outCommand.Split("\n").ToList();
+            List<string> rowItems = outCommand.Split(",\n").ToList();
 
             foreach (string rowItem in rowItems)
             {
@@ -56,6 +56,35 @@ namespace AMFramework.Controller
             }
 
             return model;
+        }
+
+        public static List<string> Get_phases_names(Core.IAMCore_Comm comm, int IDProject)
+        {
+            List<string> Result = new();
+
+            string Query = "SELECT `Case`.ID FROM `Case` WHERE `Case`.IDProject=" + IDProject;
+            string outCommand = comm.run_lua_command("database_table_custom_query", Query);
+            List<string> rowItems = outCommand.Split(",\n").ToList();
+            List<string> cells = rowItems[0].Split(",").ToList();
+
+            Query = "SELECT PrecipitationPhase.Name FROM PrecipitationPhase WHERE IDCase = " + cells[0];
+
+            foreach (var item in rowItems.Skip(1))
+            {
+                cells = item.Split(",").ToList();
+                Query += " OR IDCase = " + cells[0];
+            }
+
+            outCommand = comm.run_lua_command("database_table_custom_query", Query);
+            rowItems = outCommand.Split(",\n").ToList();
+
+            foreach (var item in rowItems)
+            {
+                cells = item.Split(",").ToList();
+                Result.Add(cells[0]);
+            }
+
+            return Result;
         }
 
         private static Model.Model_PrecipitationPhase FillModel(List<string> DataRaw)

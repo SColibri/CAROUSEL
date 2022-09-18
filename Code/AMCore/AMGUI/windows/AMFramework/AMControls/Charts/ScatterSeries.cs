@@ -68,6 +68,12 @@ namespace AMControls.Charts
 
         }
 
+        public bool Check_MouseHover(double x, double y)
+        {
+            return false;
+            //throw new NotImplementedException();
+        }
+
         #region Implementation
         public List<IDataPoint> DataPoints { get { return _DataPoints; } set { _DataPoints = value; } }
         public int Index { get { return _index; } set { _index = value; } }
@@ -75,6 +81,8 @@ namespace AMControls.Charts
         public bool IsVisible { get { return _isVisible; } set { _isVisible = value; } }
         public string Label { get { return _label; } set { _label = value; } }
         public Color ColorSeries { get { return _lineColor; } set { _lineColor = value; } }
+        public event EventHandler DataPointSelectionChanged;
+        public event EventHandler SeriesSelected;
         #endregion
     }
 }

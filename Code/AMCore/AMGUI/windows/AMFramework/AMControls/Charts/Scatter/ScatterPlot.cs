@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 
 namespace AMControls.Charts.Scatter
@@ -43,10 +46,12 @@ namespace AMControls.Charts.Scatter
         private double _xMargin = 10;
         private double _yMargin = 10;
 
+        // Axis
         private double _xAxisSpacing = 0;
         private double _xAxis_xLocation = 0;
         private double _yAxisSpacing = 0;
         private double _yAxis_yLocation = 0;
+
 
         // Legend
         private ILegend _legend = new LegendBox();
@@ -56,6 +61,11 @@ namespace AMControls.Charts.Scatter
         private double _mouseWheelDownFactor = 0.5;
         private double _mouseWheelUpFactor = 1.5;
         private double _translationFactor = 0.02;
+
+        // Animations
+        private double _axisAnimationTime = 350;
+        private double _gridAnimationTime = 500;
+        private bool[] _firstAnimation = {true, true, true, true};
 
         private ContextMenu dt = new();
 
@@ -77,6 +87,7 @@ namespace AMControls.Charts.Scatter
             dt.Items.Add(PopWindow);
 
             ContextMenu = dt;
+
         }
 
         #region Setters
@@ -124,8 +135,10 @@ namespace AMControls.Charts.Scatter
             _legend.Draw(dc, this, _chartArea, _series);
         }
 
+
         #region Drawing
 
+        #region DrawAxes
         private void Draw_HorizontalAxis(DrawingContext dc, IAxes axisObject)
         {
             UpdateAxePosition_Values();
@@ -155,8 +168,7 @@ namespace AMControls.Charts.Scatter
                 System.Windows.Point EndPoint = new(axisObject.Bounds.X + axisObject.Bounds.Width, axisObject.Bounds.Y + axis_height/2);
 
                 Pen Axe_pen = new(new SolidColorBrush(AxisColor), AxisThickness);
-                Pen Grid_pen = new(new SolidColorBrush(GridColor), GridThickness);
-                dc.DrawLine(Axe_pen, StartPoint, EndPoint);
+                Draw_AxisAnimation(dc, ref _firstAnimation[0], StartPoint, EndPoint);
 
                 // Draw intervals
                 double Sections = (axisObject.MaxValue - axisObject.MinValue) / axisObject.Interval;
@@ -164,8 +176,10 @@ namespace AMControls.Charts.Scatter
 
                 for (int n1 = 1; n1 < Sections; n1++)
                 {
+                    bool _doAnimation = _firstAnimation[2];
                     System.Windows.Point sPoint = new(axisObject.Bounds.X + _xAxisSpacing * n1, axisObject.Bounds.Y);
                     System.Windows.Point ePoint = new(axisObject.Bounds.X + _xAxisSpacing * n1, axisObject.Bounds.Y + axisObject.Bounds.Height);
+
                     dc.DrawLine(Axe_pen, sPoint, ePoint);
 
                     string valueString = (axisObject.MinValue + n1 * axisObject.Interval).ToString(axisObject.IntervalNotation());
@@ -182,10 +196,11 @@ namespace AMControls.Charts.Scatter
                         System.Windows.Point sGPoint = new(sPoint.X, sPoint.Y);
                         System.Windows.Point eGPoint = new(sPoint.X, _yMargin);
 
-                        dc.DrawLine(Grid_pen, sGPoint, eGPoint);
+                        Draw_GridAnimation(dc, ref _doAnimation, sGPoint, eGPoint);
                     }
                 }
-
+                if (_firstAnimation[2]) _firstAnimation[2] = !_firstAnimation[2];
+                
             }
         }
 
@@ -222,8 +237,7 @@ namespace AMControls.Charts.Scatter
                 System.Windows.Point EndPoint = new(axisObject.Bounds.X + axisObject.Bounds.Width - MajorTickSize, axisObject.Bounds.Y + axisObject.Bounds.Height);
 
                 Pen Axe_pen = new(new SolidColorBrush(AxisColor), AxisThickness);
-                Pen Grid_pen = new(new SolidColorBrush(GridColor), GridThickness);
-                dc.DrawLine(Axe_pen, StartPoint, EndPoint);
+                Draw_AxisAnimation(dc, ref _firstAnimation[1], EndPoint, StartPoint);
 
                 // Draw intervals
                 double Sections = (axisObject.MaxValue - axisObject.MinValue) / axisObject.Interval;
@@ -231,8 +245,10 @@ namespace AMControls.Charts.Scatter
 
                 for (int n1 = 1; n1 < Sections; n1++)
                 {
+                    bool _doAnimation = _firstAnimation[3];
                     System.Windows.Point sPoint = new(StartPoint.X - MajorTickSize/2, axisObject.Bounds.Y + _yAxisSpacing * (Sections - n1));
                     System.Windows.Point ePoint = new(StartPoint.X + MajorTickSize, axisObject.Bounds.Y + _yAxisSpacing * (Sections - n1)) ;
+
                     dc.DrawLine(Axe_pen, sPoint, ePoint);
 
                     string valueString = (axisObject.MinValue + n1 * axisObject.Interval).ToString(axisObject.IntervalNotation());
@@ -249,13 +265,75 @@ namespace AMControls.Charts.Scatter
                         System.Windows.Point sGPoint = new(sPoint.X, sPoint.Y);
                         System.Windows.Point eGPoint = new(this.ActualWidth - _xMargin, sPoint.Y);
 
-                        dc.DrawLine(Grid_pen, sGPoint, eGPoint);
+                        Draw_GridAnimation(dc,ref _doAnimation, sGPoint, eGPoint);
                     }
                 }
+                if (_firstAnimation[3]) _firstAnimation[3] = !_firstAnimation[3];
+
 
             }
         }
 
+        #region Animations
+        private void Draw_AxisAnimation(DrawingContext dc , ref bool doAnimation,
+                                        System.Windows.Point sPoint, System.Windows.Point ePoint) 
+        {
+
+            Pen Axe_pen = new(new SolidColorBrush(AxisColor), AxisThickness);
+            Pen Grid_pen = new(new SolidColorBrush(GridColor), GridThickness);
+
+            if (doAnimation)
+            {
+                PointAnimationBase pab = (PointAnimationBase)new PointAnimation(sPoint, new Duration(TimeSpan.FromMilliseconds(_axisAnimationTime)));
+                PointAnimationBase pas = (PointAnimationBase)new PointAnimation(ePoint, new Duration(TimeSpan.FromMilliseconds(_axisAnimationTime)));
+                System.Windows.Media.Animation.AnimationClock p1Animation = pab.CreateClock();
+                System.Windows.Media.Animation.AnimationClock p2Animation = pas.CreateClock();
+
+                dc.DrawLine(Axe_pen, sPoint, p1Animation, sPoint, p2Animation);
+
+                doAnimation = !doAnimation;
+            }
+            else 
+            {
+                dc.DrawLine(Axe_pen, sPoint, ePoint);
+            }
+            
+        }
+
+        private void Draw_GridAnimation(DrawingContext dc, ref bool doAnimation,
+                                       System.Windows.Point sPoint, System.Windows.Point ePoint)
+        {
+
+            Pen Axe_pen = new(new SolidColorBrush(AxisColor), AxisThickness);
+            Pen Grid_pen = new(new SolidColorBrush(GridColor), GridThickness);
+
+            if (doAnimation)
+            {
+                PointAnimationBase pab = (PointAnimationBase)new PointAnimation(sPoint, new Duration(TimeSpan.FromMilliseconds(_gridAnimationTime)));
+                PointAnimationBase pas = (PointAnimationBase)new PointAnimation(ePoint, new Duration(TimeSpan.FromMilliseconds(_gridAnimationTime)));
+                System.Windows.Media.Animation.AnimationClock p1Animation = pab.CreateClock();
+                System.Windows.Media.Animation.AnimationClock p2Animation = pas.CreateClock();
+
+                dc.DrawLine(Grid_pen, sPoint, p1Animation, sPoint, p2Animation);
+
+                doAnimation = !doAnimation;
+            }
+            else
+            {
+                dc.DrawLine(Grid_pen, sPoint, ePoint);
+            }
+
+        }
+
+        private void Draw_DataPoint_HoverAnimation() 
+        {
+            
+        }
+
+        #endregion
+        #endregion
+
+        #region Tooltip
         private void Draw_ToolTip(DrawingContext dc) 
         {
             if (_xAxis == null || _yAxis == null) return;
@@ -277,6 +355,9 @@ namespace AMControls.Charts.Scatter
             _xAxis_xLocation = _xMargin * 3 + 50;
             _yAxis_yLocation = _yMargin * 3 + labelFormat.Height;
         }
+        #endregion
+
+        
 
         #endregion
 
@@ -364,15 +445,25 @@ namespace AMControls.Charts.Scatter
         {
             base.OnMouseMove(e);
 
+            Point mouseLocation = e.GetPosition(this);
             if (MouseDown) 
             {
-                Point mouseLocation = e.GetPosition(this);
                 Translate(Translate_StartPosition.X - mouseLocation.X, -Translate_StartPosition.Y + mouseLocation.Y);
             }
             else 
             {
-                Tooltip_position = e.GetPosition(this);
+                bool doInvalidate = false;
+                //Tooltip_position = e.GetPosition(this);
                 //InvalidateVisual();
+
+                // check if over a data point
+                for (int i = 0; i < _series.Count; i++) 
+                {
+                    bool tempRes = _series[i].Check_MouseHover(mouseLocation.X, mouseLocation.Y);
+                    if (tempRes) doInvalidate = true;
+                }
+
+                if (doInvalidate) InvalidateVisual();
             }
         }
 

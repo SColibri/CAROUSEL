@@ -21,7 +21,7 @@ namespace matcalc
 				std::vector<std::string> selectedElements = project->get_selected_elements_ByName();
 				
 				// string format
-				std::string variableNames{ "T " }; // by default we leave temperature
+				std::string variableNames{ "t$c " }; // by default we leave temperature
 				std::string variableType{ "%12.2f" };
 				for (auto& phase : selectedPhase)
 				{

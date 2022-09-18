@@ -64,13 +64,14 @@ namespace AMFramework.Controller
 
             Model.Model_PrecipitationDomain model = new Model.Model_PrecipitationDomain();
             model.ID = Convert.ToInt32(DataRaw[0]);
-            model.Name = DataRaw[1];
-            model.IDPhase = Convert.ToInt32(DataRaw[2]);
-            model.InitialGrainDiameter = Convert.ToDouble(DataRaw[3]);
-            model.EquilibriumDiDe = Convert.ToDouble(DataRaw[4]);
-            model.VacancyEvolutionModel = DataRaw[5];
-            model.ConsiderExVa = Convert.ToInt16(DataRaw[6]);
-            model.ExcessVacancyEfficiency = Convert.ToDouble(DataRaw[7]);
+            model.IDCase = Convert.ToInt32(DataRaw[1]);
+            model.Name = DataRaw[2];
+            model.IDPhase = Convert.ToInt32(DataRaw[3]);
+            model.InitialGrainDiameter = Convert.ToDouble(DataRaw[4]);
+            model.EquilibriumDiDe = Convert.ToDouble(DataRaw[5]);
+            model.VacancyEvolutionModel = DataRaw[6];
+            model.ConsiderExVa = Convert.ToInt16(DataRaw[7]);
+            model.ExcessVacancyEfficiency = Convert.ToDouble(DataRaw[8]);
 
             return model;
         }

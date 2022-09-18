@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AMControls;
+using AMControls.Charts.DataPointContextMenu;
 
 namespace AMControls_Test
 {
@@ -38,23 +39,23 @@ namespace AMControls_Test
             
 
             AMControls.Charts.IDataSeries dataSeries = new AMControls.Charts.ScatterBoxSeries() { ColorBox = Colors.Pink, ColorBoxBackground = Colors.Pink};
-            dataSeries.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.000002, Y = 0.02, Label = "AL3TI_L_P0" });
-            dataSeries.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.000002, Y = 0.0048, Label = "MG2SI_B_P0" });
-            dataSeries.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.00000037, Y = 0.00093, Label = "MG2SI_B_P0" });
-            dataSeries.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.000002, Y = 0.0000000004, Label = "MG2SI_B_P0" });
+            dataSeries.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.000002, Y = 0.02, Label = "AL3TI_L_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
+            dataSeries.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.000002, Y = 0.0048, Label = "MG2SI_B_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
+            dataSeries.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.00000037, Y = 0.00093, Label = "MG2SI_B_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
+            dataSeries.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.000002, Y = 0.0000000004, Label = "MG2SI_B_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
             scat.Add_series(dataSeries);
 
             AMControls.Charts.IDataSeries dataSeries2 = new AMControls.Charts.ScatterBoxSeries();
-            dataSeries2.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.000002, Y = 0.02, Label = "AL3TI_L_P0" });
-            dataSeries2.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.0000021 , Y = 0.0053, Label = "MG2SI_B_P0" });
-            dataSeries2.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.00000067 , Y = 0.0035, Label = "MG2SI_B_P0" });
-            dataSeries2.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.0000000004 , Y = 0.000002, Label = "MG2SI_B_P0" });
+            dataSeries2.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.000002, Y = 0.02, Label = "AL3TI_L_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
+            dataSeries2.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.0000021 , Y = 0.0053, Label = "MG2SI_B_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
+            dataSeries2.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.00000067 , Y = 0.0035, Label = "MG2SI_B_P0" , ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
+            dataSeries2.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.0000000004 , Y = 0.000002, Label = "MG2SI_B_P0" , ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
             scat.Add_series(dataSeries2);
 
             AMControls.Charts.IDataSeries dataSeries3 = new AMControls.Charts.ScatterSeries() { ColorSeries = Colors.Red, Label = "Nice Series"};
             for (int n1 = 0; n1 < 100; n1++) 
             {
-                dataSeries3.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.001 * n1, Y = 0.01 * n1, Label = "Point " + n1 });
+                dataSeries3.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.001 * n1, Y = 0.01 * n1, Label = "Point " + n1, ContextMenu = new DataPoint_ContextMenu_Text() });
             }
             scat.Add_series(dataSeries3);
 
@@ -62,10 +63,10 @@ namespace AMControls_Test
             for (int n1 = 0; n1 < 5; n1++) 
             {
                 AMControls.Charts.IDataSeries dataSeriesG = new AMControls.Charts.ScatterBoxSeries();
-                dataSeriesG.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.000002 * random.NextDouble(), Y = 0.02 * random.NextDouble(), Label = "AL3TI_L_P0" });
-                dataSeriesG.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.0000021 * random.NextDouble(), Y = 0.0053 * random.NextDouble(), Label = "MG2SI_B_P0" });
-                dataSeriesG.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.00000067 * random.NextDouble(), Y = 0.0035 * random.NextDouble(), Label = "MG2SI_B_P0" });
-                dataSeriesG.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.0000000004 * random.NextDouble(), Y = 0.000002 * random.NextDouble(), Label = "MG2SI_B_P0" });
+                dataSeriesG.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.000002 * random.NextDouble(), Y = 0.02 * random.NextDouble(), Label = "AL3TI_L_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
+                dataSeriesG.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.0000021 * random.NextDouble(), Y = 0.0053 * random.NextDouble(), Label = "MG2SI_B_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
+                dataSeriesG.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.00000067 * random.NextDouble(), Y = 0.0035 * random.NextDouble(), Label = "MG2SI_B_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
+                dataSeriesG.DataPoints.Add(new AMControls.Charts.DataPoint() { X = 0.0000000004 * random.NextDouble(), Y = 0.000002 * random.NextDouble(), Label = "MG2SI_B_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });
                 scat.Add_series(dataSeriesG);
                 dataSeriesG.Label = "Series_" + n1;
                 dataSeriesG.ColorSeries = Color.FromRgb((byte)random.Next(1,255), (byte)random.Next(1, 255), (byte)random.Next(1, 255));

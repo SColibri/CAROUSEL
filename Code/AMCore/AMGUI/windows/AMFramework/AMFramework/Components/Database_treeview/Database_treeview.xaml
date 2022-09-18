@@ -118,11 +118,31 @@
                                                 </DataTemplate>
                                             </TreeViewItem.ItemTemplate>
                                         </TreeViewItem>
-                                        <TreeViewItem Header="Precipitation phases">
-
+                                        <TreeViewItem Header="Precipitation phases" ItemsSource="{Binding Path=PrecipitationPhases}">
+                                            <TreeViewItem.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto"/>
+                                                            <ColumnDefinition Width="1*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Border  Background="Transparent" Tag="{Binding}" Grid.Column="1">
+                                                            <TextBlock Text="{Binding Path=Name}"/>
+                                                        </Border>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </TreeViewItem.ItemTemplate>
                                         </TreeViewItem>
-                                        <TreeViewItem Header="Precipitation domain">
-
+                                        <TreeViewItem Header="Precipitation domain" ItemsSource="{Binding Path=PrecipitationDomains}">
+                                            <TreeViewItem.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Border  Background="Transparent" Tag="{Binding}">
+                                                            <TextBlock Text="{Binding Path=Name}"/>
+                                                        </Border>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </TreeViewItem.ItemTemplate>
                                         </TreeViewItem>
                                     </TreeViewItem>
                                 </TreeView>

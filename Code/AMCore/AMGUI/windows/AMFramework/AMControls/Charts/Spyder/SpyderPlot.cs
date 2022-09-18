@@ -119,8 +119,8 @@ namespace AMControls.Charts.Spyder
 
                 System.Windows.Point perpendicular_vector = new System.Windows.Point(-_axisUnitVector[n1].Y, _axisUnitVector[n1].X);
 
-                _axes[n1].
-                dc.DrawLine(new Pen(new SolidColorBrush(_axis_BorderColor), _axis_Thickness), _center, );
+                //_axes[n1].
+                //dc.DrawLine(new Pen(new SolidColorBrush(_axis_BorderColor), _axis_Thickness), _center, );
 
                 currentAngle += _angleSplit;
             }

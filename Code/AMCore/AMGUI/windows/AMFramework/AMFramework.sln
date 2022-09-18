@@ -9,9 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMFRamework_Components", "A
 EndProject
 Project("{5697748A-77EF-44CA-8824-4F5637E5945B}") = "lua", "AMFramework\lua.luaproj", "{E439935D-B2A2-46AE-856D-2AA408428F33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMControls", "AMControls\AMControls.csproj", "{420A655E-3B34-4A33-A431-246DC15343A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMControls", "AMControls\AMControls.csproj", "{420A655E-3B34-4A33-A431-246DC15343A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMControls_Test", "AMControls_Test\AMControls_Test.csproj", "{6661F1E0-A2A7-4E2E-BAE4-CCAB78B12195}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMControls_Test", "AMControls_Test\AMControls_Test.csproj", "{6661F1E0-A2A7-4E2E-BAE4-CCAB78B12195}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMFramework_Excel", "AMFramework_Excel\AMFramework_Excel.csproj", "{159D2840-40E0-43C0-A079-16EE425FDAE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMFramework_ClassLibrary", "AMFramework_ClassLibrary\AMFramework_ClassLibrary.csproj", "{7F7EAEC6-DCF2-4B22-8763-FCE9BA30CDB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +41,14 @@ Global
 		{6661F1E0-A2A7-4E2E-BAE4-CCAB78B12195}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6661F1E0-A2A7-4E2E-BAE4-CCAB78B12195}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6661F1E0-A2A7-4E2E-BAE4-CCAB78B12195}.Release|Any CPU.Build.0 = Release|Any CPU
+		{159D2840-40E0-43C0-A079-16EE425FDAE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{159D2840-40E0-43C0-A079-16EE425FDAE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{159D2840-40E0-43C0-A079-16EE425FDAE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{159D2840-40E0-43C0-A079-16EE425FDAE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F7EAEC6-DCF2-4B22-8763-FCE9BA30CDB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7EAEC6-DCF2-4B22-8763-FCE9BA30CDB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7EAEC6-DCF2-4B22-8763-FCE9BA30CDB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F7EAEC6-DCF2-4B22-8763-FCE9BA30CDB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

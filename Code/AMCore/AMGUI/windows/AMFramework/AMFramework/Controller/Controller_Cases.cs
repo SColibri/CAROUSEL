@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Windows.Data;
 using System.Collections;
 using System.Windows.Input;
+using System.Net.Sockets;
 
 namespace AMFramework.Controller
 {
@@ -34,6 +35,8 @@ namespace AMFramework.Controller
             _PrecipitationDomain = new(ref socket, this);
             _Controller_HeatTreatment = new(ref socket, this);
             _Controller_PrecipitateSimulationData = new(ref socket, _Controller_HeatTreatment);
+            
+
         }
 
         public Controller_Cases()
@@ -84,6 +87,8 @@ namespace AMFramework.Controller
             save(SelectedCase);
             refresh();
         }
+
+        List<string> _precipitationPhasesNames = new();
 
         #endregion
 
@@ -172,6 +177,8 @@ namespace AMFramework.Controller
             _elementComposition.fill_models_with_composition();
             _equilibriumConfigurations.fill_models_with_equilibroiumConfiguration();
             _PrecipitationPhase.fill_models_with_precipitation_phases();
+            _PrecipitationDomain.fill_models_with_precipitation_domains();
+            _precipitationPhasesNames = Controller_PrecipitationPhase.Get_phases_names(_AMCore_Socket, _ControllerProjects.SelectedProject.ID);
             OnPropertyChanged("Cases");
             return outy;
         }

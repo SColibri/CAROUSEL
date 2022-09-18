@@ -23,6 +23,18 @@ namespace AMFramework.Model
             }
         }
 
+        private int _IDCase = -1;
+        [Order]
+        public int IDCase
+        {
+            get { return _IDCase; }
+            set
+            {
+                _IDCase = value;
+                OnPropertyChanged("IDCase");
+            }
+        }
+
         private string _name = "";
         [Order]
         public string Name

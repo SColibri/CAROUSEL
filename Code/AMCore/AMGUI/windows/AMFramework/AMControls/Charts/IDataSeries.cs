@@ -44,10 +44,19 @@ namespace AMControls.Charts
         public void CheckHit(double x, double y);
 
         /// <summary>
+        /// Action when hovering on object
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public bool Check_MouseHover(double x, double y);
+
+        /// <summary>
         /// Set plot color
         /// </summary>
         public Color ColorSeries { get; set; }
 
-
+        // Events
+        public event EventHandler DataPointSelectionChanged;
+        public event EventHandler SeriesSelected;
     }
 }
