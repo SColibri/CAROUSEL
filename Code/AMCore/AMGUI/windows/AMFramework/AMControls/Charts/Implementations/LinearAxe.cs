@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using AMControls.Charts.Interfaces;
 
-namespace AMControls.Charts
+namespace AMControls.Charts.Implementations
 {
     public class LinearAxe : IAxes
     {
@@ -23,10 +24,10 @@ namespace AMControls.Charts
         {
             if (_MaxValue <= _MinValue)
             {
-                _MaxValue = _MinValue + 0.00000000001* _MinValue;
+                _MaxValue = _MinValue + 0.00000000001 * _MinValue;
             }
 
-            if ( (_MaxValue - _MinValue)/Interval != _ticks)
+            if ((_MaxValue - _MinValue) / Interval != _ticks)
             {
                 _Interval = (_MaxValue - _MinValue) / _ticks;
             }
@@ -40,7 +41,7 @@ namespace AMControls.Charts
 
         public void Set_MaxValue(double value)
         {
-           _MaxValue = value; Check_minmax_values();
+            _MaxValue = value; Check_minmax_values();
         }
 
         public void Set_MinValue(double value)
@@ -58,11 +59,11 @@ namespace AMControls.Charts
             _Interval = value;
         }
 
-        public void Set_IntervalNotation(string value) 
+        public void Set_IntervalNotation(string value)
         {
             _IntervalNotation = value;
         }
-        
+
         #endregion
         #region Implementation
         public bool IsVisible()
@@ -84,8 +85,8 @@ namespace AMControls.Charts
         }
 
         public IAxes.Orientation AxisOrientation { get; set; }
-        public int Ticks { get { return _ticks; } set { _ticks = value; } } 
-        
+        public int Ticks { get { return _ticks; } set { _ticks = value; } }
+
         // IObjectInteraction
         public Rectangle Bounds { get { return _Bounds; } set { _Bounds = value; } }
 
@@ -95,7 +96,7 @@ namespace AMControls.Charts
             return Bounds.Contains(LocationPoint);
         }
 
-        public string IntervalNotation() 
+        public string IntervalNotation()
         {
             return _IntervalNotation;
         }

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AMControls.Charts
+namespace AMFramework.Components.Charting.ContextMenu
 {
-    public interface IChart
+    public class DataPoint_CaseContextMenu
     {
-        public void Save_Image(string filename);
+
     }
 }

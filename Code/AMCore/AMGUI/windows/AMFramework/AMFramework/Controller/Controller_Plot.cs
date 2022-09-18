@@ -9,6 +9,9 @@ using System.Windows.Media;
 using System.Windows.Input;
 using System.Windows;
 using AMControls.Charts;
+using AMControls.Charts.Interfaces;
+using AMControls.Charts.Implementations;
+using AMControls.Charts.Implementations.DataSeries;
 
 namespace AMFramework.Controller
 {

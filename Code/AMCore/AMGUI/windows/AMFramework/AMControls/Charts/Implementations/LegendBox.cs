@@ -7,17 +7,18 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using AMControls.Charts.Interfaces;
 
-namespace AMControls.Charts
+namespace AMControls.Charts.Implementations
 {
     public class LegendBox : ILegend
     {
         public Point Location { get; set; }
         public Size Size { get; set; }
 
-        private List<Tuple<IDataSeries, System.Windows.Rect>> _seriesEntries = new();
-        private List<Tuple<IDataSeries, System.Windows.Rect>> _seriesVisibility = new();
-        private List<Tuple<IDataSeries, System.Windows.Rect>> _seriesFocus = new();
+        private List<Tuple<IDataSeries, Rect>> _seriesEntries = new();
+        private List<Tuple<IDataSeries, Rect>> _seriesVisibility = new();
+        private List<Tuple<IDataSeries, Rect>> _seriesFocus = new();
         private Rect _scrollNextRect = new();
         private Rect _scrollPrevRect = new();
 
@@ -26,21 +27,21 @@ namespace AMControls.Charts
 
         private FontFamily _legendLabelFontFamily = new("Lucida Sans");
         private int _legendLabelFontSize = 12;
-        private System.Windows.FontStyle _legendLabelFontStyle = System.Windows.FontStyles.Normal; // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.fontstyle?view=dotnet-plat-ext-6.0
-        private System.Windows.FontWeight _legendLabelFontWeight = System.Windows.FontWeights.Regular; // https://docs.microsoft.com/en-us/dotnet/api/system.windows.fontweights?view=windowsdesktop-6.0
-        private System.Windows.FontStretch _legendLabelFontStretch = System.Windows.FontStretches.Normal;
+        private FontStyle _legendLabelFontStyle = FontStyles.Normal; // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.fontstyle?view=dotnet-plat-ext-6.0
+        private FontWeight _legendLabelFontWeight = FontWeights.Regular; // https://docs.microsoft.com/en-us/dotnet/api/system.windows.fontweights?view=windowsdesktop-6.0
+        private FontStretch _legendLabelFontStretch = FontStretches.Normal;
         private Color _legendLabelFontColor = Colors.Black;
 
         private FontFamily _seriesLabelFontFamily = new("Lucida Sans");
         private int _seriesLabelFontSize = 12;
-        private System.Windows.FontStyle _seriesLabelFontStyle = System.Windows.FontStyles.Normal; // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.fontstyle?view=dotnet-plat-ext-6.0
-        private System.Windows.FontWeight _seriesLabelFontWeight = System.Windows.FontWeights.Regular; // https://docs.microsoft.com/en-us/dotnet/api/system.windows.fontweights?view=windowsdesktop-6.0
-        private System.Windows.FontStretch _seriesLabelFontStretch = System.Windows.FontStretches.Normal;
+        private FontStyle _seriesLabelFontStyle = FontStyles.Normal; // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.fontstyle?view=dotnet-plat-ext-6.0
+        private FontWeight _seriesLabelFontWeight = FontWeights.Regular; // https://docs.microsoft.com/en-us/dotnet/api/system.windows.fontweights?view=windowsdesktop-6.0
+        private FontStretch _seriesLabelFontStretch = FontStretches.Normal;
         private Color _seriesLabelFontColor = Colors.Black;
 
         // Resources
         private List<BitmapImage> _imageList = new();
-        public LegendBox() 
+        public LegendBox()
         {
             _imageList.Add(new BitmapImage(new Uri("Charts/Resources/eye.png", UriKind.Relative)));
             _imageList.Add(new BitmapImage(new Uri("Charts/Resources/eye-off.png", UriKind.Relative)));
@@ -62,13 +63,13 @@ namespace AMControls.Charts
 
             // Legend Title
 
-                // Legend series
-            for (int i = ((_scrollIndex - 1) * _seriesDisplay); i < Math.Min(seriesList.Count, _scrollIndex * _seriesDisplay); i++)
+            // Legend series
+            for (int i = (_scrollIndex - 1) * _seriesDisplay; i < Math.Min(seriesList.Count, _scrollIndex * _seriesDisplay); i++)
             {
                 var item = seriesList[i];
 
                 FormattedText seriesFormat = new(item.Label, System.Globalization.CultureInfo.CurrentCulture,
-                                                 System.Windows.FlowDirection.LeftToRight,
+                                                 FlowDirection.LeftToRight,
                                                  new Typeface(_seriesLabelFontFamily, _seriesLabelFontStyle, _seriesLabelFontWeight, _seriesLabelFontStretch),
                                                  _seriesLabelFontSize, new SolidColorBrush(_seriesLabelFontColor), VisualTreeHelper.GetDpi(canvas).PixelsPerDip);
 
@@ -83,38 +84,38 @@ namespace AMControls.Charts
                 // --> Eye
                 int viewIndex = 0;
                 if (!item.IsVisible) viewIndex = 1;
-                System.Windows.Point OptionsStart = new(ChartArea.X + ChartArea.Width - seriesFormat.Height - totalWidth, ChartArea.Y + yLocation);
-                dc.DrawImage(_imageList[viewIndex], new System.Windows.Rect(OptionsStart.X, OptionsStart.Y, seriesFormat.Height, seriesFormat.Height));
+                Point OptionsStart = new(ChartArea.X + ChartArea.Width - seriesFormat.Height - totalWidth, ChartArea.Y + yLocation);
+                dc.DrawImage(_imageList[viewIndex], new Rect(OptionsStart.X, OptionsStart.Y, seriesFormat.Height, seriesFormat.Height));
                 totalWidth += seriesFormat.Height + 5;
                 _seriesVisibility.Add(Tuple.Create(item, new Rect(OptionsStart.X, OptionsStart.Y, seriesFormat.Height, seriesFormat.Height)));
 
                 // --> Center object
                 if (!item.IsVisible) viewIndex = 1;
                 OptionsStart = new(ChartArea.X + ChartArea.Width - seriesFormat.Height - totalWidth, ChartArea.Y + yLocation);
-                dc.DrawImage(_imageList[2], new System.Windows.Rect(OptionsStart.X, OptionsStart.Y, seriesFormat.Height, seriesFormat.Height));
+                dc.DrawImage(_imageList[2], new Rect(OptionsStart.X, OptionsStart.Y, seriesFormat.Height, seriesFormat.Height));
                 totalWidth += seriesFormat.Height + 5;
                 _seriesFocus.Add(Tuple.Create(item, new Rect(OptionsStart.X, OptionsStart.Y, seriesFormat.Height, seriesFormat.Height)));
 
 
-                System.Windows.Point LabelStart = new(ChartArea.X + ChartArea.Width - seriesFormat.Width - totalWidth, ChartArea.Y + yLocation);
+                Point LabelStart = new(ChartArea.X + ChartArea.Width - seriesFormat.Width - totalWidth, ChartArea.Y + yLocation);
                 dc.DrawText(seriesFormat, LabelStart);
 
                 yLocation += seriesFormat.Height + 5;
 
-                _seriesEntries.Add(Tuple.Create(item, new System.Windows.Rect(LabelStart.X, LabelStart.Y, seriesFormat.Width, seriesFormat.Height)));
+                _seriesEntries.Add(Tuple.Create(item, new Rect(LabelStart.X, LabelStart.Y, seriesFormat.Width, seriesFormat.Height)));
             }
 
             // scroll menu
-            if(seriesList.Count > _seriesDisplay) 
+            if (seriesList.Count > _seriesDisplay)
             {
                 double totalWidth = 0;
-                System.Windows.Point ScrollStart = new(ChartArea.X + ChartArea.Width - 25, ChartArea.Y + yLocation);
-                dc.DrawImage(_imageList[4], new System.Windows.Rect(ScrollStart.X, ScrollStart.Y, 25, 25));
+                Point ScrollStart = new(ChartArea.X + ChartArea.Width - 25, ChartArea.Y + yLocation);
+                dc.DrawImage(_imageList[4], new Rect(ScrollStart.X, ScrollStart.Y, 25, 25));
                 totalWidth += 25 + 5;
                 _scrollNextRect = new(ScrollStart.X, ScrollStart.Y, 25, 25);
 
                 ScrollStart = new(ScrollStart.X - totalWidth, ChartArea.Y + yLocation);
-                dc.DrawImage(_imageList[3], new System.Windows.Rect(ScrollStart.X, ScrollStart.Y, 25, 25));
+                dc.DrawImage(_imageList[3], new Rect(ScrollStart.X, ScrollStart.Y, 25, 25));
                 _scrollPrevRect = new(ScrollStart.X, ScrollStart.Y, 25, 25);
             }
         }
@@ -124,17 +125,17 @@ namespace AMControls.Charts
             if (Check_Visibility_Hit(x, y)) return null;
             if (Check_Scroll_Hit(x, y)) return null;
 
-            Tuple <IDataSeries, System.Windows.Rect> Result = _seriesVisibility.Find(e => e.Item2.Contains(x, y));
-            
+            Tuple<IDataSeries, Rect> Result = _seriesVisibility.Find(e => e.Item2.Contains(x, y));
+
             Result = _seriesEntries.Find(e => e.Item2.Contains(x, y));
             if (Result == null) return null;
 
             return Result.Item1;
         }
 
-        private bool Check_Visibility_Hit(double x, double y) 
+        private bool Check_Visibility_Hit(double x, double y)
         {
-            Tuple<IDataSeries, System.Windows.Rect> Result = _seriesVisibility.Find(e => e.Item2.Contains(x, y));
+            Tuple<IDataSeries, Rect> Result = _seriesVisibility.Find(e => e.Item2.Contains(x, y));
             if (Result == null) return false;
 
             Result.Item1.IsVisible = !Result.Item1.IsVisible;
@@ -142,16 +143,16 @@ namespace AMControls.Charts
             return true;
         }
 
-        private bool Check_Scroll_Hit(double x, double y) 
+        private bool Check_Scroll_Hit(double x, double y)
         {
             if (_scrollNextRect.Contains(x, y))
             {
                 _scrollIndex += 1;
                 return true;
             }
-            else if (_scrollPrevRect.Contains(x, y)) 
-            { 
-                if (_scrollIndex - 1 > 0 ) _scrollIndex -= 1;
+            else if (_scrollPrevRect.Contains(x, y))
+            {
+                if (_scrollIndex - 1 > 0) _scrollIndex -= 1;
                 return true;
             }
 

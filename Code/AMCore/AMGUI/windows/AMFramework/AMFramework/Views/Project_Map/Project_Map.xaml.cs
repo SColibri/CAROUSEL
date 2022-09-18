@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using AMControls.Charts;
+using AMControls.Charts.Interfaces;
+using AMControls.Charts.Implementations;
 
 namespace AMFramework.Views.Project_Map
 {

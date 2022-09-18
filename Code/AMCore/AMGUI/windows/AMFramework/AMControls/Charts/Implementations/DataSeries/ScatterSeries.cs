@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
+using AMControls.Charts.Interfaces;
 
-namespace AMControls.Charts
+namespace AMControls.Charts.Implementations.DataSeries
 {
-    public class ScatterSeries: IDataSeries
+    public class ScatterSeries : IDataSeries
     {
         private static int IndexCount = 0;
 
@@ -23,27 +24,27 @@ namespace AMControls.Charts
 
         private bool _showMarkers = false;
 
-        public ScatterSeries() 
+        public ScatterSeries()
         {
             _index = IndexCount++;
         }
 
-        public void Draw(DrawingContext dc, Canvas canvas, System.Windows.Rect ChartArea, double xSize, double ySize, double xStart, double yStart) 
-        { 
-            
-            if(_DataPoints.Count > 0 && _isVisible == true) 
+        public void Draw(DrawingContext dc, Canvas canvas, System.Windows.Rect ChartArea, double xSize, double ySize, double xStart, double yStart)
+        {
+
+            if (_DataPoints.Count > 0 && _isVisible == true)
             {
-                System.Windows.Point prevPoint = new(0,0);
+                System.Windows.Point prevPoint = new(0, 0);
                 bool firstPoint = false;
                 for (int n1 = 0; n1 < _DataPoints.Count; n1++)
                 {
                     IDataPoint item = _DataPoints[n1];
                     double xLoc = ChartArea.X + item.X * xSize - xStart * xSize;
-                    double yLoc = ChartArea.Y + ChartArea.Height -  item.Y * ySize + yStart * ySize;
+                    double yLoc = ChartArea.Y + ChartArea.Height - item.Y * ySize + yStart * ySize;
 
-                    if (ChartArea.Contains(xLoc, yLoc)) 
-                    { 
-                        if(!firstPoint) 
+                    if (ChartArea.Contains(xLoc, yLoc))
+                    {
+                        if (!firstPoint)
                         {
                             firstPoint = true;
                             prevPoint = new(xLoc, yLoc);
@@ -60,9 +61,9 @@ namespace AMControls.Charts
 
         public void CheckHit(double x, double y)
         {
-            System.Windows.Rect Area = new(x,y, _checkArea, _checkArea);
+            System.Windows.Rect Area = new(x, y, _checkArea, _checkArea);
             IDataPoint? Pointy = _DataPoints.Find(e => Area.Contains(e.X, e.Y));
-            
+
             if (Pointy != null) { _isSelected = true; }
             else { _isSelected = false; }
 

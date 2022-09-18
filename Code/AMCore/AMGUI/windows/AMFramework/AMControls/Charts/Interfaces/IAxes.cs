@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using AMControls.Interfaces;
+using System.Collections.Generic;
 
-namespace AMControls.Charts
+namespace AMControls.Charts.Interfaces
 {
-    public interface IAxes : Interfaces.IObjectInteraction
+    public interface IAxes : IObjectInteraction
     {
         /// <summary>
         /// Name of the axis

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AMControls.Charts
+namespace AMControls.Charts.Interfaces
 {
     public interface IDataPoint
     {

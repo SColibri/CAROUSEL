@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace AMControls.Charts
+namespace AMControls.Charts.Interfaces
 {
     public interface IDataSeries
     {
@@ -32,7 +32,7 @@ namespace AMControls.Charts
         /// Series is selected
         /// </summary>
         public bool IsSelected { get; set; }
-        
+
         /// <summary>
         /// Series visibility
         /// </summary>

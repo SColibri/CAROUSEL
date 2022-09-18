@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using AMControls.Charts.Interfaces;
 
-namespace AMControls.Charts
+namespace AMControls.Charts.Implementations.DataSeries
 {
     public class ScatterBoxSeries : IDataSeries
     {
@@ -26,23 +27,23 @@ namespace AMControls.Charts
 
         private FontFamily _axisLabelFontFamily = new("Lucida Sans");
         private int _axisLabelFontSize = 9;
-        private System.Windows.FontStyle _axisLabelFontStyle = System.Windows.FontStyles.Normal; // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.fontstyle?view=dotnet-plat-ext-6.0
-        private System.Windows.FontWeight _axisLabelFontWeight = System.Windows.FontWeights.Thin; // https://docs.microsoft.com/en-us/dotnet/api/system.windows.fontweights?view=windowsdesktop-6.0
-        private System.Windows.FontStretch _axisLabelFontStretch = System.Windows.FontStretches.Normal;
+        private FontStyle _axisLabelFontStyle = FontStyles.Normal; // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.fontstyle?view=dotnet-plat-ext-6.0
+        private FontWeight _axisLabelFontWeight = FontWeights.Thin; // https://docs.microsoft.com/en-us/dotnet/api/system.windows.fontweights?view=windowsdesktop-6.0
+        private FontStretch _axisLabelFontStretch = FontStretches.Normal;
         private Color _axisLabelFontColor = Colors.White;
 
         private FontFamily _dotLabelFontFamily = new("Lucida Sans");
         private int _dotLabelFontSize = 9;
-        private System.Windows.FontStyle _dotLabelFontStyle = System.Windows.FontStyles.Normal; // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.fontstyle?view=dotnet-plat-ext-6.0
-        private System.Windows.FontWeight _dotLabelFontWeight = System.Windows.FontWeights.Thin; // https://docs.microsoft.com/en-us/dotnet/api/system.windows.fontweights?view=windowsdesktop-6.0
-        private System.Windows.FontStretch _dotLabelFontStretch = System.Windows.FontStretches.Normal;
+        private FontStyle _dotLabelFontStyle = FontStyles.Normal; // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.fontstyle?view=dotnet-plat-ext-6.0
+        private FontWeight _dotLabelFontWeight = FontWeights.Thin; // https://docs.microsoft.com/en-us/dotnet/api/system.windows.fontweights?view=windowsdesktop-6.0
+        private FontStretch _dotLabelFontStretch = FontStretches.Normal;
         private Color _dotLabelFontColor = Colors.Black;
 
-        public System.Windows.Rect LabelBox { get; set; }
+        public Rect LabelBox { get; set; }
 
         public ScatterBoxSeries() { _index = IndexCount++; }
 
-        public void Draw(DrawingContext dc, Canvas canvas, System.Windows.Rect ChartArea, double xSize, double ySize, double xStart, double yStart)
+        public void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, double xSize, double ySize, double xStart, double yStart)
         {
             if (_DataPoints.Count > 0 && _isVisible == true)
             {
@@ -51,18 +52,18 @@ namespace AMControls.Charts
                 double minY_Value = _DataPoints.Min(e => e.Y) * ySize;
                 double maxY_Value = _DataPoints.Max(e => e.Y) * ySize;
 
-                double xLoc = ChartArea.X + (minX_Value) - xStart * xSize;
-                double yLoc = ChartArea.Y + ChartArea.Height - (maxY_Value) + yStart * ySize;
-                System.Windows.Rect RBox = new(xLoc - 10, yLoc - 10, (int)(maxX_Value - minX_Value + 20), (int)(maxY_Value - minY_Value + 20));
+                double xLoc = ChartArea.X + minX_Value - xStart * xSize;
+                double yLoc = ChartArea.Y + ChartArea.Height - maxY_Value + yStart * ySize;
+                Rect RBox = new(xLoc - 10, yLoc - 10, (int)(maxX_Value - minX_Value + 20), (int)(maxY_Value - minY_Value + 20));
 
                 if (!ChartArea.IntersectsWith(RBox)) return;
-                System.Windows.Rect RBoxIntersect = System.Windows.Rect.Intersect(RBox, ChartArea);
+                Rect RBoxIntersect = Rect.Intersect(RBox, ChartArea);
 
                 // Draw Bounding box
                 SolidColorBrush BoxFill = new SolidColorBrush(_ColorBoxBackground);
                 if (_showBox)
                 {
-                    BoxFill.Opacity = 0.1; 
+                    BoxFill.Opacity = 0.1;
 
                     Pen BoxPen = new(new SolidColorBrush(_ColorBox), _BoxThickness);
                     dc.DrawRectangle(BoxFill, BoxPen, RBoxIntersect);
@@ -70,14 +71,14 @@ namespace AMControls.Charts
                     //Title
 
                     FormattedText txtFormat = new(Label, System.Globalization.CultureInfo.CurrentCulture,
-                                                      System.Windows.FlowDirection.LeftToRight,
+                                                      FlowDirection.LeftToRight,
                                                       new Typeface(_axisLabelFontFamily, _axisLabelFontStyle, _axisLabelFontWeight, _axisLabelFontStretch),
                                                       _axisLabelFontSize, new SolidColorBrush(_axisLabelFontColor), VisualTreeHelper.GetDpi(canvas).PixelsPerDip);
 
                     LabelBox = new(RBoxIntersect.X + RBoxIntersect.Width - txtFormat.Width - 20, RBoxIntersect.Y - (txtFormat.Height + 6), txtFormat.Width + 20, txtFormat.Height + 6);
                     dc.DrawRectangle(new SolidColorBrush(_ColorBox), BoxPen, LabelBox);
 
-                    System.Windows.Point LabelStart = new(LabelBox.X + (LabelBox.Width - txtFormat.Width) / 2, LabelBox.Y + (LabelBox.Height - txtFormat.Height) / 2);
+                    Point LabelStart = new(LabelBox.X + (LabelBox.Width - txtFormat.Width) / 2, LabelBox.Y + (LabelBox.Height - txtFormat.Height) / 2);
                     dc.DrawText(txtFormat, LabelStart);
                 }
 
@@ -87,12 +88,12 @@ namespace AMControls.Charts
                 List<IDataPoint> dPContext = new();
                 foreach (var pointy in _DataPoints)
                 {
-                    pointy.X_draw = ChartArea.X + (pointy.X * xSize) - xStart * xSize;
-                    pointy.Y_draw = ChartArea.Y + ChartArea.Height - (pointy.Y * ySize) + yStart * ySize;
-                    System.Windows.Rect PBox = new(pointy.X_draw - 2.5, pointy.Y_draw - 2.5, 5, 5);
+                    pointy.X_draw = ChartArea.X + pointy.X * xSize - xStart * xSize;
+                    pointy.Y_draw = ChartArea.Y + ChartArea.Height - pointy.Y * ySize + yStart * ySize;
+                    Rect PBox = new(pointy.X_draw - 2.5, pointy.Y_draw - 2.5, 5, 5);
 
                     if (!ChartArea.IntersectsWith(PBox)) continue;
-                    System.Windows.Rect PBoxIntersect = System.Windows.Rect.Intersect(PBox, ChartArea);
+                    Rect PBoxIntersect = Rect.Intersect(PBox, ChartArea);
                     Draw_DataPoint(dc, pointy, PBoxIntersect);
 
 
@@ -101,7 +102,7 @@ namespace AMControls.Charts
                     {
                         Draw_DataLabel(dc, canvas, pointy, PBox);
 
-                        if (pointy.Selected) dPContext.Add(pointy); 
+                        if (pointy.Selected) dPContext.Add(pointy);
                     }
                 }
 
@@ -112,28 +113,28 @@ namespace AMControls.Charts
                 }
 
             }
-            
+
         }
 
         #region Darwing
 
-        private void Draw_DataPoint(DrawingContext dc, IDataPoint dP, System.Windows.Rect pointRect) 
+        private void Draw_DataPoint(DrawingContext dc, IDataPoint dP, Rect pointRect)
         {
             if (dP.Selected || dP.MouseHover) Draw_SelectedPoint(dc, pointRect);
             else Draw_UnselectedPoint(dc, pointRect);
         }
 
-        private void Draw_SelectedPoint(DrawingContext dc, System.Windows.Rect pointRect) 
+        private void Draw_SelectedPoint(DrawingContext dc, Rect pointRect)
         {
             SolidColorBrush BoxFill = new SolidColorBrush(_ColorBoxBackground);
             BoxFill.Opacity = 0.5;
 
             Pen DotPen = new(new SolidColorBrush(_ColorBox), _PointThickness);
-            System.Windows.Point center = new(pointRect.X + pointRect.Width/2, pointRect.Y + pointRect.Height/2);
+            Point center = new(pointRect.X + pointRect.Width / 2, pointRect.Y + pointRect.Height / 2);
             dc.DrawEllipse(BoxFill, DotPen, center, pointRect.Width, pointRect.Height);
         }
 
-        private void Draw_UnselectedPoint(DrawingContext dc, System.Windows.Rect pointRect)
+        private void Draw_UnselectedPoint(DrawingContext dc, Rect pointRect)
         {
             SolidColorBrush BoxFill = new SolidColorBrush(_ColorBoxBackground);
             BoxFill.Opacity = 0.1;
@@ -142,25 +143,25 @@ namespace AMControls.Charts
             dc.DrawRectangle(BoxFill, DotPen, pointRect);
         }
 
-        private void Draw_DataLabel(DrawingContext dc, Canvas canvas, IDataPoint pointy, System.Windows.Rect pointRect) 
+        private void Draw_DataLabel(DrawingContext dc, Canvas canvas, IDataPoint pointy, Rect pointRect)
         {
             FormattedText DotFormat = new(pointy.Label, System.Globalization.CultureInfo.CurrentCulture,
-                                                  System.Windows.FlowDirection.LeftToRight,
+                                                  FlowDirection.LeftToRight,
                                                   new Typeface(_dotLabelFontFamily, _dotLabelFontStyle, _dotLabelFontWeight, _dotLabelFontStretch),
                                                   _dotLabelFontSize, new SolidColorBrush(_dotLabelFontColor), VisualTreeHelper.GetDpi(canvas).PixelsPerDip);
 
-            System.Windows.Point DotStart = new(pointRect.X + pointRect.Width, pointRect.Y);
+            Point DotStart = new(pointRect.X + pointRect.Width, pointRect.Y);
             dc.DrawText(DotFormat, DotStart);
         }
 
-        private void Draw_DataPoint_ContextMenu(DrawingContext dc, Canvas canvas, IDataPoint dP) 
+        private void Draw_DataPoint_ContextMenu(DrawingContext dc, Canvas canvas, IDataPoint dP)
         {
             if (dP.ContextMenu == null) return;
-            Point currLoc = new System.Windows.Point(dP.X_draw, dP.Y_draw);
+            Point currLoc = new Point(dP.X_draw, dP.Y_draw);
             Rect conWin = new(currLoc, dP.ContextMenu.SizeObject);
             Rect objArea = new(0, 0, canvas.ActualWidth, canvas.ActualHeight);
 
-            if (!objArea.Contains(conWin)) 
+            if (!objArea.Contains(conWin))
             {
                 conWin = new(new Point(currLoc.X - dP.ContextMenu.SizeObject.Width, currLoc.Y), dP.ContextMenu.SizeObject);
             }
@@ -182,13 +183,13 @@ namespace AMControls.Charts
 
             if (!objArea.Contains(conWin))
             {
-                conWin = new(new Point(currLoc.X - dP.ContextMenu.SizeObject.Width, 
+                conWin = new(new Point(currLoc.X - dP.ContextMenu.SizeObject.Width,
                                        currLoc.Y - dP.ContextMenu.SizeObject.Height), dP.ContextMenu.SizeObject);
             }
 
             if (!objArea.Contains(conWin))
             {
-                conWin = new(new Point(currLoc.X - dP.ContextMenu.SizeObject.Width, 
+                conWin = new(new Point(currLoc.X - dP.ContextMenu.SizeObject.Width,
                                        currLoc.Y + dP.ContextMenu.SizeObject.Height), dP.ContextMenu.SizeObject);
             }
 
@@ -213,26 +214,26 @@ namespace AMControls.Charts
 
         public void CheckHit(double x, double y)
         {
-            if (LabelBox.Contains(x, y)) 
-            { 
-                _isSelected = true; 
+            if (LabelBox.Contains(x, y))
+            {
+                _isSelected = true;
             }
             else { _isSelected = false; }
 
             bool selectedPoints = false;
             foreach (var item in _DataPoints)
             {
-                if (Check_dataPointHit(x, y, item)) 
+                if (Check_dataPointHit(x, y, item))
                 {
                     selectedPoints = true;
                     item.Selected = true;
                     item.ContextMenu.DoAnimation = true;
-                    this.IsSelected = true;
+                    IsSelected = true;
                 }
                 else item.Selected = false;
             }
 
-            if(selectedPoints)  DataPointSelectionChanged?.Invoke(this, EventArgs.Empty);
+            if (selectedPoints) DataPointSelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public bool Check_MouseHover(double x, double y)
@@ -240,7 +241,7 @@ namespace AMControls.Charts
             bool Result = false;
             foreach (var item in _DataPoints)
             {
-                if (Check_dataPointHit(x, y, item)) 
+                if (Check_dataPointHit(x, y, item))
                 {
                     item.MouseHover = true;
                     Result = true;
@@ -251,17 +252,17 @@ namespace AMControls.Charts
             return Result;
         }
 
-        private bool Check_dataPointHit(double x, double y, IDataPoint dP) 
+        private bool Check_dataPointHit(double x, double y, IDataPoint dP)
         {
-            System.Windows.Rect pointRect = new(dP.X_draw - 5, dP.Y_draw - 5, 10, 10);
-            if (pointRect.Contains(x, y)) 
+            Rect pointRect = new(dP.X_draw - 5, dP.Y_draw - 5, 10, 10);
+            if (pointRect.Contains(x, y))
             {
                 return true;
             }
             return false;
         }
 
-        public List<IDataPoint> Get_Selected_points() 
+        public List<IDataPoint> Get_Selected_points()
         {
             return _DataPoints.FindAll(e => e.Selected == true).ToList();
         }

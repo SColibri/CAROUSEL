@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace AMControls.Charts
+namespace AMControls.Charts.Interfaces
 {
     public interface ILegend
     {

@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using AMControls.Charts.Interfaces;
 
 namespace AMControls.Charts.Scatter
 {
@@ -54,7 +55,7 @@ namespace AMControls.Charts.Scatter
 
 
         // Legend
-        private ILegend _legend = new LegendBox();
+        private ILegend _legend = new Charts.Implementations.LegendBox();
 
         //Options
         private bool _showGrid = true;

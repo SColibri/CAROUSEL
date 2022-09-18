@@ -13,10 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMControls", "AMControls\AM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMControls_Test", "AMControls_Test\AMControls_Test.csproj", "{6661F1E0-A2A7-4E2E-BAE4-CCAB78B12195}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMFramework_Excel", "AMFramework_Excel\AMFramework_Excel.csproj", "{159D2840-40E0-43C0-A079-16EE425FDAE9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMFramework_ClassLibrary", "AMFramework_ClassLibrary\AMFramework_ClassLibrary.csproj", "{7F7EAEC6-DCF2-4B22-8763-FCE9BA30CDB5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,14 +37,6 @@ Global
 		{6661F1E0-A2A7-4E2E-BAE4-CCAB78B12195}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6661F1E0-A2A7-4E2E-BAE4-CCAB78B12195}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6661F1E0-A2A7-4E2E-BAE4-CCAB78B12195}.Release|Any CPU.Build.0 = Release|Any CPU
-		{159D2840-40E0-43C0-A079-16EE425FDAE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{159D2840-40E0-43C0-A079-16EE425FDAE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{159D2840-40E0-43C0-A079-16EE425FDAE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{159D2840-40E0-43C0-A079-16EE425FDAE9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F7EAEC6-DCF2-4B22-8763-FCE9BA30CDB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F7EAEC6-DCF2-4B22-8763-FCE9BA30CDB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F7EAEC6-DCF2-4B22-8763-FCE9BA30CDB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F7EAEC6-DCF2-4B22-8763-FCE9BA30CDB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
