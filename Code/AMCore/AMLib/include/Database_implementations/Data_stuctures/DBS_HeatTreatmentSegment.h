@@ -16,7 +16,7 @@ public:
 	long int IDHeatTreatment{ -1 };
 	long int IDPrecipitationDomain{ -1 };
 	double EndTemperature{ 25 };
-	double TemperatureGradient{ 0 };
+	long double TemperatureGradient{ 0 };
 	double Duration{ 0.0 };
 
 	DBS_HeatTreatmentSegment(IAM_Database* database, int id) :
@@ -35,7 +35,7 @@ public:
 									std::to_string(IDHeatTreatment),
 									std::to_string(IDPrecipitationDomain),
 									std::to_string(EndTemperature),
-									std::to_string(TemperatureGradient),
+									string_manipulators::double_to_string(TemperatureGradient),
 									std::to_string(Duration)};
 		return input;
 	}
@@ -62,7 +62,7 @@ public:
 		IDHeatTreatment = std::stoi(rawData[2]);
 		IDPrecipitationDomain = std::stoi(rawData[3]);
 		EndTemperature = std::stod(rawData[4]);
-		TemperatureGradient = std::stod(rawData[5]);
+		TemperatureGradient = std::stold(rawData[5]);
 		Duration = std::stod(rawData[6]);
 		return 0;
 	}

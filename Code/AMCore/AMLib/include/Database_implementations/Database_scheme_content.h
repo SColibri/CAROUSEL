@@ -457,6 +457,4 @@ namespace AMLIB
 		return out;
 	}
 
-
-
 }

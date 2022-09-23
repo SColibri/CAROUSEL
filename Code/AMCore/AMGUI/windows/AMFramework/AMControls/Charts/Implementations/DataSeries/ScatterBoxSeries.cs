@@ -51,11 +51,13 @@ namespace AMControls.Charts.Implementations.DataSeries
                 double maxX_Value = _DataPoints.Max(e => e.X) * xSize;
                 double minY_Value = _DataPoints.Min(e => e.Y) * ySize;
                 double maxY_Value = _DataPoints.Max(e => e.Y) * ySize;
+                if (minX_Value > maxX_Value || minY_Value > maxY_Value) return;
 
                 double xLoc = ChartArea.X + minX_Value - xStart * xSize;
                 double yLoc = ChartArea.Y + ChartArea.Height - maxY_Value + yStart * ySize;
-                Rect RBox = new(xLoc - 10, yLoc - 10, (int)(maxX_Value - minX_Value + 20), (int)(maxY_Value - minY_Value + 20));
+                Rect RBox = new(xLoc - 10, yLoc - 10, (maxX_Value - minX_Value + 20), (maxY_Value - minY_Value + 20));
 
+                if (RBox.Width == 0 || RBox.Height == 0) return;
                 if (!ChartArea.IntersectsWith(RBox)) return;
                 Rect RBoxIntersect = Rect.Intersect(RBox, ChartArea);
 

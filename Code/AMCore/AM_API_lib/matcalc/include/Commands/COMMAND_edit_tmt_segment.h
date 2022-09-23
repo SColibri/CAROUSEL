@@ -27,12 +27,12 @@ public:
 		if (segment->TemperatureGradient > 0)
 		{
 			_scriptContent += " tm-treatment-name=" + htName + " tm-treatment-segment=. T_end+T_dot segment-end-temperature=" + 
-							    std::to_string(segment->EndTemperature) + " temperature-gradient=" + std::to_string(segment->TemperatureGradient) + "\n";
+							    std::to_string(segment->EndTemperature) + " temperature-gradient=" + string_manipulators::double_to_string(segment->TemperatureGradient) + "\n";
 		}
 		else if (segment->Duration > 0)
 		{
 			_scriptContent += " tm-treatment-name=" + htName + " tm-treatment-segment=. T_end+delta_t segment-end-temperature=" +
-				std::to_string(segment->EndTemperature) + " segment-delta-time=" + std::to_string(segment->Duration) + "\n";
+				std::to_string(segment->EndTemperature) + " segment-delta-time=" + string_manipulators::double_to_string(segment->Duration) + "\n";
 		}
 	}
 

@@ -7975,6 +7975,9 @@
     <None Update="lua\Calculations\Precipitation_Calculations.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="lua\Database\Views.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="lua\Objects\ActivePhases.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

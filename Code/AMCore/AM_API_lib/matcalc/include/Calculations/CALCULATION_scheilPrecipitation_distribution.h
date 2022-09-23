@@ -17,8 +17,7 @@ namespace matcalc
 			// decorator object
 			_calculation = new CALCULATION_scheil(db, mccComm, configuration, scheilConfig, project, pixel_parameters);
 
-
-			// selected phases with P0
+			// Check if data was generated before
 			std::vector<DBS_PrecipitationPhase*> precipitationPhases = pixel_parameters->get_precipitation_phases();
 			bool DataContained = true;
 			for (auto& item : precipitationPhases)
@@ -29,20 +28,7 @@ namespace matcalc
 					if (string_manipulators::find_index_of_keyword(_precipitationPhases.back()->PrecipitateDistribution, "_") != std::string::npos) { DataContained = false; }
 				}
 			}
-
-			for (auto& item : _precipitationPhases)
-			{
-				DBS_Phase tempPhase(db, item->IDPhase);
-				tempPhase.load();
-
-				_commandList.push_back(new COMMAND_create_new_phase(mccComm, configuration, tempPhase.Name, tempPhase.Name + "_S", "precipitate", "(primary)"));
-				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, item->Name, "nucleation-sites=none"));
-
-			}
-
-			_commandList.push_back(new COMMAND_set_start_values(mccComm, configuration));
-			//_commandList.push_back(new COMMAND_step_equilibrium(mccComm, configuration));
-			_commandList.push_back(new COMMAND_load_buffer_state(mccComm, configuration, -1));
+			
 
 			if(DataContained)
 			{
@@ -54,6 +40,19 @@ namespace matcalc
 			}
 			else
 			{
+				for (auto& item : _precipitationPhases)
+				{
+					DBS_Phase tempPhase(db, item->IDPhase);
+					tempPhase.load();
+
+					_commandList.push_back(new COMMAND_create_new_phase(mccComm, configuration, tempPhase.Name, tempPhase.Name + "_S", "precipitate", "(primary)"));
+					_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, item->Name, "nucleation-sites=none"));
+
+				}
+
+				//_commandList.push_back(new COMMAND_set_start_values(mccComm, configuration));
+				_commandList.push_back(new COMMAND_step_equilibrium(mccComm, configuration));
+				_commandList.push_back(new COMMAND_load_buffer_state(mccComm, configuration, -1));
 				Add_calculation_commands(db, mccComm, configuration, scheilConfig, project, pixel_parameters);
 			}
 

@@ -121,6 +121,15 @@ namespace AMFramework
             MainTabControl.Items.Refresh();
         }
 
+        private void RibbonButton_TableView_Click(object sender, RoutedEventArgs e) 
+        {
+            Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
+
+            controllerMain.Add_Tab_Item(viewModel.Get_DataGridTable(controllerMain.Get_socket()));
+            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+            MainTabControl.Items.Refresh();
+        }
+
         private void RibbonMenuItem_Click_loadApi(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();

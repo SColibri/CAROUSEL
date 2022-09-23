@@ -16,6 +16,7 @@
 #include "COMMAND_initialize_core.h"
 #include "COMMAND_load_buffer_state.h"
 #include "COMMAND_read_thermodynamic_database.h"
+#include "COMMAND_remove_phase.h"
 #include "COMMAND_rename_current_buffer.h"
 #include "COMMAND_run_script.h"
 #include "COMMAND_run_step_equilibrium.h"

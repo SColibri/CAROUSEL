@@ -9,6 +9,7 @@ using System.Windows.Controls.Ribbon;
 using System.Windows.Data;
 using System.Windows;
 using System.Windows.Input;
+using AMFramework.Core;
 
 namespace AMFramework.Controller
 {
@@ -63,6 +64,11 @@ namespace AMFramework.Controller
         }
 
         public Controller.Controller_Plot get_plot_Controller() { return _Plot; }
+
+        public ref IAMCore_Comm Get_socket() 
+        {
+            return ref _coreSocket;
+        }
 
         #endregion
 

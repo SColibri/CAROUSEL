@@ -68,7 +68,7 @@
                         <RibbonMenuItem  Header="ssh" KeyTip="S"/>
                     </RibbonMenuButton>
                     <RibbonButton  Label="tables" 
-                                   KeyTip="C"
+                                   KeyTip="C" Click="RibbonButton_TableView_Click"
                                    SmallImageSource="Resources/Icons/tablerIcons/table.png"/>
                 </RibbonGroup>
 

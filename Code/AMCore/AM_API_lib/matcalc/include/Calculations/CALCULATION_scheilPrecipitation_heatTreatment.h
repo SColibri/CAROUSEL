@@ -2,6 +2,7 @@
 #include <vector>
 #include "CALCULATIONS_decorator.h"
 #include "CALCULATION_scheilPrecipitation_distribution.h"
+#include "../Commands/COMMAND_ALL.h"
 #include "../../../interfaces/IAM_DBS.h"
 #include "../../../include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
 
@@ -50,7 +51,8 @@ namespace matcalc
 				DBS_Phase tempPhase(db, tempRef.IDPhase);
 				tempPhase.load();
 
-				//_commandList.push_back(new COMMAND_create_new_phase(mccComm, configuration, &tempRef, tempPhase.Name, "precipitate", "(primary)")); Commented because this phase is already declared 
+				//_commandList.push_back(new COMMAND_remove_phase(mccComm, configuration, tempRef.Name));
+				_commandList.push_back(new COMMAND_create_new_phase(mccComm, configuration, tempPhase.Name, tempPhase.Name, "precipitate", "(primary)"));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " number-of-size-classes=" + std::to_string(tempRef.NumberSizeClasses)));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " nucleation-sites=" + tempRef.NucleationSites));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " restrict-nucleation-to-precipitation-domain=" + pDomain.Name));
@@ -75,9 +77,6 @@ namespace matcalc
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " number-of-size-classes=" + std::to_string(tempRef.NumberSizeClasses)));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " nucleation-sites=" + tempRef.NucleationSites));
 				_commandList.push_back(new COMMAND_set_precipitation_parameter(mccComm, configuration, tempRef.Name, " restrict-nucleation-to-precipitation-domain=" + pDomain.Name));
-
-				std::string filename = ((CALCULATION_scheilPrecipitation_distribution*)_calculation)->Get_filename_from_phasename(tempRef.Name);
-				_commandList.push_back(new COMMAND_import_precipitate_distribution(mccComm, configuration, tempRef.Name, filename));
 			}
 
 #pragma endregion

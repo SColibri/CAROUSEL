@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AMFramework.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -108,6 +109,29 @@ namespace AMFramework
             
 
             Views.Project_Map.Project_Map pM = new(plotController);
+
+            result.Content = pM;
+            result.Tag = new Components.Charting.Charting_ViewModel();
+
+            return result;
+        }
+
+        public TabItem Get_DataGridTable(IAMCore_Comm comm)
+        {
+            TabItem result = new TabItem();
+
+            string headerTitle = "Data views";
+            Uri ImageUri = null; //TODO add lua Icon here
+            if (headerTitle.Length == 0)
+            {
+                result.Header = get_TabHeader("Project Map", ImageUri);
+            }
+            else
+            {
+                result.Header = get_TabHeader(headerTitle, ImageUri);
+            }
+
+            Views.Tables.TableView pM = new(comm);
 
             result.Content = pM;
             result.Tag = new Components.Charting.Charting_ViewModel();

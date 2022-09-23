@@ -9,7 +9,7 @@ public:
 	COMMAND_step_equilibrium(IPC_winapi* mccComm, AM_Config* configuration) :
 		COMMAND_abstract(mccComm, configuration)
 	{
-		_scriptContent = _command;
+		_scriptContent = _command + "\n";
 	}
 
 	virtual std::string DoAction() override

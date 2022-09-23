@@ -12,6 +12,7 @@ using AMControls.Charts;
 using AMControls.Charts.Interfaces;
 using AMControls.Charts.Implementations;
 using AMControls.Charts.Implementations.DataSeries;
+using AMFramework.Components.Charting.DataPlot;
 
 namespace AMFramework.Controller
 {
@@ -362,50 +363,26 @@ namespace AMFramework.Controller
         { 
             List<IDataSeries> Result = new();
 
-            string Query = "SELECT DISTINCT IDHeatTreatment FROM PrecipitateSimulationData ORDER BY IDHeatTreatment DESC";
-            string RawData = _AMCore_Socket.run_lua_command("database_table_custom_query", Query);
+            string Query_T = "SELECT DISTINCT Name FROM PrecipitationPhase;";
+            string RawData_T = _AMCore_Socket.run_lua_command("database_table_custom_query", Query_T);
 
-            List<string> RowData = RawData.Split("\n").ToList();
+            List<string> RowData = RawData_T.Split("\n").ToList();
             if (RowData.Count == 0) return Result;
 
             foreach (string row in RowData)
             {
-                Query = "SELECT DISTINCT IDPrecipitationPhase, IDHeatTreatment FROM PrecipitateSimulationData WHERE IDHeatTreatment = " + row.Replace(",","");
-                RawData = _AMCore_Socket.run_lua_command("database_table_custom_query", Query);
+                if (row.Length == 0) continue;
 
-                List<string> RowData_L2 = RawData.Split("\n").ToList();
-                if (RowData_L2.Count == 0) continue;
+                ScatterBoxSeries sbs = new();
+                DataPlot_HeatTreatmentSimulations dplot = new DataPlot_HeatTreatmentSimulations(_AMCore_Socket);
+                dplot.X_Data_Option(2);
+                dplot.Y_Data_Option(0);
+                dplot.Set_where_clause("PrecipitationPhase = \"" + row.Replace(",", "").Trim() + "\"");
+                sbs.Label = row.Replace(",", "").Trim();
 
-                foreach (string r02 in RowData_L2)
-                {
-                    List<string> r02_s = r02.Split(",").ToList();
-                    Query = "SELECT PrecipitateSimulationData.*, HeatTreatment.Name, PrecipitationPhase.Name  FROM PrecipitateSimulationData INNER JOIN HeatTreatment ON HeatTreatment.ID = PrecipitateSimulationData.IDHeatTreatment INNER JOIN PrecipitationPhase ON PrecipitationPhase.ID = PrecipitateSimulationData.IDPrecipitationPhase WHERE PrecipitateSimulationData.IDHeatTreatment = " + row.Replace(",", "") + " AND PrecipitateSimulationData.IDPrecipitationPhase = " + r02_s[0] + "  ORDER BY ID DESC LIMIT 1";
-                    RawData = _AMCore_Socket.run_lua_command("database_table_custom_query", Query);
-
-                    List<string> RowData_L3 = RawData.Split("\n").ToList();
-                    if (RowData_L3.Count == 0) continue;
-
-                    List<string> cell = RowData_L3[0].Split(",").ToList();
-                    if (cell.Count < 8) continue;
-
-                    IDataSeries? SBS = Result.Find(e => e.Label.CompareTo(cell[7]) == 0);
-                    if (SBS == null)
-                    {
-                        SBS = new ScatterBoxSeries() { Label = cell[7] };
-                        Result.Add(SBS);
-                    }
-
-                    double phaseFraction = 0;
-                    double meanRadius = 0;
-
-                    if (!double.TryParse(cell[4], out phaseFraction)) continue;
-                    if (!double.TryParse(cell[6], out meanRadius)) continue;
-                    if (meanRadius == 0 && phaseFraction == 0) continue;
-
-                    DataPoint point = new DataPoint() { X = meanRadius, Y = phaseFraction, Label = cell[8] };
-                    SBS.DataPoints.Add(point);
-                }
-
+                sbs.DataPoints = dplot.DataPoints;
+                if (sbs.DataPoints.Count == 0) continue;
+                Result.Add(sbs);
             }
 
             return Result;

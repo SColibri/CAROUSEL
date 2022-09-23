@@ -1,5 +1,8 @@
 ﻿-- AMFramework objects
 -- require"json.json"
+
+require"Database.Views"
+
 require"Objects.AM_StringManipulators"
 require"Objects.Configuration"
 require"Objects.Element"

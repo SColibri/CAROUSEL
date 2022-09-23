@@ -44,7 +44,7 @@ namespace main_setup
 		// when passing the argument to matcalc.
 		configuration.set_ThermodynamicDatabase_path("C:/Program Files/MatCalc 6/database/thermodynamic/ME-Al1.2.tdb");
 		configuration.set_PhysicalDatabase_path("C:/Program Files/MatCalc 6/database/physical/physical_data.pdb");
-		configuration.set_MobilityDatabase_path("C:/Program Files/MatCalc 6/database/diffusion/mc_al.ddb");
+		configuration.set_MobilityDatabase_path("C:/Program Files/MatCalc 6/database/diffusion/ME-Al_rel1.0e.ddb");
 
 		char pBuf[256];
 		size_t len = sizeof(pBuf);

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace AMFramework.Components.Charting
 {
-    internal class Charting_ViewModel: Interfaces.ViewModel_Interface
+    internal class Charting_ViewModel: AMFramework.Interfaces.ViewModel_Interface
     {
 
         #region Interface
