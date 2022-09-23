@@ -119,7 +119,7 @@
 
 	void AM_Config::set_ThermodynamicDatabase_path(std::string filename)
 	{
-		_thermodynamic_database_path = filename;
+		_thermodynamic_database_path = string_manipulators::trim_whiteSpace(filename);
 	}
 
 	const std::string& AM_Config::get_PhysicalDatabase_path()
@@ -129,7 +129,7 @@
 
 	void AM_Config::set_PhysicalDatabase_path(std::string filename)
 	{
-		_physical_database_path = filename;
+		_physical_database_path = string_manipulators::trim_whiteSpace(filename);
 	}
 
 	const std::string& AM_Config::get_MobilityDatabase_path()
