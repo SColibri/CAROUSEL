@@ -364,6 +364,9 @@ protected:
 		add_new_function(state, "configuration_set_physical_database_path", "string", "configuration_set_physical_database_path <string filename>", Bind_configuration_setPhysicalDatabasePath);
 		add_new_function(state, "configuration_get_mobility_database_path", "string", "configuration_get_mobility_database_path", Bind_configuration_getMobilityDatabasePath);
 		add_new_function(state, "configuration_set_mobility_database_path", "string", "configuration_set_mobility_database_path <string filename>", Bind_configuration_setMobilityDatabasePath);
+		add_new_function(state, "configuration_set_max_thread_number", "string", "configuration_set_max_thread_number <int thread number>", Bind_configuration_setMaxThreadNumber);
+		add_new_function(state, "configuration_get_max_thread_number", "int", "configuration_get_max_thread_number", Bind_configuration_getMaxThreadNumber);
+		add_new_function(state, "configuration_save", "string", "configuration_save", Bind_configuration_save);
 
 		//-------- SYSTEM
 		add_new_function(state, "core_cancel_operation", "void", "core_cancel_operation", Bind_CancelCalculations, "CoreMethods||CancelOperation");
@@ -881,6 +884,56 @@ protected:
 			lua_pushstring(state, "Error; no parameters");
 		}
 
+		return 1;
+	}
+
+	/// <summary>
+	/// sets max thread Number
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_setMaxThreadNumber(lua_State* state)
+	{
+		std::vector<std::string> parameters = get_parameters(state);
+
+		if (parameters.size() > 0)
+		{
+			std::string parameter = IAM_Database::csv_join_row(parameters, " ");
+			_configuration->set_max_thread_number(std::stoi(parameter));
+			_configuration->save();
+
+			lua_pushstring(state, "OK");
+		}
+		else
+		{
+			lua_pushstring(state, "Bind_configuration_setMaxThreadNumber Error; no parameters");
+		}
+
+		return 1;
+	}
+
+	/// <summary>
+	/// Returns the max number of threads to use for calculations
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_getMaxThreadNumber(lua_State* state)
+	{
+		std::string out = std::to_string(_configuration->get_max_thread_number());
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	/// <summary>
+	/// Save configuration data
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_configuration_save(lua_State* state)
+	{
+		_configuration->save();
+		lua_pushstring(state, "OK");
 		return 1;
 	}
 
