@@ -1550,11 +1550,6 @@ private:
 		AM_Project Project(_dbFramework->get_database(), _configuration, std::stoi(parameters[0]));
 		std::vector<AM_pixel_parameters*> pixel_parameters = Project.get_singlePixel_Cases();
 
-		// Get pointers for all cases
-		int start = pixel_parameters[0]->get_caseID();
-		int end = pixel_parameters[pixel_parameters.size() -1]->get_caseID();
-		int range = end - start;
-
 		// Create communication to mcc for each thread
 		std::vector<int> threadWorkload = AMThreading::thread_workload_distribution(_configuration->get_max_thread_number(), pixel_parameters.size());
 		std::wstring externalPath = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(_configuration->get_apiExternal_path() + "/mcc.exe");
