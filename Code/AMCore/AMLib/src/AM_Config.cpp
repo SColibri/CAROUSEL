@@ -139,7 +139,7 @@
 
 	void AM_Config::set_MobilityDatabase_path(std::string filename)
 	{
-		_mobility_database_path = filename;
+		_mobility_database_path = string_manipulators::trim_whiteSpace(filename);
 	}
 
 	const int& AM_Config::get_max_thread_number()

@@ -472,6 +472,27 @@ std::vector<DBS_PrecipitationPhase*>& AM_pixel_parameters::get_precipitation_pha
 	return _precipitationPhases;
 }
 
+std::vector<DBS_HeatTreatment*>& AM_pixel_parameters::get_heat_treatments()
+{
+	if (_case == nullptr) return std::vector < DBS_HeatTreatment*>();
+	_heatTreatments.clear();
+
+	AM_Database_Datatable DTable(_db, &AMLIB::TN_HeatTreatment());
+	DTable.load_data(AMLIB::TN_HeatTreatment().columnNames[1] + " = \'" + std::to_string(_case->id()) + "\'");
+
+	if (DTable.row_count() > 0)
+	{
+		for (int n1 = 0; n1 < DTable.row_count(); n1++)
+		{
+			std::vector<std::string> rowData = DTable.get_row_data(n1);
+			_heatTreatments.push_back(new DBS_HeatTreatment(_db, -1));
+			_heatTreatments.back()->load(rowData);
+		}
+	}
+
+	return _heatTreatments;
+}
+
 #pragma endregion
 
 #pragma endregion

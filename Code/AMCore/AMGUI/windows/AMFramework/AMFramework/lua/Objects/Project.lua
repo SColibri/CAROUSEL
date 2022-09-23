@@ -357,3 +357,9 @@ function Project:get_active_phases() --@Description Using scheil method returns 
     if self.ID == -1 then error("get_active_phases: Project does not exist! save the project before doing any calculations!") end
     get_active_phases(self.ID)
 end
+
+-- Calculation heat treatments
+function Project:get_heat_treatments() --@Description Runs heat treatment calculations for all cases that have heat treatments
+    if self.ID == -1 then error("get_heat_treatments: Project does not exist! save the project before doing any calculations!") end
+    project_calculate_heat_treatments(self.ID)
+end

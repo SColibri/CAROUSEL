@@ -1537,6 +1537,95 @@ private:
 		lua_pushstring(state, outCommand_1.c_str());
 		return 1;
 	}
+
+	static int Bind_SPC_run_all_Heat_treatments(lua_State* state)
+	{
+		_luaBUFFER = "";
+
+		// Check and get parameters
+		if (check_parameters(state, lua_gettop(state), 1, "usage: <ID project>") != 0) return 1;
+		std::vector<std::string> parameters = get_parameters(state);
+
+		// Initialize AM_project object, this is used for checking if cases belong to the project
+		AM_Project Project(_dbFramework->get_database(), _configuration, std::stoi(parameters[0]));
+		std::vector<AM_pixel_parameters*> pixel_parameters = Project.get_singlePixel_Cases();
+
+		// Get pointers for all cases
+		int start = pixel_parameters[0]->get_caseID();
+		int end = pixel_parameters[pixel_parameters.size() -1]->get_caseID();
+		int range = end - start;
+
+		// Create communication to mcc for each thread
+		std::vector<int> threadWorkload = AMThreading::thread_workload_distribution(_configuration->get_max_thread_number(), pixel_parameters.size());
+		std::wstring externalPath = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(_configuration->get_apiExternal_path() + "/mcc.exe");
+		std::vector<IPC_winapi*> mcc_comms;
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
+		{
+			mcc_comms.push_back(new IPC_winapi(externalPath));
+			mcc_comms[n1]->set_endflag("MC:");
+			runVectorCommands(std::vector<string>{API_Scripting::script_initialize_core()}, mcc_comms[n1]);
+		}
+
+		_luaBUFFER = "";
+		// define the parallel function
+		auto funcStep = [](IPC_winapi* mccComm, std::vector<AM_pixel_parameters*> PixelList, AM_Project* projectM)
+		{
+			for (AM_pixel_parameters* pixel_parameters : PixelList)
+			{
+				std::vector<DBS_HeatTreatment* > htList = pixel_parameters->get_heat_treatments();
+
+				for (DBS_HeatTreatment* ht : htList)
+				{
+					matcalc::CALCULATION_scheilPrecipitation_heatTreatment hT_calc(_dbFramework->get_database(), mccComm, _configuration, projectM, pixel_parameters, ht);
+					std::string calcOut = hT_calc.Calculate();
+					calcOut += "\n\n\n COMMANDS \n\n\n" + hT_calc.Get_script_text();
+
+					char buffer[80];
+
+					time_t rTime;
+					struct tm* timeinfo;
+					time(&rTime);
+					timeinfo = localtime(&rTime);
+					strftime(buffer, 80, "%H%M%S%m%Y", timeinfo);
+
+					std::string filename = _configuration->get_working_directory() + "/Logs/HeatTreatment__run_kinetic_simulation_" + buffer + ht->Name + ".txt";
+					string_manipulators::write_to_file(filename, calcOut);
+				}
+				
+			}
+		};
+
+		int Index = 0;
+		std::vector<std::thread> threadList;
+		for (int n1 = 0; n1 < threadWorkload.size(); n1++)
+		{
+			std::vector<AM_pixel_parameters*> tempVector(pixel_parameters.begin() + Index, pixel_parameters.begin() + Index + threadWorkload[n1]);
+			threadList.push_back(std::thread(funcStep, mcc_comms[n1], tempVector, &Project));
+			Index += threadWorkload[n1];
+		}
+
+		for (int n1 = 0; n1 < threadList.size(); n1++)
+		{
+			threadList[n1].join();
+		}
+
+		for (int n1 = 0; n1 < threadList.size(); n1++)
+		{
+			mcc_comms[n1]->send_command("exit\r\n");
+			delete mcc_comms[n1];
+		}
+		mcc_comms.clear();
+
+		std::string outCommand_1 = _luaBUFFER;
+		if (_cancelCalculations)
+		{
+			Core_CancelExecution(state);
+			_cancelCalculations = false;
+			outCommand_1 = "Operation was cancelled";
+		}
+		lua_pushstring(state, outCommand_1.c_str());
+		return 1;
+	}
 #pragma endregion
 
 #pragma endregion

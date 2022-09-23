@@ -226,6 +226,13 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	std::vector<DBS_PrecipitationPhase* >& get_precipitation_phases();
+
+	/// <summary>
+	/// returns heat treatments list
+	/// </summary>
+	/// <returns></returns>
+	std::vector<DBS_HeatTreatment* >& get_heat_treatments();
+
 #pragma endregion
 
 #pragma endregion
@@ -449,6 +456,7 @@ private:
 	std::vector<DBS_SelectedPhases*> _selectedPhases;
 	std::vector<DBS_PrecipitationDomain*> _precipitationDomains;
 	std::vector<DBS_PrecipitationPhase*> _precipitationPhases;
+	std::vector<DBS_HeatTreatment*> _heatTreatments;
 
 };
 /** @}*/
