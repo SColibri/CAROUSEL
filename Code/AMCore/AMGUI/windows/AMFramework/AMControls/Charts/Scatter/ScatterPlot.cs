@@ -146,8 +146,8 @@ namespace AMControls.Charts.Scatter
             if (axisObject != null)
             {
                 // get axis width
-                int axis_width = (int)(this.ActualWidth - _xAxis_xLocation - _yMargin);
-                int axis_height = MajorTickSize;
+                double axis_width = (this.ActualWidth - _xAxis_xLocation - _yMargin);
+                double axis_height = MajorTickSize;
 
                 // Draw axis Label
                 FormattedText labelFormat = new(axisObject.Name, System.Globalization.CultureInfo.CurrentCulture,
@@ -160,7 +160,7 @@ namespace AMControls.Charts.Scatter
                 dc.DrawText(labelFormat, LabelStart);
 
                 // Set Bounds of axe
-                axisObject.Bounds = new System.Drawing.Rectangle(new System.Drawing.Point((int)(_xAxis_xLocation), (int)(this.ActualHeight - (_yAxis_yLocation))), new System.Drawing.Size(axis_width, axis_height));
+                axisObject.Bounds = new System.Windows.Rect(new System.Windows.Point((_xAxis_xLocation), (this.ActualHeight - (_yAxis_yLocation))), new System.Windows.Size(axis_width, axis_height));
                 _chartArea.X = axisObject.Bounds.X;
                 _chartArea.Width = axisObject.Bounds.Width;
 
@@ -229,7 +229,7 @@ namespace AMControls.Charts.Scatter
                 dc.Pop();
 
                 // Set Bounds of axe
-                axisObject.Bounds = new System.Drawing.Rectangle(new System.Drawing.Point((int)(_xAxis_xLocation), (int)(_yMargin)), new System.Drawing.Size(axis_width, axis_height));
+                axisObject.Bounds = new System.Windows.Rect(new System.Windows.Point((_xAxis_xLocation), (_yMargin)), new System.Windows.Size(axis_width, axis_height));
                 _chartArea.Y = axisObject.Bounds.Y;
                 _chartArea.Height = axisObject.Bounds.Height;
 
@@ -460,7 +460,7 @@ namespace AMControls.Charts.Scatter
                 // check if over a data point
                 for (int i = 0; i < _series.Count; i++) 
                 {
-                    bool tempRes = _series[i].Check_MouseHover(mouseLocation.X, mouseLocation.Y);
+                    bool tempRes = _series[i].Mouse_Hover(mouseLocation.X, mouseLocation.Y);
                     if (tempRes) doInvalidate = true;
                 }
 
@@ -518,7 +518,7 @@ namespace AMControls.Charts.Scatter
                     continue;
                 }
 
-                item.CheckHit(mousePos.X, mousePos.Y);
+                item.Mouse_LeftButton_Down(mousePos.X, mousePos.Y);
 
                 if (item.IsSelected) 
                 {

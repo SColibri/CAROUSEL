@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AMControls.Charts.Interfaces
 {
-    public interface IAxes : IObjectInteraction
+    public interface IAxes : IObjectInteraction, IDrawable
     {
         /// <summary>
         /// Name of the axis
@@ -22,12 +22,6 @@ namespace AMControls.Charts.Interfaces
         /// </summary>
         /// <returns></returns>
         public double MaxValue { get; set; }
-
-        /// <summary>
-        /// Visibility flag
-        /// </summary>
-        /// <returns></returns>
-        public bool IsVisible();
 
         /// <summary>
         /// Linear interval

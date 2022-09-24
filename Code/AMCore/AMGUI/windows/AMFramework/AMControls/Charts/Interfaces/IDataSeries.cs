@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AMControls.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,18 @@ using System.Windows.Media;
 
 namespace AMControls.Charts.Interfaces
 {
-    public interface IDataSeries
+    public interface IDataSeries: IDrawable, IObjectInteraction
     {
-        //Draw data series in bounding box
+        /// <summary>
+        /// Draws data into bounding box in canvas draw space
+        /// </summary>
+        /// <param name="dc">Canvas drawingcontext</param>
+        /// <param name="canvas">Canvas object, used for DPI awerness in text drawing</param>
+        /// <param name="ChartArea">Plotting area (without axes)</param>
+        /// <param name="xSize">x step size</param>
+        /// <param name="ySize">y step size</param>
+        /// <param name="xStart">x start position</param>
+        /// <param name="yStart">y start position</param>
         public void Draw(DrawingContext dc, Canvas canvas, System.Windows.Rect ChartArea, double xSize, double ySize, double xStart, double yStart);
 
         /// <summary>
@@ -27,28 +37,6 @@ namespace AMControls.Charts.Interfaces
         /// Series label
         /// </summary>
         public string Label { get; set; }
-
-        /// <summary>
-        /// Series is selected
-        /// </summary>
-        public bool IsSelected { get; set; }
-
-        /// <summary>
-        /// Series visibility
-        /// </summary>
-        public bool IsVisible { get; set; }
-
-        /// <summary>
-        /// Action after mouse hit
-        /// </summary>
-        public void CheckHit(double x, double y);
-
-        /// <summary>
-        /// Action when hovering on object
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        public bool Check_MouseHover(double x, double y);
 
         /// <summary>
         /// Set plot color

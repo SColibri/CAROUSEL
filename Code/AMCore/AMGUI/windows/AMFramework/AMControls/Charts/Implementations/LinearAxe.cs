@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Controls;
+using System.Windows.Media;
 using AMControls.Charts.Interfaces;
+using AMControls.Interfaces.Implementations;
 
 namespace AMControls.Charts.Implementations
 {
-    public class LinearAxe : IAxes
+    public class LinearAxe : DrawObject_Abstract, IAxes
     {
         private string _Name = "";
         private double _MinValue = 0;
@@ -66,11 +69,7 @@ namespace AMControls.Charts.Implementations
 
         #endregion
         #region Implementation
-        public bool IsVisible()
-        {
-            return _IsVisible;
-        }
-
+        // IAxes 
         public double MaxValue { get { return _MaxValue; } set { _MaxValue = value; Check_minmax_values(); } }
 
         public double MinValue { get { return _MinValue; } set { _MinValue = value; Check_minmax_values(); } }
@@ -87,19 +86,34 @@ namespace AMControls.Charts.Implementations
         public IAxes.Orientation AxisOrientation { get; set; }
         public int Ticks { get { return _ticks; } set { _ticks = value; } }
 
-        // IObjectInteraction
-        public Rectangle Bounds { get { return _Bounds; } set { _Bounds = value; } }
-
-        public bool IsInside(int x, int y)
-        {
-            Point LocationPoint = new(x, y);
-            return Bounds.Contains(LocationPoint);
-        }
-
+        // IDrawable
         public string IntervalNotation()
         {
             return _IntervalNotation;
         }
+
+        public override void Mouse_Hover_Action(double x, double y)
+        {
+            // Do nothing
+        }
+
+        public override void Mouse_RightButton_Action(double x, double y)
+        {
+            // Do nothing
+        }
+
+        public override void Mouse_LeftButton_Action(double x, double y)
+        {
+            // Do nothing
+        }
+
+        public override void Draw(DrawingContext dc, Canvas canvas)
+        {
+            // Do nothing
+        }
+
+        
+
 
         #endregion
     }

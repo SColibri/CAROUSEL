@@ -7,15 +7,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using AMControls.Charts.Implementations.DataPointContextMenu;
 using AMControls.Charts.Interfaces;
 
 namespace AMControls.Charts.DataPointContextMenu
 {
-    public class DataPoint_ContextMenu_Text : IDataPoint_ContextMenu
+    public class DataPoint_ContextMenu_Text : DataPoint_ContextMenu_DecoratorAbstract
     {
-        private Point _location;
-        private Size _sizeObject;
-        private bool _doAnimation;
         private string _title = "No title";
 
         // Title font
@@ -26,53 +24,18 @@ namespace AMControls.Charts.DataPointContextMenu
         private System.Windows.FontStretch _titleFontStretch = System.Windows.FontStretches.Normal;
         private Color _titleFontColor = Colors.Black;
 
-        public DataPoint_ContextMenu_Text() 
+        public DataPoint_ContextMenu_Text()
         {
-            dataPoint_ContextMenu = new DataPoint_BaseContextMenu();
-            SizeObject = new(150,150);
-            dataPoint_ContextMenu.SizeObject = SizeObject;
+            DataPoint_ContextMenu = new DataPoint_BaseContextMenu();
+            SizeObject = new(150, 150);
+            DataPoint_ContextMenu.SizeObject = SizeObject;
         }
 
-        public IDataPoint_ContextMenu dataPoint_ContextMenu;
-        public Point Location 
-        { 
-            get { return _location; } 
-            set 
-            { 
-                _location = value;
-                dataPoint_ContextMenu.Location = value;
-            }
-        }
-
-        public Size SizeObject 
-        { 
-            get { return _sizeObject; } 
-            set 
-            { 
-                _sizeObject = value;
-                dataPoint_ContextMenu.SizeObject = value;
-            } 
-        }
-
-        public void CheckHit(double x, double y)
-        {
-            dataPoint_ContextMenu.CheckHit(x, y);
-            throw new NotImplementedException();
-        }
-
-        public void Draw(DrawingContext dc, Canvas canvas)
-        {
-            dataPoint_ContextMenu.Draw(dc, canvas);
-            Draw_Header(dc, canvas);
-
-            DoAnimation = false;
-        }
-
-        private void Draw_Header(DrawingContext dc, Canvas canvas) 
+        private void Draw_Header(DrawingContext dc, Canvas canvas)
         {
             SolidColorBrush titleBrush = new SolidColorBrush(_titleFontColor);
 
-            if (DoAnimation) 
+            if (DoAnimation)
             {
                 DoubleAnimation tileTextAnimation = new(titleBrush.Opacity, new Duration(TimeSpan.FromMilliseconds(800)))
                 { From = 0, To = 1 };
@@ -99,26 +62,52 @@ namespace AMControls.Charts.DataPointContextMenu
                             sPoint, sAnim.CreateClock(),
                             sPoint, eAnim.CreateClock());
             }
-            else 
+            else
             {
                 dc.DrawLine(new Pen(new SolidColorBrush(Colors.DimGray), 0.5), sPoint, ePoint);
             }
-            
-            System.Windows.Point textStart = new(titleBox.X + (titleBox.Width - DotFormat.Width) / 2, 
+
+            System.Windows.Point textStart = new(titleBox.X + (titleBox.Width - DotFormat.Width) / 2,
                                                  titleBox.Y + (titleBox.Height - DotFormat.Height) / 2);
             dc.DrawText(DotFormat, textStart);
-            
+
         }
 
-        public bool DoAnimation
+        #region Implementations
+
+        #region DataPoint_ContextMenu_Abstract
+        public override void Draw(DrawingContext dc, Canvas canvas)
         {
-            get { return _doAnimation; }
-            set 
-            {
-                _doAnimation = value;
-                dataPoint_ContextMenu.DoAnimation = value;
-            }
+            DataPoint_ContextMenu?.Draw(dc, canvas);
+            Draw_Header(dc, canvas);
+
+            DoAnimation = false;
         }
+
+        public override void Mouse_Hover_Action(double x, double y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Mouse_LeftButton_Action(double x, double y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Mouse_RightButton_Action(double x, double y)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IInteractionObject
+
+        #endregion
+
+        
+
+        #endregion
 
         public string Title 
         {
@@ -128,5 +117,7 @@ namespace AMControls.Charts.DataPointContextMenu
                 _title = value;
             } 
         }
+
+
     }
 }

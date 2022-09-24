@@ -1,29 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using AMControls.Charts.Interfaces;
+using AMControls.Interfaces.Implementations;
 
 namespace AMControls.Charts.Implementations.DataSeries
 {
-    public class ScatterBoxSeries : IDataSeries
+    public class ScatterBoxSeries : DataSeries_Abstract
     {
         private static int IndexCount = 0;
 
-        private List<IDataPoint> _DataPoints = new();
         private Color _ColorBox = Colors.Black;
         private Color _ColorBoxBackground = Colors.Black;
         private int _BoxThickness = 2;
         private int _PointThickness = 2;
-        private string _label = "Series";
-        private bool _isSelected = false;
-        private bool _isVisible = true;
         private bool _showBox = false;
-        private int _index = 0;
 
         private FontFamily _axisLabelFontFamily = new("Lucida Sans");
         private int _axisLabelFontSize = 9;
@@ -41,25 +38,30 @@ namespace AMControls.Charts.Implementations.DataSeries
 
         public Rect LabelBox { get; set; }
 
-        public ScatterBoxSeries() { _index = IndexCount++; }
+        public ScatterBoxSeries() { Index = IndexCount++; }
 
-        public void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, double xSize, double ySize, double xStart, double yStart)
+        public override void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, double xSize, double ySize, double xStart, double yStart)
         {
-            if (_DataPoints.Count > 0 && _isVisible == true)
+            if (DataPoints.Count > 0 && IsVisible == true)
             {
-                double minX_Value = _DataPoints.Min(e => e.X) * xSize;
-                double maxX_Value = _DataPoints.Max(e => e.X) * xSize;
-                double minY_Value = _DataPoints.Min(e => e.Y) * ySize;
-                double maxY_Value = _DataPoints.Max(e => e.Y) * ySize;
+                double minX_Value = DataPoints.Min(e => e.X) * xSize;
+                double maxX_Value = DataPoints.Max(e => e.X) * xSize;
+                double minY_Value = DataPoints.Min(e => e.Y) * ySize;
+                double maxY_Value = DataPoints.Max(e => e.Y) * ySize;
                 if (minX_Value > maxX_Value || minY_Value > maxY_Value) return;
 
                 double xLoc = ChartArea.X + minX_Value - xStart * xSize;
                 double yLoc = ChartArea.Y + ChartArea.Height - maxY_Value + yStart * ySize;
                 Rect RBox = new(xLoc - 10, yLoc - 10, (maxX_Value - minX_Value + 20), (maxY_Value - minY_Value + 20));
+                Bounds = RBox;
 
                 if (RBox.Width == 0 || RBox.Height == 0) return;
                 if (!ChartArea.IntersectsWith(RBox)) return;
                 Rect RBoxIntersect = Rect.Intersect(RBox, ChartArea);
+
+                // Background Dots
+                SolidColorBrush BackgroundSelection = new SolidColorBrush(_ColorBoxBackground);
+                BackgroundSelection.Opacity = 0.4;
 
                 // Draw Bounding box
                 SolidColorBrush BoxFill = new SolidColorBrush(_ColorBoxBackground);
@@ -84,11 +86,9 @@ namespace AMControls.Charts.Implementations.DataSeries
                     dc.DrawText(txtFormat, LabelStart);
                 }
 
-
-
                 // Draw Points 
                 List<IDataPoint> dPContext = new();
-                foreach (var pointy in _DataPoints)
+                foreach (var pointy in DataPoints)
                 {
                     pointy.X_draw = ChartArea.X + pointy.X * xSize - xStart * xSize;
                     pointy.Y_draw = ChartArea.Y + ChartArea.Height - pointy.Y * ySize + yStart * ySize;
@@ -96,11 +96,20 @@ namespace AMControls.Charts.Implementations.DataSeries
 
                     if (!ChartArea.IntersectsWith(PBox)) continue;
                     Rect PBoxIntersect = Rect.Intersect(PBox, ChartArea);
+
+                    // Show Selected Series points background
+                    if (IsSelected)
+                    {
+                        Pen DotPen = new(new SolidColorBrush(_ColorBox), 0.1);
+                        Point center = new(PBoxIntersect.X + PBoxIntersect.Width / 2, PBoxIntersect.Y + PBoxIntersect.Height / 2);
+                        dc.DrawEllipse(BackgroundSelection, DotPen, center, PBoxIntersect.Width*3, PBoxIntersect.Height*3);
+                    }
+
                     Draw_DataPoint(dc, pointy, PBoxIntersect);
 
 
                     // Draw label point
-                    if (_isSelected == true || pointy.MouseHover == true)
+                    if (IsSelected == true || pointy.IsMouseHover == true)
                     {
                         Draw_DataLabel(dc, canvas, pointy, PBox);
 
@@ -122,7 +131,7 @@ namespace AMControls.Charts.Implementations.DataSeries
 
         private void Draw_DataPoint(DrawingContext dc, IDataPoint dP, Rect pointRect)
         {
-            if (dP.Selected || dP.MouseHover) Draw_SelectedPoint(dc, pointRect);
+            if (dP.IsMouseHover) Draw_SelectedPoint(dc, pointRect);
             else Draw_UnselectedPoint(dc, pointRect);
         }
 
@@ -218,12 +227,12 @@ namespace AMControls.Charts.Implementations.DataSeries
         {
             if (LabelBox.Contains(x, y))
             {
-                _isSelected = true;
+                IsSelected = true;
             }
-            else { _isSelected = false; }
+            else { IsSelected = false; }
 
             bool selectedPoints = false;
-            foreach (var item in _DataPoints)
+            foreach (var item in DataPoints)
             {
                 if (Check_dataPointHit(x, y, item))
                 {
@@ -238,22 +247,6 @@ namespace AMControls.Charts.Implementations.DataSeries
             if (selectedPoints) DataPointSelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public bool Check_MouseHover(double x, double y)
-        {
-            bool Result = false;
-            foreach (var item in _DataPoints)
-            {
-                if (Check_dataPointHit(x, y, item))
-                {
-                    item.MouseHover = true;
-                    Result = true;
-                }
-                else item.MouseHover = false;
-            }
-
-            return Result;
-        }
-
         private bool Check_dataPointHit(double x, double y, IDataPoint dP)
         {
             Rect pointRect = new(dP.X_draw - 5, dP.Y_draw - 5, 10, 10);
@@ -266,29 +259,63 @@ namespace AMControls.Charts.Implementations.DataSeries
 
         public List<IDataPoint> Get_Selected_points()
         {
-            return _DataPoints.FindAll(e => e.Selected == true).ToList();
+            return DataPoints.FindAll(e => e.Selected == true).ToList();
         }
 
-        public List<IDataPoint> DataPoints { get { return _DataPoints; } set { _DataPoints = value; } }
 
+        public override void Mouse_Hover_Action(double x, double y)
+        {
+            NeedsUpdate = false;
+            foreach (IDataPoint item in DataPoints)
+            {
+                bool Test = IsMouseHover;
+                Rect pointRect = new(item.X_draw - 5, item.Y_draw - 5, 10, 10);
+                NeedsUpdate = item.Mouse_Hover(x, y);
+            }
+        }
+
+        public override void Mouse_LeftButton_Action(double x, double y)
+        {
+            if (LabelBox.Contains(x, y))
+            {
+                IsSelected = true;
+            }
+            else { IsSelected = false; }
+
+            bool selectedPoints = false;
+            foreach (var item in DataPoints)
+            {
+                if (Check_dataPointHit(x, y, item))
+                {
+                    selectedPoints = true;
+                    item.Selected = true;
+                    item.ContextMenu.DoAnimation = true;
+                    IsSelected = true;
+                }
+                else item.Selected = false;
+            }
+
+            if (selectedPoints) DataPointSelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public override void Mouse_RightButton_Action(double x, double y)
+        {
+            throw new NotImplementedException();
+        }
 
         #region Getters_setters
         public Color ColorBox { get { return _ColorBox; } set { _ColorBox = value; } }
         public Color ColorBoxBackground { get { return _ColorBoxBackground; } set { _ColorBoxBackground = value; } }
 
-        public Color ColorSeries { get { return _ColorBox; } set { _ColorBox = value; _ColorBoxBackground = value; } }
+        public override Color ColorSeries { get { return _ColorBox; } set { _ColorBox = value; _ColorBoxBackground = value; } }
 
-        public string Label { get { return _label; } set { _label = value; } }
-
-        public int Index { get { return _index; } set { _index = value; } }
-        public bool IsSelected { get { return _isSelected; } set { _isSelected = value; } }
-        public bool IsVisible { get { return _isVisible; } set { _isVisible = value; } }
+      
 
         #endregion
 
         #region Events
-        public event EventHandler DataPointSelectionChanged;
-        public event EventHandler SeriesSelected;
+        public override event EventHandler DataPointSelectionChanged;
+        public override event EventHandler SeriesSelected;
         #endregion
     }
 }
