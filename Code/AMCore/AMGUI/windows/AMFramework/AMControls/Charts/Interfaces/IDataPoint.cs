@@ -37,5 +37,7 @@ namespace AMControls.Charts.Interfaces
         public bool Selected { get; set; }
 
         public IDataPoint_ContextMenu ContextMenu { get; set; }
+
+        public event EventHandler DataChanged;
     }
 }

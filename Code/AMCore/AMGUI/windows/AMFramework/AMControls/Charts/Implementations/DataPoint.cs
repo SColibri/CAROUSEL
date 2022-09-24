@@ -38,6 +38,7 @@ namespace AMControls.Charts.Implementations
             { 
                 _xDraw = value;
                 Location = new(_xDraw - SizeObject.Width / 2,_yDraw - SizeObject.Height / 2);
+                DataChanged?.Invoke(this, EventArgs.Empty);
             } 
         }
         public double Y_draw
@@ -47,6 +48,7 @@ namespace AMControls.Charts.Implementations
             {
                 _yDraw = value;
                 Location = new(_xDraw - SizeObject.Width / 2, _yDraw - SizeObject.Height / 2);
+                DataChanged?.Invoke(this, EventArgs.Empty);
             }
         }
         public double Z_draw { get; set; }
@@ -77,5 +79,7 @@ namespace AMControls.Charts.Implementations
         {
             throw new NotImplementedException();
         }
+
+        public event EventHandler DataChanged;
     }
 }

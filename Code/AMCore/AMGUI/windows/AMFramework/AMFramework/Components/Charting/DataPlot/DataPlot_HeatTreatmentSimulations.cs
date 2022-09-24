@@ -19,6 +19,7 @@ namespace AMFramework.Components.Charting.DataPlot
         private string _name = "Heat treatment simulation";
         private List<string> _DataOptions = new() { "PhaseFraction", "NumberDensity", "MeanRadius" };
         private List<string> _ColumnNames = new();
+        private Dictionary<int, string> _compositionData;
         private string _tableViewName = "vd_HeatTreatment_Plot";
         private string _xDataName = "";
         private string _yDataName = "";
@@ -27,7 +28,8 @@ namespace AMFramework.Components.Charting.DataPlot
         private Core.IAMCore_Comm _socket;
 
         public DataPlot_HeatTreatmentSimulations(Core.IAMCore_Comm socket) 
-        { 
+        {
+            _compositionData = new();
             _socket = socket;
             Get_ColumnNames();
         }
@@ -118,11 +120,33 @@ namespace AMFramework.Components.Charting.DataPlot
                 IDataPoint tempObject = new DataPoint();
                 List<string> cells = item.Split(",").ToList();
                 if (cells.Count < 11) continue;
+                if (!_compositionData.ContainsKey(Convert.ToInt32(cells[8]))) 
+                {
+                    string QueryComp = "SELECT * FROM vd_case_composition WHERE ID = \"" + cells[8] + "\"";
+                    string RawComp = _socket.run_lua_command("database_table_custom_query", QueryComp);
+
+                    List<string> RowComp = RawComp.Split("\n").ToList();
+                    if (RowComp.Count > 0) 
+                    {
+                        string CompString = "";
+                        foreach (var CompBar in RowComp) 
+                        {
+                            List<string> cellComp = CompBar.Split(",").ToList();
+                            if (cellComp.Count < 3) continue;
+
+                            CompString += cellComp[1] + " : " + cellComp[2] + " || ";
+                        }
+
+                        CompString = CompString.Substring(0, CompString.Length - 4);
+                        _compositionData.Add(Convert.ToInt32(cells[8]), CompString);
+                    }
+                }
 
                 if (xIndex > -1) { tempObject.X = Convert.ToDouble(cells[xIndex]); }
                 if (yIndex > -1) { tempObject.Y = Convert.ToDouble(cells[yIndex]); }
                 if (zIndex > -1) { tempObject.Z = Convert.ToDouble(cells[zIndex]); }
 
+                cells.Add(_compositionData[Convert.ToInt32(cells[8])]);
                 tempObject.ContextMenu = new DataPoint_ProjectViewContextMenu(cells, cells[9]);
                 tempObject.Label = cells[9];
 

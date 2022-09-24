@@ -79,6 +79,11 @@ namespace AMControls.Charts.Implementations.DataSeries
             throw new NotImplementedException();
         }
 
+        protected override void OnDataPoint_Change()
+        {
+            //throw new NotImplementedException();
+        }
+
         #region Implementation
         public override Color ColorSeries { get { return _lineColor; } set { _lineColor = value; } }
 

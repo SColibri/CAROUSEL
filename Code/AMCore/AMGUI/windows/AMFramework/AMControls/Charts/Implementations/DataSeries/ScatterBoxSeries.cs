@@ -12,6 +12,31 @@ using AMControls.Interfaces.Implementations;
 
 namespace AMControls.Charts.Implementations.DataSeries
 {
+    public struct ScatterBoxSeries_DataGroupStruct
+    {
+        public List<IDataPoint> DataGroup;
+        public Size Size;
+        public Point Location;
+
+
+        public ScatterBoxSeries_DataGroupStruct() 
+        {
+            this.DataGroup = new();
+            this.Size = new(0,0);
+            this.Location = new();
+        }
+
+        public void Add_DataPointToGroup(IDataPoint dPoint) 
+        {
+            DataGroup.Add(dPoint);
+        }
+
+        public Rect Get_rectangle() 
+        {
+            Rect Result = new(this.Location, this.Size);
+            return Result;
+        }
+    }
     public class ScatterBoxSeries : DataSeries_Abstract
     {
         private static int IndexCount = 0;
@@ -21,6 +46,11 @@ namespace AMControls.Charts.Implementations.DataSeries
         private int _BoxThickness = 2;
         private int _PointThickness = 2;
         private bool _showBox = false;
+        private bool _showGroupPoints = true;
+        private List<ScatterBoxSeries_DataGroupStruct> _groupedPoints = new();
+        private double _groupRadius = 15;
+        private Size _scale = new(0, 0);
+        
 
         private FontFamily _axisLabelFontFamily = new("Lucida Sans");
         private int _axisLabelFontSize = 9;
@@ -39,6 +69,8 @@ namespace AMControls.Charts.Implementations.DataSeries
         public Rect LabelBox { get; set; }
 
         public ScatterBoxSeries() { Index = IndexCount++; }
+
+        
 
         public override void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, double xSize, double ySize, double xStart, double yStart)
         {
@@ -86,18 +118,32 @@ namespace AMControls.Charts.Implementations.DataSeries
                     dc.DrawText(txtFormat, LabelStart);
                 }
 
-                // Draw Points 
-                List<IDataPoint> dPContext = new();
+                // Draw Points -------------------------------------------------------------
+
+                // Update Point position
+                ContextMenus.Clear();
                 foreach (var pointy in DataPoints)
                 {
                     pointy.X_draw = ChartArea.X + pointy.X * xSize - xStart * xSize;
                     pointy.Y_draw = ChartArea.Y + ChartArea.Height - pointy.Y * ySize + yStart * ySize;
-                    Rect PBox = new(pointy.X_draw - 2.5, pointy.Y_draw - 2.5, 5, 5);
 
+                    if (pointy.Selected) ContextMenus.Add(pointy);
+                }
+
+                // Update Grouping point position
+                if (_showGroupPoints) Group_Objects();
+
+                // Draw points and fill list dPContext with all points that have an open context menu
+                foreach (var pointy in DataPoints)
+                {
+                    // Check if point is in chart area
+                    Rect PBox = new(pointy.X_draw - 2.5, pointy.Y_draw - 2.5, 5, 5);
                     if (!ChartArea.IntersectsWith(PBox)) continue;
+
+                    // Get intersect area
                     Rect PBoxIntersect = Rect.Intersect(PBox, ChartArea);
 
-                    // Show Selected Series points background
+                    // Highlight selected series if selected
                     if (IsSelected)
                     {
                         Pen DotPen = new(new SolidColorBrush(_ColorBox), 0.1);
@@ -105,22 +151,24 @@ namespace AMControls.Charts.Implementations.DataSeries
                         dc.DrawEllipse(BackgroundSelection, DotPen, center, PBoxIntersect.Width*3, PBoxIntersect.Height*3);
                     }
 
-                    Draw_DataPoint(dc, pointy, PBoxIntersect);
+                    if (!pointy.IsVisible) continue;
 
+                    // Draw point
+                    Draw_DataPoint(dc, pointy, PBoxIntersect);
 
                     // Draw label point
                     if (IsSelected == true || pointy.IsMouseHover == true)
                     {
                         Draw_DataLabel(dc, canvas, pointy, PBox);
 
-                        if (pointy.Selected) dPContext.Add(pointy);
+                        //if (pointy.Selected) ContextMenus.Add(pointy);
                     }
                 }
 
-                // Draw ContextMenu
-                foreach (var dPointy in dPContext)
+                // Draw Groups
+                if (_showGroupPoints) 
                 {
-                    Draw_DataPoint_ContextMenu(dc, canvas, dPointy);
+                    Draw_DataGroup(dc, ChartArea);
                 }
 
             }
@@ -221,6 +269,42 @@ namespace AMControls.Charts.Implementations.DataSeries
             dP.ContextMenu.Draw(dc, canvas);
         }
 
+        private void Draw_DataPoint_MultipleContextMenu(DrawingContext dc, Canvas canvas, List<IDataPoint> dPL)
+        {
+            Rect reservedPoint = new(dPL[0].X, dPL[0].Y, 50, 50);
+            Rect windowAllowed = new(50, 0, canvas.Width - 150, canvas.Height - 50);
+            Point currLoc = new Point(windowAllowed.X, windowAllowed.Y);
+
+            foreach (IDataPoint dP in dPL) 
+            {
+                if (dP.ContextMenu == null) return;
+                Rect conWin = new(currLoc, dP.ContextMenu.SizeObject);
+
+                dP.ContextMenu.Location = conWin.Location;
+                dP.ContextMenu.Draw(dc, canvas);
+
+                currLoc = new(currLoc.X + conWin.Width, currLoc.Y);
+            }
+            
+        }
+
+        private void Draw_DataGroup(DrawingContext dc, Rect ChartArea) 
+        {
+            SolidColorBrush GroupBox = new SolidColorBrush(_ColorBoxBackground);
+            GroupBox.Opacity = 0.3;
+
+            foreach (var item in _groupedPoints)
+            {
+                Rect PBox = item.Get_rectangle();
+                if (!ChartArea.IntersectsWith(PBox) || !IsVisible) continue;
+                Rect PBoxIntersect = Rect.Intersect(PBox, ChartArea);
+
+                Pen DotPen = new(new SolidColorBrush(_ColorBox), 0.1);
+                Point center = new(PBoxIntersect.X + PBoxIntersect.Width / 2, PBoxIntersect.Y + PBoxIntersect.Height / 2);
+                dc.DrawEllipse(GroupBox, new Pen(new SolidColorBrush(Colors.Black), 1), center, PBoxIntersect.Width / 2, PBoxIntersect.Height / 2);
+            }
+        }
+
         #endregion
 
         public void CheckHit(double x, double y)
@@ -268,6 +352,7 @@ namespace AMControls.Charts.Implementations.DataSeries
             NeedsUpdate = false;
             foreach (IDataPoint item in DataPoints)
             {
+                if (!item.IsVisible) continue;
                 bool Test = IsMouseHover;
                 Rect pointRect = new(item.X_draw - 5, item.Y_draw - 5, 10, 10);
                 NeedsUpdate = item.Mouse_Hover(x, y);
@@ -279,12 +364,15 @@ namespace AMControls.Charts.Implementations.DataSeries
             if (LabelBox.Contains(x, y))
             {
                 IsSelected = true;
+                SeriesSelected?.Invoke(this, EventArgs.Empty);
             }
             else { IsSelected = false; }
 
             bool selectedPoints = false;
             foreach (var item in DataPoints)
             {
+                item.Selected = false;
+                if (!item.IsVisible) continue;
                 if (Check_dataPointHit(x, y, item))
                 {
                     selectedPoints = true;
@@ -292,7 +380,19 @@ namespace AMControls.Charts.Implementations.DataSeries
                     item.ContextMenu.DoAnimation = true;
                     IsSelected = true;
                 }
-                else item.Selected = false;
+            }
+
+            foreach (var item in _groupedPoints)
+            {
+                if(item.Get_rectangle().Contains(x, y)) 
+                {
+                    foreach (var dP in item.DataGroup)
+                    {
+                        dP.Selected = true;
+                        dP.ContextMenu.DoAnimation = true;
+                        IsSelected = true;
+                    }
+                } 
             }
 
             if (selectedPoints) DataPointSelectionChanged?.Invoke(this, EventArgs.Empty);
@@ -309,8 +409,54 @@ namespace AMControls.Charts.Implementations.DataSeries
 
         public override Color ColorSeries { get { return _ColorBox; } set { _ColorBox = value; _ColorBoxBackground = value; } }
 
-      
+        protected override void OnDataPoint_Change() 
+        {
+            
+            // do nothing
+        }
 
+        private void Group_Objects() 
+        {
+            if (_showGroupPoints)
+            {
+                // Group Data
+                _groupedPoints.Clear();
+
+                // Reset visibility
+                foreach (var item in DataPoints)
+                {
+                    item.IsVisible = true;
+                }
+
+                foreach (var item in DataPoints)
+                {
+                    if (!item.IsVisible) continue;
+
+                    Rect boxGroup = new Rect(new Point(item.Location.X - _groupRadius / 2, item.Location.Y - _groupRadius / 2), new Size(_groupRadius, _groupRadius));
+                    List<IDataPoint> dPoints = DataPoints.FindAll(e => e.IsVisible == true && boxGroup.Contains(e.Location));
+
+                    if (dPoints.Count > 1)
+                    {
+                        item.IsVisible = false;
+
+                        ScatterBoxSeries_DataGroupStruct dGroup = new();
+                        dGroup.Location = boxGroup.Location;
+                        dGroup.Size = boxGroup.Size;
+
+                        dGroup.Add_DataPointToGroup(item);
+                        foreach (var otP in dPoints)
+                        {
+                            otP.IsVisible = false;
+                            dGroup.Add_DataPointToGroup(otP);
+                        }
+
+                        _groupedPoints.Add(dGroup);
+                    }
+                }
+
+            }
+
+        }
         #endregion
 
         #region Events

@@ -121,10 +121,17 @@ namespace AMControls.Charts.Scatter
             Draw_VerticalAxis(dc, _yAxis);
 
             RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.Fant);
-            
+
             for (int i = 0; i < _series.Count; i++) 
             {
                 _series[i].Draw(dc, this, _chartArea, _xAxisSpacing / _xAxis.Interval, _yAxisSpacing / _yAxis.Interval, _xAxis.MinValue, _yAxis.MinValue);
+            }
+
+            List<IDataPoint> contextMenus = new();
+            List<IDataSeries> CMenus = _series.FindAll(e => e.ContextMenus.Count > 0);
+            foreach (var item in CMenus)
+            {
+                contextMenus.AddRange(item.ContextMenus);
             }
 
             RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.Fant);
@@ -134,6 +141,7 @@ namespace AMControls.Charts.Scatter
             }
 
             _legend.Draw(dc, this, _chartArea, _series);
+            Draw_PointContextMenu(dc, contextMenus);
         }
 
 
@@ -275,6 +283,104 @@ namespace AMControls.Charts.Scatter
             }
         }
 
+        private void Draw_PointContextMenu(DrawingContext dc, List<IDataPoint> dPL) 
+        { 
+            if(dPL.Count == 1) 
+            {
+                Draw_DataPoint_ContextMenu(dc, this, dPL[0]);
+            }
+            else if (dPL.Count > 1)
+            {
+                Draw_DataPoint_MultipleContextMenu(dc, this, dPL);
+            }
+        }
+
+        private void Draw_DataPoint_ContextMenu(DrawingContext dc, Canvas canvas, IDataPoint dP)
+        {
+            if (dP.ContextMenu == null) return;
+            Point currLoc = new Point(dP.X_draw, dP.Y_draw);
+            Rect conWin = new(currLoc, dP.ContextMenu.SizeObject);
+            Rect objArea = new(0, 0, canvas.ActualWidth, canvas.ActualHeight);
+
+            if (!objArea.Contains(conWin))
+            {
+                conWin = new(new Point(currLoc.X - dP.ContextMenu.SizeObject.Width, currLoc.Y), dP.ContextMenu.SizeObject);
+            }
+
+            if (!objArea.Contains(conWin))
+            {
+                conWin = new(new Point(currLoc.X + dP.ContextMenu.SizeObject.Width, currLoc.Y), dP.ContextMenu.SizeObject);
+            }
+
+            if (!objArea.Contains(conWin))
+            {
+                conWin = new(new Point(currLoc.X, currLoc.Y - dP.ContextMenu.SizeObject.Height), dP.ContextMenu.SizeObject);
+            }
+
+            if (!objArea.Contains(conWin))
+            {
+                conWin = new(new Point(currLoc.X, currLoc.Y + dP.ContextMenu.SizeObject.Height), dP.ContextMenu.SizeObject);
+            }
+
+            if (!objArea.Contains(conWin))
+            {
+                conWin = new(new Point(currLoc.X - dP.ContextMenu.SizeObject.Width,
+                                       currLoc.Y - dP.ContextMenu.SizeObject.Height), dP.ContextMenu.SizeObject);
+            }
+
+            if (!objArea.Contains(conWin))
+            {
+                conWin = new(new Point(currLoc.X - dP.ContextMenu.SizeObject.Width,
+                                       currLoc.Y + dP.ContextMenu.SizeObject.Height), dP.ContextMenu.SizeObject);
+            }
+
+            if (!objArea.Contains(conWin))
+            {
+                conWin = new(new Point(currLoc.X + dP.ContextMenu.SizeObject.Width,
+                                       currLoc.Y - dP.ContextMenu.SizeObject.Height), dP.ContextMenu.SizeObject);
+            }
+
+            if (!objArea.Contains(conWin))
+            {
+                conWin = new(new Point(currLoc.X + dP.ContextMenu.SizeObject.Width,
+                                       currLoc.Y + dP.ContextMenu.SizeObject.Height), dP.ContextMenu.SizeObject);
+            }
+
+
+            dP.ContextMenu.Location = conWin.Location;
+            dP.ContextMenu.Draw(dc, canvas);
+        }
+
+        private void Draw_DataPoint_MultipleContextMenu(DrawingContext dc, Canvas canvas, List<IDataPoint> dPL)
+        {
+            Rect reservedPoint = new(dPL[0].X, dPL[0].Y, 50, 50);
+            Rect windowAllowed = new(50, 0, canvas.ActualWidth - 150, canvas.ActualHeight - 50);
+            Point currLoc = new Point(windowAllowed.X, windowAllowed.Y);
+
+            foreach (IDataPoint dP in dPL)
+            {
+                if (dP.ContextMenu == null) return;
+                Rect conWin = new(currLoc, dP.ContextMenu.SizeObject);
+
+                dP.ContextMenu.Location = conWin.Location;
+                dP.ContextMenu.Draw(dc, canvas);
+
+                currLoc.X = currLoc.X + conWin.Width + 10;
+
+                if (currLoc.X > windowAllowed.Width - windowAllowed.X - 10) 
+                {
+                    currLoc.X = windowAllowed.X;
+                    currLoc.Y += conWin.Height + 10;
+                }
+
+                if(currLoc.Y + conWin.Height + 10 > windowAllowed.Height - windowAllowed.Y - 10) 
+                { 
+                    break; 
+                }
+            }
+
+        }
+
         #region Animations
         private void Draw_AxisAnimation(DrawingContext dc , ref bool doAnimation,
                                         System.Windows.Point sPoint, System.Windows.Point ePoint) 
@@ -398,6 +504,15 @@ namespace AMControls.Charts.Scatter
             InvalidateVisual();
         }
 
+        private void Scale_Axis(IAxes axis, double amount, double prevMin, double prevMax) 
+        {
+            double scaleFactor = axis.Interval/50;
+            axis.MinValue = prevMin -  scaleFactor * amount;
+            axis.MaxValue = prevMax +  scaleFactor * amount;
+
+            this.InvalidateVisual();
+        }
+
         #endregion
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
@@ -418,6 +533,8 @@ namespace AMControls.Charts.Scatter
 
         private Point Translate_StartPosition = new();
         private bool MouseDown = false;
+        private bool MouseDown_xAxis = false;
+        private bool MouseDown_yAxis = false;
         private double _xMinValue = 0;
         private double _xMaxValue = 0;
         private double _yMinValue = 0;
@@ -426,17 +543,33 @@ namespace AMControls.Charts.Scatter
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
-            
-            if(_xAxis != null && _yAxis != null) 
+
+            _xMinValue = _xAxis.MinValue;
+            _xMaxValue = _xAxis.MaxValue;
+            _yMinValue = _yAxis.MinValue;
+            _yMaxValue = _yAxis.MaxValue;
+
+            Point mouseLocation = e.GetPosition(this);
+            if(_xAxis.Bounds.Contains(mouseLocation)) 
+            {
+                MouseDown_xAxis = true;
+                Translate_StartPosition = e.GetPosition(this);
+                _mouseCaptured = false;
+
+            }
+            else if (_yAxis.Bounds.Contains(mouseLocation)) 
+            {
+                MouseDown_yAxis = true;
+                Translate_StartPosition = e.GetPosition(this);
+                _mouseCaptured = false;
+
+            }
+            else if (_xAxis != null && _yAxis != null) 
             {
                 Translate_StartPosition = e.GetPosition(this);
                 MouseDown = true;
                 _mouseCaptured = false;
-
-                _xMinValue = _xAxis.MinValue;
-                _xMaxValue = _xAxis.MaxValue;
-                _yMinValue = _yAxis.MinValue;
-                _yMaxValue = _yAxis.MaxValue;
+ 
             }
         }
 
@@ -447,18 +580,26 @@ namespace AMControls.Charts.Scatter
             base.OnMouseMove(e);
 
             Point mouseLocation = e.GetPosition(this);
-            if (MouseDown) 
+            if (MouseDown)
             {
                 Translate(Translate_StartPosition.X - mouseLocation.X, -Translate_StartPosition.Y + mouseLocation.Y);
             }
-            else 
+            else if (MouseDown_xAxis)
+            {
+                Scale_Axis(_xAxis, Translate_StartPosition.X - mouseLocation.X, _xMinValue, _xMaxValue);
+            }
+            else if (MouseDown_yAxis) 
+            {
+                Scale_Axis(_yAxis, Translate_StartPosition.Y - mouseLocation.Y, _yMinValue, _yMaxValue);
+            }
+            else
             {
                 bool doInvalidate = false;
                 //Tooltip_position = e.GetPosition(this);
                 //InvalidateVisual();
 
                 // check if over a data point
-                for (int i = 0; i < _series.Count; i++) 
+                for (int i = 0; i < _series.Count; i++)
                 {
                     bool tempRes = _series[i].Mouse_Hover(mouseLocation.X, mouseLocation.Y);
                     if (tempRes) doInvalidate = true;
@@ -489,7 +630,13 @@ namespace AMControls.Charts.Scatter
             base.OnMouseUp(e);
 
             MouseDown = false;
+            MouseDown_xAxis = false;
+            MouseDown_yAxis = false;
             _mouseCaptured = true;
+
+            Point mousePos = e.GetPosition(this);
+            double Distance = Point.Subtract(Translate_StartPosition, mousePos).Length;
+            if (Distance > 20) return;
 
             bool toRemove = true;
             while (toRemove) 
@@ -505,9 +652,6 @@ namespace AMControls.Charts.Scatter
                     }
                 }
             }
-            
-
-            Point mousePos =  e.GetPosition(this);
 
             bool hiddenSeries = false;
             foreach (var item in _series)

@@ -88,6 +88,7 @@ namespace AMControls.Interfaces.Implementations
             OnBoundUpdate();
         }
 
+
         protected virtual void OnBoundUpdate(){}
     }
 }

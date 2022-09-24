@@ -29,6 +29,17 @@ namespace AMControls.Charts.Interfaces
         public List<IDataPoint> DataPoints { get; set; }
 
         /// <summary>
+        /// Returns list of points that have open context menus
+        /// </summary>
+        public List<IDataPoint> ContextMenus { get; set; }
+
+        /// <summary>
+        /// Add datapoint to series
+        /// </summary>
+        /// <param name="dPoint"></param>
+        public void Add_DataPoint(IDataPoint dPoint);
+
+        /// <summary>
         /// Position index
         /// </summary>
         public int Index { get; set; }
