@@ -84,8 +84,13 @@ namespace AMControls.Charts.Scatter
             PopWindow.Header = "Pop to new window";
             PopWindow.Click += New_window;
 
+            MenuItem HideAll = new();
+            HideAll.Header = "Hide all";
+            HideAll.Click += Hide_All_handle;
+
             dt.Items.Add(SaveImage);
             dt.Items.Add(PopWindow);
+            dt.Items.Add(HideAll);
 
             ContextMenu = dt;
 
@@ -812,6 +817,14 @@ namespace AMControls.Charts.Scatter
             Window win = new();
             win.Content = sP;
             win.Show();
+        }
+
+        private void Hide_All_handle(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in _series)
+            {
+                item.IsVisible = false;
+            }
         }
     }
 }

@@ -149,6 +149,7 @@ namespace AMFramework.Components.Charting.DataPlot
                 cells.Add(_compositionData[Convert.ToInt32(cells[8])]);
                 tempObject.ContextMenu = new DataPoint_ProjectViewContextMenu(cells, cells[9]);
                 tempObject.Label = cells[9];
+                tempObject.Tag = cells;
 
                 Result.Add(tempObject);
             }

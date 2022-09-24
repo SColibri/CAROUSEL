@@ -23,7 +23,7 @@ namespace AMControls.Charts.Implementations
         private Rect _scrollPrevRect = new();
 
         private int _scrollIndex = 1; // current scroll index
-        private int _seriesDisplay = 10; // max number of series to display per section
+        private int _seriesDisplay = 20; // max number of series to display per section
 
         private FontFamily _legendLabelFontFamily = new("Lucida Sans");
         private int _legendLabelFontSize = 12;
@@ -62,6 +62,12 @@ namespace AMControls.Charts.Implementations
             if (_scrollIndex * _seriesDisplay > seriesList.Count + _seriesDisplay) _scrollIndex--;
 
             // Legend Title
+            FormattedText testFormat = new("sText", System.Globalization.CultureInfo.CurrentCulture,
+                                                 FlowDirection.LeftToRight,
+                                                 new Typeface(_seriesLabelFontFamily, _seriesLabelFontStyle, _seriesLabelFontWeight, _seriesLabelFontStretch),
+                                                 _seriesLabelFontSize, new SolidColorBrush(_seriesLabelFontColor), VisualTreeHelper.GetDpi(canvas).PixelsPerDip);
+
+            _seriesDisplay = (int)((ChartArea.Height - testFormat.Height) / (testFormat.Height + 10));
 
             // Legend series
             for (int i = (_scrollIndex - 1) * _seriesDisplay; i < Math.Min(seriesList.Count, _scrollIndex * _seriesDisplay); i++)
