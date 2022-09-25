@@ -13,6 +13,8 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using AMControls.Charts.Interfaces;
 using AMControls.Interfaces;
+using AMControls.Interfaces.Implementations;
+using AMControls.Interfaces.Implementations.Objects;
 
 namespace AMControls.Charts.Scatter
 {
@@ -69,7 +71,9 @@ namespace AMControls.Charts.Scatter
         private double _gridAnimationTime = 500;
         private bool[] _firstAnimation = {true, true, true, true};
 
+        // Controls
         private ContextMenu dt = new();
+        private List<DrawObject_Abstract> _controls = new(); // TODO use interface instead
 
         public ScatterPlot() 
         {
@@ -92,6 +96,12 @@ namespace AMControls.Charts.Scatter
             dt.Items.Add(SaveImage);
             dt.Items.Add(PopWindow);
             dt.Items.Add(HideAll);
+
+            _controls.Add(new Drawable_Button() { ImageIcon = new BitmapImage(new Uri("Charts/Resources/minus.png", UriKind.Relative)) });
+            _controls.Add(new Drawable_Button() { ImageIcon = new BitmapImage(new Uri("Charts/Resources/plus.png", UriKind.Relative)) });
+            _controls.Add(new Drawable_Button() { ImageIcon = new BitmapImage(new Uri("Charts/Resources/minus.png", UriKind.Relative)) });
+            _controls.Add(new Drawable_Button() { ImageIcon = new BitmapImage(new Uri("Charts/Resources/plus.png", UriKind.Relative)) });
+
 
             ContextMenu = dt;
 
@@ -147,7 +157,13 @@ namespace AMControls.Charts.Scatter
             }
 
             _legend.Draw(dc, this, _chartArea, _series);
-            Draw_PointContextMenu(dc, contextMenus);
+
+            foreach (var item in _controls)
+            {
+                item.Draw(dc, this);
+            }
+
+            Draw_PointContextMenu(dc, contextMenus);           
         }
 
 
@@ -174,7 +190,6 @@ namespace AMControls.Charts.Scatter
                 dc.DrawText(labelFormat, LabelStart);
 
                 // Set Bounds of axe
-                if (axis_width > 0 && axis_height > 0) return;
                 axisObject.Bounds = new System.Windows.Rect(new System.Windows.Point((_xAxis_xLocation), (this.ActualHeight - (_yAxis_yLocation))), new System.Windows.Size(axis_width, axis_height));
                 _chartArea.X = axisObject.Bounds.X;
                 _chartArea.Width = axisObject.Bounds.Width;
@@ -216,7 +231,14 @@ namespace AMControls.Charts.Scatter
                     }
                 }
                 if (_firstAnimation[2]) _firstAnimation[2] = !_firstAnimation[2];
-                
+
+                _controls[0].Bounds = new Rect(axisObject.Bounds.X + axisObject.Bounds.Width - 15, 
+                                               axisObject.Bounds.Y + axisObject.Bounds.Height + 5, 
+                                               12, 12);
+
+                _controls[1].Bounds = new Rect(axisObject.Bounds.X + axisObject.Bounds.Width - 15,
+                                               axisObject.Bounds.Y + axisObject.Bounds.Height + 17,
+                                               12, 12);
             }
         }
 
@@ -244,7 +266,6 @@ namespace AMControls.Charts.Scatter
                 dc.Pop();
 
                 // Set Bounds of axe
-                if (axis_width > 0 && axis_height > 0) return;
                 axisObject.Bounds = new System.Windows.Rect(new System.Windows.Point((_xAxis_xLocation), (_yMargin)), new System.Windows.Size(axis_width, axis_height));
                 _chartArea.Y = axisObject.Bounds.Y;
                 _chartArea.Height = axisObject.Bounds.Height;
@@ -287,7 +308,13 @@ namespace AMControls.Charts.Scatter
                 }
                 if (_firstAnimation[3]) _firstAnimation[3] = !_firstAnimation[3];
 
+                _controls[2].Bounds = new Rect(axisObject.Bounds.X - 20,
+                                               axisObject.Bounds.Y,
+                                               12, 12);
 
+                _controls[3].Bounds = new Rect(axisObject.Bounds.X - 32,
+                                               axisObject.Bounds.Y,
+                                               12, 12);
             }
         }
 
@@ -472,8 +499,29 @@ namespace AMControls.Charts.Scatter
         }
         #endregion
 
-        
 
+
+        #endregion
+
+        #region Public_methods
+        /// <summary>
+        /// Change axis interval, this can also be done directly on the axis object, however
+        /// the visual will not update automatically.
+        /// </summary>
+        /// <param name="interval"></param>
+        public void Change_Vertical_axisInterval( int interval ) 
+        {
+            Change_Axis_Interval(_yAxis, _yAxis.Ticks + interval);
+        }
+        /// <summary>
+        /// Change axis interval, this can also be done directly on the axis object, however
+        /// the visual will not update automatically.
+        /// </summary>
+        /// <param name="interval"></param>
+        public void Change_Horizontal_axisInterval(int interval) 
+        { 
+            Change_Axis_Interval( _xAxis, _xAxis.Ticks + interval);
+        }
         #endregion
 
         #region Methods
@@ -521,6 +569,12 @@ namespace AMControls.Charts.Scatter
             this.InvalidateVisual();
         }
 
+        private void Change_Axis_Interval(IAxes axis, int intervals)
+        {
+            if (intervals <= 2) return;
+            axis.Ticks = intervals;
+            this.InvalidateVisual();
+        }
         #endregion
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
@@ -610,6 +664,12 @@ namespace AMControls.Charts.Scatter
                 for (int i = 0; i < _series.Count; i++)
                 {
                     bool tempRes = _series[i].Mouse_Hover(mouseLocation.X, mouseLocation.Y);
+                    if (tempRes) doInvalidate = true;
+                }
+
+                foreach (var item in _controls)
+                {
+                    bool tempRes = item.Mouse_Hover(mouseLocation.X, mouseLocation.Y);
                     if (tempRes) doInvalidate = true;
                 }
 
@@ -704,7 +764,7 @@ namespace AMControls.Charts.Scatter
             }
 
             // Legend
-            IDataSeries dtTemp = _legend.Check_series_Hit(mousePos.X, mousePos.Y);
+            IDataSeries? dtTemp = _legend.Check_series_Hit(mousePos.X, mousePos.Y);
 
             // Zoom in series
             if (dtTemp != null) 
@@ -716,6 +776,32 @@ namespace AMControls.Charts.Scatter
                 Bring_series_to_front(dtTemp);
                 dtTemp.IsSelected = true;
                 _series = _series.OrderBy(e => e.Index).ToList();
+            }
+
+            // Axis Scale (haha ok, this can be done way better and this should be done in the IAxes object)
+            // but just look away for the moment
+            for(int n1 = 0; n1 < _controls.Count; n1++) 
+            {
+                if (_controls[n1].Mouse_LeftButton_Down(mousePos.X, mousePos.Y)) 
+                {
+                    if (n1 == 0)
+                    {
+                        Change_Horizontal_axisInterval(-1);
+                    }
+                    else if (n1 == 1)
+                    {
+                        Change_Horizontal_axisInterval(1);
+                    }
+                    else if (n1 == 2)
+                    {
+                        Change_Vertical_axisInterval(-1);
+                    }
+                    else if (n1 == 3)
+                    {
+                        Change_Vertical_axisInterval(1);
+                    }
+                    break;
+                }
             }
 
             InvalidateVisual();
@@ -858,6 +944,14 @@ namespace AMControls.Charts.Scatter
                 item.IsVisible = false;
             }
         }
+
+        private void Set_x_interval_handle(object sender, RoutedEventArgs e)
+        {
+            if (((ComboBox)sender).SelectedItem == null) return;
+            int intervals = (int)((ComboBox)sender).SelectedItem;
+            Change_Horizontal_axisInterval(intervals);
+        }
+
 
         #region Events
         public event EventHandler SelectionChanged;

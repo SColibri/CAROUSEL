@@ -84,7 +84,15 @@ namespace AMControls.Charts.Implementations
         }
 
         public IAxes.Orientation AxisOrientation { get; set; }
-        public int Ticks { get { return _ticks; } set { _ticks = value; } }
+        public int Ticks 
+        { 
+            get { return _ticks; } 
+            set 
+            { 
+                _ticks = value;
+                Check_minmax_values();
+            } 
+        }
 
         // IDrawable
         public string IntervalNotation()
