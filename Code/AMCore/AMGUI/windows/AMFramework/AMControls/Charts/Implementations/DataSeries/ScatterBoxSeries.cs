@@ -133,43 +133,21 @@ namespace AMControls.Charts.Implementations.DataSeries
                 // Update Grouping point position
                 if (_showGroupPoints) Group_Objects();
 
-                // Draw points and fill list dPContext with all points that have an open context menu
-                foreach (var pointy in DataPoints)
+                // Show either search results or all available points
+                if (_searchResult.Count > 0) Draw_Search_Result(dc, canvas, ChartArea, BackgroundSelection);
+                else 
                 {
-                    // Check if point is in chart area
-                    Rect PBox = new(pointy.X_draw - 2.5, pointy.Y_draw - 2.5, 5, 5);
-                    if (!ChartArea.IntersectsWith(PBox)) continue;
+                    Draw_Points_Action(dc, canvas, ChartArea, DataPoints, BackgroundSelection);
 
-                    // Get intersect area
-                    Rect PBoxIntersect = Rect.Intersect(PBox, ChartArea);
-
-                    // Highlight selected series if selected
-                    if (IsSelected)
-                    {
-                        Pen DotPen = new(new SolidColorBrush(_ColorBox), 0.1);
-                        Point center = new(PBoxIntersect.X + PBoxIntersect.Width / 2, PBoxIntersect.Y + PBoxIntersect.Height / 2);
-                        dc.DrawEllipse(BackgroundSelection, DotPen, center, PBoxIntersect.Width*3, PBoxIntersect.Height*3);
-                    }
-
-                    if (!pointy.IsVisible) continue;
-
-                    // Draw point
-                    Draw_DataPoint(dc, pointy, PBoxIntersect);
-
-                    // Draw label point
-                    if (IsSelected == true || pointy.IsMouseHover == true)
-                    {
-                        Draw_DataLabel(dc, canvas, pointy, PBox);
-
-                        //if (pointy.Selected) ContextMenus.Add(pointy);
-                    }
+                   
                 }
 
                 // Draw Groups
-                if (_showGroupPoints) 
+                if (_showGroupPoints)
                 {
                     Draw_DataGroup(dc, ChartArea);
                 }
+
 
             }
 
@@ -304,6 +282,44 @@ namespace AMControls.Charts.Implementations.DataSeries
                 dc.DrawEllipse(GroupBox, new Pen(new SolidColorBrush(Colors.Black), 1), center, PBoxIntersect.Width / 2, PBoxIntersect.Height / 2);
             }
         }
+
+        private void Draw_Search_Result(DrawingContext dc, Canvas canvas, Rect ChartArea, SolidColorBrush BackgroundSelection) 
+        {
+            Draw_Points_Action(dc, canvas, ChartArea, _searchResult, BackgroundSelection);
+        }
+
+        private void Draw_Points_Action(DrawingContext dc, Canvas canvas, Rect ChartArea, List <IDataPoint> DataPoints, SolidColorBrush BackgroundSelection) 
+        {
+            foreach (var pointy in DataPoints)
+            {
+                // Check if point is in chart area
+                Rect PBox = new(pointy.X_draw - 2.5, pointy.Y_draw - 2.5, 5, 5);
+                if (!ChartArea.IntersectsWith(PBox)) continue;
+
+                // Get intersect area
+                Rect PBoxIntersect = Rect.Intersect(PBox, ChartArea);
+
+                // Highlight selected series if selected
+                if (IsSelected)
+                {
+                    Pen DotPen = new(new SolidColorBrush(_ColorBox), 0.1);
+                    Point center = new(PBoxIntersect.X + PBoxIntersect.Width / 2, PBoxIntersect.Y + PBoxIntersect.Height / 2);
+                    dc.DrawEllipse(BackgroundSelection, DotPen, center, PBoxIntersect.Width * 3, PBoxIntersect.Height * 3);
+                }
+
+                if (!pointy.IsVisible) continue;
+
+                // Draw point
+                Draw_DataPoint(dc, pointy, PBoxIntersect);
+
+                // Draw label point
+                if (IsSelected == true || pointy.IsMouseHover == true)
+                {
+                    Draw_DataLabel(dc, canvas, pointy, PBox);
+                }
+            }
+        }
+
 
         #endregion
 

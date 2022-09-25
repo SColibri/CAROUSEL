@@ -54,6 +54,22 @@ namespace AMControls.Charts.Interfaces
         /// </summary>
         public Color ColorSeries { get; set; }
 
+        /// <summary>
+        /// Search for content in datapoint
+        /// </summary>
+        /// <param name="searchContent"></param>
+        /// <returns></returns>
+        public List<IDataPoint> Search(string searchContent);
+
+        /// <summary>
+        /// find points around a specified tolerance
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="tolerance"></param>
+        /// <returns></returns>
+        public List<IDataPoint> Search(double x, double y, double tolerance);
+
         // Events
         public event EventHandler DataPointSelectionChanged;
         public event EventHandler SeriesSelected;

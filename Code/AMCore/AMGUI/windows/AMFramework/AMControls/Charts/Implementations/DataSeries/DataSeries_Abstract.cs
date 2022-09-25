@@ -59,5 +59,51 @@ namespace AMControls.Charts.Implementations.DataSeries
         }
         protected abstract void OnDataPoint_Change();
 
+        protected List<IDataPoint> _searchResult = new();
+        public List<IDataPoint> Search(string searchContent)
+        {
+            _searchResult.Clear();
+
+            // Check Label
+            foreach (var item in DataPoints)
+            {
+                // check label
+                if (item.Label.Contains(searchContent)) 
+                {
+                    _searchResult.Add(item);
+                    continue;
+                }
+
+                // check tag
+                if(item.Tag is List<string>) 
+                {
+                    foreach (var sub_string in (List<string>)item.Tag)
+                    {
+                        if (item.Label.Contains(sub_string))
+                        {
+                            _searchResult.Add(item);
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            return _searchResult;
+        }
+
+        public List<IDataPoint> Search(double x, double y, double tolerance)
+        {
+            _searchResult.Clear();
+
+            double min_x = x - tolerance;
+            double max_x = x + tolerance;
+            double min_y = y - tolerance;
+            double max_y = y + tolerance;
+
+            _searchResult = DataPoints.FindAll(e => e.X >= min_x && e.X <= max_x && e.Y >= min_y && e.Y <= max_y);
+
+            return _searchResult;
+        }
+
     }
 }
