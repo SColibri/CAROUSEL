@@ -353,7 +353,6 @@ namespace AMControls.Charts.Implementations.DataSeries
             foreach (IDataPoint item in DataPoints)
             {
                 if (!item.IsVisible) continue;
-                bool Test = IsMouseHover;
                 Rect pointRect = new(item.X_draw - 5, item.Y_draw - 5, 10, 10);
                 NeedsUpdate = item.Mouse_Hover(x, y);
             }

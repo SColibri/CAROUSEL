@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using AMControls.Charts.Interfaces;
+using AMControls.Interfaces;
 
 namespace AMControls.Charts.Scatter
 {
@@ -173,6 +174,7 @@ namespace AMControls.Charts.Scatter
                 dc.DrawText(labelFormat, LabelStart);
 
                 // Set Bounds of axe
+                if (axis_width > 0 && axis_height > 0) return;
                 axisObject.Bounds = new System.Windows.Rect(new System.Windows.Point((_xAxis_xLocation), (this.ActualHeight - (_yAxis_yLocation))), new System.Windows.Size(axis_width, axis_height));
                 _chartArea.X = axisObject.Bounds.X;
                 _chartArea.Width = axisObject.Bounds.Width;
@@ -242,6 +244,7 @@ namespace AMControls.Charts.Scatter
                 dc.Pop();
 
                 // Set Bounds of axe
+                if (axis_width > 0 && axis_height > 0) return;
                 axisObject.Bounds = new System.Windows.Rect(new System.Windows.Point((_xAxis_xLocation), (_yMargin)), new System.Windows.Size(axis_width, axis_height));
                 _chartArea.Y = axisObject.Bounds.Y;
                 _chartArea.Height = axisObject.Bounds.Height;
@@ -639,9 +642,11 @@ namespace AMControls.Charts.Scatter
             MouseDown_yAxis = false;
             _mouseCaptured = true;
 
-            Point mousePos = e.GetPosition(this);
+            
+            Point mousePos = e.GetPosition(this);            
             double Distance = Point.Subtract(Translate_StartPosition, mousePos).Length;
             if (Distance > 20) return;
+            if (Check_ContextMenuClick(mousePos)) return;
 
             bool toRemove = true;
             while (toRemove) 
@@ -659,6 +664,7 @@ namespace AMControls.Charts.Scatter
             }
 
             bool hiddenSeries = false;
+            bool updateSelection = false;
             foreach (var item in _series)
             {
                 if (!item.IsVisible) 
@@ -678,7 +684,14 @@ namespace AMControls.Charts.Scatter
                     dt.Items.Add(Mitem);
                     Bring_series_to_front(item);
                     _series = _series.OrderBy(e => e.Index).ToList();
+                    updateSelection = true;
                 }
+            }
+
+            // check if selection has changed
+            if(updateSelection) 
+            { 
+                SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
             
 
@@ -708,6 +721,27 @@ namespace AMControls.Charts.Scatter
             InvalidateVisual();
         }
 
+        private bool Check_ContextMenuClick(Point mousePos) 
+        {
+            List<IDataSeries> CMenus = _series.FindAll(e => e.ContextMenus.Count > 0);
+
+            foreach (var item in CMenus) 
+            {
+                List<IDataPoint> ctMenu = item.ContextMenus;
+
+                foreach (var pointy in ctMenu)
+                {
+                    if(pointy.ContextMenu.Mouse_LeftButton_Down(mousePos.X, mousePos.Y)) 
+                    {
+                        ContextMenuClicked?.Invoke(pointy, EventArgs.Empty);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private void Handle_HideSeries(object sender, RoutedEventArgs e) 
         {
             IDataSeries series = (IDataSeries)((MenuItem)sender).Tag;
@@ -725,8 +759,6 @@ namespace AMControls.Charts.Scatter
 
             InvalidateVisual();
         }
-
-        
 
         private void ZoomIn(double x, double y) 
         {
@@ -826,5 +858,10 @@ namespace AMControls.Charts.Scatter
                 item.IsVisible = false;
             }
         }
+
+        #region Events
+        public event EventHandler SelectionChanged;
+        public event EventHandler ContextMenuClicked;
+        #endregion
     }
 }

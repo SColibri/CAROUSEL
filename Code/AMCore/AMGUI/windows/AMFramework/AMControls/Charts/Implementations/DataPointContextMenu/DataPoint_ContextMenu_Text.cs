@@ -91,7 +91,7 @@ namespace AMControls.Charts.DataPointContextMenu
 
         public override void Mouse_LeftButton_Action(double x, double y)
         {
-            throw new NotImplementedException();
+            // Do nothing
         }
 
         public override void Mouse_RightButton_Action(double x, double y)
