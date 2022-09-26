@@ -13,6 +13,7 @@ using AMControls.Charts.Interfaces;
 using AMControls.Charts.Implementations;
 using AMControls.Charts.Implementations.DataSeries;
 using AMFramework.Components.Charting.DataPlot;
+using AMFramework.Components.Charting.Interfaces;
 
 namespace AMFramework.Controller
 {
@@ -386,6 +387,48 @@ namespace AMFramework.Controller
             }
 
             return Result;
+        }
+
+        public List<IDataPlot> Get_HeatMap_GrainSize_vs_PhaseFraction_ObjectData()
+        {
+            List<IDataPlot> Result = new();
+
+            string Query_T = "SELECT DISTINCT Name FROM PrecipitationPhase;";
+            string RawData_T = _AMCore_Socket.run_lua_command("database_table_custom_query", Query_T);
+
+            List<string> RowData = RawData_T.Split("\n").ToList();
+            if (RowData.Count == 0) return Result;
+
+            foreach (string row in RowData)
+            {
+                if (row.Length == 0) continue;
+
+                IDataPlot dplot = new DataPlot_HeatTreatmentSimulations(_AMCore_Socket);
+                dplot.X_Data_Option(2);
+                dplot.Y_Data_Option(0);
+                ((DataPlot_HeatTreatmentSimulations)dplot).Set_where_clause("PrecipitationPhase = \"" + row.Replace(",", "").Trim() + "\"");
+                dplot.SeriesName = row.Replace(",", "").Trim();
+
+                Result.Add(dplot);
+            }
+
+            return Result;
+        }
+
+        public void Find_DataPoint(int IDProject, int IDCase, int IDHT) 
+        {
+            if(_projectController.SelectedProject == null) 
+            {
+                _projectController.DB_projects_reload();
+            }
+
+            foreach (var item in _projectController.DB_projects)
+            {
+                if (item.ID == IDProject)
+                {
+                    _projectController.SelectedProject = item;
+                }
+            }
         }
     }
 }

@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace AMFramework.Components.Charting.Interfaces
 {
-    internal interface IDataPlot
+    public interface IDataPlot
     {
         public string Name { get; }
+        public string SeriesName { get; set; }   
 
         public List<string> DataOptions { get; }
         public List<IDataPoint> DataPoints { get; }

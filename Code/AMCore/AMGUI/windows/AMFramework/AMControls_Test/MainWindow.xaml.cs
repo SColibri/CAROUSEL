@@ -76,6 +76,30 @@ namespace AMControls_Test
             }
 
             scat.Adjust_axes_to_data();
+
+            scat.ChartAreaMouseMove += OnChartMouseMove_Handle;
+        }
+
+        private void OnChartMouseMove_Handle(object? sender, MouseEventArgs e)
+        {
+            if (sender == null) return;
+            Point mPos = e.GetPosition(this);
+            IDataPoint dP = ((IChart)sender).Get_Position(mPos.X, mPos.Y);
+
+            if (dP.X_draw > -1 && dP.Y_draw > -1)
+            {
+                Tooltip.Visibility = Visibility.Visible;
+                XLocation.Text = dP.X.ToString("E3");
+                YLocation.Text = dP.Y.ToString("E3");
+
+                Canvas.SetLeft(Tooltip, dP.X_draw);
+                Canvas.SetTop(Tooltip, dP.Y_draw);
+
+            }
+            else
+            {
+                Tooltip.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

@@ -63,28 +63,44 @@ namespace AMControls.Charts.Implementations.DataSeries
         public List<IDataPoint> Search(string searchContent)
         {
             _searchResult.Clear();
+            if (searchContent.Length == 0) return _searchResult;
+
+            // Allow user to refine search
+            List <string> splitSearch = searchContent.Split('+').ToList();
 
             // Check Label
             foreach (var item in DataPoints)
             {
-                // check label
-                if (item.Label.Contains(searchContent)) 
+                foreach (var string_segment in splitSearch)
                 {
-                    _searchResult.Add(item);
-                    continue;
-                }
+                    item.IsVisible = false;
 
-                // check tag
-                if(item.Tag is List<string>) 
-                {
-                    foreach (var sub_string in (List<string>)item.Tag)
+                    // check label
+                    if (item.Label.Contains(string_segment.Trim()))
                     {
-                        if (item.Label.Contains(sub_string))
+                        item.IsVisible = true;
+                        continue;
+                    }
+
+                    // check tag
+                    if (item.Tag is List<string>)
+                    {
+                        foreach (var sub_string in (List<string>)item.Tag)
                         {
-                            _searchResult.Add(item);
-                            continue;
+                            if (sub_string.Contains(string_segment.Trim()))
+                            {
+                                item.IsVisible = true;
+                                break;
+                            }
                         }
                     }
+
+                    if (!item.IsVisible) break;
+                }
+                
+                if (item.IsVisible) 
+                {
+                    _searchResult.Add(item);
                 }
             }
 

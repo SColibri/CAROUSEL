@@ -8,6 +8,19 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <plot:ScatterPlot x:Name="scat" Margin="0"/>
+        <plot:ScatterPlot x:Name="scat" Margin="0">
+            <Border x:Name="Tooltip" Background="WhiteSmoke" BorderBrush="Silver" BorderThickness="0.5" CornerRadius="4">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Margin="0">
+                        <TextBlock Text="X:" FontSize="12" FontWeight="Bold" Margin="5"/>
+                        <TextBlock x:Name="XLocation" Margin="5" FontSize="13"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0">
+                        <TextBlock Text="Y:" FontSize="12" FontWeight="Bold" Margin="5"/>
+                        <TextBlock x:Name="YLocation" Margin="5" FontSize="13"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </plot:ScatterPlot>
     </Grid>
 </Window>

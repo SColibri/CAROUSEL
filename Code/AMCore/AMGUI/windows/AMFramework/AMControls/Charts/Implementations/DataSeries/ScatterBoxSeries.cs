@@ -130,23 +130,24 @@ namespace AMControls.Charts.Implementations.DataSeries
                     if (pointy.Selected) ContextMenus.Add(pointy);
                 }
 
-                // Update Grouping point position
-                if (_showGroupPoints) Group_Objects();
-
+                
                 // Show either search results or all available points
                 if (_searchResult.Count > 0) Draw_Search_Result(dc, canvas, ChartArea, BackgroundSelection);
                 else 
                 {
+                    // Update Grouping point position
+                    if (_showGroupPoints) Group_Objects();
+
                     Draw_Points_Action(dc, canvas, ChartArea, DataPoints, BackgroundSelection);
 
-                   
+                    // Draw Groups
+                    if (_showGroupPoints)
+                    {
+                        Draw_DataGroup(dc, ChartArea);
+                    }
+
                 }
 
-                // Draw Groups
-                if (_showGroupPoints)
-                {
-                    Draw_DataGroup(dc, ChartArea);
-                }
 
 
             }

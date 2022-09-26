@@ -5,9 +5,236 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AMFramework.Views.Project_Map"
              xmlns:AMPlot="clr-namespace:AMControls.Charts.Scatter;assembly=AMControls"
+             xmlns:butt="clr-namespace:AMFramework.Components.Button" d:DataContext="{d:DesignInstance Type=local:Project_Map}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <AMPlot:ScatterPlot x:Name="Main_plot"></AMPlot:ScatterPlot>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="25" MaxWidth="25" x:Name="ExpanderColumn"/>
+        </Grid.ColumnDefinitions>
+
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" 
+                      Background="LightSteelBlue" Visibility="Visible" Name="MainSplitter"/>
+        <AMPlot:ScatterPlot x:Name="Main_plot" PreviewKeyDown="Main_plot_PreviewKeyDown" MouseEnter="Main_plot_MouseEnter" Focusable="True">
+            <Border x:Name="Tooltip" Background="WhiteSmoke" BorderBrush="Silver" BorderThickness="0.5" CornerRadius="4">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Margin="0">
+                        <TextBlock Text="X:" FontSize="12" FontWeight="Bold" Margin="5"/>
+                        <TextBlock x:Name="XLocation" Margin="5" FontSize="13"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0">
+                        <TextBlock Text="Y:" FontSize="12" FontWeight="Bold" Margin="5"/>
+                        <TextBlock x:Name="YLocation" Margin="5" FontSize="13"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            
+        </AMPlot:ScatterPlot>
+        <StackPanel VerticalAlignment="Top" 
+                HorizontalAlignment="Right" MaxWidth="400">
+            <Border Background="White" 
+                MinWidth="300"
+                Margin="5"
+                x:Name="SearchControl" 
+                Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="25"/>
+                        <ColumnDefinition Width="5"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Search:" VerticalAlignment="Center" Margin="5" FontSize="15"  />
+                    <TextBox Grid.Column="1" VerticalAlignment="Center" Margin="5" FontSize="15" x:Name="stringSearch" KeyDown="TextBlock_KeyDown"/>
+                    <butt:AM_button Grid.Column="2" IconName="search" Height="25" GradientColor_2="DodgerBlue" GradientTransition="Blue" ForegroundIcon="White" ClickButton="AM_button_ClickButton"/>
+                    <Expander Grid.Row="1" Grid.ColumnSpan="3" Header="Advanced search options">
+                        <StackPanel>
+                            <Border Margin="5" Background="White" BorderBrush="Silver" BorderThickness="1" CornerRadius="2">
+                                <Grid Margin="5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="1"/>
+                                        <RowDefinition Height="1"/>
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox VerticalAlignment="Center" Margin="2" x:Name="SearchByRegion"/>
+                                        <TextBlock Text="Search in region" Grid.Row="0" Margin="2" VerticalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" Grid.Row="1">
+                                        <StackPanel Orientation="Horizontal" Margin="5">
+                                            <TextBlock Text="X: " Margin="2" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="1" Width="50"/>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Margin="5">
+                                            <TextBlock Text="Y: " Margin="2" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="1" Width="50"/>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Margin="5">
+                                            <TextBlock Text="Tolerance: " Margin="2" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Row="1" Width="50"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Expander>
+                </Grid>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="5" ShadowDepth="2"/>
+                </Border.Effect>
+            </Border>
+
+            <Border x:Name="ToolBorder" Visibility="Collapsed">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <CheckBox IsChecked="{Binding Path=ShowToolTip}" Margin="2"/>
+                        <TextBlock Text="Show tooltip" Margin="2"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <Grid Grid.Column="2">
+            <Border Background="White" BorderBrush="Silver" BorderThickness="0.8">
+                <Expander ExpandDirection="Right">
+                    <Expander.Triggers>
+                        <EventTrigger RoutedEvent="Expander.Expanded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.300" To="500" 
+                                                     Storyboard.TargetProperty="MaxWidth"
+                                                     Storyboard.TargetName="ExpanderColumn">
+                                        <DoubleAnimation.EasingFunction>
+                                            <CubicEase EasingMode="EaseOut"/>
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                    <DoubleAnimation Duration="0:0:0.300" To="200" 
+                                                     Storyboard.TargetProperty="MinWidth"
+                                                     Storyboard.TargetName="ExpanderColumn">
+                                        <DoubleAnimation.EasingFunction>
+                                            <CubicEase EasingMode="EaseOut"/>
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="Expander.Collapsed">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Duration="0:0:0.300" To="25" 
+                                                     Storyboard.TargetProperty="MaxWidth"
+                                                     Storyboard.TargetName="ExpanderColumn">
+                                        <DoubleAnimation.EasingFunction>
+                                            <CubicEase EasingMode="EaseOut"/>
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                    <DoubleAnimation Duration="0:0:0.300" To="20" 
+                                                     Storyboard.TargetProperty="MinWidth"
+                                                     Storyboard.TargetName="ExpanderColumn">
+                                        <DoubleAnimation.EasingFunction>
+                                            <CubicEase EasingMode="EaseOut"/>
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Expander.Triggers>
+
+                    <Expander.Header>
+                        <TextBlock Text="Data tools" FontSize="15" FontFamily="Lucida Sans">
+                            <TextBlock.LayoutTransform>
+                                <RotateTransform Angle="-90"/>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
+                    </Expander.Header>
+                    <Grid>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <Border Background="WhiteSmoke" Height="auto" Margin="5" CornerRadius="5"
+                                        BorderThickness="1" BorderBrush="Silver">
+                                    <Grid>
+                                        <StackPanel>
+                                            <TextBlock Text="Data origin" Margin="5,5,1,5"/>
+                                            <ComboBox Margin="5,1,5,5" ItemsSource="{Binding Path=DataOrigin}" SelectedItem="{Binding Path=SelectedDataOrigin}" />
+                                            <TextBlock Text="x_Data" Margin="5,5,1,5"/>
+                                            <ComboBox Margin="5,1,5,5" ItemsSource="{Binding Path=ColumnNames}" SelectedItem="{Binding Path=XDataColumn}"/>
+                                            <TextBlock Text="y_Data" Margin="5,5,1,5"/>
+                                            <ComboBox Margin="5,1,5,5" ItemsSource="{Binding Path=ColumnNames}" SelectedItem="{Binding Path=YDataColumn}"/>
+                                            <Button Content="Update" Margin="5" Click="Button_Click"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <Border Background="silver" Height="1" Margin="5"/>
+                                <TextBlock Text="Selected data points:" Margin="5"/>
+                                <ItemsControl ItemsSource="{Binding Path=SelectedPoints}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TreeViewItem Header="{Binding Path=Label}" Margin="1,5,5,5">
+
+                                                <StackPanel Orientation="Vertical">
+                                                    <Border BorderBrush="Silver" BorderThickness="1" CornerRadius="3" Margin="1,5,5,1">
+                                                        <StackPanel Margin="1">
+                                                            <TextBlock Text="Location: " FontSize="10"/>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <StackPanel Orientation="Horizontal" Margin="5">
+                                                                    <TextBlock Text="X: " FontWeight="Bold"/>
+                                                                    <TextBlock Text="{Binding Path=X}"/>
+                                                                </StackPanel>
+
+                                                                <Border Background="Silver" Width="1" Margin="5"></Border>
+
+                                                                <StackPanel Orientation="Horizontal" Margin="5">
+                                                                    <TextBlock Text="Y: " FontWeight="Bold"/>
+                                                                    <TextBlock Text="{Binding Path=Y}"/>
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                        
+                                                    </Border>
+
+                                                    <Border BorderBrush="Silver" BorderThickness="1" CornerRadius="3" Margin="1,5,5,1">
+                                                        <StackPanel Margin="1">
+                                                            <TextBlock Text="Raw data: " FontSize="10"/>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <ItemsControl ItemsSource="{Binding Path=Tag}">
+                                                                </ItemsControl>
+                                                            </StackPanel>
+                                                        </StackPanel>
+
+                                                    </Border>
+                                                </StackPanel>
+                                                
+
+
+                                            </TreeViewItem>
+                                            
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+
+                </Expander>
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="1" BlurRadius="10" Direction="200"/>
+                </Border.Effect>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

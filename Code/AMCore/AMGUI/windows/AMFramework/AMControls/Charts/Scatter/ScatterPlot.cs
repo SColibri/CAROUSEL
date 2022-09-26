@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using AMControls.Charts.Implementations;
 using AMControls.Charts.Interfaces;
 using AMControls.Interfaces;
 using AMControls.Interfaces.Implementations;
@@ -53,8 +54,12 @@ namespace AMControls.Charts.Scatter
         // Axis
         private double _xAxisSpacing = 0;
         private double _xAxis_xLocation = 0;
+        private double _xAxisStepSize = 0;
+        private double _yAxisStepSize = 0;
         private double _yAxisSpacing = 0;
         private double _yAxis_yLocation = 0;
+        
+
 
 
         // Legend
@@ -79,7 +84,6 @@ namespace AMControls.Charts.Scatter
         {
             Background = new SolidColorBrush(Colors.Transparent);
             this.Cursor = Cursors.Cross;
-
 
             MenuItem SaveImage = new();
             SaveImage.Header = "Save image";
@@ -138,9 +142,11 @@ namespace AMControls.Charts.Scatter
 
             RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.Fant);
 
+            _xAxisStepSize = _xAxisSpacing / _xAxis.Interval;
+            _yAxisStepSize = _yAxisSpacing / _yAxis.Interval;
             for (int i = 0; i < _series.Count; i++) 
             {
-                _series[i].Draw(dc, this, _chartArea, _xAxisSpacing / _xAxis.Interval, _yAxisSpacing / _yAxis.Interval, _xAxis.MinValue, _yAxis.MinValue);
+                _series[i].Draw(dc, this, _chartArea, _xAxisStepSize, _yAxisStepSize, _xAxis.MinValue, _yAxis.MinValue);
             }
 
             List<IDataPoint> contextMenus = new();
@@ -575,6 +581,18 @@ namespace AMControls.Charts.Scatter
             axis.Ticks = intervals;
             this.InvalidateVisual();
         }
+
+        public List<IDataPoint> Get_Selected_DataPoints() 
+        {
+            List<IDataPoint> Result = new();
+
+            foreach (var item in _series)
+            {
+                Result.AddRange(item.DataPoints.FindAll(e => e.Selected == true));
+            }
+
+            return Result;
+        }
         #endregion
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
@@ -631,7 +649,6 @@ namespace AMControls.Charts.Scatter
                 Translate_StartPosition = e.GetPosition(this);
                 MouseDown = true;
                 _mouseCaptured = false;
- 
             }
         }
 
@@ -642,11 +659,8 @@ namespace AMControls.Charts.Scatter
             base.OnMouseMove(e);
 
             Point mouseLocation = e.GetPosition(this);
-            if (MouseDown)
-            {
-                Translate(Translate_StartPosition.X - mouseLocation.X, -Translate_StartPosition.Y + mouseLocation.Y);
-            }
-            else if (MouseDown_xAxis)
+            
+            if (MouseDown_xAxis)
             {
                 Scale_Axis(_xAxis, Translate_StartPosition.X - mouseLocation.X, _xMinValue, _xMaxValue);
             }
@@ -654,18 +668,30 @@ namespace AMControls.Charts.Scatter
             {
                 Scale_Axis(_yAxis, Translate_StartPosition.Y - mouseLocation.Y, _yMinValue, _yMaxValue);
             }
-            else
+            else if (_chartArea.Contains(mouseLocation))
+            {
+                if (MouseDown)
+                {
+                    Translate(Translate_StartPosition.X - mouseLocation.X, -Translate_StartPosition.Y + mouseLocation.Y);
+                }
+                else
+                {
+                    bool doInvalidate = false;
+
+                    for (int i = 0; i < _series.Count; i++)
+                    {
+                        bool tempRes = _series[i].Mouse_Hover(mouseLocation.X, mouseLocation.Y);
+                        if (tempRes) doInvalidate = true;
+                    }
+
+                    if (doInvalidate) InvalidateVisual();
+
+                    ChartAreaMouseMove?.Invoke(this, e);
+                }
+            }
+            else 
             {
                 bool doInvalidate = false;
-                //Tooltip_position = e.GetPosition(this);
-                //InvalidateVisual();
-
-                // check if over a data point
-                for (int i = 0; i < _series.Count; i++)
-                {
-                    bool tempRes = _series[i].Mouse_Hover(mouseLocation.X, mouseLocation.Y);
-                    if (tempRes) doInvalidate = true;
-                }
 
                 foreach (var item in _controls)
                 {
@@ -675,6 +701,7 @@ namespace AMControls.Charts.Scatter
 
                 if (doInvalidate) InvalidateVisual();
             }
+
         }
 
         private bool _mouseCaptured = false;
@@ -923,13 +950,26 @@ namespace AMControls.Charts.Scatter
 
         private void New_window(object sender, RoutedEventArgs e) 
         {
-            ScatterPlot sP = new();
-            sP.Set_xAxis(_xAxis);
-            sP.Set_yAxis(_yAxis);
-
-            foreach (var item in _series)
+            bool disconnected = false;
+            var parentC = VisualTreeHelper.GetParent(this);
+            if (parentC is Grid) 
             {
-                sP.Add_series(item);
+                ((Grid)parentC).Children.Remove(this);
+                disconnected = true;
+            }
+
+            ScatterPlot sP;
+            if (disconnected) sP = this;
+            else 
+            {
+                sP = new();
+                sP.Set_xAxis(_xAxis);
+                sP.Set_yAxis(_yAxis);
+
+                foreach (var item in _series)
+                {
+                    sP.Add_series(item);
+                }
             }
 
             Window win = new();
@@ -952,10 +992,56 @@ namespace AMControls.Charts.Scatter
             Change_Horizontal_axisInterval(intervals);
         }
 
+        public List<IDataPoint> Search(string searchString) 
+        {
+            List<IDataPoint> Result = new();
+
+            foreach (var item in _series)
+            {
+                List<IDataPoint> tempRef = item.Search(searchString);
+                Result.AddRange(tempRef);
+            }
+
+            this.InvalidateVisual();
+            return Result;
+        }
+
+        public List<IDataPoint> Search(double x, double y, double tolerance)
+        {
+            List<IDataPoint> Result = new();
+
+            foreach (var item in _series)
+            {
+                List<IDataPoint> tempRef = item.Search(x, y, tolerance);
+                Result.AddRange(tempRef);
+            }
+
+            this.InvalidateVisual();
+            return Result;
+        }
+
+        public IDataPoint Get_Position(double x_mouse, double y_mouse) 
+        {
+            if (!_chartArea.Contains(x_mouse, y_mouse)) return new DataPoint() { X_draw = -1, Y_draw = -1};
+            DataPoint dP = new();
+            dP.X = _xAxis.MinValue + (x_mouse - _xAxis_xLocation)/ _xAxisStepSize;
+            dP.Y = _yAxis.MinValue - (- y_mouse + _yAxis.Bounds.Y) / _yAxisStepSize;
+            
+            dP.X_draw = x_mouse;
+            dP.Y_draw = y_mouse;
+
+            return dP;
+        }
+
+        public void Clear_Series() 
+        {
+            _series.Clear();
+        }
 
         #region Events
         public event EventHandler SelectionChanged;
         public event EventHandler ContextMenuClicked;
+        public event EventHandler<MouseEventArgs> ChartAreaMouseMove;
         #endregion
     }
 }

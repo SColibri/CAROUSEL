@@ -10,7 +10,7 @@ using AMControls.Charts.Interfaces;
 
 namespace AMControls.Charts.Spyder
 {
-    internal class SpyderPlot : Canvas, IChart
+    internal class SpyderPlot : Canvas
     {
         // Axes
         private List<IAxes> _axes;

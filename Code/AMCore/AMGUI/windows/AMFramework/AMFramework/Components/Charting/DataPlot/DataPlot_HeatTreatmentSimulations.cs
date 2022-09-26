@@ -14,10 +14,12 @@ using System.Threading.Tasks;
 
 namespace AMFramework.Components.Charting.DataPlot
 {
-    internal class DataPlot_HeatTreatmentSimulations : IDataPlot
+    public class DataPlot_HeatTreatmentSimulations : IDataPlot
     {
         private string _name = "Heat treatment simulation";
+        public string SeriesName { get; set; } = "Empty";
         private List<string> _DataOptions = new() { "PhaseFraction", "NumberDensity", "MeanRadius" };
+        private List<string> _DataUnits = new() { "","","m"};
         private List<string> _ColumnNames = new();
         private Dictionary<int, string> _compositionData;
         private string _tableViewName = "vd_HeatTreatment_Plot";
@@ -26,6 +28,7 @@ namespace AMFramework.Components.Charting.DataPlot
         private string _zDataName = "";
         private string _whereClause = "";
         private Core.IAMCore_Comm _socket;
+        private List<List<string>> _cellData;
 
         public DataPlot_HeatTreatmentSimulations(Core.IAMCore_Comm socket) 
         {
@@ -102,34 +105,39 @@ namespace AMFramework.Components.Charting.DataPlot
 
         private List<IDataPoint> Get_datapoints() 
         {
-            List<IDataPoint> Result = new();
 
-            int xIndex = Get_ColumnIndex(_xDataName);
-            int yIndex = Get_ColumnIndex(_yDataName);
-            int zIndex = Get_ColumnIndex(_zDataName);
+            if(_cellData == null) 
+            {
+                _cellData = new();
+                Load_Data();
+            }
+  
+            return Get_DataFromExisiting();
+        }
 
+        private void Load_Data() 
+        {
             string Query_T = "SELECT * FROM vd_HeatTreatment_Plot";
             if (_whereClause.Length > 0) Query_T += " WHERE " + _whereClause + "";
 
             string RawData_T = _socket.run_lua_command("database_table_custom_query", Query_T);
             List<string> RowData = RawData_T.Split("\n").ToList();
-            if (RowData.Count == 0) return Result;
+            if (RowData.Count == 0) return;
 
             foreach (var item in RowData)
             {
-                IDataPoint tempObject = new DataPoint();
-                List<string> cells = item.Split(",").ToList();
+                List<string> cells = item.Trim().Split(",").ToList();
                 if (cells.Count < 11) continue;
-                if (!_compositionData.ContainsKey(Convert.ToInt32(cells[8]))) 
+                if (!_compositionData.ContainsKey(Convert.ToInt32(cells[8])))
                 {
                     string QueryComp = "SELECT * FROM vd_case_composition WHERE ID = \"" + cells[8] + "\"";
                     string RawComp = _socket.run_lua_command("database_table_custom_query", QueryComp);
 
                     List<string> RowComp = RawComp.Split("\n").ToList();
-                    if (RowComp.Count > 0) 
+                    if (RowComp.Count > 0)
                     {
                         string CompString = "";
-                        foreach (var CompBar in RowComp) 
+                        foreach (var CompBar in RowComp)
                         {
                             List<string> cellComp = CompBar.Split(",").ToList();
                             if (cellComp.Count < 3) continue;
@@ -142,11 +150,28 @@ namespace AMFramework.Components.Charting.DataPlot
                     }
                 }
 
+
+                cells.Add(_compositionData[Convert.ToInt32(cells[8])]);
+                _cellData.Add(cells);
+            }
+
+        }
+        private List<IDataPoint> Get_DataFromExisiting() 
+        {
+            List<IDataPoint> Result = new();
+
+            int xIndex = Get_ColumnIndex(_xDataName);
+            int yIndex = Get_ColumnIndex(_yDataName);
+            int zIndex = Get_ColumnIndex(_zDataName);
+
+            foreach (var cells in _cellData)
+            {
+                IDataPoint tempObject = new DataPoint();
+
                 if (xIndex > -1) { tempObject.X = Convert.ToDouble(cells[xIndex]); }
                 if (yIndex > -1) { tempObject.Y = Convert.ToDouble(cells[yIndex]); }
                 if (zIndex > -1) { tempObject.Z = Convert.ToDouble(cells[zIndex]); }
 
-                cells.Add(_compositionData[Convert.ToInt32(cells[8])]);
                 tempObject.ContextMenu = new DataPoint_ProjectViewContextMenu(cells, cells[9]);
                 tempObject.Label = cells[9];
                 tempObject.Tag = cells;
@@ -156,6 +181,5 @@ namespace AMFramework.Components.Charting.DataPlot
 
             return Result;
         }
-
     }
 }
