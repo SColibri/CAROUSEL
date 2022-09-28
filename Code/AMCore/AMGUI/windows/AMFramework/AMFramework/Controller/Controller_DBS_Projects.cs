@@ -12,6 +12,9 @@ using System.Reflection;
 using AutocompleteMenuNS;
 using System.Windows.Media;
 using System.Windows.Threading;
+using AMFramework.Components.Button;
+using AMFramework.Interfaces;
+using AMFramework.Model;
 
 namespace AMFramework.Controller
 {
@@ -657,7 +660,43 @@ namespace AMFramework.Controller
             _dtv_Controller.ID = SelectedProject.ID;
 
             List<object> listy = new();
+            
+            WrapPanel ToolPanel = new();
+            ToolPanel.Orientation = Orientation.Horizontal;
+            ToolPanel.FlowDirection = FlowDirection.RightToLeft;
+            ToolPanel.Margin = new Thickness(3,3,3,3);
 
+            AM_button plotAccess = new Components.Button.AM_button()
+            {
+                IconName = "AreaChart",
+                Width = 20,
+                Height = 20,
+                GradientColor_2 = "White",
+                ForegroundIcon = "DodgerBlue",
+                GradientTransition = "SteelBlue",
+                Margin = new Thickness(2, 2, 2, 2),
+                CornerRadius = "2",
+                ModelTag = SelectedProject
+            };
+            plotAccess.ClickButton += OnMouseClick_Plot_Handle;
+            ToolPanel.Children.Add(plotAccess);
+
+            AM_button editAccess = new Components.Button.AM_button()
+            {
+                IconName = "Edit",
+                Width = 20,
+                Height = 20,
+                GradientColor_2 = "White",
+                ForegroundIcon = "DodgerBlue",
+                GradientTransition = "SteelBlue",
+                Margin = new Thickness(2, 2, 2, 2),
+                CornerRadius = "2",
+                ModelTag = SelectedProject
+            };
+            editAccess.ClickButton += OnMouseClick_Edit_Handle;
+            ToolPanel.Children.Add(editAccess);
+
+            listy.Add(ToolPanel);
 
             _dtv_Controller.Clear_Items();
             listy.Add(new TV_TopView(dtv_Add_elements()));
@@ -666,10 +705,29 @@ namespace AMFramework.Controller
             listy.Add(new TV_TopView(dtv_Add_object()));
             _dtv_Controller.Items = listy;
 
-
-
-
             OnPropertyChanged("DTV_Controller");
+        }
+
+        private void OnMouseClick_Plot_Handle(object? sender, EventArgs e) 
+        {
+            if (sender is not AM_button) return;
+            AM_button sRef = (AM_button)sender;
+
+            if (sRef.ModelTag is not Model_Projects) return;
+            Model_Projects mRef = (Model_Projects)sRef.ModelTag;
+
+            Controller_Global.MainControl?.Show_Project_PlotView(mRef);
+        }
+
+        private void OnMouseClick_Edit_Handle(object? sender, EventArgs e)
+        {
+            if (sender is not AM_button) return;
+            AM_button sRef = (AM_button)sender;
+
+            if (sRef.ModelTag is not Model_Projects) return;
+            Model_Projects mRef = (Model_Projects)sRef.ModelTag;
+
+            Controller_Global.MainControl?.Show_Project_EditView(mRef);
         }
 
         private TV_TopView_controller dtv_Add_elements() 
@@ -709,30 +767,22 @@ namespace AMFramework.Controller
             WrapPanel ToolPanel = new();
             ToolPanel.Orientation = Orientation.Horizontal;
             ToolPanel.FlowDirection = FlowDirection.RightToLeft;
-            ToolPanel.Children.Add(new Components.Button.AM_button()
+            ToolPanel.Margin = new Thickness(3, 3, 3, 3);
+
+            AM_button plotAccess = new Components.Button.AM_button()
             {
                 IconName = "AreaChart",
-                Width = 25,
-                Height = 25,
-                GradientColor_2 = "White",
-                ForegroundIcon = "DodgerBlue",
-                GradientTransition = "SteelBlue",
-                Margin = new Thickness(2,2,2,2),
-                CornerRadius = "2"
-            });
-
-            ToolPanel.Children.Add(new Components.Button.AM_button()
-            {
-                IconName = "Edit",
-                Width = 25,
-                Height = 25,
+                Width = 20,
+                Height = 20,
                 GradientColor_2 = "White",
                 ForegroundIcon = "DodgerBlue",
                 GradientTransition = "SteelBlue",
                 Margin = new Thickness(2, 2, 2, 2),
-                CornerRadius = "2"
-            });
-
+                CornerRadius = "2",
+                ModelTag = new Model_Case()
+            };
+            plotAccess.ClickButton += OnMouseClick_CasePixel_View_Handle;
+            ToolPanel.Children.Add(plotAccess);
             TC_proj.Items.Add(ToolPanel);
 
             foreach (var item in Cases)
@@ -743,11 +793,58 @@ namespace AMFramework.Controller
             return TC_proj;
         }
 
+        private void OnMouseClick_CasePixel_View_Handle(object? sender, EventArgs e)
+        {
+            if (sender is not AM_button) return;
+            AM_button sRef = (AM_button)sender;
+
+            if (sRef.ModelTag is not Model_Case) return;
+            Model_Case mRef = (Model_Case)sRef.ModelTag;
+
+            Controller_Global.MainControl?.Show_Case_PlotView(mRef);
+        }
+
         private TV_TopView_controller dtv_Add_CaseSingle(Model.Model_Case casey)
         {
             TV_TopView_controller TC_proj = new();
             TC_proj.Title = "Case " + casey.ID;
             TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.EllipsisH;
+
+            WrapPanel ToolPanel = new();
+            ToolPanel.Orientation = Orientation.Horizontal;
+            ToolPanel.FlowDirection = FlowDirection.RightToLeft;
+            ToolPanel.Margin = new Thickness(3, 3, 3, 3);
+
+            AM_button plotAccess = new Components.Button.AM_button()
+            {
+                IconName = "AreaChart",
+                Width = 20,
+                Height = 20,
+                GradientColor_2 = "White",
+                ForegroundIcon = "DodgerBlue",
+                GradientTransition = "SteelBlue",
+                Margin = new Thickness(2, 2, 2, 2),
+                CornerRadius = "2",
+                ModelTag = casey
+            };
+            //plotAccess.ClickButton += OnMouseClick_Plot_Handle;
+            ToolPanel.Children.Add(plotAccess);
+
+            AM_button editAccess = new Components.Button.AM_button()
+            {
+                IconName = "Edit",
+                Width = 20,
+                Height = 20,
+                GradientColor_2 = "White",
+                ForegroundIcon = "DodgerBlue",
+                GradientTransition = "SteelBlue",
+                Margin = new Thickness(2, 2, 2, 2),
+                CornerRadius = "2",
+                ModelTag = casey
+            };
+            editAccess.ClickButton += OnMouseClick_Case_Edit_Handle;
+            ToolPanel.Children.Add(editAccess);
+            TC_proj.Items.Add(ToolPanel);
 
             // Add case composition
             TV_TopView_controller TC_Composition = new();
@@ -770,6 +867,17 @@ namespace AMFramework.Controller
 
 
             return TC_proj;
+        }
+
+        private void OnMouseClick_Case_Edit_Handle(object? sender, EventArgs e)
+        {
+            if (sender is not AM_button) return;
+            AM_button sRef = (AM_button)sender;
+
+            if (sRef.ModelTag is not Model_Case) return;
+            Model_Case mRef = (Model_Case)sRef.ModelTag;
+
+            Controller_Global.MainControl?.Show_Case_EditWindow(mRef);
         }
 
         private TV_TopView_controller dtv_Add_Precipitation_kinetics(Model.Model_Case casey) 

@@ -5,6 +5,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using AMControls.Custom.ProjectTreeView;
+using AMFramework.Controller;
+using AMFramework.Interfaces;
 using ScintillaNET;
 
 namespace AMFramework
@@ -20,6 +22,7 @@ namespace AMFramework
 
             InitializeComponent();
             DataContext = new Controller.Controller_MainWindow();
+            Controller_Global.MainControl = (IMainWindow)DataContext;
 
             databaseView.DataContext = ((Controller.Controller_MainWindow)DataContext).get_project_controller();
             databaseView.Navigator.SelectedItemChanged += ((Controller.Controller_MainWindow)DataContext).Selected_treeview_item_Handle;

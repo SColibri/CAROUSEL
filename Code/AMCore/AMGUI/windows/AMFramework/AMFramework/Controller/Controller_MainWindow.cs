@@ -10,10 +10,16 @@ using System.Windows.Data;
 using System.Windows;
 using System.Windows.Input;
 using AMFramework.Core;
+using AMFramework.Interfaces;
+using AMFramework.Model;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
+using AMFramework.Views.Projects;
+using AMFramework.Views.Case;
 
 namespace AMFramework.Controller
 {
-    public class Controller_MainWindow : INotifyPropertyChanged
+    public class Controller_MainWindow : Controller_Abstract, IMainWindow
     {
         private MainWindow_ViewModel _AMView;        
         private Controller.Controller_AMCore _AMCore;
@@ -118,15 +124,43 @@ namespace AMFramework.Controller
             }
         }
 
+        private TabItem _selectedTab;
+        public TabItem SelectedTab
+        {
+            get { return _selectedTab; }
+            set
+            {
+                _selectedTab = value;
+                OnPropertyChanged("SelectedTab");
+            }
+        }
+
         #endregion
 
         #region Control_Elements
         #region TabItems
         private List<TabItem> _tabItems = new();
-        public List<TabItem> TabItems { get { return _tabItems; } }
-        public void Add_Tab_Item(TabItem itemy) 
+        public List<TabItem> TabItems 
         { 
-            TabItems.Add(itemy);
+            get { return _tabItems; } 
+            set 
+            {
+                _tabItems = value;
+                OnPropertyChanged("TabItems");
+            }
+        }
+        public void Add_Tab_Item(TabItem itemy) 
+        {
+            List<TabItem> nList = new();
+
+            nList.Add(itemy);
+            foreach (var item in TabItems)
+            {
+                nList.Add(item);
+            }
+
+            TabItems = nList;
+            SelectedTab = itemy;
             OnPropertyChanged("TabItems");
         }
         public void Remove_tab_Item(TabItem itemy) 
@@ -135,17 +169,112 @@ namespace AMFramework.Controller
             OnPropertyChanged("TabItems");
         }
 
-        #endregion
-        #endregion
-
-        #endregion
-
-        #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
+        public void Remove_ByTagType(Type objType) 
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            TabItems.RemoveAll(e => e.Tag.GetType().Equals(objType));
+            OnPropertyChanged("TabItems");
+        }
+
+        #endregion
+        #endregion
+
+        #endregion
+
+        #region IMainWindow
+        public void Show_Project_PlotView(Model_Projects modelObject)
+        {
+            Remove_ByTagType(typeof(Project_ViewModel));
+            TabItem tabContainer = Create_Tab(new Views.Project_Map.Project_Map(get_plot_Controller()), new Project_ViewModel(), "Project view");
+            Add_Tab_Item(tabContainer);
+        }
+
+        public void Show_Project_EditView(Model_Projects modelObject)
+        {
+            Remove_ByTagType(typeof(Project_ViewModel));
+            TabItem tabContainer = Create_Tab(new Views.Projects.Project_contents(ref _DBSProjects), new Project_ViewModel(), "Project");
+            Add_Tab_Item(tabContainer);
+        }
+
+        public void Show_Case_PlotView(Model_Case modelObject)
+        {
+            Remove_ByTagType(typeof(Case_ViewModel));
+            Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
+            TabItem tabContainer = Create_Tab(new Views.Case.Case_contents(ref _Plot), new Case_ViewModel(), "Case plot");
+            Add_Tab_Item(tabContainer);
+        }
+
+        public void Show_Case_EditWindow(Model_Case modelObject)
+        {
+            Remove_ByTagType(typeof(Case_ViewModel));
+            Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
+            TabItem tabContainer = Create_Tab(new Views.Case.Case_general(ref tController), new Case_ViewModel(), "Case item");
+            Add_Tab_Item(tabContainer);
+        }
+
+        public void Show_HeatTreatment_PlotView(Model_HeatTreatment modelObject)
+        {
+            Remove_ByTagType(modelObject.GetType());
+
+            throw new NotImplementedException();
+        }
+
+        public void Show_HeatTreatment_EditWindow(Model_HeatTreatment modelObject)
+        {
+            Remove_ByTagType(modelObject.GetType());
+
+            throw new NotImplementedException();
+        }
+
+        
+        private TabItem Create_Tab(object itemView, object modelObject, string tabTitle) 
+        {
+            TabItem result = new TabItem();
+
+            string headerTitle = tabTitle;
+            Uri ImageUri = null; //TODO add lua Icon here
+            if (headerTitle.Length == 0)
+            {
+                result.Header = get_TabHeader(tabTitle, ImageUri);
+            }
+            else
+            {
+                result.Header = get_TabHeader(headerTitle, ImageUri);
+            }
+
+            result.Content = itemView;
+            result.Tag = modelObject;
+
+            return result;
+        }
+
+        public Grid get_TabHeader(string TabTitle, Uri uriImage)
+        {
+            Grid grid = new Grid();
+            ColumnDefinition CDef_01 = new ColumnDefinition();
+            CDef_01.Width = new GridLength(25);
+            ColumnDefinition CDef_02 = new ColumnDefinition();
+            CDef_01.Width = new GridLength(1, GridUnitType.Star);
+
+            grid.ColumnDefinitions.Add(CDef_01);
+            grid.ColumnDefinitions.Add(CDef_02);
+
+            Image image = new Image();
+            if (uriImage != null)
+            {
+                ImageSource imS = new BitmapImage(uriImage);
+                image.Source = imS;
+            }
+
+            TextBlock textBlock = new TextBlock();
+            textBlock.FontWeight = FontWeights.DemiBold;
+            textBlock.Text = TabTitle;
+
+            Grid.SetColumn(image, 0);
+            Grid.SetColumn(textBlock, 0);
+            grid.Children.Add(textBlock);
+            grid.Children.Add(image);
+
+            return grid;
         }
         #endregion
 
@@ -517,6 +646,8 @@ namespace AMFramework.Controller
                 _treeview_selected_tab = _AMView.get_project_tab((Controller_DBS_Projects)refItem);
             }
         }
+
+       
 
         #endregion
         #endregion

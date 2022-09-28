@@ -130,7 +130,8 @@
             <tvc:TV_Menu x:Name="tvc" Margin="1,1,5,1"/>
             
             <TabControl x:Name="MainTabControl" Grid.Column="2" ItemsSource="{Binding Path=TabItems, UpdateSourceTrigger=PropertyChanged}"
-                        Visibility="{Binding Path=TabControlVisible, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}">
+                        Visibility="{Binding Path=TabControlVisible, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}"
+                        SelectedItem="{Binding Path=SelectedTab}">
                 <TabControl.Style>
                     <Style TargetType="TabControl">
                         <Setter Property="Visibility" Value="Visible"/>
