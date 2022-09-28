@@ -17,6 +17,7 @@ using AMControls.Charts.DataPointContextMenu;
 using AMControls.Charts.Interfaces;
 using AMControls.Charts.Implementations;
 using AMControls.Charts.Implementations.DataSeries;
+using AMControls_Test.Custom;
 
 namespace AMControls_Test
 {
@@ -78,6 +79,9 @@ namespace AMControls_Test
             scat.Adjust_axes_to_data();
 
             scat.ChartAreaMouseMove += OnChartMouseMove_Handle;
+
+            TreeView_Test TTT = new();
+            TTT.Show();
         }
 
         private void OnChartMouseMove_Handle(object? sender, MouseEventArgs e)

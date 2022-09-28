@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Charts\Resources\arrow-autofit-width.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

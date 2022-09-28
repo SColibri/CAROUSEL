@@ -77,7 +77,7 @@ namespace AMFramework.Model
         {
             get { return _startTemperature; }
             set
-            {
+            {               
                 _startTemperature = value;
                 OnPropertyChanged("StartTemperature");
             }

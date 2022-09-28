@@ -15,7 +15,7 @@ namespace AMFramework.Model.ModelCoreExecutors
         #region Implementation Abstract class
         public override void DoAction()
         {
-            //TODO: add checks of neccesary
+            //TODO: add checks of necessary
             Command_parameters = _modelObject.Get_parameter_list().ToList().Find(e => e.Name.CompareTo("ID") == 0)?.GetValue(_modelObject)?.ToString() ?? "";
 
             if (_commandReference == null) { CoreOutput = "Error: DoAction, loading by id project is not available for this model!"; return; }

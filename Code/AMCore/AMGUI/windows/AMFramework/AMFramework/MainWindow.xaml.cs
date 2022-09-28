@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using AMControls.Custom.ProjectTreeView;
 using ScintillaNET;
 
 namespace AMFramework
@@ -24,12 +25,12 @@ namespace AMFramework
             databaseView.Navigator.SelectedItemChanged += ((Controller.Controller_MainWindow)DataContext).Selected_treeview_item_Handle;
             databaseView.Navigator.SelectedItemChanged += Treeview_selectionChanged_Handle;
             databaseView.click_heat_treatment += Select_kinetic_precipitation;
-             
+
+            TV_Menu_Controller tvmController = new();
+            tvmController.Main_Nodes.Add(new TV_TopView(((Controller.Controller_MainWindow)DataContext).get_project_controller().DTV_Controller));
+            tvc.DataContext = tvmController;
 
             ((Controller.Controller_MainWindow)DataContext).get_project_controller().PropertyChanged += OnProperty_changed_project;
-
-            
-
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -417,7 +417,10 @@ namespace AMFramework.Controller
 
         public void Find_DataPoint(int IDProject, int IDCase, int IDHT) 
         {
-            if(_projectController.SelectedProject == null) 
+            _projectController.TreeIDCase = IDCase;
+            _projectController.TreeIDHeatTreatment = IDHT;
+
+            if (_projectController.SelectedProject == null) 
             {
                 _projectController.DB_projects_reload();
             }

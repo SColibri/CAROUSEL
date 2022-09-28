@@ -8,6 +8,7 @@
              xmlns:models ="clr-namespace:AMFramework.Model"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:converters ="clr-namespace:AMFramework.Components.Converters" d:DataContext="{d:DesignInstance Type=controllers:Controller_DBS_Projects}"
+             xmlns:amc ="clr-namespace:AMControls.Custom;assembly=AMControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -24,7 +25,8 @@
             <TextBlock Grid.Column="0" Text="Search: " Margin="5"/>
             <TextBox Grid.Column="1" Margin="5"/>
         </Grid>
-        <TreeView x:Name="Navigator" Grid.Row="1" ItemsSource="{Binding Path=SelectedProject}" Tag="Project">
+        <amc:TreeView_custom_AM x:Name="Navigator" Grid.Row="1" ItemsSource="{Binding Path=SelectedProject}" Tag="Project"
+                                SelectionTree="{Binding Path=SelectionTree}">
             <TreeView.Resources>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="HeaderTemplate">
@@ -156,7 +158,7 @@
                     
                 </TreeViewItem>
             </TreeViewItem>
-        </TreeView>
+        </amc:TreeView_custom_AM>
 
         <Grid Visibility="{Binding Path=Loading_project, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}" 
               Background="AliceBlue" Opacity="0.7" Grid.RowSpan="2">

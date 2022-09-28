@@ -8,6 +8,7 @@
         xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
         xmlns:AMWindow="clr-namespace:AMFramework.Components.Windows" 
         xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_MainWindow}"
+        xmlns:tvc ="clr-namespace:AMControls.Custom.ProjectTreeView;assembly=AMControls"
         mc:Ignorable="d"
         Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
     <Grid>
@@ -122,9 +123,12 @@
             </Grid.ColumnDefinitions>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
-            <local2:Database_treeview x:Name="databaseView">
+            <local2:Database_treeview x:Name="databaseView" Visibility="Collapsed">
 
             </local2:Database_treeview>
+            
+            <tvc:TV_Menu x:Name="tvc" Margin="1,1,5,1"/>
+            
             <TabControl x:Name="MainTabControl" Grid.Column="2" ItemsSource="{Binding Path=TabItems, UpdateSourceTrigger=PropertyChanged}"
                         Visibility="{Binding Path=TabControlVisible, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}">
                 <TabControl.Style>

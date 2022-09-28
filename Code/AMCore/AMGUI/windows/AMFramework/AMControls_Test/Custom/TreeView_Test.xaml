@@ -1,0 +1,27 @@
+﻿<Window x:Class="AMControls_Test.Custom.TreeView_Test"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AMControls_Test.Custom"
+        xmlns:amc="clr-namespace:AMControls.Custom;assembly=AMControls"
+        xmlns:sd="clr-namespace:AMControls.Custom.ProjectTreeView;assembly=AMControls"
+        d:DataContext="{d:DesignInstance Type=local:TreeView_Test}"
+        mc:Ignorable="d"
+        Title="TreeView_Test" Height="450" Width="800" >
+    <Grid>
+        <amc:TreeView_custom_AM ItemsSource="{Binding Path=MainTreeList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                Visibility="Collapsed">
+            <amc:TreeView_custom_AM.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Items}">
+                    <TextBlock Text="{Binding Path=Name}"></TextBlock>
+                </HierarchicalDataTemplate>
+            </amc:TreeView_custom_AM.ItemTemplate>
+
+        </amc:TreeView_custom_AM>
+        <sd:TV_TopView x:Name="tr">
+
+        </sd:TV_TopView>
+        
+    </Grid>
+</Window>

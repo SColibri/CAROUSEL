@@ -7,6 +7,11 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using AMControls.Custom.ProjectTreeView;
+using System.Reflection;
+using AutocompleteMenuNS;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace AMFramework.Controller
 {
@@ -142,6 +147,38 @@ namespace AMFramework.Controller
                 OnPropertyChanged("Loading_project");
             }
         }
+
+        private int _treeIDCase = -1;
+        public int TreeIDCase
+        {
+            get { return _treeIDCase; }
+            set 
+            {
+                _treeIDCase = value;
+            }
+        }
+
+        private int _treeIDHeatTreatment = -1;
+        public int TreeIDHeatTreatment
+        {
+            get { return _treeIDHeatTreatment; }
+            set
+            {
+                _treeIDHeatTreatment = value;
+            }
+        }
+
+        private List<int> _selectionTree = new();
+        public List<int> SelectionTree 
+        { 
+            get { return _selectionTree; }
+            set 
+            {
+                _selectionTree = value;
+                OnPropertyChanged("SelectionTree");
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -231,7 +268,22 @@ namespace AMFramework.Controller
             OnPropertyChanged("Cases");
             OnPropertyChanged(nameof(SelectedElements));
 
+            if(_treeIDCase > -1 && _treeIDHeatTreatment > -1) 
+            {
+                Model.Model_Case? CaseID = Cases.Find(e => e.ID == _treeIDCase);
+                if(CaseID != null) 
+                {
+                    Model.Model_HeatTreatment? Htreat = CaseID.HeatTreatments.Find(e => e.ID == _treeIDHeatTreatment);
+                    if(Htreat != null) 
+                    {
+                        Htreat.IsSelected = true;
+                    }
+                }
+                
+            }
+
             Loading_project = false;
+            Application.Current.Dispatcher.Invoke(new Action(Refresh_DTV));
         }
 
         public Model.Model_Projects DataModel(int ID)
@@ -584,6 +636,224 @@ namespace AMFramework.Controller
 
         #region Plot
 
+        #endregion
+
+        #region FTR
+        private TV_TopView_controller _dtv_Controller = new();
+        public TV_TopView_controller DTV_Controller
+        {
+            get { return _dtv_Controller; }
+            set 
+            {
+                _dtv_Controller = value;
+                OnPropertyChanged("DTV_Controller");
+            }
+        }
+
+        private void Refresh_DTV() 
+        {
+
+            _dtv_Controller.Title = SelectedProject.Name;
+            _dtv_Controller.ID = SelectedProject.ID;
+
+            List<object> listy = new();
+
+
+            _dtv_Controller.Clear_Items();
+            listy.Add(new TV_TopView(dtv_Add_elements()));
+            listy.Add(new TV_TopView(dtv_Add_activePhases()));
+            listy.Add(new TV_TopView(dtv_Add_singlePixelCases()));
+            listy.Add(new TV_TopView(dtv_Add_object()));
+            _dtv_Controller.Items = listy;
+
+
+
+
+            OnPropertyChanged("DTV_Controller");
+        }
+
+        private TV_TopView_controller dtv_Add_elements() 
+        {
+            TV_TopView_controller TC_proj = new();
+            TC_proj.Title = "Selected Elements";
+            TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.Slack;
+
+            WrapPanel sPanel = new();
+            sPanel.Orientation = Orientation.Horizontal;
+
+            foreach (var item in SelectedElements)
+            {
+                sPanel.Children.Add(dtv_ElementFormat(item.ElementName));
+            }
+
+            TC_proj.Items.Add(sPanel);
+
+            return TC_proj;
+        }
+
+        private TV_TopView_controller dtv_Add_activePhases()
+        {
+            TV_TopView_controller TC_proj = new();
+            TC_proj.Title = "Active phases";
+            TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.Clipboard;
+
+            return TC_proj;
+        }
+
+        private TV_TopView_controller dtv_Add_singlePixelCases()
+        {
+            TV_TopView_controller TC_proj = new();
+            TC_proj.Title = "Single pixel cases";
+            TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.SquareOutline;
+
+            WrapPanel ToolPanel = new();
+            ToolPanel.Orientation = Orientation.Horizontal;
+            ToolPanel.FlowDirection = FlowDirection.RightToLeft;
+            ToolPanel.Children.Add(new Components.Button.AM_button()
+            {
+                IconName = "AreaChart",
+                Width = 25,
+                Height = 25,
+                GradientColor_2 = "White",
+                ForegroundIcon = "DodgerBlue",
+                GradientTransition = "SteelBlue",
+                Margin = new Thickness(2,2,2,2),
+                CornerRadius = "2"
+            });
+
+            ToolPanel.Children.Add(new Components.Button.AM_button()
+            {
+                IconName = "Edit",
+                Width = 25,
+                Height = 25,
+                GradientColor_2 = "White",
+                ForegroundIcon = "DodgerBlue",
+                GradientTransition = "SteelBlue",
+                Margin = new Thickness(2, 2, 2, 2),
+                CornerRadius = "2"
+            });
+
+            TC_proj.Items.Add(ToolPanel);
+
+            foreach (var item in Cases)
+            {
+                TC_proj.Items.Add(new TV_TopView(dtv_Add_CaseSingle(item)));
+            }
+
+            return TC_proj;
+        }
+
+        private TV_TopView_controller dtv_Add_CaseSingle(Model.Model_Case casey)
+        {
+            TV_TopView_controller TC_proj = new();
+            TC_proj.Title = "Case " + casey.ID;
+            TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.EllipsisH;
+
+            // Add case composition
+            TV_TopView_controller TC_Composition = new();
+            TC_Composition.Title = "Element Composition";
+            TC_Composition.IconObject = FontAwesome.WPF.FontAwesomeIcon.PuzzlePiece;
+
+            WrapPanel sPanel = new();
+            sPanel.Orientation = Orientation.Horizontal;
+
+            foreach (var item in casey.ElementComposition)
+            {
+                sPanel.Children.Add(dtv_ElementFormat(item.ElementName + " : " + item.Value));
+            }
+            TC_Composition.Items.Add(sPanel);
+
+            TC_proj.Items.Add(new TV_TopView(TC_Composition));
+
+            // Add Case Precipitationn kinetics
+            TC_proj.Items.Add(new TV_TopView(dtv_Add_Precipitation_kinetics(casey)));
+
+
+            return TC_proj;
+        }
+
+        private TV_TopView_controller dtv_Add_Precipitation_kinetics(Model.Model_Case casey) 
+        {
+            TV_TopView_controller TC_Kinetics = new();
+            TC_Kinetics.Title = "Precipitation kinetics";
+            TC_Kinetics.IconObject = FontAwesome.WPF.FontAwesomeIcon.SnowflakeOutline;
+
+            // Heat treatments
+            TV_TopView_controller TC_HT = new();
+            TC_HT.Title = "Heat treatments";
+            TC_HT.IconObject = FontAwesome.WPF.FontAwesomeIcon.Thermometer;
+
+            foreach (var item in casey.HeatTreatments)
+            {
+                TV_TopView_controller TC_HT_Item = new();
+                TC_HT_Item.Title = item.ID + " : " + item.Name;
+                TC_HT_Item.IconObject = FontAwesome.WPF.FontAwesomeIcon.None;
+
+                TC_HT.Items.Add(new TV_TopView(TC_HT_Item));
+            }
+
+            TC_Kinetics.Items.Add(new TV_TopView(TC_HT));
+
+            // Precipitation phases
+            TV_TopView_controller TC_PR = new();
+            TC_PR.Title = "Precipitation phases";
+            TC_PR.IconObject = FontAwesome.WPF.FontAwesomeIcon.Circle;
+
+            foreach (var item in casey.PrecipitationPhases)
+            {
+                TV_TopView_controller TC_PR_Item = new();
+                TC_PR_Item.Title = item.Name;
+                TC_PR_Item.IconObject = FontAwesome.WPF.FontAwesomeIcon.None;
+
+                TC_PR.Items.Add(new TV_TopView(TC_PR_Item));
+            }
+
+            TC_Kinetics.Items.Add(new TV_TopView(TC_PR));
+
+            // Precipitation Domain
+            TV_TopView_controller TC_DO = new();
+            TC_DO.Title = "Precipitation domain";
+            TC_DO.IconObject = FontAwesome.WPF.FontAwesomeIcon.DotCircleOutline;
+
+            foreach (var item in casey.PrecipitationDomains)
+            {
+                TV_TopView_controller TC_DO_Item = new();
+                TC_DO_Item.Title = item.Name;
+                TC_DO_Item.IconObject = FontAwesome.WPF.FontAwesomeIcon.None;
+
+                TC_DO.Items.Add(new TV_TopView(TC_DO_Item));
+            }
+
+            TC_Kinetics.Items.Add(new TV_TopView(TC_DO));
+
+            return TC_Kinetics;
+        }
+
+        private TV_TopView_controller dtv_Add_object()
+        {
+            TV_TopView_controller TC_proj = new();
+            TC_proj.Title = "Object";
+            TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.Cube;
+
+            return TC_proj;
+        }
+
+        private Border dtv_ElementFormat(string content) 
+        {
+            Border Belement = new();
+            Belement.Background = new SolidColorBrush(System.Windows.Media.Colors.WhiteSmoke);
+            Belement.BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Silver);
+
+            TextBlock tBlock = new();
+            tBlock.Text = content;
+            tBlock.HorizontalAlignment = HorizontalAlignment.Center;
+            tBlock.VerticalAlignment = VerticalAlignment.Center;
+            tBlock.Margin = new Thickness(5, 5, 5, 5);
+            Belement.Child = tBlock;
+
+            return Belement;
+
+        }
         #endregion
 
         #region other_controllers

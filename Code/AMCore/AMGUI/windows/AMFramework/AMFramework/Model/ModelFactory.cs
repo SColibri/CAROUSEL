@@ -35,6 +35,7 @@ namespace AMFramework.Model
             SELECTEDPHASES
         }
 
+        [Obsolete("Use GetType", true)]
         public Interfaces.Model_Interface? Get_model_byName(string modelName) 
         {
             Interfaces.Model_Interface? result = null;

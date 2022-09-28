@@ -10,7 +10,7 @@ namespace AMFramework.Model.ModelCoreExecutors
     public class MCE_Factory
     {
         /// <summary>
-        /// Returns the MCE type that contains the name specified in containingstring
+        /// Returns the MCE type that contains the name specified in containing string
         /// </summary>
         /// <param name="ContainingString"></param>
         /// <returns></returns>
