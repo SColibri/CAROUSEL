@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using AMFramework.Views.Projects;
 using AMFramework.Views.Case;
+using AMFramework.Views.Precipitation_Kinetics;
 
 namespace AMFramework.Controller
 {
@@ -213,9 +214,11 @@ namespace AMFramework.Controller
 
         public void Show_HeatTreatment_PlotView(Model_HeatTreatment modelObject)
         {
-            Remove_ByTagType(modelObject.GetType());
-
-            throw new NotImplementedException();
+            Remove_ByTagType(typeof(PrecipitationKinetics_ViewModel));
+            Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
+            get_plot_Controller().HeatModel = modelObject;
+            TabItem tabContainer = Create_Tab(new Views.Precipitation_Kinetics.Precipitation_kinetics_plot(get_plot_Controller()), new PrecipitationKinetics_ViewModel(), "Heat treatment");
+            Add_Tab_Item(tabContainer);
         }
 
         public void Show_HeatTreatment_EditWindow(Model_HeatTreatment modelObject)

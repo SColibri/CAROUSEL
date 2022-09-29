@@ -897,6 +897,27 @@ namespace AMFramework.Controller
                 TC_HT_Item.Title = item.ID + " : " + item.Name;
                 TC_HT_Item.IconObject = FontAwesome.WPF.FontAwesomeIcon.None;
 
+                WrapPanel ToolPanel = new();
+                ToolPanel.Orientation = Orientation.Horizontal;
+                ToolPanel.FlowDirection = FlowDirection.RightToLeft;
+                ToolPanel.Margin = new Thickness(3, 3, 3, 3);
+
+                AM_button plotAccess = new Components.Button.AM_button()
+                {
+                    IconName = "AreaChart",
+                    Width = 20,
+                    Height = 20,
+                    GradientColor_2 = "White",
+                    ForegroundIcon = "DodgerBlue",
+                    GradientTransition = "SteelBlue",
+                    Margin = new Thickness(2, 2, 2, 2),
+                    CornerRadius = "2",
+                    ModelTag = item
+                };
+                plotAccess.ClickButton += OnMouseClick_HeatTreatment_View_Handle;
+                ToolPanel.Children.Add(plotAccess);
+                TC_HT_Item.Items.Add(ToolPanel);
+
                 TC_HT.Items.Add(new TV_TopView(TC_HT_Item));
             }
 
@@ -935,6 +956,17 @@ namespace AMFramework.Controller
             TC_Kinetics.Items.Add(new TV_TopView(TC_DO));
 
             return TC_Kinetics;
+        }
+
+        private void OnMouseClick_HeatTreatment_View_Handle(object? sender, EventArgs e)
+        {
+            if (sender is not AM_button) return;
+            AM_button sRef = (AM_button)sender;
+
+            if (sRef.ModelTag is not Model_HeatTreatment) return;
+            Model_HeatTreatment mRef = (Model_HeatTreatment)sRef.ModelTag;
+
+            Controller_Global.MainControl?.Show_HeatTreatment_PlotView(mRef);
         }
 
         private TV_TopView_controller dtv_Add_object()

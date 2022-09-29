@@ -1,18 +1,41 @@
 # AMFramework
-Is a framework that allows the use of different CALPHAD software for phase, grain size and other calculations used for simulating the final grain structure of a 3D metal printed object.
+Is a framework used for simulating and mapping material properties when subjected to heat treatments and/or change in element composition. Additionally the framework offers various tools for analizing all generated data nodes.
 
-Depending on the library you are linking to, you might need to have a valid license.
+Calculations are made using external CALPHAD software (e.g. Matcalc), and it is important to keep in mind that this framework does not provide any license.
 
 # Installation
+The framework is currently windows only.
+
 ## Windows
-Clone the repository and run cmake.
+### AMCore
+AMCore is a terminal application that handles all the backend functionality. Additionally, AMCore has to link to a library that specifies how to communicate with the external CALPHAD software by using the interface IAM_API. The library is linked dynamically, thus you don't have to rebuild the whole project to use the new implementation.
+
+Create by running CMake, copy binaries to final location.
+
+### GUI
+The graphical user interface was done using WPF .NET framework, you can either download the binaries from here or build the project yourself using visual studio.
 
 ### Requirements
+Besides being a windows only application, the framework uses and external CALPHAD software for running all simulations. For now, only the Matcalc library(IAM_API) is available, however, this will be extended in the future for other CALPHAD software.
+
 #### Matcalc
-If you plan to use MatCalc for all CALPHAD calculations please refer to Matcalc 6.0 on how to abtain a valid license https://www.matcalc.at/
+Matcalc offers a free trial, and for further information please refer to the Matcalc wepage https://www.matcalc.at/
 
-#### MPIC (MIT-license)
-Microsoft MPI (MS-MPI) is a Microsoft implementation of the Message Passing Interface standard for developing and running parallel applications on the Windows platform.
+# Features
 
-# How to use
-This framework is currently under construction, this will updated soon...
+## LUA scripting
+
+### OOP LUA
+
+### Autocomplete feature
+
+## Plotting
+
+### Project Map
+### Case view
+### Heat treatment
+
+## Database
+
+## Parallelism
+

@@ -127,7 +127,7 @@
 
             </local2:Database_treeview>
             
-            <tvc:TV_Menu x:Name="tvc" Margin="1,1,5,1"/>
+            <tvc:TV_Menu x:Name="tvc" Margin="1,1,5,1" Visibility="Visible"/>
             
             <TabControl x:Name="MainTabControl" Grid.Column="2" ItemsSource="{Binding Path=TabItems, UpdateSourceTrigger=PropertyChanged}"
                         Visibility="{Binding Path=TabControlVisible, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}"
