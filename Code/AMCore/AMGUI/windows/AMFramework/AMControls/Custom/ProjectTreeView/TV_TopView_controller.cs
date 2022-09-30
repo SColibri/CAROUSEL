@@ -12,6 +12,8 @@ namespace AMControls.Custom.ProjectTreeView
 {
     public class TV_TopView_controller: INotifyPropertyChanged, ISearchable
     {
+
+        private TV_TopView_controller? _selectedItem;
         private int _id = -1;
         public int ID 
         { 
@@ -53,7 +55,8 @@ namespace AMControls.Custom.ProjectTreeView
             {
                 if(Items.Count > 0) _isExpanded = value;
                 else _isExpanded = false;
-                
+
+                if (!_isExpanded) UnselectTree();
                 OnPropertyChanged("IsExpanded");
             }
         }
@@ -66,6 +69,8 @@ namespace AMControls.Custom.ProjectTreeView
             {
                 _isSelected = value;
                 OnPropertyChanged("IsSelected");
+
+                if(_isSelected) Selected?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -78,7 +83,10 @@ namespace AMControls.Custom.ProjectTreeView
             }
             set
             {
+                UnsubscribeToEvents();
                 _items = value;
+                SubscribeToEvents();
+
                 OnPropertyChanged("Items");
             }
         }
@@ -101,11 +109,13 @@ namespace AMControls.Custom.ProjectTreeView
         public void Add_Item(object itemToAdd) 
         { 
             Items.Add(itemToAdd);
-            OnPropertyChanged("Items");
+            SubscribeToItemEvents(itemToAdd);
+            OnPropertyChanged("Items"); 
         }
 
         public void Clear_Items()
         {
+            UnsubscribeToEvents();
             Items.Clear();
             OnPropertyChanged("Items");
         }
@@ -115,7 +125,7 @@ namespace AMControls.Custom.ProjectTreeView
         {
             bool isContained = false;
 
-            if (IDElements.Count >= Index) 
+            if (IDElements.Count <= Index) 
             {
                 IsExpanded = false;
                 IsSelected = false;
@@ -196,6 +206,64 @@ namespace AMControls.Custom.ProjectTreeView
         }
 
         #endregion
+
+        public event EventHandler? Selected;
+
+        private void UnsubscribeToEvents()
+        {
+            foreach (var item in Items)
+            {
+                if(item is not TV_TopView) continue;
+                TV_TopView refOpt = (TV_TopView)item;
+                TV_TopView_controller tvRef = (TV_TopView_controller)refOpt.DataContext;
+                tvRef.Selected -= Selected_Handle;
+            }
+        }
+
+        private void SubscribeToEvents()
+        {
+            foreach (var item in Items)
+            {
+                SubscribeToItemEvents(item);
+            }
+        }
+
+        private void SubscribeToItemEvents(object itemToSubs) 
+        {
+            if (itemToSubs is not TV_TopView) return;
+            TV_TopView refOpt = (TV_TopView)itemToSubs;
+            TV_TopView_controller tvRef = (TV_TopView_controller)refOpt.DataContext;
+            tvRef.Selected += Selected_Handle;
+        }
+
+        private void UnselectTree() 
+        {
+            foreach (var item in Items)
+            {
+                if (item is not TV_TopView) continue;
+                TV_TopView refOpt = (TV_TopView)item;
+                TV_TopView_controller tvRef = (TV_TopView_controller)refOpt.DataContext;
+                tvRef.IsSelected = false;
+            }
+        }
+
+        private void Selected_Handle(object? sender, EventArgs e)
+        {
+            _selectedItem = (TV_TopView_controller?)sender;
+
+            if(this != sender) this.IsSelected = false;
+
+            foreach (var item in Items)
+            {
+                if (item is not TV_TopView) continue;
+                TV_TopView refOpt = (TV_TopView)item;
+                TV_TopView_controller tvRef = (TV_TopView_controller)refOpt.DataContext;
+                if (tvRef != _selectedItem) 
+                    tvRef.IsSelected = false;
+            }
+
+            Selected?.Invoke(this, EventArgs.Empty);
+        }
 
     }
 }

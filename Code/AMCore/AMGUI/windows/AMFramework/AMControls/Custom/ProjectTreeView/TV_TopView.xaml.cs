@@ -45,8 +45,17 @@ namespace AMControls.Custom.ProjectTreeView
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
             TV_TopView_controller tref = (TV_TopView_controller)this.DataContext;
-            tref.IsExpanded = !tref.IsExpanded;
-            tref.IsSelected = !tref.IsSelected;
+
+            if (tref.IsSelected) 
+            {
+                tref.IsExpanded = false;
+                tref.IsSelected = false;
+            }
+            else 
+            {
+                tref.IsExpanded = true;
+                tref.IsSelected = true;
+            }
 
         }
     }

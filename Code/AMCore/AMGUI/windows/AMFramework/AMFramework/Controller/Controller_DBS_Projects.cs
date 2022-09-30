@@ -744,7 +744,7 @@ namespace AMFramework.Controller
                 sPanel.Children.Add(dtv_ElementFormat(item.ElementName));
             }
 
-            TC_proj.Items.Add(sPanel);
+            TC_proj.Add_Item(sPanel);
 
             return TC_proj;
         }
@@ -783,11 +783,11 @@ namespace AMFramework.Controller
             };
             plotAccess.ClickButton += OnMouseClick_CasePixel_View_Handle;
             ToolPanel.Children.Add(plotAccess);
-            TC_proj.Items.Add(ToolPanel);
+            TC_proj.Add_Item(ToolPanel);
 
             foreach (var item in Cases)
             {
-                TC_proj.Items.Add(new TV_TopView(dtv_Add_CaseSingle(item)));
+                TC_proj.Add_Item(new TV_TopView(dtv_Add_CaseSingle(item)));
             }
 
             return TC_proj;
@@ -844,7 +844,7 @@ namespace AMFramework.Controller
             };
             editAccess.ClickButton += OnMouseClick_Case_Edit_Handle;
             ToolPanel.Children.Add(editAccess);
-            TC_proj.Items.Add(ToolPanel);
+            TC_proj.Add_Item(ToolPanel);
 
             // Add case composition
             TV_TopView_controller TC_Composition = new();
@@ -858,12 +858,12 @@ namespace AMFramework.Controller
             {
                 sPanel.Children.Add(dtv_ElementFormat(item.ElementName + " : " + item.Value));
             }
-            TC_Composition.Items.Add(sPanel);
+            TC_Composition.Add_Item(sPanel);
 
-            TC_proj.Items.Add(new TV_TopView(TC_Composition));
+            TC_proj.Add_Item(new TV_TopView(TC_Composition));
 
             // Add Case Precipitationn kinetics
-            TC_proj.Items.Add(new TV_TopView(dtv_Add_Precipitation_kinetics(casey)));
+            TC_proj.Add_Item(new TV_TopView(dtv_Add_Precipitation_kinetics(casey)));
 
 
             return TC_proj;
@@ -916,12 +916,12 @@ namespace AMFramework.Controller
                 };
                 plotAccess.ClickButton += OnMouseClick_HeatTreatment_View_Handle;
                 ToolPanel.Children.Add(plotAccess);
-                TC_HT_Item.Items.Add(ToolPanel);
+                TC_HT_Item.Add_Item(ToolPanel);
 
-                TC_HT.Items.Add(new TV_TopView(TC_HT_Item));
+                TC_HT.Add_Item(new TV_TopView(TC_HT_Item));
             }
 
-            TC_Kinetics.Items.Add(new TV_TopView(TC_HT));
+            TC_Kinetics.Add_Item(new TV_TopView(TC_HT));
 
             // Precipitation phases
             TV_TopView_controller TC_PR = new();
@@ -934,10 +934,10 @@ namespace AMFramework.Controller
                 TC_PR_Item.Title = item.Name;
                 TC_PR_Item.IconObject = FontAwesome.WPF.FontAwesomeIcon.None;
 
-                TC_PR.Items.Add(new TV_TopView(TC_PR_Item));
+                TC_PR.Add_Item(new TV_TopView(TC_PR_Item));
             }
 
-            TC_Kinetics.Items.Add(new TV_TopView(TC_PR));
+            TC_Kinetics.Add_Item(new TV_TopView(TC_PR));
 
             // Precipitation Domain
             TV_TopView_controller TC_DO = new();
@@ -950,10 +950,10 @@ namespace AMFramework.Controller
                 TC_DO_Item.Title = item.Name;
                 TC_DO_Item.IconObject = FontAwesome.WPF.FontAwesomeIcon.None;
 
-                TC_DO.Items.Add(new TV_TopView(TC_DO_Item));
+                TC_DO.Add_Item(new TV_TopView(TC_DO_Item));
             }
 
-            TC_Kinetics.Items.Add(new TV_TopView(TC_DO));
+            TC_Kinetics.Add_Item(new TV_TopView(TC_DO));
 
             return TC_Kinetics;
         }

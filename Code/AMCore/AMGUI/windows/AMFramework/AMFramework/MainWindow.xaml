@@ -264,7 +264,7 @@
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="2" Margin="2" Panel.ZIndex="2">
+        <Grid Grid.Row="2" Margin="2" Panel.ZIndex="2" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="1*"/>
