@@ -25,6 +25,8 @@ namespace AMControls.Charts.Interfaces
 
         public void Draw(DrawingContext dc, Canvas canvas, System.Windows.Rect ChartArea, List<double> xSize, List<double> ySize, List<double> xStart, List<double> yStart);
 
+        public void Draw(DrawingContext dc, Canvas canvas, System.Windows.Rect ChartArea, List<IAxes> axesList);
+
 
         /// <summary>
         /// Series data content

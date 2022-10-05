@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -91,7 +92,10 @@ namespace AMControls.Charts.Implementations
             } 
         }
 
-        double IAxes.DrawInterval { get; set; }
+        public double DrawInterval { get; set; }
+        public double DrawLineLength { get; set; } = 0;
+        public System.Windows.Point StartPoint { get; set; } = new();
+        public System.Windows.Point EndPoint { get; set; } = new();
 
         // IDrawable
         public string IntervalNotation()
@@ -119,7 +123,21 @@ namespace AMControls.Charts.Implementations
             // Do nothing
         }
 
-        
+        public System.Windows.Point ValueToPoint(double value)
+        {
+            System.Windows.Point dPoint = new(EndPoint.X - StartPoint.X, EndPoint.Y - StartPoint.Y);
+            double dDistance = Math.Sqrt(dPoint.X* dPoint.X + dPoint.Y* dPoint.Y);
+            System.Windows.Point dNorm = new(dPoint.X/dDistance, dPoint.Y / dDistance);
+
+            double lineLength = DrawInterval / Interval * (value - MinValue);
+            double xPos = StartPoint.X + lineLength * dNorm.X;
+            double yPos = StartPoint.Y + lineLength * dNorm.Y;
+
+            System.Windows.Point point = new System.Windows.Point(xPos, yPos);
+            return point;
+        }
+
+
 
 
         #endregion

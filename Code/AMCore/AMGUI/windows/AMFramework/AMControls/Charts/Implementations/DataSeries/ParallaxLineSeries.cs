@@ -87,6 +87,8 @@ namespace AMControls.Charts.Implementations.DataSeries
             }
         }
 
+        public override void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, List<IAxes> axesList) 
+        { }
         #region Drawing
         private void Draw_DataPoint(DrawingContext dc, IDataPoint dP, Rect pointRect)
         {

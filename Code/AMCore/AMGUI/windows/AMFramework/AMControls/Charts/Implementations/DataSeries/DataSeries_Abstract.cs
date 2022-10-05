@@ -39,6 +39,10 @@ namespace AMControls.Charts.Implementations.DataSeries
         }
 
         public abstract void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, double xSize, double ySize, double xStart, double yStart);
+
+        public abstract void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, List<IAxes> axesList);
+
+
         public override abstract void Mouse_Hover_Action(double x, double y);
 
         public override abstract void Mouse_LeftButton_Action(double x, double y);

@@ -54,6 +54,9 @@ namespace AMControls.Charts.Implementations.DataSeries
 
         }
 
+        public override void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, List<IAxes> axesList)
+        { }
+
         public bool Check_MouseHover(double x, double y)
         {
             return false;

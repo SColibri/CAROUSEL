@@ -36,6 +36,11 @@ namespace AMControls.Charts.Interfaces
         public double DrawInterval { get; set; }
 
         /// <summary>
+        /// Linear drawing lecth for axis
+        /// </summary>
+        public double DrawLineLength { get; set; }
+
+        /// <summary>
         /// Non-linear intervals
         /// </summary>
         /// <returns></returns>
@@ -61,6 +66,22 @@ namespace AMControls.Charts.Interfaces
         /// Amount of ticks
         /// </summary>
         public int Ticks { get; set; }
+
+        /// <summary>
+        /// Origin point of axis
+        /// </summary>
+        public System.Windows.Point StartPoint { get; set; }
+        /// <summary>
+        /// end point of axis
+        /// </summary>
+        public System.Windows.Point EndPoint { get; set; }
+
+        /// <summary>
+        /// Get point on axis line based on the value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public System.Windows.Point ValueToPoint(double value);
 
     }
 }
