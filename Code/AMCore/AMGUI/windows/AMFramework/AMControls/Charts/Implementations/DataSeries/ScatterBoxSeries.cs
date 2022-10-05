@@ -473,6 +473,11 @@ namespace AMControls.Charts.Implementations.DataSeries
             }
 
         }
+
+        public override void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, List<double> xSize, List<double> ySize, List<double> xStart, List<double> yStart)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Events

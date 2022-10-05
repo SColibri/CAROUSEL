@@ -18,6 +18,7 @@ using AMControls.Charts.Interfaces;
 using AMControls.Charts.Implementations;
 using AMControls.Charts.Implementations.DataSeries;
 using AMControls_Test.Custom;
+using AMControls_Test.Charts;
 
 namespace AMControls_Test
 {
@@ -80,8 +81,8 @@ namespace AMControls_Test
 
             scat.ChartAreaMouseMove += OnChartMouseMove_Handle;
 
-            TreeView_Test TTT = new();
-            TTT.Show();
+            ParallaxExample pExample = new();
+            pExample.Show();
         }
 
         private void OnChartMouseMove_Handle(object? sender, MouseEventArgs e)

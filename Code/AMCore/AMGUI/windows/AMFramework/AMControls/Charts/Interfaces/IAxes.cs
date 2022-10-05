@@ -30,6 +30,12 @@ namespace AMControls.Charts.Interfaces
         public double Interval { get; set; }
 
         /// <summary>
+        /// Linear interval
+        /// </summary>
+        /// <returns></returns>
+        public double DrawInterval { get; set; }
+
+        /// <summary>
         /// Non-linear intervals
         /// </summary>
         /// <returns></returns>

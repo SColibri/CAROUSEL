@@ -23,6 +23,9 @@ namespace AMControls.Charts.Interfaces
         /// <param name="yStart">y start position</param>
         public void Draw(DrawingContext dc, Canvas canvas, System.Windows.Rect ChartArea, double xSize, double ySize, double xStart, double yStart);
 
+        public void Draw(DrawingContext dc, Canvas canvas, System.Windows.Rect ChartArea, List<double> xSize, List<double> ySize, List<double> xStart, List<double> yStart);
+
+
         /// <summary>
         /// Series data content
         /// </summary>
@@ -69,6 +72,12 @@ namespace AMControls.Charts.Interfaces
         /// <param name="tolerance"></param>
         /// <returns></returns>
         public List<IDataPoint> Search(double x, double y, double tolerance);
+
+        /// <summary>
+        /// Return a list of unique lables from datapoints
+        /// </summary>
+        /// <returns></returns>
+        public List<string> Get_pointLabelList();
 
         // Events
         public event EventHandler DataPointSelectionChanged;

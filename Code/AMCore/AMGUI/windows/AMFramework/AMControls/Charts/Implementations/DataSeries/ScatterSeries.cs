@@ -84,6 +84,11 @@ namespace AMControls.Charts.Implementations.DataSeries
             //throw new NotImplementedException();
         }
 
+        public override void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, List<double> xSize, List<double> ySize, List<double> xStart, List<double> yStart)
+        {
+            throw new NotImplementedException();
+        }
+
         #region Implementation
         public override Color ColorSeries { get { return _lineColor; } set { _lineColor = value; } }
 

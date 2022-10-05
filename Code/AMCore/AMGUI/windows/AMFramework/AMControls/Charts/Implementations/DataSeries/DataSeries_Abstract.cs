@@ -121,5 +121,18 @@ namespace AMControls.Charts.Implementations.DataSeries
             return _searchResult;
         }
 
+        List<string> IDataSeries.Get_pointLabelList()
+        {
+            List<string> Result = new();
+
+            foreach (var item in DataPoints)
+            {
+                Result.Add(item.Label);
+            }
+
+            return Result;
+        }
+
+        public abstract void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, List<double> xSize, List<double> ySize, List<double> xStart, List<double> yStart);
     }
 }

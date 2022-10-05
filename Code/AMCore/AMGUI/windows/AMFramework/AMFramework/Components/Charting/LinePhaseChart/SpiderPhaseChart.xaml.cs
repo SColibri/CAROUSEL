@@ -116,7 +116,7 @@ namespace AMFramework.Components.Charting.LinePhaseChart
             update_plot();
             update_spyderplot();
             MainChart.UpdateImage();
-            SpyderPlot.Refresh();
+            //SpyderPlot.Refresh();
 
         }
     }

@@ -200,6 +200,7 @@ namespace AMFramework.Controller
         {
             Remove_ByTagType(typeof(Case_ViewModel));
             Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
+            tController.SelectedCase = modelObject;
             TabItem tabContainer = Create_Tab(new Views.Case.Case_contents(ref _Plot), new Case_ViewModel(), "Case plot");
             Add_Tab_Item(tabContainer);
         }
@@ -208,6 +209,7 @@ namespace AMFramework.Controller
         {
             Remove_ByTagType(typeof(Case_ViewModel));
             Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
+            tController.SelectedCase = modelObject;
             TabItem tabContainer = Create_Tab(new Views.Case.Case_general(ref tController), new Case_ViewModel(), "Case item");
             Add_Tab_Item(tabContainer);
         }

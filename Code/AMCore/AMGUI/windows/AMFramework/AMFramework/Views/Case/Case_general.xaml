@@ -37,7 +37,7 @@
                                     <TextBlock Text="Composition" Grid.Column="0" HorizontalAlignment="Left"
                                    VerticalAlignment="Top" Margin="20,5,10,10"/>
                                     <StackPanel Grid.Column="1">
-                                        <ItemsControl ItemsSource="{Binding Path=SelectedCase.ElementComposition}" Margin="10">
+                                        <ItemsControl ItemsSource="{Binding Path=SelectedCase.ElementComposition, UpdateSourceTrigger=PropertyChanged}" Margin="10">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <WrapPanel Orientation="Horizontal"

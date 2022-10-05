@@ -30,10 +30,7 @@ namespace AMControls.Charts.Implementations
                 _MaxValue = _MinValue + 0.00000000001 * _MinValue;
             }
 
-            if ((_MaxValue - _MinValue) / Interval != _ticks)
-            {
-                _Interval = (_MaxValue - _MinValue) / _ticks;
-            }
+            _Interval = (_MaxValue - _MinValue) / _ticks;
         }
         #endregion
         #region Setters
@@ -93,6 +90,8 @@ namespace AMControls.Charts.Implementations
                 Check_minmax_values();
             } 
         }
+
+        double IAxes.DrawInterval { get; set; }
 
         // IDrawable
         public string IntervalNotation()

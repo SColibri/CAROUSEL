@@ -150,7 +150,7 @@ namespace AMFramework.Controller
 
             // load Data
             _projectController.Case_load_equilibrium_phase_fraction(model);
-            double solidificationTemp = model.EquilibriumPhaseFractions.Min(e => e.Temperature);
+            double solidificationTemp = model.ScheilPhaseFractions.Min(e => e.Temperature);
 
             // get data points
             SpyderDataStructure dataPlotItem = new();
@@ -214,6 +214,8 @@ namespace AMFramework.Controller
 
         public void Spyderplot_get_data_async() 
         {
+            _projectController.Cases[0].IsSelected = true;
+            _projectController.Cases[2].IsSelected = true;
             List<Model.Model_Case> selCases = _projectController.Cases.FindAll(e => e.IsSelected == true);
             List<Model.Model_Phase> selPhases = Used_Phases_inCases.FindAll(e => e.IsSelected == true);
             _spyderDataPlot.Clear();
