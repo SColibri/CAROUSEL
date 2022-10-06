@@ -13,7 +13,7 @@ AMCore is a terminal application that handles all the backend functionality. Add
 Create by running CMake, copy the [binaries](https://syncandshare.lrz.de/getlink/fiFESSiL5grTWwaT4a9R5K/) to any directory.
 
 ### GUI
-The graphical user interface was done using WPF .NET framework, you can either download the binaries from here or build the project yourself using visual studio.
+The graphical user interface was done using WPF .NET framework, you can either download the binaries from [here](https://syncandshare.lrz.de/getlink/fiFESSiL5grTWwaT4a9R5K/) or build the project yourself using visual studio.
 
 ### Requirements
 Besides being a windows only application, the framework uses and external CALPHAD software for running all simulations. For now, only the Matcalc library(IAM_API) is available, however, this will be extended in the future for other CALPHAD software.
