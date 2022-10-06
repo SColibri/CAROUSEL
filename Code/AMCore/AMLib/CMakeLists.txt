@@ -20,5 +20,3 @@ target_link_libraries(AMLib ftxui::component)
 target_link_libraries(AMLib ftxui::screen)
 target_link_libraries(AMLib ftxui::dom)
 target_link_libraries(AMLib ${CMAKE_CURRENT_SOURCE_DIR}/external/lua542/lua54.lib)
-
-# TODO: Add tests and install targets if needed.

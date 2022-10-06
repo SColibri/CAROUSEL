@@ -14,16 +14,17 @@ namespace AMFramework.Controller
     {
 
         #region Cons_Des
-        private static Core.IAMCore_Comm _apiHandle;
-        private Core.AMCore_Socket _AMCore_Socket;
-        public Controller_Config()
+        private static Core.IAMCore_Comm? _apiHandle;
+
+        public Controller_Config(string PathToLib)
         {
-            _apiHandle = new Core.AMCore_libHandle("C:/Users/drogo/Documents/TUM/Thesis/Framework/AMFramework/Code/AMCore/out/build/x64-debug/AM_API_lib/matcalc/AM_MATCALC_Lib.dll");
+            _apiHandle = new Core.AMCore_libHandle(PathToLib);
             load_model_data();
         }
 
         private void load_model_data() 
         {
+            if (_apiHandle == null) return;
             datamodel.API_path = _apiHandle.run_lua_command("configuration_getAPI_path", "");
             datamodel.External_API_path = _apiHandle.run_lua_command("configuration_getExternalAPI_path", "");
             datamodel.Working_Directory = _apiHandle.run_lua_command("configuration_get_working_directory", "");
@@ -35,6 +36,11 @@ namespace AMFramework.Controller
 
         private void save_model_data() 
         {
+            if (_apiHandle == null) 
+            {
+                MainWindow.notify.ShowBalloonTip(5000, "AM_API not linked!", "Please link the AM_API library", System.Windows.Forms.ToolTipIcon.Info);
+                return;
+            }
             bool dataSaved = true;
 
             if (_apiHandle.run_lua_command("configuration_setAPI_path " + datamodel.API_path,"").CompareTo("OK") != 0) dataSaved = false;
@@ -56,7 +62,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region getters
-        public static Core.IAMCore_Comm ApiHandle { get { return _apiHandle; } }
+        public static Core.IAMCore_Comm? ApiHandle { get { return _apiHandle; } }
         #endregion
 
         #region Model

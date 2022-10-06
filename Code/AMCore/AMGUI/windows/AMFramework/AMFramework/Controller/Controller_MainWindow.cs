@@ -17,6 +17,8 @@ using System.Windows.Media;
 using AMFramework.Views.Projects;
 using AMFramework.Views.Case;
 using AMFramework.Views.Precipitation_Kinetics;
+using AMFramework.AMSystem;
+using Microsoft.Win32;
 
 namespace AMFramework.Controller
 {
@@ -34,7 +36,29 @@ namespace AMFramework.Controller
 
         public Controller_MainWindow() 
         {
-            _Config = new();
+            AMSystem.UserPreferences? uPref = AMSystem.UserPreferences.load();
+            if (uPref == null) uPref = new();
+
+            if (uPref != null) 
+            {
+                if(uPref.IAM_API_PATH.Length == 0) 
+                {
+                    
+                    System.Windows.Forms.OpenFileDialog ofd = new();
+                    ofd.Filter = "Library dll | *.dll";
+                    ofd.Title = "please select an IAM_API library";
+
+                    if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) 
+                    {
+                        uPref.IAM_API_PATH = ofd.FileName;
+                        uPref.save();
+                    }
+                }
+
+                _Config = new(uPref.IAM_API_PATH);
+            }
+
+            
             _coreSocket = Controller.Controller_Config.ApiHandle;
 
             AMSystem.AMFramework_startup.Start(ref _coreSocket);

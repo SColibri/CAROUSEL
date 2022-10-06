@@ -48,7 +48,7 @@ namespace AMControls_Test.Charts
             for (int n1 = 0; n1 < 5; n1++)
             {
                 IDataSeries nSeries = new SpyderSeries();
-                nSeries.Add_DataPoint(new DataPoint() { X = random.Next(1, 10), Label = "Axis_1", ContextMenu = new DataPoint_ContextMenu_Text() { Title="No Title" } });
+                nSeries.Add_DataPoint(new DataPoint() { X = random.Next(1, 10), Label = "Axis_1", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "No Title" } });
                 nSeries.Add_DataPoint(new DataPoint() { X = random.Next(1, 10), Label = "Axis_2", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "No Title" } });
                 nSeries.Add_DataPoint(new DataPoint() { X = random.Next(1, 10), Label = "Axis_3", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "No Title" } });
                 nSeries.Add_DataPoint(new DataPoint() { X = random.Next(1, 10), Label = "Axis_4", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "No Title" } });

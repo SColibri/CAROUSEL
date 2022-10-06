@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Libraries\**" />
+    <EmbeddedResource Remove="Libraries\**" />
+    <None Remove="Libraries\**" />
+    <Page Remove="Libraries\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Resources\Icons\tablerIcons\2fa.png" />
     <None Remove="Resources\Icons\tablerIcons\3d-cube-sphere.png" />
     <None Remove="Resources\Icons\tablerIcons\3d-rotate.png" />
@@ -7930,7 +7937,6 @@
     <Folder Include="Components\NewFolder\" />
     <Folder Include="Components\Terminal\" />
     <Folder Include="Core\Database\" />
-    <Folder Include="Libraries\dll\" />
     <Folder Include="Resources\img\" />
   </ItemGroup>
 
