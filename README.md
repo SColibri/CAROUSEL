@@ -10,7 +10,7 @@ The framework is currently windows only.
 ### AMCore
 AMCore is a terminal application that handles all the backend functionality. Additionally, AMCore has to link to a library that specifies how to communicate with the external CALPHAD software by using the interface IAM_API. The library is linked dynamically, thus you don't have to rebuild the whole project to use the new implementation.
 
-Create by running CMake, copy binaries to final location.
+Create by running CMake, copy the [binaries](https://syncandshare.lrz.de/getlink/fiFESSiL5grTWwaT4a9R5K/) to any directory.
 
 ### GUI
 The graphical user interface was done using WPF .NET framework, you can either download the binaries from here or build the project yourself using visual studio.
