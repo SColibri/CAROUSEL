@@ -10,45 +10,67 @@ using System.IO;
 
 namespace AMFramework.Controller
 {
+    /// <summary>
+    /// Controller config points to the core implementation library using the interface IAMCore_Comm
+    /// for sending commands. The config model contains paths to databases and to the working directory.
+    /// 
+    /// Note: The working directory is where the database will get created, thus modifiying the working directory will
+    /// also create a new working database. 
+    /// </summary>
     public class Controller_Config
     {
 
         #region Cons_Des
-        private static Core.IAMCore_Comm? _apiHandle;
-
-        public Controller_Config(string PathToLib)
+        /// <summary>
+        /// 
+        /// </summary>
+        public Controller_Config()
         {
-            _apiHandle = new Core.AMCore_libHandle(PathToLib);
             load_model_data();
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="PathToLib">Path to library that implements the IAM_API interface</param>
+            public Controller_Config(string PathToLib)
+        {
+            Controller_Global.ApiHandle = new Core.AMCore_libHandle(PathToLib);
+            load_model_data();
+        }
+
+        /// <summary>
+        /// Loads the model data
+        /// </summary>
         private void load_model_data() 
         {
-            if (_apiHandle == null) return;
-            datamodel.API_path = _apiHandle.run_lua_command("configuration_getAPI_path", "");
-            datamodel.External_API_path = _apiHandle.run_lua_command("configuration_getExternalAPI_path", "");
-            datamodel.Working_Directory = _apiHandle.run_lua_command("configuration_get_working_directory", "");
-            datamodel.Thermodynamic_database_path = _apiHandle.run_lua_command("configuration_get_thermodynamic_database_path", "");
-            datamodel.Physical_database_path = _apiHandle.run_lua_command("configuration_get_physical_database_path", "");
-            datamodel.Mobility_database_path = _apiHandle.run_lua_command("configuration_get_mobility_database_path", "");
+            if (Controller_Global.ApiHandle == null) return;
+            datamodel.API_path = Controller_Global.ApiHandle.run_lua_command("configuration_getAPI_path", "");
+            datamodel.External_API_path = Controller_Global.ApiHandle.run_lua_command("configuration_getExternalAPI_path", "");
+            datamodel.Working_Directory = Controller_Global.ApiHandle.run_lua_command("configuration_get_working_directory", "");
+            datamodel.Thermodynamic_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_thermodynamic_database_path", "");
+            datamodel.Physical_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_physical_database_path", "");
+            datamodel.Mobility_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_mobility_database_path", "");
             datamodel.IsLoaded = true;
         }
 
         private void save_model_data() 
         {
-            if (_apiHandle == null) 
+            if (Controller_Global.ApiHandle == null) 
             {
                 MainWindow.notify.ShowBalloonTip(5000, "AM_API not linked!", "Please link the AM_API library", System.Windows.Forms.ToolTipIcon.Info);
                 return;
             }
             bool dataSaved = true;
 
-            if (_apiHandle.run_lua_command("configuration_setAPI_path " + datamodel.API_path,"").CompareTo("OK") != 0) dataSaved = false;
-            if (_apiHandle.run_lua_command("configuration_setExternalAPI_path " + datamodel.External_API_path, "").CompareTo("OK") != 0) dataSaved = false;
-            if (_apiHandle.run_lua_command("configuration_set_working_directory " + datamodel.Working_Directory, "").CompareTo("OK") != 0) dataSaved = false;
-            if (_apiHandle.run_lua_command("configuration_set_thermodynamic_database_path " + datamodel.Thermodynamic_database_path, "").CompareTo("OK") != 0) dataSaved = false;
-            if (_apiHandle.run_lua_command("configuration_set_physical_database_path " + datamodel.Physical_database_path, "").CompareTo("OK") != 0) dataSaved = false;
-            if (_apiHandle.run_lua_command("configuration_set_mobility_database_path " + datamodel.Mobility_database_path, "").CompareTo("OK") != 0) dataSaved = false;
+            string std01 = Controller_Global.ApiHandle.run_lua_command("configuration_setAPI_path " + datamodel.API_path, "");
+
+            if (Controller_Global.ApiHandle.run_lua_command("configuration_setAPI_path " + datamodel.API_path,"").CompareTo("OK") != 0) dataSaved = false;
+            if (Controller_Global.ApiHandle.run_lua_command("configuration_setExternalAPI_path " + datamodel.External_API_path, "").CompareTo("OK") != 0) dataSaved = false;
+            if (Controller_Global.ApiHandle.run_lua_command("configuration_set_working_directory " + datamodel.Working_Directory, "").CompareTo("OK") != 0) dataSaved = false;
+            if (Controller_Global.ApiHandle.run_lua_command("configuration_set_thermodynamic_database_path " + datamodel.Thermodynamic_database_path, "").CompareTo("OK") != 0) dataSaved = false;
+            if (Controller_Global.ApiHandle.run_lua_command("configuration_set_physical_database_path " + datamodel.Physical_database_path, "").CompareTo("OK") != 0) dataSaved = false;
+            if (Controller_Global.ApiHandle.run_lua_command("configuration_set_mobility_database_path " + datamodel.Mobility_database_path, "").CompareTo("OK") != 0) dataSaved = false;
 
             if(dataSaved == false) 
             {
@@ -57,12 +79,18 @@ namespace AMFramework.Controller
             }
             MainWindow.notify.ShowBalloonTip(5000, "Configuration was saved", "Success", System.Windows.Forms.ToolTipIcon.Info);
 
+            if(datamodel.API_path.CompareTo(Controller_Global.UserPreferences.IAM_API_PATH) != 0) 
+            {
+                Controller_Global.UserPreferences.IAM_API_PATH = datamodel.API_path;
+                Controller_Global.UserPreferences.save();
+            }
+            
         }
 
         #endregion
 
         #region getters
-        public static Core.IAMCore_Comm? ApiHandle { get { return _apiHandle; } }
+        public static Core.IAMCore_Comm? ApiHandle { get { return Controller_Global.ApiHandle; } }
         #endregion
 
         #region Model
@@ -87,6 +115,7 @@ namespace AMFramework.Controller
                         param => this.Can_Change_API_path()
                     );
                 }
+
                 return _Search_API_Path;
             }
         }

@@ -3,6 +3,7 @@
 #include "../../AMLib/include/AM_lua_interpreter.h"
 #include "../../AMLib/interfaces/IAM_API.h"
 #include "../../AMLib/interfaces/IAM_Observer.h"
+#include "../../AMLib/include/Implementations/ObserverObject.h"
 #include <stdexcept>
 #include <Windows.h>
 
@@ -14,7 +15,7 @@
 /// Handles communication with the dynamic library that
 /// contains the implementation of the IAM_API interface
 /// </summary>
-class API_controll: IAM_Observer
+class API_controll: public ObserverObject
 {
 public:
 	/// <summary>
@@ -33,7 +34,7 @@ public:
 	}
 
 #pragma region Interface_Observer
-	virtual void update() override
+	virtual void update(std::string& ObserverTypeName) override
 	{
 		if (_api_path_last.compare(_configuration->get_api_path()) == 0) return;
 		_implementation->dispose();

@@ -22,7 +22,7 @@ namespace AMFramework.Model
 
                 if (_is_loaded) 
                 {
-                    Controller.Controller_Config.ApiHandle.update_path(_API_path);
+                    Controller.Controller_Config.ApiHandle?.update_path(_API_path);
                 }
                 
                 OnPropertyChanged("API_path");

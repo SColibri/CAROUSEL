@@ -1,7 +1,8 @@
 #pragma once
+#include <string>
 
 class IAM_Observer 
 {
 public:
-	virtual void update() = 0;
+	virtual void update(std::string& ObserverTypeName) = 0;
 };

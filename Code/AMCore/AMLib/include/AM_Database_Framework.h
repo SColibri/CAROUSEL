@@ -9,12 +9,13 @@
 #include "../include/Database_implementations/Database_scheme_content.h"
 #include "../include/AM_Database_TableStruct.h"
 #include "../include/Database_implementations/Data_Controller.h"
+#include "../include/Implementations/ObserverObject.h"
 
 /// <summary>
 /// This class handles all interactions between the database and the framework.
 /// It creates the initial setup of tables, handles all data organizational stuff.
 /// </summary>
-class AM_Database_Framework
+class AM_Database_Framework : public ObserverObject
 {
 public:
 	AM_Database_Framework(AM_Config* configuration);
@@ -43,6 +44,15 @@ public:
 	}
 #pragma endregion
 
+#pragma region ObserverObject_Interface
+	void update(std::string& ObjectTypeName) override
+	{
+		database_disconnect();
+		database_delete();
+		update_variables();
+	}
+#pragma endregion
+
 private:
 	inline const static std::string _dbName{"AMDatabase"}; // Name of the database
 	AM_Config* _configuration{ nullptr };
@@ -57,6 +67,17 @@ private:
 		//TODO: add exception!
 		if (_database->connect() == 0) return true;
 		return false;
+	}
+
+	bool database_disconnect() 
+	{
+		if (_database->disconnect() == 0) return true;
+		return false;
+	}
+
+	void database_delete() 
+	{
+		if (_database != nullptr) delete _database;
 	}
 
 	int create_database()
@@ -75,5 +96,17 @@ private:
 
 		return 0;
 	}
+
+	void update_variables() 
+	{
+		_database = Database_Factory::get_database(_configuration);
+		_fileManagement = AM_FileManagement(_configuration->get_working_directory());
+		std::filesystem::path std0 = std::filesystem::current_path();
+		create_database();
+	}
+
+
 #pragma endregion
+
+
 };

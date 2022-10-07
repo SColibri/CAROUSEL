@@ -10,7 +10,7 @@ namespace AMFramework.Controller
     public class ControllerAbstract : Interfaces.Controller_Interface
     {
         #region INotifyPropertyChanged_Interface
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {

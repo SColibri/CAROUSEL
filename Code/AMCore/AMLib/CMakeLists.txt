@@ -9,6 +9,7 @@ file(GLOB AMLIB_SRC "src/*.cpp")
 file(GLOB AMLIB_H "include/*.h")
 file(GLOB AMLIB_I "interfaces/*.h")
 file(GLOB AMLIB_DBH "include/Database_implementations/*.h")
+file(GLOB AMLIB_DBH "include/Implementations/*.h")
 file(GLOB AMLIB_DBSRC "src/Database_implementations/*.cpp")
 file(GLOB AMLIB_HELP "x_Helpers/*.h")
 

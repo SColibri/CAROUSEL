@@ -18,6 +18,10 @@ The graphical user interface was done using WPF .NET framework, you can either d
 ### Requirements
 Besides being a windows only application, the framework uses and external CALPHAD software for running all simulations. For now, only the Matcalc library(IAM_API) is available, however, this will be extended in the future for other CALPHAD software.
 
+Microsoft:
+[Visual C++ Redist](https://www.microsoft.com/de-de/download/details.aspx?id=48145)
+[.Net](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+
 #### Matcalc
 Matcalc offers a free trial, and for further information please refer to the Matcalc wepage https://www.matcalc.at/
 

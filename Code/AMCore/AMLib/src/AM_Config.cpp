@@ -30,11 +30,11 @@
 #pragma region Methods
 	void AM_Config::save()
 	{
-		_fileManagement.save_file(AM_FileManagement::FILEPATH::SYSTEM,
+		_fileManagement.save_file(workingDirectoryOption,
 								  Name + ".config",
 								  get_save_string());
 
-		notify_observers();
+		notify_observers("AM_Config");
 	}
 
 	void AM_Config::load(std::string filename)
@@ -42,6 +42,7 @@
 		std::ifstream streamF;
 		streamF.open(filename);
 
+		if (!streamF.is_open()) return;
 		load_string(streamF);
 		streamF.close();
 	}
@@ -60,7 +61,11 @@
 #pragma region Getters_Setters
 	std::string AM_Config::get_filename()
 	{
-		return _fileManagement.get_filePath(workingDirectoryOption) + "/" + Name + ".config";
+		std::string fPath = _fileManagement.get_filePath(workingDirectoryOption);
+		if (fPath.size() > 0) fPath += "/";
+		std::string fullFileName = fPath + Name + ".config";
+
+		return fullFileName;
 	}
 	std::string AM_Config::get_directory_path(AM_FileManagement::FILEPATH foption)
 	{
@@ -70,6 +75,7 @@
 	void AM_Config::set_working_directory(std::string mainPath)
 	{
 		_fileManagement.set_workingDirectory(string_manipulators::trim_whiteSpace(mainPath));
+		notify_observers("AM_Config");
 	}
 
 	const std::string AM_Config::get_working_directory()

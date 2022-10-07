@@ -104,7 +104,6 @@ TEST_CASE("lua scripting")
 		casey2.load();
 		//REQUIRE(casey2.Name.compare("Hello world from Framework") == 0);
 
-		
 	}
 
 	SECTION("Objects")
@@ -155,5 +154,23 @@ TEST_CASE("lua scripting")
 
 	}
 
+	SECTION("Config")
+	{
+		std::string cnfg_01 = main_setup::interpreter->run_command("configuration_setAPI_path", std::vector<std::string>{"AMFramework/AMFramework/bin/Release/net6.0-windows/../AM_API_lib/matcalc/AM_MATCALC_Lib.dll"});
+		std::string cnfg_02 = main_setup::interpreter->run_command("configuration_setExternalAPI_path", std::vector<std::string>{"MatCalc 6"});
+		std::string cnfg_03 = main_setup::interpreter->run_command("configuration_set_working_directory", std::vector<std::string>{"Error:api thingy"});
+		std::string cnfg_04 = main_setup::interpreter->run_command("configuration_set_thermodynamic_database_path", std::vector<std::string>{"Program Files/MatCalc 6/database/thermodynamic/ME-Al1.2.tdb"});
+		std::string cnfg_05 = main_setup::interpreter->run_command("configuration_set_physical_database_path", std::vector<std::string>{"Program Files/MatCalc 6/database/physical/physical_data.pdb"});
+		std::string cnfg_06 = main_setup::interpreter->run_command("configuration_set_mobility_database_path", std::vector<std::string>{"Program Files/MatCalc 6/database/diffusion/ME-Al_rel1.0e.ddb"});
+		bool tBool = false;
+
+		std::filesystem::path spath = std::filesystem::current_path();
+		std::string tempDir = spath.string() + "\\OkyTests";
+		if (!std::filesystem::exists(std::filesystem::status(tempDir.c_str())))
+		{
+			std::filesystem::create_directory(tempDir);
+		}
+		main_setup::configuration.set_working_directory(tempDir);
+	}
 	
 }

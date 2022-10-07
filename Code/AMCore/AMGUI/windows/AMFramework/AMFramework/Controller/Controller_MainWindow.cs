@@ -37,28 +37,29 @@ namespace AMFramework.Controller
         public Controller_MainWindow() 
         {
             AMSystem.UserPreferences? uPref = AMSystem.UserPreferences.load();
-            if (uPref == null) uPref = new();
+            
+            if (uPref != null) Controller_Global.UserPreferences = uPref;
 
-            if (uPref != null) 
-            {
-                if(uPref.IAM_API_PATH.Length == 0) 
+            if(Controller_Global.UserPreferences.IAM_API_PATH.Length == 0 && 1 == 2) 
+            {    
+                System.Windows.Forms.OpenFileDialog ofd = new();
+                ofd.Filter = "Library dll | *.dll";
+                ofd.Title = "please select an IAM_API library";
+
+                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) 
                 {
-                    
-                    System.Windows.Forms.OpenFileDialog ofd = new();
-                    ofd.Filter = "Library dll | *.dll";
-                    ofd.Title = "please select an IAM_API library";
-
-                    if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) 
-                    {
-                        uPref.IAM_API_PATH = ofd.FileName;
-                        uPref.save();
-                    }
+                    Controller_Global.UserPreferences.IAM_API_PATH = ofd.FileName;
+                    Controller_Global.UserPreferences.save();
                 }
-
-                _Config = new(uPref.IAM_API_PATH);
+            }
+            else 
+            {
+                _Config = new(Controller_Global.UserPreferences.IAM_API_PATH);
             }
 
-            
+            _Config = new();
+
+
             _coreSocket = Controller.Controller_Config.ApiHandle;
 
             AMSystem.AMFramework_startup.Start(ref _coreSocket);

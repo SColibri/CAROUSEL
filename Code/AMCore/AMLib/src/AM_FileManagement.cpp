@@ -15,21 +15,41 @@
 //Methods
 // -------------------------------------------------------------------------------------
 #pragma region Methods
-	std::string AM_FileManagement::save_file(FILEPATH option_, std::string filename, std::string content) {
-		std::ofstream class_file;
-		std::string Save01 = content;
-		std::string fullFileName = get_filePath(option_) + "/" + filename;
+	std::string AM_FileManagement::save_file(FILEPATH option_, std::string filename, std::string content) 
+	{
+		// ----------------------------------------------------------------------
+		// Get filename from FILEPATH managed by FileManagement
+		// ----------------------------------------------------------------------
+		
+		std::string fPath = get_filePath(option_);
 
-		class_file.open(fullFileName);
+		// if filepath is inside a directory add '/'
+		if (fPath.size() > 0) fPath += "/";
+
+		// Build the full path
+		std::string fullFileName = fPath + filename;
+
+		// ----------------------------------------------------------------------
+		// Save content in file, return relative path
+		// ----------------------------------------------------------------------
+
+		// Create/open file - not appended
+		std::ofstream class_file(fullFileName);
+
+		// If file is not open, then something went wrong - consider throwing exceptions
+		if (!class_file.is_open()) return "Error";
+
+		// Add content to file and return filename (relative)
 		class_file << content;
 		class_file.close();
-
 		return fullFileName;
 	}
 
 	std::string AM_FileManagement::get_filePath(FILEPATH option_)
 	{
 		std::string response;
+		std::string wDir = _workingDirectory;
+		if (wDir.size() > 0) wDir += "/";
 
 		switch (option_)
 		{
@@ -40,19 +60,19 @@
 			response = _workingDirectory;
 			break;
 		case FILEPATH::SCRIPTS:
-			response = _workingDirectory + "/Scripts";
+			response = wDir + "Scripts";
 			break;
 		case FILEPATH::PROJECTS:
-			response = _workingDirectory + "/Projects";
+			response = wDir + "Projects";
 			break;
 		case FILEPATH::DATABASE:
-			response = _workingDirectory + "/Database";
+			response = wDir + "Database";
 			break;
 		case FILEPATH::TEMP:
-			response = _workingDirectory + "/Temp";
+			response = wDir + "Temp";
 			break;
 		case FILEPATH::LOGS:
-			response = _workingDirectory + "/Logs";
+			response = wDir + "Logs";
 			break;
 		default:
 			response = "";
@@ -75,7 +95,7 @@
 	{
 		if (std::filesystem::is_directory(_workingDirectory))
 		{
-			for (auto& dir : filepath_names) 
+			for (auto& dir : filepath_names)
 			{
 				std::string tempDir = _workingDirectory + "/" + dir;
 				if (!std::filesystem::exists(std::filesystem::status(tempDir.c_str())))
@@ -84,6 +104,7 @@
 				}
 			}
 		}
+		else _workingDirectory = "";
 	}
 #pragma endregion Methods
 

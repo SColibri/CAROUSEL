@@ -3,7 +3,7 @@
 #include <filesystem>
 #include "AM_FileManagement.h"
 #include "../interfaces/IStrigify.h"
-#include "../interfaces/IAM_Observed.h"
+#include "Implementations/ObservedObject.h"
 
 
 /** \defgroup AMLib
@@ -19,7 +19,7 @@
 /// <summary>
 /// Configuration options used by the framework
 /// </summary>
-class AM_Config : public IStringify, public IAM_Observed{
+class AM_Config : public IStringify, public ObservedObject {
 
 public:
 	
