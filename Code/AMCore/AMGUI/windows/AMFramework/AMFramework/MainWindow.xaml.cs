@@ -19,7 +19,6 @@ namespace AMFramework
         private MainWindow_ViewModel viewModel = new();
         public MainWindow()
         {
-
             InitializeComponent();
             DataContext = new Controller.Controller_MainWindow();
             Controller_Global.MainControl = (IMainWindow)DataContext;

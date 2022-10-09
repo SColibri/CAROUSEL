@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.Windows;
 
 namespace AMFramework.Core
 {
@@ -44,7 +46,8 @@ namespace AMFramework.Core
 
             if(Marshal.GetLastWin32Error() != 0) 
             {
-                System.Windows.Forms.MessageBox.Show("Linking to the library was not possible.");
+                Win32Exception ex = new Win32Exception();
+                System.Windows.Forms.MessageBox.Show("Linking to the library was not possible: " + ex.Message + " || " + ex.InnerException?.Message);
             }
         }
 
@@ -115,11 +118,14 @@ namespace AMFramework.Core
         private void Link_to_library(string pathToLibrary)
         {
             Free_library();
+            string fullPath = pathToLibrary;
+            if(!System.IO.Path.IsPathRooted(pathToLibrary)) 
+                fullPath = AppDomain.CurrentDomain.BaseDirectory + pathToLibrary;
 
-            if (!System.IO.File.Exists(pathToLibrary)) return;
+            if (!System.IO.File.Exists(fullPath)) return;
             try
             {
-                Load_library(pathToLibrary);
+                Load_library(fullPath);
                 Load_api_controll();
                 Load_run_lua_command_address_space();
                 _api_available = true;

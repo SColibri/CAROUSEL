@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.VisualBasic;
 using ScintillaNET;
 
 namespace AMFramework.Components.Scripting
@@ -193,17 +194,18 @@ namespace AMFramework.Components.Scripting
             return System.Drawing.Color.FromArgb(255, (byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb);
         }
 
-        private void ScintillaDragEnter_handle(object sender, System.Windows.Forms.DragEventArgs e)
+        private void ScintillaDragEnter_handle(object? sender, System.Windows.Forms.DragEventArgs e)
         {
+            if (e.Data == null) return;
             if (e.Data.GetDataPresent(System.Windows.Forms.DataFormats.FileDrop))
                 e.Effect = System.Windows.Forms.DragDropEffects.Copy;
             else
                 e.Effect = System.Windows.Forms.DragDropEffects.None;
         }
 
-        private void ScintillaDragDrop_handle(object sender, System.Windows.Forms.DragEventArgs e)
+        private void ScintillaDragDrop_handle(object? sender, System.Windows.Forms.DragEventArgs e)
         {
-
+            if (e.Data == null) return;
             // get file drop
             if (e.Data.GetDataPresent(System.Windows.Forms.DataFormats.FileDrop))
             {
@@ -214,8 +216,8 @@ namespace AMFramework.Components.Scripting
 
                     string path = a.GetValue(0).ToString();
 
+                    if (path == null) return;
                     ((Scripting_ViewModel)DataContext).load(Scripting, path);
-
                 }
             }
         }
@@ -224,8 +226,9 @@ namespace AMFramework.Components.Scripting
         #endregion
 
         #region Handles
-        private void Scripting_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void Scripting_KeyDown(object? sender, System.Windows.Forms.KeyEventArgs e)
         {
+            if (sender == null) return;
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) 
             {
                 var pos = ((Scintilla)sender).CurrentPosition;

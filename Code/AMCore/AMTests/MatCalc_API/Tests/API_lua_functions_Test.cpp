@@ -57,7 +57,7 @@ namespace main_setup
 			Database_Factory::get_schema() + ".db";
 		if (std::filesystem::exists(filename))
 			removed = std::filesystem::remove(std::filesystem::path(filename));
-
+		
 		_dbF = new AM_Database_Framework(&configuration);
 		_db = _dbF->get_database();
 		
@@ -106,6 +106,8 @@ TEST_CASE("IAM_lua_functions")
 	SECTION("Test initialize")
 	{
 		REQUIRE(main_setup::_db != nullptr);
+		IAM_Database dbn = (*main_setup::_db);
+		AM_Database_Framework* dbb = main_setup::_dbF;
 
 		REQUIRE(main_setup::api->run_lua_command("configuration_setAPI_path",
 			std::vector<std::string> {main_setup::configuration.get_api_path()}).compare("OK") == 0);

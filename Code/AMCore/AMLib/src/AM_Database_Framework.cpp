@@ -6,11 +6,11 @@ AM_Database_Framework::AM_Database_Framework(AM_Config* configuration):
 	_configuration(configuration)
 {
 	set_observedObject(_configuration);
+	_database = Database_Factory::get_database(_configuration);
 	update_variables();
 }
 
 AM_Database_Framework::~AM_Database_Framework()
 {
-	if (_database != nullptr) delete _database;
-	//if (_dataController != nullptr) delete _dataController;
+	database_delete();
 }

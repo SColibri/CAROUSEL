@@ -1997,41 +1997,60 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\NewFolder\" />
+    <Folder Include="Components\Terminal\" />
+    <Folder Include="Core\Database\" />
+    <Folder Include="Resources\img\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.2" />
+    <PackageReference Include="fernandreu.ScintillaNET.WPF" Version="3.1.0" />
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />
+    <PackageReference Include="ScottPlot.WPF" Version="4.1.50" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AMControls\AMControls.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Resources\Icons\tablerIcons\2fa.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\3d-cube-sphere.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\3d-rotate.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\a-b-off.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\a-b.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\abacus.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\access-point-off.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\access-point.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\accessible-off.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\accessible.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\activity-heartbeat.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\activity.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Icons\tablerIcons\ad-2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -7931,25 +7950,6 @@
     <Resource Include="Resources\Icons\tablerIcons\zoom-question.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\NewFolder\" />
-    <Folder Include="Components\Terminal\" />
-    <Folder Include="Core\Database\" />
-    <Folder Include="Resources\img\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.2" />
-    <PackageReference Include="fernandreu.ScintillaNET.WPF" Version="3.1.0" />
-    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
-    <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />
-    <PackageReference Include="ScottPlot.WPF" Version="4.1.50" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\AMControls\AMControls.csproj" />
   </ItemGroup>
 
   <ItemGroup>

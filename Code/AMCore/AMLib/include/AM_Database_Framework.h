@@ -48,7 +48,6 @@ public:
 	void update(std::string& ObjectTypeName) override
 	{
 		database_disconnect();
-		database_delete();
 		update_variables();
 	}
 #pragma endregion
@@ -99,9 +98,7 @@ private:
 
 	void update_variables() 
 	{
-		_database = Database_Factory::get_database(_configuration);
 		_fileManagement = AM_FileManagement(_configuration->get_working_directory());
-		std::filesystem::path std0 = std::filesystem::current_path();
 		create_database();
 	}
 
