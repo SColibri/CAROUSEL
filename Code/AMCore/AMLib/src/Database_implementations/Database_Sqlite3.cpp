@@ -163,6 +163,11 @@ int Database_Sqlite3::clear_table(const AM_Database_TableStruct* tableName)
 	return sqlite3_exec(db, Query.c_str(), NULL, NULL, &_errorMessage);
 }
 
+int Database_Sqlite3::create_view(std::string createQuery)
+{
+	return sqlite3_exec(db, createQuery.c_str(), NULL, NULL, &_errorMessage);
+}
+
 int Database_Sqlite3::remove_row(const AM_Database_TableStruct* tableName, int ID)
 {
 	std::string Query = "DELETE FROM \'" + tableName->tableName + "\' WHERE " +

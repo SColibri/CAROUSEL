@@ -82,6 +82,13 @@ public:
 	virtual int clear_table(const AM_Database_TableStruct* tableName) { return -1; }
 
 	/// <summary>
+	/// Create a new view using SQL sintax
+	/// </summary>
+	/// <param name="createQuery"></param>
+	/// <returns></returns>
+	virtual int create_view(std::string createQuery) { return -1; }
+
+	/// <summary>
 	/// Removes a row identified by its ID
 	/// </summary>
 	/// <param name="tableName">table name in schema</param>

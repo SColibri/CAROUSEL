@@ -26,7 +26,7 @@ class AM_FileManagement:IStringify {
 										"Projects",
 										"Scripts", 
 										"Database",
-										"temp"
+										"temp",
 										"Logs"};
 
 	// Constructors, destructors and other

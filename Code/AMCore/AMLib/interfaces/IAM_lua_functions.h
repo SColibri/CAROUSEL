@@ -148,6 +148,7 @@ protected:
 		// Database
 		add_new_function(state, "database_tableQuery", "string, csv format, delimiter comma char", "database_tableQuery <tablename> <optional-where clause>", baseBind_DatabaseQuery);
 		add_new_function(state, "database_table_custom_query", "string, csv format, delimiter comma char", "database_tableFullQuery <Full query>", baseBind_DatabaseByQuery);
+		add_new_function(state, "database_create_view", "string, csv format, delimiter comma char", "database_create_view <Full query>", baseBind_DatabaseCreateView);
 		add_new_function(state, "database_tableList", "string, csv format, delimiter comma char", "database_tableList", baseBind_DatabaseTableList);
 		add_new_function(state, "database_rowNumbers", "int", "database_rowNumbers <TableName> <Where Query - optional>", baseBind_DatabaseRowNumber);
 
@@ -559,6 +560,32 @@ protected:
 			out = _dbFramework->get_database()->get_tableRows(parameter, parameter_2);
 		}
 		
+
+		lua_pushstring(state, out.c_str());
+		return 1;
+	}
+
+	static int baseBind_DatabaseCreateView(lua_State* state)
+	{
+		std::vector<std::string> parameters = get_parameters(state);
+		std::string out{ "" };
+
+		if (parameters.size() < 1)
+		{
+			out = "Error, Please insert a valid SQL view query";
+			lua_pushstring(state, out.c_str());
+			return 1;
+		}
+
+		int response = _dbFramework->get_database()->create_view(IAM_Database::csv_join_row(parameters, " "));
+		if(response == 0)
+		{
+			out = "OK";
+		}
+		else
+		{
+			out = "An error ocurred while executing the SQL command: " + IAM_Database::csv_join_row(parameters, " ");
+		}
 
 		lua_pushstring(state, out.c_str());
 		return 1;

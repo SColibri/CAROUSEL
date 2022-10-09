@@ -97,7 +97,7 @@
 		{
 			for (auto& dir : filepath_names)
 			{
-				std::string tempDir = _workingDirectory + "/" + dir;
+				std::string tempDir = _workingDirectory + "\\" + dir;
 				if (!std::filesystem::exists(std::filesystem::status(tempDir.c_str())))
 				{
 					std::filesystem::create_directory(tempDir);

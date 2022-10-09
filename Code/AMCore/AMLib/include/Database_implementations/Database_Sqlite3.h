@@ -38,6 +38,7 @@ public:
 	virtual int add_table(const AM_Database_TableStruct* newTable) override;
 	virtual int drop_table(const AM_Database_TableStruct* tableName) override;
 	virtual int clear_table(const AM_Database_TableStruct* tableName) override;
+	virtual int create_view(std::string createQuery) override;
 	virtual int remove_row(const AM_Database_TableStruct* tableName, int ID) override;
 	virtual int remove_row(const AM_Database_TableStruct* tableName, std::string whereClause) override;
 	virtual int insert_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData) override;
