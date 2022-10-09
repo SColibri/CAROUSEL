@@ -17,7 +17,7 @@ namespace main_setup
 		Database_Factory::set_schema("projectDB");
 
 		//Create a new database file
-		std::string filename = configuration.get_directory_path(AM_FileManagement::FILEPATH::DATABASE) + "/" +
+		std::string filename = configuration.get_directory_path(AM_FileManagement::FILEPATH::DATABASE) + "\\" +
 			Database_Factory::get_schema() + ".db";
 		if (std::filesystem::exists(filename))
 			std::filesystem::remove(std::filesystem::path(filename));

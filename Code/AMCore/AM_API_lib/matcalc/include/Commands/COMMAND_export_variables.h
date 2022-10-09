@@ -36,7 +36,7 @@ public:
 
 		// create script filename for later
 		std::string tempName = "TempFile" + std::to_string(std::rand() + get_uniqueNumber());
-		_scriptFilename = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "/" + tempName + ".mcs";
+		_scriptFilename = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "\\" + tempName + ".mcs";
 
 		// Additional commands
 		_commandList.push_back(new COMMAND_run_script(_communication, _configuration, _scriptFilename));

@@ -14,7 +14,7 @@ int Database_Sqlite3::connect()
 {
 	if (_connectionOpen) return 0;
 
-	std::string filename = _configuration->get_directory_path(AM_FileManagement::FILEPATH::DATABASE) + "/" + 
+	std::string filename = _configuration->get_directory_path(AM_FileManagement::FILEPATH::DATABASE) + "\\" + 
 							Database_Factory::get_schema() + ".db";
 
 	if (sqlite3_open(filename.c_str(), &db) != SQLITE_OK) {

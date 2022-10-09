@@ -22,7 +22,7 @@ TEST_CASE("Database", "[classic]")
 		AM_Config config01;
 
 		//Create a new database file
-		std::string filename = config01.get_directory_path(AM_FileManagement::FILEPATH::DATABASE) + "/" +
+		std::string filename = config01.get_directory_path(AM_FileManagement::FILEPATH::DATABASE) + "\\" +
 			Database_Factory::get_schema() + ".db";
 		std::filesystem::remove(std::filesystem::path(filename));
 

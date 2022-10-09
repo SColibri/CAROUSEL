@@ -92,10 +92,7 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 
 	add_new_function(state, "pixelcase_stepEquilibrium_IDProject", "std::string out", "<int IDProject> <int IDCase>", Bind_SPC_StepEquilibrium_ByProjectID);
 	add_new_function(state, "pixelcase_stepEquilibrium", "std::string out", "<int IDCase>", Bind_SPC_StepEquilibrium);
-	
 	add_new_function(state, "pixelcase_stepScheil", "std::string out", "<int IDCase>", Bind_SPC_StepScheil);
-	
-	
 	add_new_function(state, "pixelcase_run_cases", "std::string out", "pixelcase_run_cases", Bind_SPC_run_cases);
 
 }

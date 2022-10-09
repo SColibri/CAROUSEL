@@ -636,9 +636,12 @@ protected:
 		{
 			bool outy = luaL_dofile(state, parameter.c_str());
 		}
-		catch (const std::exception&)
+		catch (std::exception& em)
 		{
-			lua_pushstring(state, "Error: Something went wrong while running trying to run the script! is it still there?");
+			std::string err = "Error: Something went wrong while running trying to run the script! is it still there?";
+			err += em.what();
+
+			lua_pushstring(state, err.c_str());
 		}
 		
 		return 1;

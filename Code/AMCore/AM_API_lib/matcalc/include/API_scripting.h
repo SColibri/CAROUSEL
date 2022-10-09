@@ -38,7 +38,7 @@ namespace API_Scripting
 		std::vector<std::string> out
 		{
 			"use-module core",
-			"set-working-directory " + configuration->get_working_directory() + "",
+			"set-working-directory \"" + configuration->get_working_directory() + "\"",
 			"open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path() + "",
 			"set-variable-value npc 25"
 		};
@@ -50,7 +50,7 @@ namespace API_Scripting
 	std::vector<std::string> static script_get_thermodynamic_database(AM_Config* configuration)
 	{
 		std::vector<std::string> out; //= Script_initialize(configuration);
-		out.push_back("open-thermodyn-database " + configuration->get_ThermodynamicDatabase_path() + "");
+		out.push_back("open-thermodyn-database \"" + configuration->get_ThermodynamicDatabase_path() + "\"");
 		out.push_back("list-database-contents equi-database-contents");
 		return out;
 	}
@@ -73,17 +73,17 @@ namespace API_Scripting
 
 	std::string static script_set_thermodynamic_database(std::string parameters)
 	{
-		return "open-thermodynamic-database " + parameters;
+		return "open-thermodynamic-database \"" + parameters + "\"";
 	}
 
 	std::string static script_set_physical_database(std::string parameters)
 	{
-		return "read-mobility-database " + parameters;
+		return "read-mobility-database \"" + parameters + "\"";
 	}
 
 	std::string static script_set_mobility_database(std::string parameters)
 	{
-		return "read-physical-database " + parameters;
+		return "read-physical-database \"" + parameters + "\"";
 	}
 
 	std::string static Script_selectElements(std::vector<std::string> Elements) 
@@ -732,7 +732,7 @@ namespace API_Scripting
 	{
 		// create filenames
 		std::string tempName = "TempFile" + std::to_string(std::rand() + get_uniqueNumber());
-		std::string matcalfFilename = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "/" + tempName + ".Framework";
+		std::string matcalfFilename = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "\\" + tempName + ".Framework";
 
 		// create script
 		std::string scriptTemplate = "export-open-file file-name=\"" + matcalfFilename + "\" \n";
@@ -743,7 +743,7 @@ namespace API_Scripting
 		scriptTemplate += "export-close-file \n";
 
 		// Save script
-		std::string fileName = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) +  "/" + tempName + ".mcs";
+		std::string fileName = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) +  "\\" + tempName + ".mcs";
 		std::ofstream striptFile(fileName);
 		striptFile << scriptTemplate.c_str() << std::endl;
 		striptFile.close();
@@ -755,7 +755,7 @@ namespace API_Scripting
 	{
 		// create filenames
 		std::string tempName = "TempFile" + std::to_string(std::rand() + get_uniqueNumber());
-		std::string matcalfFilename = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "/" + tempName + ".Framework";
+		std::string matcalfFilename = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "\\" + tempName + ".Framework";
 
 		// create script
 		std::string scriptTemplate = "export-open-file file-name=\"" + matcalfFilename + "\" \n";
@@ -770,7 +770,7 @@ namespace API_Scripting
 		scriptTemplate += "export-close-file \n";
 
 		// Save script
-		std::string fileName = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "/" + tempName + ".mcs";
+		std::string fileName = configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "\\" + tempName + ".mcs";
 		std::ofstream striptFile(fileName);
 		striptFile << scriptTemplate.c_str() << std::endl;
 		striptFile.close();

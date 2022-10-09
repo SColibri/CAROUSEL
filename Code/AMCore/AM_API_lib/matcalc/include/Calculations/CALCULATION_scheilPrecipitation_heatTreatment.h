@@ -205,7 +205,7 @@ namespace matcalc
 
 			_totalVariables = phasesTable.row_count() * 3 + 2;
 
-			_filename = _configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "/" + std::to_string(COMMAND_export_variables::get_uniqueNumber()) + "_Data.pSimulation";
+			_filename = _configuration->get_directory_path(AM_FileManagement::FILEPATH::SCRIPTS) + "\\" + std::to_string(COMMAND_export_variables::get_uniqueNumber()) + "_Data.pSimulation";
 			_commandList.push_back(new COMMAND_export_variables(_mccComm, _configuration, _filename, stringFormat, variableName, ""));
 
 			std::string thisScript = this->Get_script_text();

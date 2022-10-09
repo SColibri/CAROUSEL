@@ -20,7 +20,7 @@ class AM_FileManagement:IStringify {
 							TEMP,
 							LOGS};
 
-		std::string filepath_names[7] = {"None",
+		std::string filepath_names[8] = {"None",
 										"System"
 										"General",
 										"Projects",

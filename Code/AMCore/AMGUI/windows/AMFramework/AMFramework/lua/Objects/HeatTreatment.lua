@@ -124,7 +124,7 @@ function HeatTreatment:run_kinetic_simulation()
   local dbRows = database_rowNumbers("HeatTreatmentProfile","IDHeatTreatment="..self.ID)
 
   local framework = Framework:new{}
-  local logFilename =  framework.configuration.Working_directory.."/Logs/HeatTreatment__run_kinetic_simulation_"..os.date("%d%m%Y%H%M%S")..".txt"
+  local logFilename =  framework.configuration.Working_directory.."\\Logs\\HeatTreatment__run_kinetic_simulation_"..os.date("%d%m%Y%H%M%S")..".txt"
   write_to_file(logFilename, outText.."\n Profile data enties: "..dbRows.."\n Query used: ".."IDHeatTreatment="..self.ID)
 
   assert(dbRows ~= "0", "HeatTreatment:run_kinetic_simulation; No results where obtained, output log available->"..logFilename)

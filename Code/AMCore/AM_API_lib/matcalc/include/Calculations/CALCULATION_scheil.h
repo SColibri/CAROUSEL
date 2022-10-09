@@ -39,7 +39,7 @@ namespace matcalc
 				variableType += "";
 
 				// set filename
-				_filename = configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "/" + std::to_string(COMMAND_export_variables::get_uniqueNumber()) + "_scheilCalculation.AMFramework";
+				_filename = configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "\\" + std::to_string(COMMAND_export_variables::get_uniqueNumber()) + "_scheilCalculation.AMFramework";
 
 				_commandList.push_back(new COMMAND_set_thermodynamic_database(mccComm, configuration));
 				_commandList.push_back(new COMMAND_select_elements(mccComm, configuration, selectedElements));

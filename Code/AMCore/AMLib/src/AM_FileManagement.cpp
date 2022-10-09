@@ -49,7 +49,7 @@
 	{
 		std::string response;
 		std::string wDir = _workingDirectory;
-		if (wDir.size() > 0) wDir += "/";
+		if (wDir.size() > 0) wDir += "\\";
 
 		switch (option_)
 		{

@@ -1104,7 +1104,7 @@ private:
 					DBS_Phase tempPhaseName(_dbFramework->get_database(), ItempPhase->IDPhase);
 					tempPhaseName.load();
 
-					ItempPhase->PrecipitateDistribution = IAM_Database::csv_join_row(string_manipulators::read_file_to_end(_configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "/" + std::to_string(ItempPhase->id()) + "_" + tempPhaseName.Name + ".txt"),"\n");
+					ItempPhase->PrecipitateDistribution = IAM_Database::csv_join_row(string_manipulators::read_file_to_end(_configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "\\" + std::to_string(ItempPhase->id()) + "_" + tempPhaseName.Name + ".txt"),"\n");
 					ItempPhase->save();
 				}
 				

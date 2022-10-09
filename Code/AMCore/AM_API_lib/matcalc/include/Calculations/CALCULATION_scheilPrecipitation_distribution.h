@@ -34,7 +34,7 @@ namespace matcalc
 			{
 				for(auto& item:_precipitationPhases)
 				{
-					_filenames.push_back(configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "/" + std::to_string(COMMAND_export_variables::get_uniqueNumber()) + "_" + item->Name + ".AMFramework");
+					_filenames.push_back(configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "\\" + std::to_string(COMMAND_export_variables::get_uniqueNumber()) + "_" + item->Name + ".AMFramework");
 					string_manipulators::write_to_file(_filenames.back(), item->PrecipitateDistribution);
 				}
 			}
@@ -147,7 +147,7 @@ namespace matcalc
 				DBS_Phase tempPhase(db, item->IDPhase);
 				tempPhase.load();
 
-				_filenames.push_back(configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "/" + std::to_string(COMMAND_export_variables::get_uniqueNumber()) + "_" + item->Name + ".AMFramework");
+				_filenames.push_back(configuration->get_directory_path(AM_FileManagement::FILEPATH::TEMP) + "\\" + std::to_string(COMMAND_export_variables::get_uniqueNumber()) + "_" + item->Name + ".AMFramework");
 				_commandList.push_back(new COMMAND_export_precipitate_distribution(mccComm, configuration, item->Name, _filenames[_filenames.size() - 1]));
 			}
 		}
