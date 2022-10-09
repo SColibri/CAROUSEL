@@ -81,7 +81,7 @@
 
 	const std::string AM_Config::get_working_directory()
 	{
-		return _fileManagement.get_filePath(workingDirectoryOption);
+		return _workingDirectory; //_fileManagement.get_filePath(workingDirectoryOption);
 	}
 
 	void AM_Config::set_config_name(std::string newName)
@@ -178,7 +178,7 @@
 		ss << "_thermodynamic_database_path" << separatorChar << _thermodynamic_database_path << std::endl;
 		ss << "_physical_database_path" << separatorChar << _physical_database_path << std::endl;
 		ss << "_mobility_database_path" << separatorChar << _mobility_database_path << std::endl;
-		ss << "_workingDirectory" << separatorChar << _fileManagement.get_filePath(AM_FileManagement::FILEPATH::GENERAL) << std::endl;
+		ss << "_workingDirectory" << separatorChar << _workingDirectory << std::endl;
 		ss << "\n";
 		ss << _fileManagement.get_save_string();
 		ss << "\n";

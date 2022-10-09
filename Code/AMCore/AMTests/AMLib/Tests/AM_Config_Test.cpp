@@ -10,6 +10,7 @@ TEST_CASE("AM_Config", "[classic]")
 		testConfig.set_config_name("NameChanged");
 		testConfig.set_api_path("C:\\Users\\drogo\\Documents\\TUM\\Thesis\\Framework\\AMFramework\\Code\\AMCore\\AMGUI\\windows\\AMFramework\\AMFramework\\bin\\Release\\net6.0-windows\\..\\AM_API_lib\\matcalc\\AM_MATCALC_Lib.dll");
 		testConfig.set_apiExternal_path("C:\\Program Files\\MatCalc 6");
+		testConfig.set_working_directory("OkyTests");
 		testConfig.save();
 		std::string pathToTest = testConfig.get_filename();
 

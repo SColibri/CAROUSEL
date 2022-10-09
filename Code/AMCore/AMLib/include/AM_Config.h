@@ -119,7 +119,7 @@ private:
 	/// The framework uses a defined directory structure on which the config file can be found
 	/// at the "general" location, namely at the top node of the working directory 
 	/// </summary>
-	AM_FileManagement::FILEPATH workingDirectoryOption = AM_FileManagement::FILEPATH::GENERAL;
+	AM_FileManagement::FILEPATH workingDirectoryOption = AM_FileManagement::FILEPATH::SYSTEM;
 
 	/// <summary>
 	/// Library to implementation of IAM_API
