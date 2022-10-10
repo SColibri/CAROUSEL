@@ -1,15 +1,6 @@
 # AMFramework
-Framework used for simulating metal structures obtained from an additive manufacturing process. The framework is powered by matcalc, so a valid license is required. 
+Is a framework used for simulating and mapping material properties when subjected to heat treatments and/or change in element composition. Additionally the framework offers various tools for analizing all generated data nodes.
 
-# Installation
-## Linux
-### Requirements
-- MPI
+Calculations are made using external CALPHAD software (e.g. Matcalc), and it is important to keep in mind that this framework does not provide any license.
 
-```bash
-sudo get-apt install 
-```
-- Matcalc 6.0 with valid license https://www.matcalc.at/
 
-# How to use
-This framework is currently under construction, this will updated soon...
