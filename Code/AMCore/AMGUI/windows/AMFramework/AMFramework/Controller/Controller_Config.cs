@@ -192,7 +192,7 @@ namespace AMFramework.Controller
                         param => this.Can_Change_externalAPI_path()
                     );
                 }
-                return _Search_externalAPI_Path;
+                return _Search_workingDirectory_Path;
             }
         }
 

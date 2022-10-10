@@ -28,7 +28,11 @@ namespace AMFramework.Controller
         /// <summary>
         /// User preferences top level
         /// </summary>
-        public static UserPreferences UserPreferences { get; set; } = new();
+        public static UserPreferences UserPreferences { get; set; } = UserPreferences.load();
 
+        /// <summary>
+        /// AMcore configurations
+        /// </summary>
+        public static Controller.Controller_Config? Configuration { get; set; }
     }
 }

@@ -9,7 +9,7 @@ public:
 	COMMAND_export_precipitate_distribution(IPC_winapi* mccComm, AM_Config* configuration, std::string phaseName, std::string filename) :
 		COMMAND_abstract(mccComm, configuration)
 	{
-		_scriptContent = _command + phaseName + " file-name=" + filename + "\n";
+		_scriptContent = _command + phaseName + " file-name=\"" + filename + "\"\n";
 	}
 
 	virtual std::string DoAction() override

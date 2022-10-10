@@ -62,7 +62,7 @@
 	std::string AM_Config::get_filename()
 	{
 		std::string fPath = _fileManagement.get_filePath(workingDirectoryOption);
-		if (fPath.size() > 0) fPath += "/";
+		if (fPath.size() > 0) fPath += "\\";
 		std::string fullFileName = fPath + Name + ".config";
 
 		return fullFileName;

@@ -1,4 +1,8 @@
-﻿using System;
+﻿using AMControls.Charts.DataPointContextMenu;
+using AMControls.Charts.Implementations.DataSeries;
+using AMControls.Charts.Implementations;
+using AMControls.Charts.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,18 +33,20 @@ namespace AMFramework.Views.Case
         {
             InitializeComponent();
             DataContext = plotController;
-            plotController.refresh_used_Phases_inCases();
+            //plotController.refresh_used_Phases_inCases();
 
-            Components.Charting.LinePhaseChart.LinePhaseChart win01 = new Components.Charting.LinePhaseChart.LinePhaseChart(plotController);
-            win01.Height = 700;
+            //Components.Charting.LinePhaseChart.LinePhaseChart win01 = new Components.Charting.LinePhaseChart.LinePhaseChart(plotController);
+            //win01.Height = 700;
 
-            Components.Charting.LinePhaseChart.SpiderPhaseChart win02 = new Components.Charting.LinePhaseChart.SpiderPhaseChart(plotController);
-            win02.Height = 700;
+            //Components.Charting.LinePhaseChart.SpiderPhaseChart win02 = new Components.Charting.LinePhaseChart.SpiderPhaseChart(plotController);
+            //win02.Height = 700;
 
-            MainContent.Children.Add(win01);
-            MainContent.Children.Add(win02);
+            //MainContent.Children.Add(win01);
+            //MainContent.Children.Add(win02);
 
-            SelectedPhasesList.DataContext = plotController;
+            //SelectedPhasesList.DataContext = plotController;
+
+            
         }
     }
 }

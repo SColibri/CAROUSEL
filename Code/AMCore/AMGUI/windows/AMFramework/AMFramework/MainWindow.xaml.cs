@@ -85,6 +85,7 @@ namespace AMFramework
         {
             System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
             ofd.Filter = " lua script | *.lua";
+            ofd.InitialDirectory = Controller.Controller_Global.Configuration?.datamodel.Working_Directory;
             ofd.Multiselect = false;
 
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)

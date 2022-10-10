@@ -7,6 +7,7 @@
              xmlns:plot="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
              xmlns:phase_1="clr-namespace:AMFramework.Components.Charting.LinePhaseChart"
              xmlns:phase="clr-namespace:AMFramework.Views.Phase"
+             xmlns:pv ="clr-namespace:AMFramework.Views.Case.plotViews"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid x:Name="MainGrid">
@@ -16,8 +17,9 @@
         </Grid.RowDefinitions>
 
         <phase:PhaseSelection_smallList x:Name="SelectedPhasesList" Grid.Row="0"/>
-
-        <ScrollViewer Grid.Row="1">
+        <pv:Case_SpyderChart x:Name="MainP" Grid.Row="1"></pv:Case_SpyderChart>
+        
+        <ScrollViewer Grid.Row="1" Visibility="Hidden">
             <StackPanel x:Name="MainContent">
             
             </StackPanel>

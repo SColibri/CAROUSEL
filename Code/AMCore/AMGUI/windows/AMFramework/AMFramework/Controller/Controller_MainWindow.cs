@@ -38,27 +38,12 @@ namespace AMFramework.Controller
         {
             AMSystem.UserPreferences? uPref = AMSystem.UserPreferences.load();
             
-            if (uPref != null) Controller_Global.UserPreferences = uPref;
-
-            if(Controller_Global.UserPreferences.IAM_API_PATH.Length == 0 && 1 == 2) 
-            {    
-                System.Windows.Forms.OpenFileDialog ofd = new();
-                ofd.Filter = "Library dll | *.dll";
-                ofd.Title = "please select an IAM_API library";
-
-                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) 
-                {
-                    Controller_Global.UserPreferences.IAM_API_PATH = ofd.FileName;
-                    Controller_Global.UserPreferences.save();
-                }
-            }
-            else 
+            if (Controller_Global.Configuration == null) 
             {
-                _Config = new(Controller_Global.UserPreferences.IAM_API_PATH);
+                Controller_Global.Configuration = new(Controller_Global.UserPreferences.IAM_API_PATH);
             }
 
-            _Config = new();
-
+            _Config = Controller_Global.Configuration;
 
             _coreSocket = Controller.Controller_Config.ApiHandle;
 

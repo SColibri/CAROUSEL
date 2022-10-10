@@ -19,9 +19,9 @@ namespace AMFramework.AMSystem
             WriteToXmlFile<UserPreferences>("UserPreferences", this);
         }
 
-        public static UserPreferences? load() 
+        public static UserPreferences load() 
         {
-            if (!File.Exists("UserPreferences")) return null;
+            if (!File.Exists("UserPreferences")) return new();
 
             UserPreferences? Result = ReadFromXmlFile<UserPreferences>("UserPreferences");
             return Result;
