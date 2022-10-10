@@ -73,8 +73,8 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 
 	// Database
 #pragma region Database
-	add_new_function(state, "get_elementNames", "std::string out", "void", bind_getElementNames_command);
-	add_new_function(state, "get_phaseNames", "std::string out", "void", bind_getPhaseNames_command);
+	add_new_function(state, "get_elementNames", "std::string out", "get_elementNames", bind_getElementNames_command);
+	add_new_function(state, "get_phaseNames", "std::string out", "get_phaseNames", bind_getPhaseNames_command);
 #pragma endregion
 	
 
