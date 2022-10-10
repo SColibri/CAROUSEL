@@ -1,3 +1,4 @@
+theme: minima
 # AMFramework
 Framework used for simulating metal structures obtained from an additive manufacturing process. The framework is powered by matcalc, so a valid license is required. 
 
