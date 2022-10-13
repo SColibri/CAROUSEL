@@ -7993,6 +7993,9 @@
     <None Update="lua\Objects\ActivePhasesElementComposition.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="lua\Objects\AMRange.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="lua\Objects\AM_StringManipulators.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

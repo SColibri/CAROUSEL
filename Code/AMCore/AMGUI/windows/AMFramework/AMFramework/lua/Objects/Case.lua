@@ -16,18 +16,17 @@ function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, Pos
    self.PosX = PosX or 0
    self.PosY = PosY or 0
    self.PosZ = PosZ or 0
-   self.SelectedPhases = SelectedPhases or {}
    self.Columns = {"ID", "IDProject", "IDGroup", "Name", "Script", "Date", "PosX", "PosY", "PosZ"}
 
-   self.EquilibriumConfiguration = EquilibriumConfiguration or EquilibriumConfig:new{}
-   self.ScheilConfiguration = ScheilConfiguration or  ScheilConfig:new{}
-   self.equilibriumPhaseFraction = equilibriumPhaseFraction or  {} 
-   self.scheilPhaseFraction = scheilPhaseFraction or  {}
-   self.selectedPhases = selectedPhases or {}
-   self.elementComposition = elementComposition or {}
-   self.precipitationPhases = precipitationPhases or {}
-   self.precipitationDomain = precipitationDomain or {}
-   self.heatTreatment = heatTreatment or {}
+   o.EquilibriumConfiguration = EquilibriumConfiguration or EquilibriumConfig:new{}
+   o.ScheilConfiguration = ScheilConfiguration or  ScheilConfig:new{}
+   o.equilibriumPhaseFraction = equilibriumPhaseFraction or  {} 
+   o.scheilPhaseFraction = scheilPhaseFraction or  {}
+   o.selectedPhases = selectedPhases or {}
+   o.elementComposition = elementComposition or {}
+   o.precipitationPhases = precipitationPhases or {}
+   o.precipitationDomain = precipitationDomain or {}
+   o.heatTreatment = heatTreatment or {}
 
    if o.ID > -1 then
     o:load()
@@ -106,6 +105,8 @@ end
 
 -- save
 function Case:save()
+    assert(self.IDProject > -1, "Case:save Error; Case has no reference to a project ID, poor orphan :(")    
+
     local saveString = join(self, ",")
     local saveOut = spc_case_save(saveString)
 
@@ -192,6 +193,31 @@ function Case:select_phases(In)
     end
 end
 
+function Case:set_phases_ByName(In)
+    local Etable = split(In," ")
+
+    -- Save before adding selected phases
+    if #Etable > 0 then
+        self:clear_selected_phases()
+        self.selectedPhases = {}
+        for i,Item in ipairs(Etable) do
+            
+            local phasey = Phase:new{Name = Item}
+
+            if phasey.ID == -1 then
+                get_phaseNames()
+                phasey = Phase:new{Name = Item}
+            end
+
+            if phasey.ID == -1 then
+                error("select_phases: The phase \'" .. Item .. "\' is not contained in the database! :(")
+            end
+            
+            self.selectedPhases[i] = SelectedPhase:new{IDPhase = phasey.ID}
+        end
+    end
+end
+
 function Case:clear_selected_phases()
     for i,Item in ipairs(self.selectedPhases) do
         self.selectedPhases[i]:remove()
@@ -250,7 +276,7 @@ end
 -- Composition by name
 function Case:find_composition_ByName(nameObj)
     for i,Item in ipairs(self.elementComposition) do
-        if self.elementComposition[i].element.Name == nameObj then
+        if string.upper(self.elementComposition[i].element.Name) == string.upper(nameObj) then
             return self.elementComposition[i]
         end
     end
@@ -272,6 +298,16 @@ function Case:clear_elementComposition(projectObject)
                                                                 IDElement = Pobject.selectedElements[i].IDElement}
 
         end
+    end
+end
+
+function Case:set_element_composition_from_project(projectObject)
+    assert(projectObject ~= nil, "Case:set_element_composition_from_project Error: invalid input, nil value")    
+
+    self.elementComposition = {}
+    local Pobject = projectObject
+    for i,Item in ipairs(Pobject.selectedElements) do 
+        self.elementComposition[i] = ElementComposition:new{IDElement = Item.IDElement}
     end
 end
 

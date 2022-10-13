@@ -1,4 +1,4 @@
-﻿-- Project
+﻿-- Scheil configuration
 ScheilConfig = {ID = -1, IDCase = -1, StartTemperature = 700, EndTemperature = 25, StepSize = 25, DependentPhase = 1, Min_Liquid_Fraction = 0.01} --@Description Case object. \n Each case contains all calculations and configurations for the ccurrent element composition
 
 -- Constructor

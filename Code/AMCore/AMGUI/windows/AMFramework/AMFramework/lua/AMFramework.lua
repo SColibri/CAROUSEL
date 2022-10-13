@@ -4,6 +4,7 @@
 require"Database.Views"
 
 require"Objects.AM_StringManipulators"
+require"Objects.AMRange"
 require"Objects.Configuration"
 require"Objects.Element"
 require"Objects.ElementComposition"

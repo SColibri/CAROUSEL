@@ -11,7 +11,7 @@ function Element:new (o,ID,Name) --@Description Creates a new Element,\n
    self.Name = Name or ""
    self.Columns = {"ID","Name"}
 
-   if o.ID > -1 or Name ~= "" then
+   if o.ID > -1 or o.Name ~= "" then
     o:load()
    end
 

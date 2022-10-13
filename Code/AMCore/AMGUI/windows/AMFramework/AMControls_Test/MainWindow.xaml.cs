@@ -82,7 +82,7 @@ namespace AMControls_Test
             scat.ChartAreaMouseMove += OnChartMouseMove_Handle;
 
             ParallaxExample pExample = new();
-            // pExample.Show();
+            pExample.Show();
 
             SpyderExample spyderExample = new SpyderExample();
             spyderExample.Show();

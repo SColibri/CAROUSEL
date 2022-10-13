@@ -12,13 +12,13 @@ function Project:new (o,ID,Name,API,ExternalAPI,selectedElements,cases) --@Descr
    self.ExternalAPI = ExternalAPI or ""
 
    self.Columns = {"ID","Name","API","ExternalAPI"}
-   self.selectedElements = selectedElements or {}
-   self.cases = cases or {} --@TYPE Case
+   o.selectedElements = selectedElements or {}
+   o.cases = cases or {} --@TYPE Case
 
    --Active Phases
-   self.ActivePhases = {} --@TYPE ActivePhases
-   self.ActivePhasesConfig = {}
-   self.ActivePhasesElementComposition = {}
+   o.ActivePhases = {} --@TYPE ActivePhases
+   o.ActivePhasesConfig = {}
+   o.ActivePhasesElementComposition = ActivePhasesConfig:new{IDProject = self.ID}
 
    if o.ID > -1 or o.Name ~= "Empty project" then
     o:load()
@@ -238,6 +238,121 @@ function Project:update_cases()
     end
 
 end
+
+-- 
+function Project:create_cases(caseTemplate)--@Description Create case items based on the input parameters
+    -- Make sure we have saved the project object
+    if self.ID == -1 then self:save() end
+
+    -- Get all cases from composition list
+    local caseList = self:casesByComposition(caseTemplate.elementComposition)
+    
+    -- Manually set project ID to all cases, we do not call the add_case function since this will
+    -- reset all element compositions to the project selected elements, and on the previous function 
+    -- call we checked that already.
+    for index,item in ipairs(caseList) do
+        item.IDProject = self.ID
+        item.EquilibriumConfiguration = table.deepcopy(caseTemplate.EquilibriumConfiguration)
+        item.ScheilConfiguration = table.deepcopy(caseTemplate.ScheilConfiguration)
+        item.selectedPhases = table.deepcopy(caseTemplate.selectedPhases)
+        item.precipitationPhases = table.deepcopy(caseTemplate.precipitationPhases)
+        item.precipitationDomain = table.deepcopy(caseTemplate.precipitationDomain)
+        item.heatTreatment = table.deepcopy(caseTemplate.heatTreatment)
+        item:save()
+    end
+
+    -- After saving all cases we now proceed by populating the heat treatments
+    
+end
+
+function Project:htBySegments(caseList, HeatTreatementConfig, listSegments) --@Description Create heat treatments
+    
+end
+
+function Project:recursiveHTBySegments(caseList, rangeIndexes, rangeLists, currentIndex)--@Description
+
+end
+
+function Project:casesByComposition(listElementComposition)
+
+    -- Check if parameters are valid
+	assert(type(listElementComposition) == "table", "Project:casesByComposition Error; element composition has to be a list with values defined by an AMRange object")
+    assert(#listElementComposition == #self.selectedElements, "Project:casesByComposition Error; listElementComposition does not specify all elements in project")
+    
+    -- Index for all values that have ranged values
+	local rangeIndexes = {}
+
+    -- List that contains the range items, this is an array with all discrete intervals
+    local rangeLists = {}
+    
+    -- Find all indexes that have a range object instead of a unique value
+    for index,item in ipairs(listElementComposition) do
+        
+        -- Remove identifier if it has one, we don't want to copy the ID
+        item.ID = -1
+        
+        -- Check if the 'value parameter' is of type table, else skip
+		if type(item.value) ~= "table" then goto C01 end
+        
+        -- Check then if it has a key of AMName that is equal to AMRange
+        if item.value.AMName == "AMRange" then
+            table.insert(rangeIndexes, index)
+            table.insert(rangeLists, item.value.Items)
+        end
+		
+		::C01::
+    end
+	
+    -- create a temporal deep copy of the element compositions, we will later use the copy for the recursive function 
+    local cpTable = table.deepcopy(listElementComposition)
+
+    -- create all cases base on the composition list
+    local caseList = self:recursiveCaseByComposition(cpTable, rangeIndexes, rangeLists, 1)
+	
+    -- Debug, list of all combinations
+	print("case list size "..#caseList)
+	for index, item in ipairs(caseList) do
+		stringB = "->"..index.." || ";
+		
+		for index2, item2 in ipairs(item.elementComposition) do
+			stringB = stringB.." "..item2.value..""
+		end
+
+		print(stringB)
+	end
+
+    return caseList
+end
+
+
+function Project:recursiveCaseByComposition(listElementComposition, rangeIndexes, rangeLists, currentIndex)
+    local caseList = {}
+	
+	-- Recursive function that create all cases based on all possible element composition combinations
+    if currentIndex == #rangeIndexes then
+        for index,item in ipairs(rangeLists[currentIndex]) do
+            listElementComposition[rangeIndexes[currentIndex]].value = item
+
+            caseList[index] = Case:new{}
+			caseList[index].elementComposition = table.deepcopy(listElementComposition)
+        end
+    else
+        for index,item in ipairs(rangeLists[currentIndex]) do 
+            listElementComposition[rangeIndexes[currentIndex]].value = item
+
+			local nvalue = currentIndex + 1;
+			local tempTable = self:recursiveCaseByComposition(listElementComposition, rangeIndexes, rangeLists, nvalue)
+			
+			for indexy,itemy in ipairs(tempTable) do
+				table.insert(caseList, itemy)
+			end
+        end
+
+    end
+
+    return caseList
+end
+
 
 -- .......................................................................................
 --                                   Active phases
