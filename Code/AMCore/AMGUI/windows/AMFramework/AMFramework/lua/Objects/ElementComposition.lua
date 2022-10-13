@@ -13,7 +13,7 @@ function ElementComposition:new (o,ID,IDCase,IDElement,TypeComposition,value) --
    self.TypeComposition = TypeComposition or "weight"
    self.value = value or 0
    self.Columns = {"ID","IDCase","IDElement","TypeComposition","value"}
-   self.element = Element:new{}
+   o.element = Element:new{}
 
    if o.ID > -1 then
     o:load()

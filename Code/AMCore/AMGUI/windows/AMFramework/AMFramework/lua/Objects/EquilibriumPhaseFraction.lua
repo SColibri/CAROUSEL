@@ -13,7 +13,7 @@ function EquilibriumPhaseFraction:new (o,ID,IDCase,IDPhase,Temperature,Value) --
    self.Temperature = Temperature or 0
    self.Value = Value or 0
    self.Columns = {"ID","IDCase","IDPhase","Temperature","Value"}
-   self.phase = Phase:new{}
+   o.phase = Phase:new{}
 
    if o.ID > -1 then
     o:load()

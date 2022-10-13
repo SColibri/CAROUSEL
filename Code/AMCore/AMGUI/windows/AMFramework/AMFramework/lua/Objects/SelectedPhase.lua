@@ -11,7 +11,7 @@ function SelectedPhase:new (o,ID,IDCase,IDPhase,phase) --@Description Creates a 
    self.IDCase = IDCase or -1
    self.IDPhase = IDPhase or -1
    self.Columns = {"ID","IDCase","IDPhase"}
-   self.phase = phase or Phase:new{}
+   o.phase = phase or Phase:new{}
 
    if o.ID > -1 then
     o:load()

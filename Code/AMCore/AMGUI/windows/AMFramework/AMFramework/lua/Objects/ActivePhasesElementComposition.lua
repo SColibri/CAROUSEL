@@ -13,7 +13,7 @@ function ActivePhasesElementComposition:new (o,ID,IDProject,IDElement,Value) --@
    self.Value = Value or 0.0000
    
    self.Columns = {"ID","IDProject","IDElement","Value"}
-   self.element = Element:new{}
+   o.element = Element:new{}
 
    if o.ID > -1 then
     o:load()

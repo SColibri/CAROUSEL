@@ -15,9 +15,9 @@ function HeatTreatment:new (o,ID,IDCase,Name,MaxTemperatureStep,IDPrecipitationD
    self.StartTemperature = StartTemperature or 100
    
    self.Columns = {"ID","IDCase","Name","MaxTemperatureStep","IDPrecipitationDomain","StartTemperature"}
-   self.TemperatureProfile = TemperatureProfile or {}
-   self.SimulationData = SimulationData or {}
-   self.Segments = Segments or {}
+   o.TemperatureProfile = TemperatureProfile or {}
+   o.SimulationData = SimulationData or {}
+   o.Segments = Segments or {}
    
    if o.ID > -1 or string.len(o.Name) > 1 then
     o:load()
