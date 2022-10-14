@@ -1,5 +1,5 @@
 ﻿
-function split(str, delim, maxNb)
+function split(str, delim, maxNb) --@Description Splits text into a table object, usage(text, delimiter char, optional max size) output->table
     if str == nil or delim == nil then
         return {}
     end
@@ -31,7 +31,7 @@ function split(str, delim, maxNb)
 end
 -- function from: http://lua-users.org/wiki/SplitJoin
 
-function join(tableObject, delim)
+function join(tableObject, delim) --@Description Joins a string table and stores it into a string sepparated by a delimiter, usage(table, delimiter char) output->string
     -- Get valid value objects from tableObject
     local resultArray = {}
     for i,Item in ipairs(tableObject.Columns) do
@@ -47,7 +47,8 @@ function trim(s)
    return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
-function load_data(objectT, csvData)
+function load_data(objectT, csvData) --@Description Loads csv data into data models. data models contain a key with name 'Columns' where each data column is specified by keyname
+    assert(objectT.Columns ~= nil, "load_data Error: invalid table, this does not represent a data model")
     local index = 1
     for i , Item in ipairs(objectT.Columns) do
         if index > #csvData then break end
@@ -78,7 +79,7 @@ function load_table_data(TableStore, ObjectType, csvTableData) --@Description Lo
 end
 
 -- code snippet for deep copy from: http://lua-users.org/wiki/CopyTable, Author: not available, lua?
-function table.deepcopy(orig, copies)
+function table.deepcopy(orig, copies) --@Description creates a copy of a table, output->table
     copies = copies or {}
     local orig_type = type(orig)
     local copy
@@ -99,7 +100,7 @@ function table.deepcopy(orig, copies)
     return copy
 end
 
-function write_to_file(filename, Content, writeMode)
+function write_to_file(filename, Content, writeMode) --@Description Write a file, usage(filename, content string, writeMode), write modes: a,append || w,write/overwrite
   -- common modes:
   -- w: write and overwrite
   -- a: append

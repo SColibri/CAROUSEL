@@ -1,8 +1,8 @@
 ﻿-- Item
-ElementComposition = {ID = -1,IDCase = -1, IDElement=-1, TypeComposition="weight", value=0, element={} } --@Description Element object. \n Element information, this should be loaded from a database
+ElementComposition = {ID = -1,IDCase = -1, IDElement=-1, TypeComposition="weight", value=0, element={} } --@Description ElementComposition object. \n Item that holds the value in weight percentage of an element
 
 -- Constructor
-function ElementComposition:new (o,ID,IDCase,IDElement,TypeComposition,value) --@Description Creates a new Element,\n 
+function ElementComposition:new (o,ID,IDCase,IDElement,TypeComposition,value) --@Description Creates a new ElementComposition,\n 
    o = o or {}
 
    setmetatable(o, self)
@@ -27,21 +27,8 @@ function ElementComposition:new (o,ID,IDCase,IDElement,TypeComposition,value) --
    return o
 end
 
-function ElementComposition:copy (obj) --@Description deep copy of object on to current object, it does not copy the ID\n 
-   error(1 == 2, "Deprecated function, this deep copies are done using table.deepcopy implementation")
-   assert(obj ~= nil, "ElementComposition:copy  Error; nil object as parameter")
-
-   self.ID = -1
-   self.IDCase = obj.IDCase
-   self.IDElement = obj.IDElement
-   self.TypeComposition = obj.TypeComposition
-   self.value = obj.value or 0
-   self.Columns = {"ID","IDCase","IDElement","TypeComposition","value"}
-   self.element = Element:new{}
-end
-
 -- load
-function ElementComposition:load ()
+function ElementComposition:load () --@Description Loads data based on the ID, if the ID is -1 it will return an empty object
    local sqlData = split(spc_elementcomposition_load_id(self.ID))
    load_data(self, sqlData)
 
@@ -49,7 +36,7 @@ function ElementComposition:load ()
 end
 
 -- save
-function ElementComposition:save()
+function ElementComposition:save() --@Description Saves an object into the database, if ID = -1 it creates a new entry.
     assert(self.IDElement ~= -1, "Wrong id element for: "..self.element.Name.." and value: "..self.value)
     assert(type(self.value) ~= "table", "ElementComposition:save; invalid table value, composition ranges cannot be saved directly")
     if self.IDElement == -1 then error("wrong id element") end
@@ -61,6 +48,6 @@ function ElementComposition:save()
 end
 
 -- remove
-function ElementComposition:remove()
+function ElementComposition:remove() --@Description Deletes the object entry
     spc_elementcomposition_delete(self.ID)
 end

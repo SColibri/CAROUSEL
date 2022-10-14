@@ -244,7 +244,21 @@ namespace AMFramework.AMSystem
             List<string> file_classes = fileRows.FindAll(e => e.Contains("= {") == true || e.Contains("={") == true);
             List<string> file_classFunctions = fileRows.FindAll(e => e.Contains("function") == true && e.Contains(':') == true);
             List<string> file_functions = fileRows.FindAll(e => e.Contains("function") == true && e.Contains(':') == false);
-            List<string> file_global_variables = fileRows.FindAll(e => e.Contains("=") == true && e.Contains(":new") == true && e.Contains("local") == false && e.Contains("function") == false);
+
+            List<string> file_global_variables = fileRows.FindAll(e => e.Contains("=") == true && 
+                                                                       e.Contains(":new") == true &&
+                                                                       e.Contains("o.") == false &&
+                                                                       e.Contains("self.") == false &&
+                                                                       e.Contains("local") == false && 
+                                                                       e.Contains("function") == false);
+
+            List<string> file_local_variables = fileRows.FindAll(e => e.Contains("=") == true && 
+                                                                      e.Contains(":new") == true &&
+                                                                      e.Contains("o.") == false &&
+                                                                      e.Contains("self.") == false &&
+                                                                      e.Contains("local") == true && 
+                                                                      e.Contains("function") == false);
+            
             List<string> file_parameter_types = fileRows.FindAll(e => e.Contains("--@TYPE",StringComparison.OrdinalIgnoreCase) == true);
 
             // Modules
@@ -267,6 +281,7 @@ namespace AMFramework.AMSystem
 
                 // extract class name, check if it is already contained
                 string className = Get_class_name(item);
+                if (className.Length == 0) continue;
                 if (Parser.AMParser.Find(e => e.Name.CompareTo(item) == 0) != null) continue; // avoid repeated classes (this might conflict with something)
 
                 // Create class item
@@ -298,7 +313,8 @@ namespace AMFramework.AMSystem
             // functions
             foreach (var item in file_functions)
             {
-                string className = Get_class_name(item);
+                string functionName = Get_function_name(item);
+                if (functionName.Length == 0) continue;
                 if (Parser.AMParser.Find(e => e.Name.CompareTo(item) == 0) != null) continue;
 
                 ParseObject tempParse = new ParseObject();
@@ -311,9 +327,12 @@ namespace AMFramework.AMSystem
                 Parser.AMParser.Add(tempParse);
             }
 
-            // functions
+            // Global variables
             foreach (var item in file_global_variables)
             {
+                // o. is used in class definitions for all generic tables
+                if (item.Contains("o.")) continue;
+
                 string className = Get_class_name(item);
                 if (Parser.AMParser.Find(e => e.Name.CompareTo(item) == 0) != null) continue;
 
@@ -327,9 +346,33 @@ namespace AMFramework.AMSystem
                                                                e.ObjectType == ParseObject.PTYPE.CLASS).Select(e => e.Parameters).ToList().SelectMany(e => e).ToList();
 
                 tempParse.functions = Parser.AMParser.FindAll(e => e.Name.CompareTo(tempParse.ParametersType) == 0 &&
-                                                               e.ObjectType == ParseObject.PTYPE.FUNCTION).Select(e => e.functions).ToList().SelectMany(e => e).ToList();
+                                                               e.ObjectType == ParseObject.PTYPE.CLASS).Select(e => e.functions).ToList().SelectMany(e => e).ToList();
                 
                 tempParse.Description = Get_description(item);
+                Parser.AMParser.Add(tempParse);
+            }
+
+            // local variables
+            foreach (var item in file_local_variables)
+            {
+                if (Parser.AMParser.Find(e => e.Name.CompareTo(item) == 0) != null) continue;
+
+                ParseObject tempParse = new ParseObject();
+                tempParse.ModuleName = modName;
+                tempParse.ObjectType = ParseObject.PTYPE.LOCAL_VARIABLE;
+                tempParse.Name = Get_class_name(item);
+                tempParse.ParametersType = Get_variable_className(item);
+
+                tempParse.Parameters = Parser.AMParser.FindAll(e => e.Name.CompareTo(tempParse.ParametersType) == 0 &&
+                                                               e.ObjectType == ParseObject.PTYPE.CLASS).Select(e => e.Parameters).ToList().SelectMany(e => e).ToList();
+
+                tempParse.functions = Parser.AMParser.FindAll(e => e.Name.CompareTo(tempParse.ParametersType) == 0 &&
+                                                               e.ObjectType == ParseObject.PTYPE.CLASS).Select(e => e.functions).ToList().SelectMany(e => e).ToList();
+
+                ParseObject? tempObject = Parser.AMParser.Find(e => e.Name.CompareTo(tempParse.ParametersType) == 0);
+                if (tempObject != null) tempParse.Description = tempObject.Description;
+
+                tempParse.Description += Get_description(item);
                 Parser.AMParser.Add(tempParse);
             }
 
@@ -355,8 +398,8 @@ namespace AMFramework.AMSystem
         {
             // copy string and remove spaces
             string copyRowLine = rowLine;
-            copyRowLine.Replace(" ", "");
-
+            copyRowLine = copyRowLine.Replace("local", "").Replace(" ","");
+        
             // find key where class name ends
             int Index = copyRowLine.IndexOf('=');
             if (Index == -1) return "";

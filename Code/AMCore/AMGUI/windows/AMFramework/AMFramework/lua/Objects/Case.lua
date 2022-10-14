@@ -1,5 +1,5 @@
 ﻿-- Case
-Case = {ID = -1, IDProject=-1, IDGroup=0, Name="NewCase", Script="", Date="", PosX=0, PosY=0, PosZ=0, EquilibriumConfiguration=EquilibriumConfig:new{}, ScheilConfiguration={}, equilibriumPhaseFraction={}, scheilPhaseFraction={}, selectedPhases={}, elementComposition={}, precipitationPhases = {}, precipitationDomain = {}, heatTreatment = {} } --@Description Case object. \n Each case contains all calculations and configurations for the ccurrent element composition
+Case = {ID = -1, IDProject=-1, IDGroup=0, Name="NewCase", Script="", Date="", PosX=0, PosY=0, PosZ=0, EquilibriumConfiguration=EquilibriumConfig:new{}, ScheilConfiguration={}, equilibriumPhaseFraction={}, scheilPhaseFraction={}, selectedPhases={}, elementComposition={}, precipitationPhases = {}, precipitationDomain = {}, heatTreatment = {} } --@Description Case object. \n Each case contains all calculations and configurations for the current element composition, also known as pixel case
 
 -- Constructor
 function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, PosZ, SelectedPhases, EquilibriumConfiguration, ScheilConfiguration, equilibriumPhaseFraction, scheilPhaseFraction, selectedPhases, elementComposition, precipitationPhases, precipitationDomain, heatTreatment) --@Description Creates a new case,\n create new object by calling newVar = Case:new{ID = -1}, use ID = -1 when you want to create a new case item
@@ -17,6 +17,7 @@ function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, Pos
    self.PosY = PosY or 0
    self.PosZ = PosZ or 0
    self.Columns = {"ID", "IDProject", "IDGroup", "Name", "Script", "Date", "PosX", "PosY", "PosZ"}
+   self.AMName = "Case"
 
    o.EquilibriumConfiguration = EquilibriumConfiguration or EquilibriumConfig:new{}
    o.ScheilConfiguration = ScheilConfiguration or  ScheilConfig:new{}
@@ -36,7 +37,7 @@ function Case:new (o,ID, IDProject, IDGroup, Name, Script, Date, PosX, PosY, Pos
 end
 
 -- load
-function Case:load()
+function Case:load() --@Description Loads data based on the ID, if the ID is -1 it will return an empty object
    -- Load CaseData
    local sqlData = split(spc_case_load_id(self.ID),",")
    load_data(self, sqlData)
@@ -83,7 +84,7 @@ function Case:load()
     ::continue::
 end
 
-function Case:load_phase_fractions() --@Description This loads data for the phase diagram.
+function Case:load_phase_fractions() --@Description This loads data from the simulations, used for plotting phase fractions vs temperature.
 
     -- equilibrium phase fractions
     local sqlData_equilibrium = split(spc_equilibrium_phasefraction_load_caseID(self.ID),"\n")
@@ -104,7 +105,7 @@ function Case:load_phase_fractions() --@Description This loads data for the phas
 end
 
 -- save
-function Case:save()
+function Case:save() --@Description Saves an object into the database, if ID = -1 it creates a new entry. It also saves all contained objects.
     assert(self.IDProject > -1, "Case:save Error; Case has no reference to a project ID, poor orphan :(")    
 
     local saveString = join(self, ",")
@@ -165,7 +166,7 @@ end
 --                                       Selected phases
 -- .......................................................................................
 
-function Case:select_phases(In)
+function Case:select_phases(In) --@Description Selects phases by name. usage("phase_1 phase_2 phase_3")
     local Etable = split(In," ")
 
     -- Save before adding selected phases
@@ -193,7 +194,7 @@ function Case:select_phases(In)
     end
 end
 
-function Case:set_phases_ByName(In)
+function Case:set_phases_ByName(In) --@Description simiar to select_phases, however, this function is used for templated objects, avoids unnecessary saves, Future: this function will be incorporated into select_phases and the save procedure should be done separately
     local Etable = split(In," ")
 
     -- Save before adding selected phases
@@ -218,7 +219,7 @@ function Case:set_phases_ByName(In)
     end
 end
 
-function Case:clear_selected_phases()
+function Case:clear_selected_phases() --@Description Removes all selected phases, if phases had an ID, they will be removed from the database too.
     for i,Item in ipairs(self.selectedPhases) do
         self.selectedPhases[i]:remove()
     end
@@ -228,13 +229,13 @@ end
 --                                Equilibrium/Scheil Phase fractions
 -- .......................................................................................
 
-function Case:clear_equilibriumPhaseFractions()
+function Case:clear_equilibriumPhaseFractions() --@Description Removes all data from equilibrium solidification simulation, if phases had an ID, they will be removed from the database too.
     for i,Item in ipairs(self.equilibriumPhaseFraction) do
         self.equilibriumPhaseFraction[i]:remove()
     end
 end
 
-function Case:clear_scheilPhaseFraction()
+function Case:clear_scheilPhaseFraction() --@Description Removes all data from scheil solidification simulation, if phases had an ID, they will be removed from the database too.
     for i,Item in ipairs(self.scheilPhaseFraction) do
         self.scheilPhaseFraction[i]:remove()
     end
@@ -245,7 +246,8 @@ end
 -- .......................................................................................
 
 -- Set composition
-function Case:set_composition(In)
+function Case:set_composition(In) --@Description Set composition for all elements specified in project level. Note: do not use as a templated object, refer to wiki on how to use templated objects
+    assert(self.IDProject > -1, "Case:set_composition Error, Case has no reference to a project, if you wanted to use this case as a templated object, specify the composition using find_composition_ByName(name).value")
     local Etable = split(In," ")
 
     if #self.elementComposition ~= #Etable then
@@ -274,7 +276,7 @@ function Case:set_composition(In)
 end
 
 -- Composition by name
-function Case:find_composition_ByName(nameObj)
+function Case:find_composition_ByName(nameObj) --@Description Searches for the element and returns an elementComposition object if found, if not, it returns a nil object
     for i,Item in ipairs(self.elementComposition) do
         if string.upper(self.elementComposition[i].element.Name) == string.upper(nameObj) then
             return self.elementComposition[i]
@@ -285,7 +287,7 @@ function Case:find_composition_ByName(nameObj)
 end
 
 -- Clear all element compositions
-function Case:clear_elementComposition(projectObject)
+function Case:clear_elementComposition(projectObject) --@Description Removes all element compositions and creates new ones based on the project added as parameter
     for i,Item in ipairs(self.elementComposition) do
         self.elementComposition[i]:remove()
     end
@@ -301,7 +303,7 @@ function Case:clear_elementComposition(projectObject)
     end
 end
 
-function Case:set_element_composition_from_project(projectObject)
+function Case:set_element_composition_from_project(projectObject) --@Description For templated objects just creates the element compositions needed for the current project setup
     assert(projectObject ~= nil, "Case:set_element_composition_from_project Error: invalid input, nil value")    
 
     self.elementComposition = {}
@@ -314,14 +316,14 @@ end
 -- .......................................................................................
 --                                      Precipitation Phases
 -- .......................................................................................
-function Case:clear_precipitationPhases()
+function Case:clear_precipitationPhases() --@Description Removes all precipitation phases
     for i,Item in ipairs(self.precipitationPhases) do
         self.precipitationPhases[i]:remove()
     end
     self.precipitationPhases = {}
 end
 
-function Case:add_precipitation_phase(pPhase) 
+function Case:add_precipitation_phase(pPhase) --@Description Adds a precipitation phase
     -- check before applying
     assert(type(pPhase) == "table", "add_precipitation_phase only accepts as input an object of PrecipitationPhase")
     assert(#pPhase.Name > 0, "Precipitation phase does not have a name")
@@ -339,14 +341,14 @@ end
 -- .......................................................................................
 --                                      Precipitation Domains
 -- .......................................................................................
-function Case:clear_precipitationDomains()
+function Case:clear_precipitationDomains() --@Description Removes all precipitation domains
     for i,Item in ipairs(self.precipitationDomain) do
         self.precipitationDomain[i]:remove()
     end
     self.precipitationDomain = {}
 end
 
-function Case:add_precipitation_domain(pDomain)
+function Case:add_precipitation_domain(pDomain) --@Description Adds a precipitation domain
     -- check before applying
     assert(type(pDomain) == "table", "add_precipitation_domain only accepts as input an object of PrecipitationDomain")
     assert(#pDomain.Name > 0, "Precipitation domain does not have a name")
@@ -365,14 +367,14 @@ end
 --                                       Heat treatment
 -- .......................................................................................
 
-function Case:clear_heat_treatments()
+function Case:clear_heat_treatments() --@Description Removes all heat treatments
     for i,Item in ipairs(self.heatTreatment) do
         self.heatTreatment[i]:remove()
     end
     self.heatTreatment = {}
 end
 
-function Case:add_heat_treatment(hTreatment)
+function Case:add_heat_treatment(hTreatment) --@Description Adds a heat treatment
     -- check before applying
     assert(type(hTreatment) == "table", "add_heat_treatment only accepts as input an object of HeatTreatment")
     assert(#hTreatment.Name > 0, "Heat treatment does not have a name")
@@ -397,7 +399,7 @@ end
 -- .......................................................................................
 
 -- Single case calculation (for parallel implementation check project level/object)
-function Case:calculate_heat_treatment(HeatTreatment_Name)
+function Case:calculate_heat_treatment(HeatTreatment_Name) --@Description precipitation kinetic simulation, this function will be deprecated as it will change for ID as input
     -- Check input
     assert(type(HeatTreatment_Name) == "string", "calculate_precipitate_distribution requires a string as an input")
 

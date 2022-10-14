@@ -159,17 +159,20 @@ namespace AMFramework
 
         private void RibbonButton_Click_NewProject(object sender, RoutedEventArgs e)
         {
-            Popup.Visibility = Visibility.Visible;
+            //MainTabControl.Visibility = Visibility.Collapsed;
+            //Popup.Visibility = Visibility.Visible;
 
             Controller.Controller_MainWindow controller_MainWindow = (Controller.Controller_MainWindow)DataContext;
             Components.Windows.AM_popupWindow Pw = controller_MainWindow.popupProject(-1);
-            Pw.PopupWindowClosed += ClosePopup;
+            //Pw.PopupWindowClosed += ClosePopup;
 
-            PopupFrame.Navigate(Pw);
+            controller_MainWindow.Show_Popup(Pw);
+            //PopupFrame.Navigate(Pw);
         }
 
         private void RibbonButton_Click_2(object sender, RoutedEventArgs e)
         {
+            MainTabControl.Visibility = Visibility.Collapsed;
             Popup.Visibility = Visibility.Visible;
 
             Controller.Controller_MainWindow controller_MainWindow = (Controller.Controller_MainWindow)DataContext;
@@ -179,9 +182,10 @@ namespace AMFramework
             PopupFrame.Navigate(Pw);
         }
 
-        private void ClosePopup(object sender, System.EventArgs e)
+        private void ClosePopup(object? sender, System.EventArgs e)
         { 
             Popup.Visibility=Visibility.Collapsed;
+            MainTabControl.Visibility = Visibility.Visible;
         }
 
         private void RibbonButton_Click_RunScript(object sender, RoutedEventArgs e)
@@ -386,6 +390,7 @@ namespace AMFramework
 
         private void RibbonButton_Click_1(object sender, RoutedEventArgs e)
         {
+            MainTabControl.Visibility = Visibility.Collapsed;
             Popup.Visibility = Visibility.Visible;
 
             Controller.Controller_MainWindow controller_MainWindow = (Controller.Controller_MainWindow)DataContext;

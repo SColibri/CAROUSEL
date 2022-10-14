@@ -19,6 +19,8 @@ using AMFramework.Views.Case;
 using AMFramework.Views.Precipitation_Kinetics;
 using AMFramework.AMSystem;
 using Microsoft.Win32;
+using AMFramework.Components.Windows;
+using System.Windows.Controls.Primitives;
 
 namespace AMFramework.Controller
 {
@@ -662,11 +664,89 @@ namespace AMFramework.Controller
             }
         }
 
-       
+
+
+
+
 
         #endregion
         #endregion
 
+        #region Popup
+        private AM_popupWindow? _popupWindow = new();
+        public AM_popupWindow? PopupWindow
+        {
+            get { return _popupWindow; }
+            set
+            {
+                _popupWindow = value;
+                OnPropertyChanged("PopupWindow");
+            }
+        }
+        public void Show_Popup(AM_popupWindow pWindow)
+        {
+            TabControlVisible = false;
+            PopupVisibility = true;
+            pWindow.PopupWindowClosed += Close_popup;
+            PopupWindow = pWindow;
+        }
+
+        private void Close_popup(object? sender, EventArgs e) 
+        {
+            PopupWindow = null;
+            PopupVisibility = false;
+            TabControlVisible = true;
+        }
+
+        private bool _popupVisibility = false;
+        public bool PopupVisibility 
+        { 
+            get { return _popupVisibility; }
+            set 
+            {
+                _popupVisibility = value;
+                OnPropertyChanged("PopupVisibility");
+            }
+        }
+
+        #endregion
+
+        #region AdditionalInformation
+        private string _titleAdditionalInformation = "";
+        public string TitleAdditionalInformation 
+        { 
+            get { return _titleAdditionalInformation; }
+            set 
+            {
+                _titleAdditionalInformation = value;
+                OnPropertyChanged("TitleAdditionalInformation");
+                AdditionalInformationIsExpanded = true;
+            }
+        }
+
+        private string _contentAdditionalInformation = "";
+        public string ContentAdditionalInformation 
+        { 
+            get { return _contentAdditionalInformation; }
+            set 
+            {
+                _contentAdditionalInformation = value;
+                OnPropertyChanged("ContentAdditionalInformation");
+                AdditionalInformationIsExpanded = true;
+            }
+        }
+
+        private bool _additionalInformationIsExpanded = false;
+        public bool AdditionalInformationIsExpanded 
+        { 
+            get { return _additionalInformationIsExpanded; }
+            set 
+            {
+                _additionalInformationIsExpanded = value;
+                OnPropertyChanged("AdditionalInformationIsExpanded");
+            }
+        }
+        #endregion
 
         #region Commands
 

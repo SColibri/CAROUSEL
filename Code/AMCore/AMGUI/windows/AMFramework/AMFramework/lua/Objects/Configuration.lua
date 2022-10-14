@@ -1,8 +1,8 @@
 ﻿-- Item
-Configuration = {API_path = "", External_API_path = "", Working_directory = "", Thermodynamic_database = "", Physical_database = "", Mobility_database = "", Max_thread_number = 1} --@Description Element object. \n Element information, this should be loaded from a database
+Configuration = {API_path = "", External_API_path = "", Working_directory = "", Thermodynamic_database = "", Physical_database = "", Mobility_database = "", Max_thread_number = 1} --@Description Configuration object. \n System configurations and others can be found here
 
 -- Constructor
-function Configuration:new (o,API_path,External_API_path,Working_directory,Thermodynamic_database,Physical_database,Mobility_database,Max_thread_number) --@Description Creates a new Element,\n 
+function Configuration:new (o,API_path,External_API_path,Working_directory,Thermodynamic_database,Physical_database,Mobility_database,Max_thread_number) --@Description Creates a new Configuration object,\n 
    o = o or {}
 
    setmetatable(o, self)
@@ -14,6 +14,7 @@ function Configuration:new (o,API_path,External_API_path,Working_directory,Therm
    self.Physical_database = Physical_database or ""
    self.Mobility_database = Mobility_database or ""
    self.Max_thread_number = Max_thread_number or 1
+   self.AMName = "Configuration"
 
    o:load()
 
@@ -21,7 +22,7 @@ function Configuration:new (o,API_path,External_API_path,Working_directory,Therm
 end
 
 -- load
-function Configuration:load ()
+function Configuration:load () --@Description loads a configuration setup
    self.API_path = configuration_getAPI_path()
    self.External_API_path = configuration_getExternalAPI_path()
    self.Working_directory = configuration_get_working_directory()
@@ -32,6 +33,6 @@ function Configuration:load ()
 end
 
 -- save
-function Configuration:save()
+function Configuration:save() --@Description saves a configuration setup
    configuration_save()
 end

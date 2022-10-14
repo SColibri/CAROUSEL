@@ -7,7 +7,8 @@
         xmlns:local2="clr-namespace:AMFramework.Components.Database_treeview"
         xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
         xmlns:AMWindow="clr-namespace:AMFramework.Components.Windows" 
-        xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_MainWindow}"
+        xmlns:controller="clr-namespace:AMFramework.Controller" 
+        d:DataContext="{d:DesignInstance Type=controller:Controller_MainWindow}"
         xmlns:tvc ="clr-namespace:AMControls.Custom.ProjectTreeView;assembly=AMControls"
         mc:Ignorable="d"
         Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
@@ -130,17 +131,17 @@
             <tvc:TV_Menu x:Name="tvc" Margin="1,1,5,1" Visibility="Visible"/>
             
             <TabControl x:Name="MainTabControl" Grid.Column="2" ItemsSource="{Binding Path=TabItems, UpdateSourceTrigger=PropertyChanged}"
-                        Visibility="{Binding Path=TabControlVisible, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}"
-                        SelectedItem="{Binding Path=SelectedTab}">
+                        Visibility="{Binding Path=TabControlVisible, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}, Mode=TwoWay}"
+                        SelectedItem="{Binding Path=SelectedTab, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                 <TabControl.Style>
                     <Style TargetType="TabControl">
                         <Setter Property="Visibility" Value="Visible"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=Popup, Path=Visibility}"
+                            <DataTrigger Binding="{Binding ElementName=PopupVisibility, Path=Visibility}"
                                  Value="Collapsed">
                                 <Setter Property="Visibility" Value="Visible"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding ElementName=Popup, Path=Visibility}"
+                            <DataTrigger Binding="{Binding ElementName=PopupVisibility, Path=Visibility}"
                                  Value="Visible">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                             </DataTrigger>
@@ -158,10 +159,11 @@
                                             <ColumnDefinition Width="20"/>
                                         </Grid.ColumnDefinitions>
                                         <Border Name="Panel" 
-                                                CornerRadius="5,5,0,0"
+                                                CornerRadius="25,5,0,0"
                                                 Grid.ColumnSpan="2"
                                                 BorderBrush="silver"
-                                                BorderThickness="1">
+                                                BorderThickness="1"
+                                                Margin="0,0,-15,0">
                                             <Border.Background>
                                                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                                     <GradientStop Color="white" Offset="0.0"/>
@@ -174,7 +176,7 @@
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
                                         ContentSource="Header"
-                                        Margin="10,2"/>
+                                        Margin="25,5,5,5"/>
                                         <Border Background="Silver" 
                                                 CornerRadius="10"
                                                 Grid.Column="1"
@@ -210,10 +212,12 @@
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
-
-
-
                                             </Border.Triggers>
+                                            <fa:ImageAwesome Icon="Close" 
+                                                             HorizontalAlignment="Center" 
+                                                             VerticalAlignment="Center" 
+                                                             Width="6"
+                                                             Foreground="White"/>
                                         </Border>
                                     </Grid>
                                     <ControlTemplate.Triggers>
@@ -233,7 +237,7 @@
                                                 <Setter.Value>
                                                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                                         <GradientStop Color="white" Offset="0.0"/>
-                                                        <GradientStop Color="Silver" Offset="0.2"/>
+                                                        <GradientStop Color="WhiteSmoke" Offset="0.2"/>
                                                         <GradientStop Color="white" Offset="0.95"/>
                                                     </LinearGradientBrush>
                                                 </Setter.Value>
@@ -268,16 +272,70 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="AMFramework: " Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <TextBlock Text="AMFramework: " Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5"/>
             <TextBlock Text="{Binding Path=CoreOut, Mode=OneWay, UpdateSourceTrigger=PropertyChanged }" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
         </Grid>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="500"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="1" 
+                Background="LightYellow" 
+                BorderBrush="Silver" 
+                BorderThickness="1" 
+                CornerRadius="5" 
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="5,5,5,5" Panel.ZIndex="2">
+                <Expander ExpandDirection="Right" IsExpanded="{Binding Path=AdditionalInformationIsExpanded,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Expander.Header>
+                        <Border Background="WhiteSmoke" CornerRadius="5" BorderThickness="1" BorderBrush="Silver">
+                            <TextBlock Text="Info" FontSize="11" FontFamily="Lucida Sans" Margin="5">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90"/>
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </Border>
+                    </Expander.Header>
+
+                    <Grid Margin="5,0,5,5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="auto" MaxHeight="150"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Path=TitleAdditionalInformation}" 
+                               Margin="1" 
+                               Foreground="SteelBlue" 
+                               FontWeight="DemiBold"/>
+                        <TextBlock Text="{Binding Path=ContentAdditionalInformation}" 
+                               Margin="1" 
+                               Foreground="Black" 
+                               FontWeight="Thin"
+                               Grid.Row="1"
+                               TextWrapping="WrapWithOverflow"/>
+                    </Grid>
+                </Expander>
+            </Border>
+        </Grid>
+        
 
         <Grid x:Name="Popup" Visibility="Collapsed" Grid.RowSpan="5" Panel.ZIndex="3">
             <Grid Background="Black" Opacity="0.7"/>
             <Frame x:Name="PopupFrame" Grid.RowSpan="5" Margin="50" NavigationUIVisibility="Hidden">
 
             </Frame>
+        </Grid>
+        
+        <Grid Visibility="{Binding Path=PopupVisibility, Converter={StaticResource BoolToVis}, UpdateSourceTrigger=PropertyChanged}"
+              Grid.RowSpan="5" Panel.ZIndex="15">
+            <Grid Background="Black" Opacity="0.7"/>
+            <Grid Margin="50">
+                <ContentControl Content="{Binding Path=PopupWindow, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
         </Grid>
 
         <Grid x:Name="ProjectWorking" Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}}" Grid.ColumnSpan="4" Grid.RowSpan="4">

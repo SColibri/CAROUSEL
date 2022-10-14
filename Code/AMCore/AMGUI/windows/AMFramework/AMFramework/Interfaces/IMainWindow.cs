@@ -1,4 +1,5 @@
-﻿using AMFramework.Core;
+﻿using AMFramework.Components.Windows;
+using AMFramework.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace AMFramework.Interfaces
         public void Show_Case_EditWindow(Model.Model_Case modelObject);
         public void Show_HeatTreatment_PlotView(Model.Model_HeatTreatment modelObject);
         public void Show_HeatTreatment_EditWindow(Model.Model_HeatTreatment modelObject);
+        public void Show_Popup(AM_popupWindow pWindow);
 
         //---------------------------------------------------------------------------------
         // CORE COMMUNICATION
@@ -29,6 +31,16 @@ namespace AMFramework.Interfaces
         //---------------------------------------------------------------------------------
         public Controller.Controller_Plot get_plot_Controller();
         public Controller.Controller_DBS_Projects get_project_controller();
+
+        //---------------------------------------------------------------------------------
+        // Parameters
+        //---------------------------------------------------------------------------------
+
+        // Additional information: Text that offers additional information on current control or action
+        public bool AdditionalInformationIsExpanded { get; set; }
+        public string ContentAdditionalInformation { get; set; }
+        public string TitleAdditionalInformation { get; set; }
+
 
     }
 }

@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AMFramework.Controller;
 using Microsoft.VisualBasic;
 using ScintillaNET;
 
@@ -29,7 +30,7 @@ namespace AMFramework.Components.Scripting
         public Scripting_editor()
         {
             InitializeComponent();
-
+            
             string filename = "Components/Scripting/Templates/NewScript.AMFramework";
             if (!System.IO.File.Exists(filename)) return;
             Scripting.Text = System.IO.File.ReadAllText(filename);
@@ -51,8 +52,9 @@ namespace AMFramework.Components.Scripting
         #region Initialization
         private void setupMain(Scintilla scintilla)
         {
+            scintilla.Technology = Technology.DirectWrite;
             // Extracted from the Lua Scintilla lexer and SciTE .properties file
-            var alphaChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var alphaChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
             var numericChars = "0123456789";
             var accentedChars = "ŠšŒœŸÿÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïÐðÑñÒòÓóÔôÕõÖØøÙùÚúÛûÜüÝýÞþßö";
 
@@ -184,7 +186,7 @@ namespace AMFramework.Components.Scripting
             scintilla.DragEnter += ScintillaDragEnter_handle;
             scintilla.DragDrop += ScintillaDragDrop_handle;
             scintilla.CharAdded += AutoCompleter;
-            scintilla.MouseMove += MouseMove;
+            scintilla.MouseMove += MouseMove_Scintilla;
             UpdateLineNumbers(0);
         }
 
@@ -412,28 +414,68 @@ namespace AMFramework.Components.Scripting
             Show_autocomplete(word, scintilla);
         }
 
-        public void MouseMove(object sender, System.Windows.Forms.MouseEventArgs e) 
+        public void MouseMove_Scintilla(object? sender, System.Windows.Forms.MouseEventArgs e) 
         {
+            if (sender == null) return;
             System.Drawing.Point point = System.Windows.Forms.Control.MousePosition; 
             var cor = ((Scintilla)sender).PointToClient(point); 
             int pos = ((Scintilla)sender).CharPositionFromPoint(cor.X, cor.Y);
 
             if (pos == -1) return;
+            var cLine = ((Scintilla)sender).LineFromPosition(pos);
+            var fullText = ((Scintilla)sender).Lines[cLine].Text;
             var word = ((Scintilla)sender).GetWordFromPosition(pos);
 
+            if (word.Length == 0) return;
+            string titleData = "";
             string infoData = "";
-            if (word.Contains(".")) { }
-            else if (word.Contains(":")) { }
-            else 
+            AMSystem.ParseObject? referenceP = AMParser.AMParser.Find(e => e.Name.CompareTo(word) == 0);
+            if (referenceP == null) 
             {
-                AMSystem.ParseObject referenceP = AMParser.AMParser.Find(e => e.Name.CompareTo(word) == 0);
-                if (referenceP == null) return;
-                infoData = referenceP.Description;
+                int posIterate = pos - 2;
+                AMSystem.ParseObject? mainClass = null;
+                while (((Scintilla)sender).LineFromPosition(posIterate) == cLine && 
+                                                                 posIterate >= 0 &&
+                                                                 mainClass == null) 
+                {
+                    var tWord = ((Scintilla)sender).GetWordFromPosition(posIterate);
+                    mainClass = AMParser.AMParser.Find(e => e.Name.CompareTo(tWord) == 0);
+                    posIterate -= (tWord.Length + 1);
+                }
+
+                if (mainClass == null) return;
+
+
+
+                referenceP = mainClass;
             }
 
-            if (infoData.Length == 0) return;
-            ((Scintilla)sender).CallTipShow(pos, infoData);
+            if (referenceP.ObjectType == AMSystem.ParseObject.PTYPE.CLASS || 
+                referenceP.ObjectType == AMSystem.ParseObject.PTYPE.GLOBAL_VARIABLE ||
+                referenceP.ObjectType == AMSystem.ParseObject.PTYPE.LOCAL_VARIABLE)
+            {
+                infoData = referenceP.Description;
+                titleData = referenceP.ObjectType.ToString() + " " + referenceP.Name;
+            }
+            else if (referenceP.ObjectType == AMSystem.ParseObject.PTYPE.FUNCTION) 
+            {
+                AMSystem.ParseObject? mainClass = AMParser.AMParser.Find(e => e.functions.FindAll(e  => e.Name.CompareTo(referenceP.ParametersType) == 0).Count > 0 );
 
+                if (mainClass == null) return;
+            }
+
+
+            if (infoData.Length == 0) return;
+
+            if(Controller_Global.MainControl != null) 
+            {
+                Controller_Global.MainControl.TitleAdditionalInformation = titleData;
+                Controller_Global.MainControl.ContentAdditionalInformation = infoData;
+            }
+
+
+            // ((Scintilla)sender).CallTipShow(pos, infoData);
+            // Call tip is not as useful, this becomes annoying instead of helpful
         }
 
         private int maxLineNumberCharLength;

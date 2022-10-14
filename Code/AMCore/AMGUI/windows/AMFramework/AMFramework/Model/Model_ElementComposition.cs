@@ -86,6 +86,22 @@ namespace AMFramework.Model
         }
         #endregion
 
+        #region Additional
+        private string _stringValue = "";
+        /// <summary>
+        /// String value is used for templated objects and ranged intervaled values
+        /// </summary>
+        public string StringValue
+        {
+            get { return _stringValue; }
+            set
+            {
+                _stringValue = value;
+                OnPropertyChanged("StringValue");
+            }
+        }
+        #endregion
+
 
         #region Interfaces
         public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
