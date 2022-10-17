@@ -52,6 +52,13 @@ namespace AMFramework.AMsystem
         public static System.Drawing.Bitmap Get_faIcon_bitmap(string ImageName) 
         {
             string filename = Get_FullPath(ImageName);
+
+            if (!File.Exists(filename)) 
+            {
+                System.Drawing.Bitmap errBitmap = new(17,17);
+                return new(17, 17);
+            }
+
             System.Drawing.Bitmap originalIMG = new System.Drawing.Bitmap(filename);
             return new System.Drawing.Bitmap(originalIMG,   new System.Drawing.Size(17,17));
         }

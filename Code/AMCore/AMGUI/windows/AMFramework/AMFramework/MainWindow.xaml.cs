@@ -33,10 +33,6 @@ namespace AMFramework
             tvc.DataContext = tvmController;
 
             ((Controller.Controller_MainWindow)DataContext).get_project_controller().PropertyChanged += OnProperty_changed_project;
-
-            Controller.Controller_Project Tproj = new(Controller_Global.ApiHandle);
-            Tproj.Load_projectList();
-            Tproj.Load_project(1);
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
