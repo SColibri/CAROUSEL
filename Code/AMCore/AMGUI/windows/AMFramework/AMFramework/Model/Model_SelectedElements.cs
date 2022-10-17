@@ -78,17 +78,6 @@ namespace AMFramework.Model
         }
 
         #region Other_properties
-        private bool _isSelected = false;
-        [Order]
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set
-            {
-                _isSelected = value;
-                OnPropertyChanged("IsSelected");
-            }
-        }
 
         private bool _isReferenceElement_bool = false;
         [Order]

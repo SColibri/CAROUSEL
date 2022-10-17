@@ -6,21 +6,20 @@ using System.Threading.Tasks;
 
 namespace AMFramework.Model.ModelCoreExecutors
 {
-    public class MCE_Delete:Model.ModelCoreCommunicationExecutor
+    public class MCE_LoadByIDCase : Model.ModelCoreCommunicationExecutor
     {
-        public MCE_Delete(ref Core.IAMCore_Comm comm,
-                        ref Interfaces.Model_Interface ModelObject) : base(ref comm, ref ModelObject)
+        public MCE_LoadByIDCase(ref Core.IAMCore_Comm comm,
+                                ref Interfaces.Model_Interface ModelObject) : base(ref comm, ref ModelObject)
         { }
 
         #region Implementation Abstract class
         public override void DoAction()
         {
-            //TODO: add checks of necessary
-            Command_parameters = _modelObject.Get_parameter_list().ToList().Find(e => e.Name.CompareTo("ID") == 0)?.GetValue(_modelObject)?.ToString() ?? "";
+            Command_parameters = _modelObject.Get_parameter_list().ToList().Find(e => e.Name.CompareTo("IDCase") == 0)?.GetValue(_modelObject)?.ToString() ?? "";
 
             if (_commandReference == null) { CoreOutput = "Error: DoAction, loading by id project is not available for this model!"; return; }
             CoreOutput = _coreCommunication.run_lua_command(_commandReference.Command_instruction, Command_parameters);
-            _modelObject.Get_parameter_list().ToList().Find(e => e.Name.CompareTo("ID") == 0)?.SetValue(_modelObject, -1);
+            Create_ModelObjects(CoreOutput);
         }
         #endregion
     }

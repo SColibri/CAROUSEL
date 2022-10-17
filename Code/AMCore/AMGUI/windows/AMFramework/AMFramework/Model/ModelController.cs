@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using AMFramework.Controller;
+using System.ComponentModel;
+using AMFramework.Interfaces;
 
 namespace AMFramework.Model
 {
@@ -11,7 +14,7 @@ namespace AMFramework.Model
     /// Model controller is the default way to manage a model object (Load, save, other)
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal class ModelController<T> where T : Interfaces.Model_Interface
+    public class ModelController<T> : IModelController where T : Interfaces.Model_Interface
     {
         private Core.IAMCore_Comm _coreCommunication;
         private Interfaces.Model_Interface _model;
@@ -41,6 +44,9 @@ namespace AMFramework.Model
             }
         }
 
+        // Interface implementation
+        public Model_Interface Model_Object { get { return _model; } }
+
         // Default Model actions 
         public Model.ModelCoreExecutors.MCE_Save SaveAction { get; set; }
         public Model.ModelCoreExecutors.MCE_Delete DeleteAction { get; set; }
@@ -57,6 +63,7 @@ namespace AMFramework.Model
         public static List<ModelController<T>> LoadAll(ref Core.IAMCore_Comm comm) 
         {
             Interfaces.Model_Interface tempRef = (Interfaces.Model_Interface)Activator.CreateInstance(typeof(T));
+
             Model.ModelCoreExecutors.MCE_LoadALL tempMCE = new(ref comm, ref tempRef);
             tempMCE.DoAction();
 
@@ -64,7 +71,7 @@ namespace AMFramework.Model
         }
 
         /// <summary>
-        /// Returns a list of model controllers IDProject
+        /// Returns a list of model controllers IDProject, this does not apply for all models
         /// </summary>
         /// <returns></returns>
         public static List<ModelController<T>> LoadIDProject(ref Core.IAMCore_Comm comm, int IDproject)
@@ -75,6 +82,40 @@ namespace AMFramework.Model
             tempRef.Get_parameter_list().ToList().Find(e => e.Name.CompareTo("IDProject") == 0)?.SetValue(tempRef, Convert.ToInt32(IDproject));
 
             Model.ModelCoreExecutors.MCE_LoadByIDProject tempMCE = new(ref comm, ref tempRef);
+            tempMCE.DoAction();
+
+            return ExtractMCE(comm, tempMCE);
+        }
+
+        /// <summary>
+        /// Returns a list of model controllers IDCase. Note: not all models load by IDCase
+        /// </summary>
+        /// <param name="comm"></param>
+        /// <param name="IDCase"></param>
+        /// <returns></returns>
+        public static List<ModelController<T>> LoadIDCase(ref Core.IAMCore_Comm comm, int IDCase)
+        {
+            Interfaces.Model_Interface tempRef = (Interfaces.Model_Interface)Activator.CreateInstance(typeof(T));
+
+            if (tempRef == null) return new List<ModelController<T>>();
+            tempRef.Get_parameter_list().ToList().Find(e => e.Name.CompareTo("IDCase") == 0)?.SetValue(tempRef, Convert.ToInt32(IDCase));
+
+            Model.ModelCoreExecutors.MCE_LoadByIDCase tempMCE = new(ref comm, ref tempRef);
+            tempMCE.DoAction();
+
+            return ExtractMCE(comm, tempMCE);
+        }
+
+        /// <summary>
+        /// Returns a list of model controllers based on a SQL query command
+        /// </summary>
+        /// <returns></returns>
+        public static List<ModelController<T>> LoadByQuery(ref Core.IAMCore_Comm comm, string query)
+        {
+            Interfaces.Model_Interface tempRef = (Interfaces.Model_Interface)Activator.CreateInstance(typeof(T));
+
+            if (tempRef == null) return new List<ModelController<T>>();
+            Model.ModelCoreExecutors.MCE_LoadByQuery tempMCE = new(ref comm, ref tempRef, query);
             tempMCE.DoAction();
 
             return ExtractMCE(comm, tempMCE);
@@ -100,6 +141,14 @@ namespace AMFramework.Model
         }
         #endregion
 
+        #region INotifyPropertyChanged_Interface
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        #endregion
 
     }
 }

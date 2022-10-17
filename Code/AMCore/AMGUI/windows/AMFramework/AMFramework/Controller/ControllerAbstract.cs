@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AMFramework.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -9,6 +10,26 @@ namespace AMFramework.Controller
 {
     public class ControllerAbstract : Interfaces.Controller_Interface
     {
+        protected IAMCore_Comm _comm;
+        public ControllerAbstract() { }
+        public ControllerAbstract(IAMCore_Comm comm) 
+        {
+            _comm = comm;
+        }
+
+        #region Flags
+        private bool _loadingData = false;
+        public bool LoadingData
+        {
+            get { return _loadingData; }
+            set
+            {
+                _loadingData = value;
+                OnPropertyChanged(nameof(LoadingData));
+            }
+        }
+        #endregion
+
         #region INotifyPropertyChanged_Interface
         public event PropertyChangedEventHandler? PropertyChanged;
 

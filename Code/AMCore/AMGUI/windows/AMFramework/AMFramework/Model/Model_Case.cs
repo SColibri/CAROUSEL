@@ -121,6 +121,7 @@ namespace AMFramework.Model
   
 
         #region Template
+        // This is deprecated -- REMOVE AL REFERENCES
         public struct CaseTemplateStructure
         {
             public Model.Model_Element ElementName;

@@ -44,26 +44,46 @@ namespace AMFramework.Core
         {
             _library = LoadLibrary(pathToLibrary);
 
-            if(Marshal.GetLastWin32Error() != 0) 
-            {
-                Win32Exception ex = new Win32Exception();
-                System.Windows.Forms.MessageBox.Show("Linking to the library was not possible: " + ex.Message + " || " + ex.InnerException?.Message);
-            }
+            // Uff user32 on windows 7 causes module load error 126 win32
+            //if (Marshal.GetLastWin32Error() != 0) 
+            //{
+                
+            //    Win32Exception ex = new Win32Exception();
+            //    string report = "Linking to the library was not possible: \n" + 
+            //                    "Module Name: " + ex.TargetSite?.Module.Name + "\n" +
+            //                    "Target site: " + ex.TargetSite?.Name + "\n" +
+            //                    "Internal error: " + ex.InnerException?.Message + "\n" +
+            //                    "Error Message: " + ex.Message;
+            //    System.Windows.Forms.MessageBox.Show(report);
+            //}
         }
 
         private void Load_api_controll() 
         {
-            IntPtr AddressPointer_api_object = GetProcAddress(_library, "get_API_controll_default");
-
-            if (Marshal.GetLastWin32Error() == 0) 
+            try
             {
+                IntPtr AddressPointer_api_object = GetProcAddress(_library, "get_API_controll_default");
+
                 get_API_controll_default apiObject = (get_API_controll_default)Marshal.GetDelegateForFunctionPointer(AddressPointer_api_object, typeof(get_API_controll_default));
                 _api = apiObject();
+
+                // User32.dll causes loading error
+                //if (Marshal.GetLastWin32Error() == 0)
+                //{
+                //    get_API_controll_default apiObject = (get_API_controll_default)Marshal.GetDelegateForFunctionPointer(AddressPointer_api_object, typeof(get_API_controll_default));
+                //    _api = apiObject();
+                //}
+                //else
+                //{
+                //    System.Windows.Forms.MessageBox.Show("Library does not contain the correct function address \'get_API_controll_default\' that implements IAM_API");
+                //}
             }
-            else 
+            catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Library does not contain the correct function address \'get_API_controll_default\' that implements IAM_API");
+                System.Windows.Forms.MessageBox.Show("An error occured when loading the API: " + e.Message);
+                throw new Exception(e.Message);
             }
+            
                 
         }
 
@@ -132,7 +152,7 @@ namespace AMFramework.Core
             }
             catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("An error occured when loading the API: " + e.Message);
+                System.Windows.Forms.MessageBox.Show("An error occured when loading the API: " + e.Message + " Path: " + fullPath);
                 throw;
             }
         }

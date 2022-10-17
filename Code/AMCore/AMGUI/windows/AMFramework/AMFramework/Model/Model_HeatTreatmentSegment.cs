@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AMFramework.Model
 {
-    class Model_HeatTreatmentSegment : ModelAbstract
+    public class Model_HeatTreatmentSegment : ModelAbstract
     {
         private int _id = -1;
         [Order]

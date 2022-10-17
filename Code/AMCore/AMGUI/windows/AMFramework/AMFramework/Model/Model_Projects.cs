@@ -49,8 +49,63 @@ namespace AMFramework.Model
             }
         }
 
-        #region Other_properties
+        #region Relational_properties
 
+        // --------------------------------------------------
+        //                   ELEMENTS
+        // --------------------------------------------------
+
+        // Selected elements
+        private List<ModelController<Model_SelectedElements>> _selectedElements = new();
+        public List<ModelController<Model_SelectedElements>> SelectedElements 
+        {
+            get { return _selectedElements; }
+            set 
+            {
+                _selectedElements = value;
+                OnPropertyChanged("SelectedElements");
+            }
+        }
+
+        // --------------------------------------------------
+        //                   ACTIVE PHASES
+        // --------------------------------------------------
+
+        // Configuration
+        private ModelController<Model_ActivePhasesConfiguration> _activePhasesConfiguration = null;
+        public ModelController<Model_ActivePhasesConfiguration> ActivePhasesConfiguration
+        {
+            get { return _activePhasesConfiguration; }
+            set 
+            {
+                _activePhasesConfiguration = value;
+                OnPropertyChanged("ActivePhasesConfiguration");
+            }
+        }
+
+        // Active Phases
+        private List<ModelController<Model_ActivePhases>> _activePhases= new();
+        public List<ModelController<Model_ActivePhases>> ActivePhases
+        {
+            get { return _activePhases; }
+            set
+            {
+                _activePhases = value;
+                OnPropertyChanged("ActivePhases");
+            }
+        }
+
+        // Composition
+        private List<ModelController<Model_ActivePhasesElementComposition>> _activePhasesElementComposition = new();
+        public List<ModelController<Model_ActivePhasesElementComposition>> ActivePhasesElementComposition
+        {
+            get { return _activePhasesElementComposition; }
+            set
+            {
+                _activePhasesElementComposition = value;
+                OnPropertyChanged("ActivePhasesElementComposition");
+            }
+        }
         #endregion
 
         #region Interfaces
