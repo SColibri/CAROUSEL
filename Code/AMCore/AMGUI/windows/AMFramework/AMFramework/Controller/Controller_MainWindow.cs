@@ -32,6 +32,8 @@ namespace AMFramework.Controller
         private Controller.Controller_Config _Config;
         private Controller.Controller_Plot _Plot;
 
+        private Controller.Controller_Project _Project;
+
         private Core.IAMCore_Comm _coreSocket = new Core.AMCore_Socket();
 
         private Views.Projects.Project_contents _viewProjectContents;
@@ -61,6 +63,8 @@ namespace AMFramework.Controller
             _AMCore.PropertyChanged += Core_output_changed_Handle;
 
             _viewProjectContents = new(ref _DBSProjects);
+            _Project = new(_coreSocket);
+            _Project.Load_projectList();
 
             reloadProjects();
         }
@@ -203,9 +207,14 @@ namespace AMFramework.Controller
 
         public void Show_Project_EditView(Model_Projects modelObject)
         {
+            _Project.Load_project(_DBSProjects.SelectedProject.ID);
+
             Remove_ByTagType(typeof(Project_ViewModel));
-            TabItem tabContainer = Create_Tab(new Views.Projects.Project_contents(ref _DBSProjects), new Project_ViewModel(), "Project");
+            TabItem tabContainer = Create_Tab(new Views.Projects.ProjectView_Data(_Project), new Project_ViewModel(), "Project");
             Add_Tab_Item(tabContainer);
+            //Remove_ByTagType(typeof(Project_ViewModel));
+            //TabItem tabContainer = Create_Tab(new Views.Projects.Project_contents(ref _DBSProjects), new Project_ViewModel(), "Project");
+            //Add_Tab_Item(tabContainer);
         }
 
         public void Show_Case_PlotView(Model_Case modelObject)
@@ -601,6 +610,7 @@ namespace AMFramework.Controller
                 Add_Tab_Item(_treeview_selected_tab);
         }
 
+        // kinetic is not the same as kinetick xp
         public void Selected_kinetick_precipitation_heatT_Handle(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (!sender.GetType().Equals(typeof(Model.Model_HeatTreatment))) return;

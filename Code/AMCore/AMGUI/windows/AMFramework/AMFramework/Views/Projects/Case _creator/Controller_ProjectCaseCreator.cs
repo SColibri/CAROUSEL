@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AMFramework.Views.Projects.Other
 {
-    class Controller_ProjectCaseCreator : Controller.ControllerAbstract
+    public class Controller_ProjectCaseCreator : Controller.ControllerAbstract
     {
         public Controller_ProjectCaseCreator(ref Core.IAMCore_Comm comm, ControllerM_Project projectController):base(comm) 
         {

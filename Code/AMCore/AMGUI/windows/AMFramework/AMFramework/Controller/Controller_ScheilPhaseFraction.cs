@@ -85,20 +85,20 @@ namespace AMFramework.Controller
         {
             foreach (Model.Model_Case casey in _CaseController.Cases)
             {
-                casey.ScheilPhaseFractions = get_equilibrium_list(casey.ID);
+                casey.ScheilPhaseFractionsOLD = get_equilibrium_list(casey.ID);
             }
         }
 
         public void fill_model_phase_fraction(Model.Model_Case casey)
         {
-            casey.ScheilPhaseFractions = get_equilibrium_list(casey.ID);
+            casey.ScheilPhaseFractionsOLD = get_equilibrium_list(casey.ID);
         }
 
         public void clear_models_phaseFractions()
         {
             foreach (Model.Model_Case casey in _CaseController.Cases)
             {
-                casey.ScheilPhaseFractions = new();
+                casey.ScheilPhaseFractionsOLD = new();
             }
         }
 

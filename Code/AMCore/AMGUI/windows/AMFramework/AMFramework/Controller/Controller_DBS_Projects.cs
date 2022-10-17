@@ -276,7 +276,7 @@ namespace AMFramework.Controller
                 Model.Model_Case? CaseID = Cases.Find(e => e.ID == _treeIDCase);
                 if(CaseID != null) 
                 {
-                    Model.Model_HeatTreatment? Htreat = CaseID.HeatTreatments.Find(e => e.ID == _treeIDHeatTreatment);
+                    Model.Model_HeatTreatment? Htreat = CaseID.HeatTreatmentsOLD.Find(e => e.ID == _treeIDHeatTreatment);
                     if(Htreat != null) 
                     {
                         Htreat.IsSelected = true;
@@ -366,7 +366,7 @@ namespace AMFramework.Controller
             {
                 for (int n1 = 0; n1 < _cases_BySelectedPhases.Count; n1++)
                 {
-                    if (!_cases_BySelectedPhases[n1][0].SelectedPhases.Except(caseItem.SelectedPhases).Any()) 
+                    if (!_cases_BySelectedPhases[n1][0].SelectedPhasesOLD.Except(caseItem.SelectedPhasesOLD).Any()) 
                     {
                         _cases_BySelectedPhases[n1].Add(caseItem);
                         break;
@@ -428,7 +428,7 @@ namespace AMFramework.Controller
             }
 
             if (controllerCases.SelectedCase is null) return;
-            foreach (Model.Model_SelectedPhases item in controllerCases.SelectedCase.SelectedPhases)
+            foreach (Model.Model_SelectedPhases item in controllerCases.SelectedCase.SelectedPhasesOLD)
             {
                 Model.Model_Phase? tempFindPhase = AvailablePhase.Find(e => e.ID == item.IDPhase);
                 if (tempFindPhase is null) continue;
@@ -441,7 +441,7 @@ namespace AMFramework.Controller
         {
             if (controllerCases.SelectedCase is null) return;
 
-            controllerCases.SelectedCase.Clear_selectedPhases();
+            controllerCases.SelectedCase.Clear_selectedPhasesOLD();
             foreach (Model.Model_Phase item in AvailablePhase)
             {
                 if (item.IsSelected == false) continue;
@@ -450,7 +450,7 @@ namespace AMFramework.Controller
                 tempSelPhase.IDPhase = item.ID;
                 tempSelPhase.IDCase = controllerCases.SelectedCase.ID;
                 tempSelPhase.PhaseName = item.Name;
-                controllerCases.SelectedCase.Add_selectedPhases(tempSelPhase);
+                controllerCases.SelectedCase.Add_selectedPhasesOLD(tempSelPhase);
             }
 
         }
@@ -854,7 +854,7 @@ namespace AMFramework.Controller
             WrapPanel sPanel = new();
             sPanel.Orientation = Orientation.Horizontal;
 
-            foreach (var item in casey.ElementComposition)
+            foreach (var item in casey.ElementCompositionOLD)
             {
                 sPanel.Children.Add(dtv_ElementFormat(item.ElementName + " : " + item.Value));
             }
@@ -891,7 +891,7 @@ namespace AMFramework.Controller
             TC_HT.Title = "Heat treatments";
             TC_HT.IconObject = FontAwesome.WPF.FontAwesomeIcon.Thermometer;
 
-            foreach (var item in casey.HeatTreatments)
+            foreach (var item in casey.HeatTreatmentsOLD)
             {
                 TV_TopView_controller TC_HT_Item = new();
                 TC_HT_Item.Title = item.ID + " : " + item.Name;
@@ -928,7 +928,7 @@ namespace AMFramework.Controller
             TC_PR.Title = "Precipitation phases";
             TC_PR.IconObject = FontAwesome.WPF.FontAwesomeIcon.Circle;
 
-            foreach (var item in casey.PrecipitationPhases)
+            foreach (var item in casey.PrecipitationPhasesOLD)
             {
                 TV_TopView_controller TC_PR_Item = new();
                 TC_PR_Item.Title = item.Name;
@@ -944,7 +944,7 @@ namespace AMFramework.Controller
             TC_DO.Title = "Precipitation domain";
             TC_DO.IconObject = FontAwesome.WPF.FontAwesomeIcon.DotCircleOutline;
 
-            foreach (var item in casey.PrecipitationDomains)
+            foreach (var item in casey.PrecipitationDomainsOLD)
             {
                 TV_TopView_controller TC_DO_Item = new();
                 TC_DO_Item.Title = item.Name;

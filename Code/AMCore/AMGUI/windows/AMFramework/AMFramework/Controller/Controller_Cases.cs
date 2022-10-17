@@ -167,7 +167,7 @@ namespace AMFramework.Controller
                     model.PosX = Convert.ToDouble(columnItems[6]);
                     model.PosY = Convert.ToDouble(columnItems[7]);
                     model.PosZ = Convert.ToDouble(columnItems[8]);
-                    model.ElementComposition = new();
+                    model.ElementCompositionOLD = new();
                     _cases.Add(model);
                     Controller_HeatTreatment.fill_case_model(ref _AMCore_Socket, model);
                 }
@@ -232,31 +232,31 @@ namespace AMFramework.Controller
             _AMCore_Socket.run_lua_command("template_pixelcase_new", "");
 
             // send element composition
-            string compositionString = OriginalCase.ElementComposition[0].ElementName + "||" + OriginalCase.ElementComposition[0].Value.ToString();
-            foreach (Model.Model_ElementComposition comp in OriginalCase.ElementComposition.Skip(1))
+            string compositionString = OriginalCase.ElementCompositionOLD[0].ElementName + "||" + OriginalCase.ElementCompositionOLD[0].Value.ToString();
+            foreach (Model.Model_ElementComposition comp in OriginalCase.ElementCompositionOLD.Skip(1))
             {
                 compositionString += "||" + comp.ElementName + "||" + comp.Value.ToString();
             }
             _AMCore_Socket.run_lua_command("template_pixelcase_setComposition ", compositionString);
 
-            string phaseString = OriginalCase.SelectedPhases[0].PhaseName;
-            foreach (Model.Model_SelectedPhases comp in OriginalCase.SelectedPhases.Skip(1))
+            string phaseString = OriginalCase.SelectedPhasesOLD[0].PhaseName;
+            foreach (Model.Model_SelectedPhases comp in OriginalCase.SelectedPhasesOLD.Skip(1))
             {
                 phaseString += "||" + comp.PhaseName ;
             }
             _AMCore_Socket.run_lua_command("template_pixelcase_selectPhases ", phaseString);
             _AMCore_Socket.run_lua_command("template_pixelcase_setEquilibriumTemperatureRange ", 
-                                            OriginalCase.EquilibriumConfiguration.StartTemperature.ToString() + "||" +
-                                            OriginalCase.EquilibriumConfiguration.EndTemperature.ToString() + "||" +
-                                            OriginalCase.EquilibriumConfiguration.StepSize.ToString());
+                                            OriginalCase.EquilibriumConfigurationOLD.StartTemperature.ToString() + "||" +
+                                            OriginalCase.EquilibriumConfigurationOLD.EndTemperature.ToString() + "||" +
+                                            OriginalCase.EquilibriumConfigurationOLD.StepSize.ToString());
 
             _AMCore_Socket.run_lua_command("template_pixelcase_setScheilTemperatureRange ",
-                                            OriginalCase.ScheilConfiguration.StartTemperature.ToString() + "||" +
-                                            OriginalCase.ScheilConfiguration.EndTemperature.ToString() + "||" +
-                                            OriginalCase.ScheilConfiguration.StepSize.ToString());
+                                            OriginalCase.ScheilConfigurationOLD.StartTemperature.ToString() + "||" +
+                                            OriginalCase.ScheilConfigurationOLD.EndTemperature.ToString() + "||" +
+                                            OriginalCase.ScheilConfigurationOLD.StepSize.ToString());
 
             _AMCore_Socket.run_lua_command("template_pixelcase_setScheilLiquidFraction ",
-                                            OriginalCase.ScheilConfiguration.MinLiquidFraction.ToString());
+                                            OriginalCase.ScheilConfigurationOLD.MinLiquidFraction.ToString());
 
            
 

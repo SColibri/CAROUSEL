@@ -175,119 +175,222 @@ namespace AMFramework.Model
         }
         #endregion
 
-        #region Other
+        #region Extended_Parameters
 
-        private List<Model.Model_SelectedPhases> _SelectedPhases = new();
-        public List<Model.Model_SelectedPhases> SelectedPhases
+        private List<ModelController<Model_SelectedElements>> _selectedPhases = new();
+        public List<ModelController<Model_SelectedElements>> SelectedPhases 
         {
-            get { return _SelectedPhases; }
-            set
+            get { return _selectedPhases; }
+            set 
             {
-                _SelectedPhases = value;
-                OnPropertyChanged("SelectedPhases");
+                _selectedPhases = value;
+                OnPropertyChanged(nameof(SelectedPhases));
             }
         }
 
-        public void Add_selectedPhases(Model.Model_SelectedPhases model) 
-        {
-            _SelectedPhases.Add(model);
-            OnPropertyChanged("SelectedPhases");
-        }
-
-        public void Clear_selectedPhases() 
-        {
-            _SelectedPhases.Clear();
-            OnPropertyChanged("SelectedPhases");
-        }
-
-        List<Model.Model_ElementComposition> _elementComposition = new();
-        public List<Model.Model_ElementComposition> ElementComposition
+        private List<ModelController<Model_ElementComposition>> _elementComposition = new();
+        public List<ModelController<Model_ElementComposition>> ElementComposition
         {
             get { return _elementComposition; }
             set
             {
                 _elementComposition = value;
-                OnPropertyChanged("ElementComposition");
+                OnPropertyChanged(nameof(ElementComposition));
             }
         }
 
-        List<Model.Model_EquilibriumPhaseFraction> _equilibriumPhaseFractions = new();
-        public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFractions
+        private List<ModelController<Model_EquilibriumPhaseFraction>> _equilibriumPhaseFractions = new();
+        public List<ModelController<Model_EquilibriumPhaseFraction>> EquilibriumPhaseFractions
         {
             get { return _equilibriumPhaseFractions; }
             set
             {
                 _equilibriumPhaseFractions = value;
-                OnPropertyChanged("EquilibriumPhaseFractions");
+                OnPropertyChanged(nameof(EquilibriumPhaseFractions));
             }
         }
 
-        Model.Model_EquilibriumConfiguration _equilibriumConfiguration = new();
-        public Model.Model_EquilibriumConfiguration EquilibriumConfiguration
+        private ModelController<Model_EquilibriumPhaseFraction>? _equilibriumConfiguration;
+        public ModelController<Model_EquilibriumPhaseFraction>? EquilibriumConfiguration
         {
             get { return _equilibriumConfiguration; }
             set
             {
                 _equilibriumConfiguration = value;
-                OnPropertyChanged("EquilibriumConfiguration");
+                OnPropertyChanged(nameof(EquilibriumConfiguration));
             }
         }
 
-        List<Model.Model_ScheilPhaseFraction> _scheilPhaseFractions = new();
-        public List<Model.Model_ScheilPhaseFraction> ScheilPhaseFractions
+        private List<ModelController<Model_ScheilPhaseFraction>> _scheilPhaseFractions = new();
+        public List<ModelController<Model_ScheilPhaseFraction>> ScheilPhaseFractions
         {
             get { return _scheilPhaseFractions; }
             set
             {
                 _scheilPhaseFractions = value;
-                OnPropertyChanged("ScheilPhaseFractions");
+                OnPropertyChanged(nameof(ScheilPhaseFractions));
             }
         }
 
-        Model.Model_ScheilConfiguration _scheilConfiguration = new();
-        public Model.Model_ScheilConfiguration ScheilConfiguration
+        private ModelController<Model_ScheilConfiguration>? _scheilConfiguration;
+        public ModelController<Model_ScheilConfiguration>? ScheilConfiguration
         {
             get { return _scheilConfiguration; }
             set
             {
                 _scheilConfiguration = value;
-                OnPropertyChanged("ScheilConfiguration");
+                OnPropertyChanged(nameof(ScheilConfiguration));
             }
         }
 
-        List<Model.Model_PrecipitationPhase> _precipitationPhases = new();
-        public List<Model.Model_PrecipitationPhase> PrecipitationPhases
+        private List<ModelController<Model_PrecipitationPhase>> _precipitationPhases = new();
+        public List<ModelController<Model_PrecipitationPhase>> PrecipitationPhases
         {
             get { return _precipitationPhases; }
-            set 
-            { 
+            set
+            {
                 _precipitationPhases = value;
-                OnPropertyChanged("PrecipitationPhases");
+                OnPropertyChanged(nameof(PrecipitationPhases));
             }
         }
 
-        List<Model.Model_PrecipitationDomain> _precipitationDomains = new();
-        public List<Model.Model_PrecipitationDomain> PrecipitationDomains
+        private List<ModelController<Model_PrecipitationDomain>> _precipitationDomains = new();
+        public List<ModelController<Model_PrecipitationDomain>> PrecipitationDomains
         {
             get { return _precipitationDomains; }
             set
             {
                 _precipitationDomains = value;
-                OnPropertyChanged("PrecipitationDomains");
+                OnPropertyChanged(nameof(PrecipitationDomains));
             }
         }
 
-        List<Model.Model_HeatTreatment> _HeatTreatments = new();
-        public List<Model.Model_HeatTreatment> HeatTreatments
+        private List<ModelController<Model_HeatTreatment>> _HeatTreatments = new();
+        public List<ModelController<Model_HeatTreatment>> HeatTreatments
         {
             get { return _HeatTreatments; }
             set
             {
                 _HeatTreatments = value;
+                OnPropertyChanged(nameof(HeatTreatments));
+            }
+        }
+
+
+        #region Deprecated
+
+        private List<Model.Model_SelectedPhases> _SelectedPhasesOLD = new();
+        public List<Model.Model_SelectedPhases> SelectedPhasesOLD
+        {
+            get { return _SelectedPhasesOLD; }
+            set
+            {
+                _SelectedPhasesOLD = value;
+                OnPropertyChanged("SelectedPhasesOLD");
+            }
+        }
+
+        public void Add_selectedPhasesOLD(Model.Model_SelectedPhases model) 
+        {
+            _SelectedPhasesOLD.Add(model);
+            OnPropertyChanged("SelectedPhasesOLD");
+        }
+
+        public void Clear_selectedPhasesOLD() 
+        {
+            _SelectedPhasesOLD.Clear();
+            OnPropertyChanged("SelectedPhasesOLD");
+        }
+
+        List<Model.Model_ElementComposition> _elementCompositionOLD = new();
+        public List<Model.Model_ElementComposition> ElementCompositionOLD
+        {
+            get { return _elementCompositionOLD; }
+            set
+            {
+                _elementCompositionOLD = value;
+                OnPropertyChanged("ElementCompositionOLD");
+            }
+        }
+
+        List<Model.Model_EquilibriumPhaseFraction> _equilibriumPhaseFractionsOLD = new();
+        public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFractionsOLD
+        {
+            get { return _equilibriumPhaseFractionsOLD; }
+            set
+            {
+                _equilibriumPhaseFractionsOLD = value;
+                OnPropertyChanged("EquilibriumPhaseFractionsOLD");
+            }
+        }
+
+        Model.Model_EquilibriumConfiguration _equilibriumConfigurationOLD = new();
+        public Model.Model_EquilibriumConfiguration EquilibriumConfigurationOLD
+        {
+            get { return _equilibriumConfigurationOLD; }
+            set
+            {
+                _equilibriumConfigurationOLD = value;
+                OnPropertyChanged("EquilibriumConfigurationOLD");
+            }
+        }
+
+        List<Model.Model_ScheilPhaseFraction> _scheilPhaseFractionsOLD = new();
+        public List<Model.Model_ScheilPhaseFraction> ScheilPhaseFractionsOLD
+        {
+            get { return _scheilPhaseFractionsOLD; }
+            set
+            {
+                _scheilPhaseFractionsOLD = value;
+                OnPropertyChanged("ScheilPhaseFractions");
+            }
+        }
+
+        Model.Model_ScheilConfiguration _scheilConfigurationOLD = new();
+        public Model.Model_ScheilConfiguration ScheilConfigurationOLD
+        {
+            get { return _scheilConfigurationOLD; }
+            set
+            {
+                _scheilConfigurationOLD = value;
+                OnPropertyChanged("ScheilConfiguration");
+            }
+        }
+
+        List<Model.Model_PrecipitationPhase> _precipitationPhasesOLD = new();
+        public List<Model.Model_PrecipitationPhase> PrecipitationPhasesOLD
+        {
+            get { return _precipitationPhasesOLD; }
+            set 
+            { 
+                _precipitationPhasesOLD = value;
+                OnPropertyChanged("PrecipitationPhases");
+            }
+        }
+
+        List<Model.Model_PrecipitationDomain> _precipitationDomainsOLD = new();
+        public List<Model.Model_PrecipitationDomain> PrecipitationDomainsOLD
+        {
+            get { return _precipitationDomainsOLD; }
+            set
+            {
+                _precipitationDomainsOLD = value;
+                OnPropertyChanged("PrecipitationDomains");
+            }
+        }
+
+        List<Model.Model_HeatTreatment> _HeatTreatmentsOLD = new();
+        public List<Model.Model_HeatTreatment> HeatTreatmentsOLD
+        {
+            get { return _HeatTreatmentsOLD; }
+            set
+            {
+                _HeatTreatmentsOLD = value;
                 OnPropertyChanged("HeatTreatments");
             }
         }
 
+        #endregion
         #endregion
 
         #region Interfaces

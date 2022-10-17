@@ -85,7 +85,7 @@ namespace AMFramework.Controller
         {
             foreach (Model.Model_Case casey in _CaseController.Cases)
             {
-                casey.PrecipitationDomains = Get_model(_AMCore_Socket, casey.ID);
+                casey.PrecipitationDomainsOLD = Get_model(_AMCore_Socket, casey.ID);
             }
         }
         #endregion

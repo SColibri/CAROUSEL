@@ -68,11 +68,11 @@ namespace AMFramework.Controller
 
             // load Data
             _projectController.Case_load_equilibrium_phase_fraction(model);
-            List<Model.Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractions.FindAll(e => e.IDPhase == IDPhase);
+            List<Model.Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractionsOLD.FindAll(e => e.IDPhase == IDPhase);
             if (modelList.Count == 0) return;
 
             //get data points
-            Model.Model_SelectedPhases phaseSelected = model.SelectedPhases.Find(e => e.IDCase == IDCase && e.IDPhase == IDPhase) ?? new();
+            Model.Model_SelectedPhases phaseSelected = model.SelectedPhasesOLD.Find(e => e.IDCase == IDCase && e.IDPhase == IDPhase) ?? new();
             List<double> tempAxis = modelList.Select(e => e.Temperature).ToList();
             List<double> phaseFraction = modelList.Select(e => e.Value).ToList();
 
@@ -150,7 +150,7 @@ namespace AMFramework.Controller
 
             // load Data
             _projectController.Case_load_equilibrium_phase_fraction(model);
-            double solidificationTemp = model.ScheilPhaseFractions.Min(e => e.Temperature);
+            double solidificationTemp = model.ScheilPhaseFractionsOLD.Min(e => e.Temperature);
 
             // get data points
             SpyderDataStructure dataPlotItem = new();
@@ -158,7 +158,7 @@ namespace AMFramework.Controller
             dataPlotItem.Phases = Used_Phases_inCases;
             dataPlotItem.Name = "";
 
-            foreach (var item in model.ElementComposition)
+            foreach (var item in model.ElementCompositionOLD)
             {
                 if(dataPlotItem.Name.Length > 0) { dataPlotItem.Name += " || "; }
                 dataPlotItem.Name += item.ElementName + ":" + item.Value;
@@ -166,7 +166,7 @@ namespace AMFramework.Controller
 
             foreach (Model.Model_Phase phaseModel in Used_Phases_inCases)
             {
-                List<Model.Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractions.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
+                List<Model.Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractionsOLD.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
                 if (modelList.Count == 0) continue;
 
                 Tuple<Model.Model_Phase, List<double>> tempItem = new(phaseModel, new());
@@ -186,7 +186,7 @@ namespace AMFramework.Controller
 
             // load Data
             _projectController.Case_load_equilibrium_phase_fraction(model);
-            double solidificationTemp = model.ScheilPhaseFractions.Min(e => e.Temperature);
+            double solidificationTemp = model.ScheilPhaseFractionsOLD.Min(e => e.Temperature);
 
             // get data points
             SpyderDataStructure dataPlotItem = new();
@@ -194,7 +194,7 @@ namespace AMFramework.Controller
             dataPlotItem.Phases = Used_Phases_inCases;
             foreach (Model.Model_Phase phaseModel in Used_Phases_inCases)
             {
-                List<Model.Model_ScheilPhaseFraction> modelList = model.ScheilPhaseFractions.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
+                List<Model.Model_ScheilPhaseFraction> modelList = model.ScheilPhaseFractionsOLD.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
                 if (modelList.Count == 0) continue;
 
                 Tuple<Model.Model_Phase, List<double>> tempItem = new(phaseModel, new());

@@ -71,7 +71,7 @@ namespace AMFramework.Controller
         {
             foreach (Model.Model_Case casey in _CaseController.Cases)
             {
-                casey.ElementComposition = get_composition_list(casey.ID);
+                casey.ElementCompositionOLD = get_composition_list(casey.ID);
             }
         }
         #endregion

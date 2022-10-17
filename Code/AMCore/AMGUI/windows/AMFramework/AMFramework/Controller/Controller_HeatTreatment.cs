@@ -72,7 +72,7 @@ namespace AMFramework.Controller
 
         public static void fill_case_model(ref Core.IAMCore_Comm socket, Model.Model_Case ObjectModel) 
         {
-            ObjectModel.HeatTreatments = get_heat_treatments_from_case(ref socket, ObjectModel.ID);
+            ObjectModel.HeatTreatmentsOLD = get_heat_treatments_from_case(ref socket, ObjectModel.ID);
         }
         #endregion
     }

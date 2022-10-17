@@ -119,7 +119,7 @@ namespace AMFramework.Controller
         {
             foreach (Model.Model_Case casey in _CaseController.Cases)
             {
-                casey.PrecipitationPhases = Get_model(_AMCore_Socket, casey.ID);
+                casey.PrecipitationPhasesOLD = Get_model(_AMCore_Socket, casey.ID);
             }
         }
 

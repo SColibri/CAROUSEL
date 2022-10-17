@@ -83,8 +83,8 @@ namespace AMFramework.Views.Case
             Controller.Controller_Cases controllerCase = (Controller.Controller_Cases)DataContext;
             controllerCase.get_project_controller().Case_load_equilibrium_phase_fraction(controllerCase.SelectedCase);
 
-            if (controllerCase.SelectedCase.EquilibriumPhaseFractions.Count > 0 ||
-                controllerCase.SelectedCase.ScheilPhaseFractions.Count > 0) 
+            if (controllerCase.SelectedCase.EquilibriumPhaseFractionsOLD.Count > 0 ||
+                controllerCase.SelectedCase.ScheilPhaseFractionsOLD.Count > 0) 
             {
 
                 if (System.Windows.Forms.MessageBox.Show("Changing this selection will delete all calculations, do you want to proceed?",
@@ -99,10 +99,10 @@ namespace AMFramework.Views.Case
         private void Button_Add_PrecipitationPhase_Click(object sender, RoutedEventArgs e)
         {
             Controller.Controller_Cases controllerCase = (Controller.Controller_Cases)DataContext;
-            controllerCase.SelectedCase.PrecipitationPhases.Add(new());
-            controllerCase.SelectedCase.PrecipitationPhases[controllerCase.SelectedCase.PrecipitationPhases.Count - 1].IDCase = controllerCase.SelectedCase.ID;
+            controllerCase.SelectedCase.PrecipitationPhasesOLD.Add(new());
+            controllerCase.SelectedCase.PrecipitationPhasesOLD[controllerCase.SelectedCase.PrecipitationPhasesOLD.Count - 1].IDCase = controllerCase.SelectedCase.ID;
 
-            Views.Precipitation.PrecipitationPhase_general windowPPhase = new() { DataContext = controllerCase.SelectedCase.PrecipitationPhases[controllerCase.SelectedCase.PrecipitationPhases.Count - 1] };
+            Views.Precipitation.PrecipitationPhase_general windowPPhase = new() { DataContext = controllerCase.SelectedCase.PrecipitationPhasesOLD[controllerCase.SelectedCase.PrecipitationPhasesOLD.Count - 1] };
             controllerCase.PopupView.ContentPage.Children.Clear();
             controllerCase.PopupView.ContentPage.Children.Add(windowPPhase);
             controllerCase.PopupView.Title = "precipitation Phase";

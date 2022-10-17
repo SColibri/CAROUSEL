@@ -84,7 +84,7 @@ namespace AMFramework.Controller
         {
             foreach (Model.Model_Case casey in _CaseController.Cases)
             {
-                casey.EquilibriumConfiguration = get_configuration_list(casey.ID);
+                casey.EquilibriumConfigurationOLD = get_configuration_list(casey.ID);
             }
         }
         #endregion

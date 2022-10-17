@@ -107,7 +107,7 @@ namespace AMFramework.Controller
         {
             foreach (Model.Model_Case casey in _CaseController.Cases) 
             {
-                casey.SelectedPhases = get_phas_list(casey.ID);
+                casey.SelectedPhasesOLD = get_phas_list(casey.ID);
             }
         }
 

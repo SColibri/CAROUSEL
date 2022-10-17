@@ -70,6 +70,17 @@ namespace AMFramework.Model
                 OnPropertyChanged("ElementName");
             }
         }
+
+        private bool _isReferenceElement = false;
+        public bool IsReferenceElement
+        {
+            get { return _isReferenceElement; }
+            set
+            {
+                _isReferenceElement = value;
+                OnPropertyChanged("IsReferenceElement");
+            }
+        }
         #endregion
 
         #region Interfaces

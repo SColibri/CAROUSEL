@@ -22,6 +22,14 @@ namespace AMFramework.Model.Model_Controllers
         public void Load_SelectedElements() 
         {
             MCObject.ModelObject.SelectedElements = ModelController<Model_SelectedElements>.LoadIDProject(ref _comm, MCObject.ModelObject.ID);
+
+            ModelController<Model_Element> tRef = new(ref _comm);
+            foreach (var item in MCObject.ModelObject.SelectedElements)
+            {
+                tRef.ModelObject.ID = item.ModelObject.IDElement;
+                tRef.LoadByIDAction.DoAction();
+                item.ModelObject.ElementName = tRef.ModelObject.Name;
+            }
         }
 
         public void Load_ActivePhases()
@@ -29,6 +37,14 @@ namespace AMFramework.Model.Model_Controllers
             MCObject.ModelObject.ActivePhases = ModelController<Model_ActivePhases>.LoadIDProject(ref _comm, MCObject.ModelObject.ID);
             MCObject.ModelObject.ActivePhasesConfiguration = ModelController<Model_ActivePhasesConfiguration>.LoadIDProject(ref _comm, MCObject.ModelObject.ID)[0];
             MCObject.ModelObject.ActivePhasesElementComposition = ModelController<Model_ActivePhasesElementComposition>.LoadIDProject(ref _comm, MCObject.ModelObject.ID);
+
+            ModelController<Model_Element> tRef = new(ref _comm);
+            foreach (var item in MCObject.ModelObject.ActivePhasesElementComposition)
+            {
+                tRef.ModelObject.ID = item.ModelObject.IDElement;
+                tRef.LoadByIDAction.DoAction();
+                item.ModelObject.ElementName = tRef.ModelObject.Name;
+            }
         }
         #endregion
 

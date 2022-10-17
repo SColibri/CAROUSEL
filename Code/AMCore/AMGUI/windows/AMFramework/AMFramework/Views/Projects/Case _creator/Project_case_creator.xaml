@@ -27,7 +27,7 @@
                                            FontWeight="Bold" Margin="3"/>
 
                 <TextBlock Grid.Column="1"
-                                           Text="{Binding Path=Projects.Name}" 
+                                           Text="{Binding Path=ProjectController.Model_Object.Name}" 
                                            FontWeight="Light" Margin="3"/>
             </Grid>
 

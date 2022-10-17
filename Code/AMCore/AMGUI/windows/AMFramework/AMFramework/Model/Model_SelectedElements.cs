@@ -47,20 +47,6 @@ namespace AMFramework.Model
             }
         }
 
-        private string _ElementName = "";
-        [Order]
-        public string ElementName
-        {
-            get { return _ElementName; }
-            set
-            {
-                _ElementName = value;
-                OnPropertyChanged("ElementName");
-            }
-        }
-
-
-
         private int _isReferenceElement = -1;
         [Order]
         public int ISReferenceElement
@@ -77,10 +63,24 @@ namespace AMFramework.Model
             }
         }
 
+        private string _ElementName = "";
+        public string ElementName
+        {
+            get { return _ElementName; }
+            set
+            {
+                _ElementName = value;
+                OnPropertyChanged("ElementName");
+            }
+        }
+
+
+
+        
+
         #region Other_properties
 
         private bool _isReferenceElement_bool = false;
-        [Order]
         public bool ISReferenceElementBool
         {
             get { return _isReferenceElement_bool; }
