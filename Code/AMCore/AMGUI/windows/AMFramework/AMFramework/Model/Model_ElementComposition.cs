@@ -74,7 +74,6 @@ namespace AMFramework.Model
 
         #region Other
         private string _ElementName = "";
-        [Order]
         public string ElementName
         {
             get { return _ElementName; }
@@ -84,6 +83,19 @@ namespace AMFramework.Model
                 OnPropertyChanged("ElementName");
             }
         }
+
+        private bool _isReferenceElement = false;
+        public bool IsReferenceElement
+        {
+            get { return _isReferenceElement; }
+            set
+            {
+                _isReferenceElement = value;
+                OnPropertyChanged(nameof(IsReferenceElement));
+            }
+        }
+
+
         #endregion
 
         #region Additional

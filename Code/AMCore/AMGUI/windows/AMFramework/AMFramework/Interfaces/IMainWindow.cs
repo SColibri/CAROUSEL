@@ -20,6 +20,12 @@ namespace AMFramework.Interfaces
         public void Show_HeatTreatment_PlotView(Model.Model_HeatTreatment modelObject);
         public void Show_HeatTreatment_EditWindow(Model.Model_HeatTreatment modelObject);
         public void Show_Popup(AM_popupWindow pWindow);
+        public void Show_loading(bool showLoading);
+
+        //---------------------------------------------------------------------------------
+        // OUTPUT
+        //---------------------------------------------------------------------------------
+        public void Set_Core_Output(string outputString);
 
         //---------------------------------------------------------------------------------
         // CORE COMMUNICATION

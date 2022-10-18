@@ -176,19 +176,19 @@ namespace API_Scripting
 
 	std::string static Script_openThermodynamicDatabase(AM_Config* configuration)
 	{
-		std::string out = "open-thermodynamic-database " + configuration->get_ThermodynamicDatabase_path() + "" + "\n";
+		std::string out = "open-thermodynamic-database \"" + configuration->get_ThermodynamicDatabase_path() + "\"" + "\n";
 		return out;
 	}
 
 	std::string static Script_readMobilityDatabase(AM_Config* configuration)
 	{
-		std::string out = "read-mobility-database " + configuration->get_MobilityDatabase_path() + "" + "\n";
+		std::string out = "read-mobility-database \"" + configuration->get_MobilityDatabase_path() + "\"" + "\n";
 		return out;
 	}
 
 	std::string static Script_readPhysicalDatabase(AM_Config* configuration)
 	{
-		std::string out = "read-physical-database " + configuration->get_PhysicalDatabase_path() + "" + "\n";
+		std::string out = "read-physical-database \"" + configuration->get_PhysicalDatabase_path() + "\"" + "\n";
 		return out;
 	}
 

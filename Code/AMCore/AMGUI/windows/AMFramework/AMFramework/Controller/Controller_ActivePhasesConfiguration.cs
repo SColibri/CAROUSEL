@@ -5,19 +5,53 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Input;
+using AMFramework.Model;
 
 namespace AMFramework.Controller
 {
-    public class Controller_ActivePhasesConfiguration : INotifyPropertyChanged
+    public class Controller_ActivePhasesConfiguration : ControllerAbstract
     {
         #region Socket
-        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller_DBS_Projects _ProjectController;
-        public Controller_ActivePhasesConfiguration(ref Core.IAMCore_Comm socket, Controller_DBS_Projects projectController)
+
+        [Obsolete("Constructor type is obsolete, we should avoid the usage of the prototype Controller_DBS_project")]
+        /// <summary>
+        /// Thid function will be deprecated for the new restructured method
+        /// </summary>
+        /// <param name="comm"></param>
+        /// <param name="projectController"></param>
+        public Controller_ActivePhasesConfiguration(ref Core.IAMCore_Comm comm, Controller_DBS_Projects projectController) : base(comm)
         {
-            _AMCore_Socket = socket;
             _ProjectController = projectController;
         }
+
+        #region New_implementation
+
+        public Controller_ActivePhasesConfiguration(ref Core.IAMCore_Comm comm, int IDProject) : base(comm)
+        {
+            //_ProjectController = projectController;
+            var tRef = ModelController<Model_ActivePhasesConfiguration>.LoadIDProject(ref _comm, IDProject);
+            if(tRef.Count > 0) _activePhasesConfiguration = tRef[0];
+        }
+
+        public Controller_ActivePhasesConfiguration(ref Core.IAMCore_Comm comm, ModelController<Model_ActivePhasesConfiguration> activePhaseConfig) : base(comm)
+        {
+            //_ProjectController = projectController;
+            _activePhasesConfiguration = activePhaseConfig;
+        }
+
+        private ModelController<Model_ActivePhasesConfiguration>? _activePhasesConfiguration;
+        public ModelController<Model_ActivePhasesConfiguration>? ActivePhasesConfiguration
+        {
+            get { return _activePhasesConfiguration; }
+            set
+            {
+                _activePhasesConfiguration = value;
+                OnPropertyChanged(nameof(ActivePhasesConfiguration));
+            }
+        }
+        #endregion
+
         #endregion
 
         #region ActivePhases
@@ -104,11 +138,19 @@ namespace AMFramework.Controller
         #endregion
 
         #region Methods
-        private void Method_Find_Active_Phases() 
+        [Obsolete("use Method_Find_Active_Phases instead")]
+        private void Method_Find_Active_Phases_OLD() 
         {
-            string outy = _AMCore_Socket.run_lua_command("get_active_phases",_ProjectController.SelectedProject.ID.ToString());
+            string outy = _comm.run_lua_command("get_active_phases",_ProjectController.SelectedProject.ID.ToString());
             Searching_Active_Phases = false;
             _ProjectController.Refresh_ActivePhases();
+        }
+
+        private void Method_Find_Active_Phases()
+        {
+            if (_activePhasesConfiguration == null) return;
+            string outy = _comm.run_lua_command("get_active_phases", _activePhasesConfiguration.ModelObject.IDProject.ToString());
+            Searching_Active_Phases = false;
         }
         #endregion
 
@@ -125,13 +167,5 @@ namespace AMFramework.Controller
         }
         #endregion
 
-        #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
     }
 }

@@ -18,6 +18,7 @@ using AMFramework.Model;
 
 namespace AMFramework.Controller
 {
+    [Obsolete("This was a prototyping function used for all fast edits, the time has come to use the controllers correctly, refer to controller_project. Many other controllers have to be updated :)")]
     public class Controller_DBS_Projects : INotifyPropertyChanged
     {
         #region Socket

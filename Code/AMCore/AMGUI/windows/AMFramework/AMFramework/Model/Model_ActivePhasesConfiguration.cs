@@ -59,9 +59,9 @@ namespace AMFramework.Model
             }
         }
 
-        private int _stepSize = -1;
+        private double _stepSize = -1;
         [Order]
-        public int StepSize
+        public double StepSize
         {
             get { return _stepSize; }
             set

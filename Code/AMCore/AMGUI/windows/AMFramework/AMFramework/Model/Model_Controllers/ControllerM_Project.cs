@@ -35,7 +35,28 @@ namespace AMFramework.Model.Model_Controllers
         public void Load_ActivePhases()
         {
             MCObject.ModelObject.ActivePhases = ModelController<Model_ActivePhases>.LoadIDProject(ref _comm, MCObject.ModelObject.ID);
-            MCObject.ModelObject.ActivePhasesConfiguration = ModelController<Model_ActivePhasesConfiguration>.LoadIDProject(ref _comm, MCObject.ModelObject.ID)[0];
+
+            foreach (var item in MCObject.ModelObject.ActivePhases)
+            {
+                ModelController<Model_Phase> pName = new(ref _comm);
+                pName.ModelObject.ID = item.ModelObject.IDPhase;
+                pName.LoadByIDAction.DoAction();
+
+                item.ModelObject.PhaseName = pName.ModelObject.Name;
+            }
+
+            List<ModelController<Model_ActivePhasesConfiguration>> refConfig = ModelController<Model_ActivePhasesConfiguration>.LoadIDProject(ref _comm, MCObject.ModelObject.ID);
+            if (refConfig.Count > 0)
+            {
+                MCObject.ModelObject.ActivePhasesConfiguration = ModelController<Model_ActivePhasesConfiguration>.LoadIDProject(ref _comm, MCObject.ModelObject.ID)[0];
+            }
+            else 
+            {
+                Model_ActivePhasesConfiguration refModelConfig = new() { IDProject = MCObject.ModelObject.ID };
+                MCObject.ModelObject.ActivePhasesConfiguration = new ModelController<Model_ActivePhasesConfiguration>(ref _comm, refModelConfig);
+                MCObject.ModelObject.ActivePhasesConfiguration.SaveAction.DoAction();
+            }
+            
             MCObject.ModelObject.ActivePhasesElementComposition = ModelController<Model_ActivePhasesElementComposition>.LoadIDProject(ref _comm, MCObject.ModelObject.ID);
 
             ModelController<Model_Element> tRef = new(ref _comm);

@@ -9,10 +9,15 @@
              xmlns:controller="clr-namespace:AMFramework.Controller"
              d:DataContext="{d:DesignInstance Type=controller:Controller_Project}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="584" MaxWidth="700">
+             d:DesignHeight="450" d:DesignWidth="584">
     <Grid Background="White" Margin="5,15,5,5">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+       
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+            <StackPanel Margin="20">
                 <GroupBox Header="General" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
                           Style="{StaticResource AM_OptionSection}">
                     <StackPanel>
@@ -85,6 +90,12 @@
                             <fa:ImageAwesome Grid.Column="1" Grid.Row="1" 
                                              Icon="Edit" Height="25" 
                                              Foreground="SteelBlue"/>
+                            <Border Style="{StaticResource AM_MouseBorder}" Grid.Column="1" Grid.Row="1" 
+                                    CornerRadius="2" Margin="1,1,3,1">
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" Command="{Binding Path=ShowElementList}"/>
+                                </Border.InputBindings>
+                            </Border>
                         </Grid>
                     </StackPanel>
                 </GroupBox>
@@ -104,9 +115,23 @@
                             <Border Grid.Row="1" BorderBrush="Silver" 
                                     BorderThickness="1" CornerRadius="3" 
                                     Margin="5,1,5,1">
-                                <WrapPanel Orientation="Horizontal">
-
-                                </WrapPanel>
+                                <ItemsControl ItemsSource="{Binding Path=SelectedProject.MCObject.ModelObject.ActivePhases}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="White" Margin="3" CornerRadius="3"
+                                                    BorderBrush="Silver" BorderThickness="0.5">
+                                                <Grid Margin="5">
+                                                    <TextBlock Text ="{Binding Path=ModelObject.PhaseName}"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </Border>
 
                             <Expander Grid.Row="2" Header="Configurations" 
@@ -120,34 +145,46 @@
 
                                         <TextBlock Text="Element composition" 
                                                    Margin="5"/>
+                                        <Border Background="White" Grid.Row="1"
+                                                Opacity="0.8">
+                                            <Border.Effect>
+                                                <BlurEffect Radius="7"/>
+                                            </Border.Effect>
+                                        </Border>
                                         <StackPanel Grid.Row="1">
                                             <Grid Margin="10,1,1,1">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="50"/>
+                                                    <ColumnDefinition Width="60"/>
                                                     <ColumnDefinition Width="150"/>
                                                     <ColumnDefinition Width="30"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <Border Grid.ColumnSpan="2" Background="WhiteSmoke" CornerRadius="3"
+                                                <Border Grid.ColumnSpan="1" Background="WhiteSmoke" CornerRadius="3"
                                                         BorderThickness="1" BorderBrush="Silver"/>
-                                                <TextBlock Text="Element" FontWeight="DemiBold" HorizontalAlignment="Center" />
-                                                <TextBlock Text="Composition (%weight)" FontWeight="DemiBold" Grid.Column="1" HorizontalAlignment="Center" />
+                                                <Border Grid.Column="1" Background="WhiteSmoke" CornerRadius="3"
+                                                        BorderThickness="1" BorderBrush="Silver" Margin="5,0,5,0"/>
+                                                <TextBlock Text="Elements" FontWeight="DemiBold" HorizontalAlignment="Center" />
+                                                <TextBlock Text="Composition (%w)" FontWeight="DemiBold" Grid.Column="1" HorizontalAlignment="Center" />
                                             </Grid>
                                             <ItemsControl ItemsSource="{Binding Path=SelectedProject.Model_Object.ActivePhasesElementComposition}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <Grid Margin="10,1,1,1">
                                                             <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="50"/>
+                                                                <ColumnDefinition Width="60"/>
                                                                 <ColumnDefinition Width="150"/>
                                                                 <ColumnDefinition Width="30"/>
+                                                                <ColumnDefinition Width="auto"/>
                                                             </Grid.ColumnDefinitions>
 
 
                                                             <TextBlock Text="{Binding Path=Model_Object.ElementName}" HorizontalAlignment="Center"
                                                                        Margin="2,2,5,2"/>
-                                                            <TextBox Text="{Binding Path=Model_Object.Value}" Grid.Column="1" Width="70"/>
+                                                            <TextBox Text="{Binding Path=Model_Object.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,Delay=1000}" Grid.Column="1" Width="70"/>
                                                             <fa:ImageAwesome Icon="HandOutlineLeft" Grid.Column="2" Height="13" Visibility="{Binding Path=Model_Object.IsReferenceElement, Converter={StaticResource BoolToVis}}"/>
+                                                            <TextBlock Grid.Column="3" Text="Reference element" 
+                                                                       VerticalAlignment="Center"
+                                                                       Visibility="{Binding Path=Model_Object.IsReferenceElement, Converter={StaticResource BoolToVis}}"/>
                                                         </Grid>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
@@ -163,7 +200,9 @@
 
                                         <TextBlock Text="Solidification calculation  method" 
                                                    Margin="5"/>
-                                        <ComboBox Grid.Column="1" ItemsSource="{Binding Path=SolidificationCalculationMethods}"/>
+                                        <ComboBox Grid.Column="1" 
+                                                  SelectedItem="{Binding Path=SelectedSolidificationCalculationMethod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  ItemsSource="{Binding Path=SolidificationCalculationMethods, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
 
                                     <Grid Margin="5">
@@ -174,7 +213,7 @@
 
                                         <TextBlock Text="Calculation parameters" 
                                                    Margin="5"/>
-                                        <ContentPresenter Grid.Row="1"/>
+                                        <ContentControl Grid.Row="1" Content="{Binding Path=ActivePhasesConfigurationPage, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Grid>
 
                                     <Grid Margin="5">
@@ -186,6 +225,13 @@
                                         <fa:ImageAwesome Grid.Column="1" Icon="Play" 
                                                          Height="25" Foreground="SteelBlue"
                                                          ToolTip="Obtain all active phases"/>
+
+                                        <Border Style="{StaticResource AM_MouseBorder}" Grid.Column="1"
+                                                CornerRadius="2" Margin="-5,-5,-5,-5">
+                                            <Border.InputBindings>
+                                                <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" Command="{Binding Path=FindActivePhases}"/>
+                                            </Border.InputBindings>
+                                        </Border>
                                     </Grid>
                                 </StackPanel>
                             </Expander>
@@ -203,5 +249,30 @@
                 </GroupBox>
             </StackPanel>
         </ScrollViewer>
+        <Grid Margin="5,5,5,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="40"/>
+                
+            </Grid.ColumnDefinitions>
+            <Border Grid.ColumnSpan="2" Margin="0,-10,0,-10" CornerRadius="3">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
+                        <GradientStop Color="WhiteSmoke" Offset="0.1"/>
+                        <GradientStop Color="White" Offset="0.7"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2"/>
+                </Border.Effect>
+            </Border>
+            <fa:ImageAwesome Icon="Save" Grid.Column="1" Foreground="Black"
+                             ToolTip="Save"/>
+            <Border Style="{StaticResource AM_MouseBorder}" Grid.Column="1" CornerRadius="2" Margin="1,-5,3,-5">
+                <Border.InputBindings>
+                    <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" Command="{Binding Path=SaveProject}"/>
+                </Border.InputBindings>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

@@ -55,7 +55,7 @@ namespace AMFramework.Model
             set
             {
                 _value = value;
-                OnPropertyChanged("Value");
+                OnPropertyChanged(nameof(Value));
             }
         }
 

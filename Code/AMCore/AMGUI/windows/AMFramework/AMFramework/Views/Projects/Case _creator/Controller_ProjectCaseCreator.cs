@@ -14,6 +14,8 @@ namespace AMFramework.Views.Projects.Other
         {
             _projectController = projectController;
             CaseTemplate = new(_comm);
+            UpdateCaseTemplate_Elements();
+
         }
 
 
@@ -46,18 +48,29 @@ namespace AMFramework.Views.Projects.Other
 
         private void UpdateCaseTemplate_Elements() 
         {
-            
-            // Get reference to model object
-            Model_Projects refProject = (Model_Projects)_projectController.Model_Object;
-            Model_Case refCase = (Model_Case)_caseTemplate.Model_Object;
 
-            // Use selected elements and fill composition elements on templated case
-            foreach (var element in refProject.SelectedElements)
+            var refElement = _projectController.MCObject.ModelObject.SelectedElements.Find(e => e.ModelObject.ISReferenceElementBool);
+            var eObj = ModelController<Model_Element>.LoadAll(ref _comm);
+            List<ModelController<Model_ElementComposition >> compTable = new();
+            foreach (var item in _projectController.MCObject.ModelObject.SelectedElements)
             {
-                
+                var refEObj = eObj.Find(e => e.ModelObject.ID == item.ModelObject.IDElement);
+                if (refEObj == null) continue;
+
+                Model_ElementComposition refComp = new()
+                {
+                    IDElement = refEObj.ModelObject.ID,
+                    ElementName = refEObj.ModelObject.Name
+                };
+
+                compTable.Add(new(ref _comm, refComp));
+
+                if (refElement == null) continue;
+                if (refEObj.ModelObject.ID == refElement.ModelObject.IDElement) refComp.IsReferenceElement = true;
             }
-            
+            CaseTemplate.MCObject.ModelObject.ElementComposition = compTable;
         }
+
 
         #endregion
 

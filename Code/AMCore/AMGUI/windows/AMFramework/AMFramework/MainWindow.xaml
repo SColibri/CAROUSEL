@@ -338,7 +338,7 @@
             </Grid>
         </Grid>
 
-        <Grid x:Name="ProjectWorking" Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}}" Grid.ColumnSpan="4" Grid.RowSpan="4">
+        <Grid x:Name="ProjectWorking" Visibility="{Binding Path=IsLoading, Converter={StaticResource BoolToVis}, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="4" Grid.RowSpan="4">
             <Border Opacity="70" Background="Black" Visibility="Hidden" Grid.RowSpan="4">
 
             </Border>

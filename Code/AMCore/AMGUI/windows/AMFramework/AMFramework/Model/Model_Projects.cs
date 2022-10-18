@@ -37,7 +37,7 @@ namespace AMFramework.Model
         }
 
 
-        private string _apiName = "";
+        private string _apiName = "Not_set";
         [Order]
         public string APIName
         {
@@ -46,6 +46,18 @@ namespace AMFramework.Model
             {
                 _apiName = value;
                 OnPropertyChanged("APIName");
+            }
+        }
+
+        private string _externalAPI_Name = "Not_set";
+        [Order]
+        public string ExternalAPI_Name
+        {
+            get { return _externalAPI_Name; }
+            set
+            {
+                _externalAPI_Name = value;
+                OnPropertyChanged("ExternalAPI_Name");
             }
         }
 
@@ -103,8 +115,51 @@ namespace AMFramework.Model
             set
             {
                 _activePhasesElementComposition = value;
+
                 OnPropertyChanged("ActivePhasesElementComposition");
+
+                var refElement = SelectedElements.Find(e => e.ModelObject.ISReferenceElement == 1);
+                if (refElement == null) return;
+
+                foreach (var item in _activePhasesElementComposition)
+                {
+                    if (item.ModelObject.IDElement != refElement.ModelObject.IDElement)
+                    {
+                        item.ModelObject.PropertyChanged += ActivePhasesElementComposition_CheckValues;
+                    }
+                    else 
+                    {
+                        item.ModelObject.IsReferenceElement = true;
+                    }
+                }
             }
+        }
+
+        /// <summary>
+        /// Updates the reference element based ont the composition of all other elements
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ActivePhasesElementComposition_CheckValues(object? sender, PropertyChangedEventArgs e) 
+        {
+            if (e.PropertyName?.CompareTo("Value") != 0) return;
+
+            var refElement = SelectedElements.Find(e => e.ModelObject.ISReferenceElement == 1);
+            if (refElement == null) return;
+
+            double totalSum = 0;
+            foreach (var item in ActivePhasesElementComposition)
+            {
+                if(item.ModelObject.IDElement != refElement.ModelObject.IDElement) 
+                {
+                    totalSum += item.ModelObject.Value;
+                }
+            }
+
+            var refElementComposition = ActivePhasesElementComposition.Find(e => e.ModelObject.IDElement == refElement.ModelObject.IDElement);
+            
+            if(refElementComposition != null)
+                refElementComposition.ModelObject.Value = 1 - totalSum;
         }
         #endregion
 

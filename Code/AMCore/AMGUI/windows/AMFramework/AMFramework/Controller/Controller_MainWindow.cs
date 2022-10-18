@@ -108,16 +108,7 @@ namespace AMFramework.Controller
             }
         }
 
-        private bool _isLoading = false;
-        public bool IsLoading
-        {
-            get { return _isLoading; }
-            set
-            {
-                _isLoading = value;
-                OnPropertyChanged("IsLoading");
-            }
-        }
+        
 
         private bool _isComputing = false;
         public bool IsComputing
@@ -313,6 +304,10 @@ namespace AMFramework.Controller
                 _coreOut = value;
                 OnPropertyChanged("CoreOut");
             } 
+        }
+        public void Set_Core_Output(string outputString)
+        {
+            CoreOut = outputString;
         }
 
         #endregion
@@ -719,6 +714,24 @@ namespace AMFramework.Controller
             }
         }
 
+        #endregion
+
+        #region LoadingInformationDisplay
+        private bool _isLoading = false;
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged("IsLoading");
+            }
+        }
+
+        public void Show_loading(bool showLoading)
+        {
+            IsLoading = showLoading;
+        }
         #endregion
 
         #region AdditionalInformation

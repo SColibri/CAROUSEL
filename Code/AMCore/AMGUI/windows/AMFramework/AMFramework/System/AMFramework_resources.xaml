@@ -169,6 +169,17 @@
                                    HorizontalAlignment="Right" Margin="5,5,15,5" FontWeight="DemiBold" FontSize="13"
                                            TextWrapping="WrapWithOverflow" Foreground="SteelBlue"/>
                                 <Grid Grid.Column="1" Margin="5">
+                                    <Border Opacity="0.6">
+                                        <Border.Background>
+                                            <LinearGradientBrush>
+                                                <GradientStop Color="LightBlue" Offset="0.1" />
+                                                <GradientStop Color="Transparent" Offset="1.5" />
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Border.Effect>
+                                            <BlurEffect/>
+                                        </Border.Effect>
+                                    </Border>
                                     <ContentPresenter Content="{TemplateBinding Content}" />
                                 </Grid>
                             </Grid>
@@ -178,6 +189,84 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type Border}" x:Key="AM_MouseBorder">
+        <Setter Property="Background">
+            <Setter.Value>
+                <SolidColorBrush Color="Transparent" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderThickness">
+            <Setter.Value>
+                <Thickness Top="1" Bottom="1" Left="1" Right="1"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderBrush">
+            <Setter.Value>
+                <SolidColorBrush Color="Silver"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <BlurEffect Radius="1"></BlurEffect>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Opacity" Value="0"/>
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="Border.MouseEnter">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            From="Transparent" To="LightBlue" Duration="0:0:0.2">
+                               
+                            </ColorAnimation>
+                            <DoubleAnimation From="0.0" To="0.3" Storyboard.TargetProperty="(Border.Opacity)"
+                                             Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="Border.MouseLeave">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            From="LightBlue" To="Transparent" Duration="0:0:0.2">
+
+                            </ColorAnimation>
+                            <DoubleAnimation From="0.3" To="0.0" Storyboard.TargetProperty="(Border.Opacity)"
+                                             Duration="0:0:0.2"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="Border.MouseDown">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            From="LightBlue" To="DarkOrange" Duration="0:0:0.2">
+
+                            </ColorAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="Border.MouseUp">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            From="DarkOrange" To="LightBlue" Duration="0:0:0.2">
+
+                            </ColorAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="{x:Type UserControl}" x:Key="AM_OptionTextEntry">
