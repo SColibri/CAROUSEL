@@ -93,11 +93,11 @@ namespace AMFramework.Views.Popup
 
         public static Components.Windows.AM_popupWindow popupCaseWindow(Controller.Controller_Cases caseController, int IDProject)
         {
-            caseController.SelectedCase = new Model.Model_Case();
-            caseController.SelectedCase.IDProject = IDProject;
-            caseController.SelectedCase.Date = DateTime.Now.ToString("dd/MM/yyyy");
+            caseController.SelectedCaseOLD = new Model.Model_Case();
+            caseController.SelectedCaseOLD.IDProject = IDProject;
+            caseController.SelectedCaseOLD.Date = DateTime.Now.ToString("dd/MM/yyyy");
 
-            Views.Case.Case_newitem Pg = new(caseController.SelectedCase);
+            Views.Case.Case_newitem Pg = new(caseController.SelectedCaseOLD);
 
             Components.Windows.AM_popupWindow Pw = new() { Title = "Case item" };
             Pw.ContentPage.Children.Add(Pg);

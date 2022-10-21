@@ -51,7 +51,7 @@ namespace AMFramework.Controller
         }
         private void load_phases()
         {
-            string Query = "database_table_custom_query SELECT SelectedPhases.*, Phase.Name FROM SelectedPhases INNER JOIN Phase ON Phase.ID=SelectedPhases.IDPhase WHERE IDCase = " + _CaseController.SelectedCase.ID.ToString();
+            string Query = "database_table_custom_query SELECT SelectedPhases.*, Phase.Name FROM SelectedPhases INNER JOIN Phase ON Phase.ID=SelectedPhases.IDPhase WHERE IDCase = " + _CaseController.SelectedCaseOLD.ID.ToString();
             string outy = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outy.Split("\n").ToList();
             _Phases.Clear();

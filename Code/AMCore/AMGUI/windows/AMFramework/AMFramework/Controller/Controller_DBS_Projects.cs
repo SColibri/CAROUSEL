@@ -428,8 +428,8 @@ namespace AMFramework.Controller
                 item.IsSelected = false;
             }
 
-            if (controllerCases.SelectedCase is null) return;
-            foreach (Model.Model_SelectedPhases item in controllerCases.SelectedCase.SelectedPhasesOLD)
+            if (controllerCases.SelectedCaseOLD is null) return;
+            foreach (Model.Model_SelectedPhases item in controllerCases.SelectedCaseOLD.SelectedPhasesOLD)
             {
                 Model.Model_Phase? tempFindPhase = AvailablePhase.Find(e => e.ID == item.IDPhase);
                 if (tempFindPhase is null) continue;
@@ -440,18 +440,18 @@ namespace AMFramework.Controller
 
         public void set_phase_selection_to_current_case()
         {
-            if (controllerCases.SelectedCase is null) return;
+            if (controllerCases.SelectedCaseOLD is null) return;
 
-            controllerCases.SelectedCase.Clear_selectedPhasesOLD();
+            controllerCases.SelectedCaseOLD.Clear_selectedPhasesOLD();
             foreach (Model.Model_Phase item in AvailablePhase)
             {
                 if (item.IsSelected == false) continue;
                 Model.Model_SelectedPhases tempSelPhase = new();
 
                 tempSelPhase.IDPhase = item.ID;
-                tempSelPhase.IDCase = controllerCases.SelectedCase.ID;
+                tempSelPhase.IDCase = controllerCases.SelectedCaseOLD.ID;
                 tempSelPhase.PhaseName = item.Name;
-                controllerCases.SelectedCase.Add_selectedPhasesOLD(tempSelPhase);
+                controllerCases.SelectedCaseOLD.Add_selectedPhasesOLD(tempSelPhase);
             }
 
         }
@@ -1064,7 +1064,7 @@ namespace AMFramework.Controller
                 }
 
                 if (model is null) return false;
-                controllerCases.SelectedCase = model;
+                controllerCases.SelectedCaseOLD = model;
             }
             else
             {
@@ -1079,7 +1079,7 @@ namespace AMFramework.Controller
             //Check if Tag is of type string
             if (refTreeItem.GetType().Equals(typeof(Model.Model_Case))) 
             {
-                controllerCases.SelectedCase = (Model.Model_Case)refTreeItem;
+                controllerCases.SelectedCaseOLD = (Model.Model_Case)refTreeItem;
                 SelectedCaseID = true;
                 return true;
             }

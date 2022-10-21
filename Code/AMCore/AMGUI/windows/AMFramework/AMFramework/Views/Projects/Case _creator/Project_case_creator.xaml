@@ -86,9 +86,7 @@
                         </Border>
 
                         <Grid Margin="5" Grid.Row="1" MinHeight="50">
-                            <ItemsControl>
-
-                            </ItemsControl>
+                            <ContentControl Content="{Binding Path=PhaseListPage}"/>
                         </Grid>
                     </Grid>
 

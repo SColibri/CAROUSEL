@@ -185,7 +185,7 @@ namespace AMFramework
         {
             TabItem result = new TabItem();
 
-            string headerTitle = "Case: " + controllerCase.SelectedCase.Name;
+            string headerTitle = "Case: " + controllerCase.SelectedCaseOLD.Name;
             Uri ImageUri = null; //TODO add lua Icon here
             if (headerTitle.Length == 0)
             {

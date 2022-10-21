@@ -16,6 +16,7 @@ namespace AMFramework.Views.Projects.Other
             CaseTemplate = new(_comm);
             UpdateCaseTemplate_Elements();
 
+            PhaseListPage = new Phase.Phase_List();
         }
 
 
@@ -42,6 +43,21 @@ namespace AMFramework.Views.Projects.Other
                 OnPropertyChanged("CaseTemplate");
             }
         }
+        #endregion
+
+        #region Views
+
+        private object? _phaseListPage;
+        public object? PhaseListPage 
+        {
+            get { return _phaseListPage; }
+            set 
+            {
+                _phaseListPage = value;
+                OnPropertyChanged(nameof(PhaseListPage));
+            }
+        }
+
         #endregion
 
         #region Methods

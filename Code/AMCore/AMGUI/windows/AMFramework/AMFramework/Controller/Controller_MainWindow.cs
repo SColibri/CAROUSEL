@@ -212,7 +212,7 @@ namespace AMFramework.Controller
         {
             Remove_ByTagType(typeof(Case_ViewModel));
             Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
-            tController.SelectedCase = modelObject;
+            tController.SelectedCaseOLD = modelObject;
             TabItem tabContainer = Create_Tab(new Views.Case.Case_contents(ref _Plot), new Case_ViewModel(), "Case plot");
             Add_Tab_Item(tabContainer);
         }
@@ -221,7 +221,7 @@ namespace AMFramework.Controller
         {
             Remove_ByTagType(typeof(Case_ViewModel));
             Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
-            tController.SelectedCase = modelObject;
+            tController.SelectedCaseOLD = modelObject;
             TabItem tabContainer = Create_Tab(new Views.Case.Case_general(ref tController), new Case_ViewModel(), "Case item");
             Add_Tab_Item(tabContainer);
         }
@@ -660,7 +660,7 @@ namespace AMFramework.Controller
         {
             if (refItem.GetType().Equals(typeof(Model.Model_Case)))
             {
-                _DBSProjects.ControllerCases.SelectedCase = (Model.Model_Case)refItem;
+                _DBSProjects.ControllerCases.SelectedCaseOLD = (Model.Model_Case)refItem;
                 _treeview_selected_tab = _AMView.get_case_itemTab(_DBSProjects.ControllerCases);
             }
             else if (refItem.GetType().Equals(typeof(Controller_DBS_Projects)))

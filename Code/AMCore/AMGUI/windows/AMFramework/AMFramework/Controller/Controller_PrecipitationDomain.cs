@@ -35,8 +35,8 @@ namespace AMFramework.Controller
 
         public void Refresh()
         {
-            if (_CaseController.SelectedCase == null) return;
-            PrecipitationDomains = Get_model(_AMCore_Socket, _CaseController.SelectedCase.ID);
+            if (_CaseController.SelectedCaseOLD == null) return;
+            PrecipitationDomains = Get_model(_AMCore_Socket, _CaseController.SelectedCaseOLD.ID);
         }
 
         public static List<Model.Model_PrecipitationDomain> Get_model(Core.IAMCore_Comm comm, int IDCase)

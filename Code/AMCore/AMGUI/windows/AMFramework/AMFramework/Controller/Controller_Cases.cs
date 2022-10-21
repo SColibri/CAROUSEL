@@ -8,22 +8,22 @@ using System.Windows.Data;
 using System.Collections;
 using System.Windows.Input;
 using System.Net.Sockets;
+using AMFramework.Core;
 
 namespace AMFramework.Controller
 {
-    public class Controller_Cases : INotifyPropertyChanged
+    public class Controller_Cases : ControllerAbstract
     {
 
         #region Cons_Des
-        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller.Controller_DBS_Projects _ControllerProjects;
         private int _idProject = -1;
         private int _selectedIDCase = -1;
 
         public Controller_Cases(ref Core.IAMCore_Comm socket,
-                               Controller.Controller_DBS_Projects _project)
+                               Controller.Controller_DBS_Projects _project) : base(socket)
         {
-            _AMCore_Socket = socket;
+            _comm = socket;
             _ControllerProjects = _project;
             _selectedPhases = new Controller_Selected_Phases(ref socket, this);
             _elementComposition = new(ref socket, this);
@@ -39,18 +39,20 @@ namespace AMFramework.Controller
 
         }
 
-        public Controller_Cases()
+        public Controller_Cases(ref IAMCore_Comm comm, Controller_Project projectController) : base(comm)
         {
-
-        }
-        #endregion
-
-        #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            _comm = comm;
+            //_ControllerProjects = _project;
+            _selectedPhases = new Controller_Selected_Phases(ref comm, this);
+            _elementComposition = new(ref comm, this);
+            _equilibriumPhaseFractions = new(ref comm, this);
+            _equilibriumConfigurations = new(ref comm, this);
+            _scheilConfigurations = new(ref comm, this);
+            _scheilPhaseFractions = new(ref comm, this);
+            _PrecipitationPhase = new(ref comm, this);
+            _PrecipitationDomain = new(ref comm, this);
+            _Controller_HeatTreatment = new(ref comm, this);
+            _Controller_PrecipitateSimulationData = new(ref comm, _Controller_HeatTreatment);
         }
         #endregion
 
@@ -75,7 +77,7 @@ namespace AMFramework.Controller
 
         public void save(Model.Model_Case model)
         {
-            string outComm = _AMCore_Socket.run_lua_command("singlepixel_case_save", model.Get_csv());
+            string outComm = _comm.run_lua_command("singlepixel_case_save", model.Get_csv());
             if (outComm.CompareTo("OK") != 0)
             {
                 MainWindow.notify.ShowBalloonTip(5000, "Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);
@@ -84,27 +86,51 @@ namespace AMFramework.Controller
 
         public void save_Handle(object sender, EventArgs e) 
         {
-            save(SelectedCase);
+            save(SelectedCaseOLD);
             refresh();
         }
 
         List<string> _precipitationPhasesNames = new();
 
+        private List<Model.Model_Phase> _availablePhases = new();
+        public List<Model.Model_Phase> AvailablePhases { get { return _availablePhases; } }
+
+        public void load_database_available_phases()
+        {
+            _availablePhases = Controller_Phase.get_available_phases_in_database(ref _comm);
+            OnPropertyChanged("AvailablePhase");
+        }
+
+        public void get_phase_selection_from_current_case()
+        {
+            foreach (Model.Model_Phase item in AvailablePhases)
+            {
+                item.IsSelected = false;
+            }
+
+            foreach (var item in SelectedPhases)
+            {
+                Model.Model_Phase? tempFindPhase = AvailablePhases.Find(e => e.ID == item.IDPhase);
+                if (tempFindPhase is null) continue;
+                tempFindPhase.IsSelected = true;
+            }
+
+        }
         #endregion
 
         #region Flags
-        private Model.Model_Case _selected_case;
-        public Model.Model_Case SelectedCase 
+        private Model.Model_Case _selected_caseOLD;
+        public Model.Model_Case SelectedCaseOLD 
         { 
-            get { return _selected_case; } 
+            get { return _selected_caseOLD; } 
             set 
             {
-                _selected_case = value;
-                _selectedIDCase = _selected_case.ID;
+                _selected_caseOLD = value;
+                _selectedIDCase = _selected_caseOLD.ID;
                 _ControllerProjects.get_phase_selection_from_current_case();
                 _ControllerProjects.set_phase_selection_ifActive();
                 _selectedPhases.refresh();
-                _scheilConfigurations.Model = _scheilConfigurations.get_scheil_configuration_case(_selected_case.ID);
+                _scheilConfigurations.Model = _scheilConfigurations.get_scheil_configuration_case(_selected_caseOLD.ID);
                 OnPropertyChanged("SelectedCase");
                 OnPropertyChanged("SelectedPhases");
                 OnPropertyChanged("ElementComposition");
@@ -146,7 +172,7 @@ namespace AMFramework.Controller
         private string load_data() 
         {
             string Query = "database_table_custom_query SELECT * FROM \'Case\' WHERE IDProject = " + _ControllerProjects.SelectedProject.ID.ToString();
-            string outy = _AMCore_Socket.run_lua_command(Query,"");
+            string outy = _comm.run_lua_command(Query,"");
             List<string> rowItems = outy.Split("\n").ToList();
             _cases = new List<Model.Model_Case>();
 
@@ -169,7 +195,7 @@ namespace AMFramework.Controller
                     model.PosZ = Convert.ToDouble(columnItems[8]);
                     model.ElementCompositionOLD = new();
                     _cases.Add(model);
-                    Controller_HeatTreatment.fill_case_model(ref _AMCore_Socket, model);
+                    Controller_HeatTreatment.fill_case_model(ref _comm, model);
                 }
             }
 
@@ -178,7 +204,7 @@ namespace AMFramework.Controller
             _equilibriumConfigurations.fill_models_with_equilibroiumConfiguration();
             _PrecipitationPhase.fill_models_with_precipitation_phases();
             _PrecipitationDomain.fill_models_with_precipitation_domains();
-            _precipitationPhasesNames = Controller_PrecipitationPhase.Get_phases_names(_AMCore_Socket, _ControllerProjects.SelectedProject.ID);
+            _precipitationPhasesNames = Controller_PrecipitationPhase.Get_phases_names(_comm, _ControllerProjects.SelectedProject.ID);
             OnPropertyChanged("Cases");
             return outy;
         }
@@ -229,7 +255,7 @@ namespace AMFramework.Controller
             }
 
             // create new case template
-            _AMCore_Socket.run_lua_command("template_pixelcase_new", "");
+            _comm.run_lua_command("template_pixelcase_new", "");
 
             // send element composition
             string compositionString = OriginalCase.ElementCompositionOLD[0].ElementName + "||" + OriginalCase.ElementCompositionOLD[0].Value.ToString();
@@ -237,25 +263,25 @@ namespace AMFramework.Controller
             {
                 compositionString += "||" + comp.ElementName + "||" + comp.Value.ToString();
             }
-            _AMCore_Socket.run_lua_command("template_pixelcase_setComposition ", compositionString);
+            _comm.run_lua_command("template_pixelcase_setComposition ", compositionString);
 
             string phaseString = OriginalCase.SelectedPhasesOLD[0].PhaseName;
             foreach (Model.Model_SelectedPhases comp in OriginalCase.SelectedPhasesOLD.Skip(1))
             {
                 phaseString += "||" + comp.PhaseName ;
             }
-            _AMCore_Socket.run_lua_command("template_pixelcase_selectPhases ", phaseString);
-            _AMCore_Socket.run_lua_command("template_pixelcase_setEquilibriumTemperatureRange ", 
+            _comm.run_lua_command("template_pixelcase_selectPhases ", phaseString);
+            _comm.run_lua_command("template_pixelcase_setEquilibriumTemperatureRange ", 
                                             OriginalCase.EquilibriumConfigurationOLD.StartTemperature.ToString() + "||" +
                                             OriginalCase.EquilibriumConfigurationOLD.EndTemperature.ToString() + "||" +
                                             OriginalCase.EquilibriumConfigurationOLD.StepSize.ToString());
 
-            _AMCore_Socket.run_lua_command("template_pixelcase_setScheilTemperatureRange ",
+            _comm.run_lua_command("template_pixelcase_setScheilTemperatureRange ",
                                             OriginalCase.ScheilConfigurationOLD.StartTemperature.ToString() + "||" +
                                             OriginalCase.ScheilConfigurationOLD.EndTemperature.ToString() + "||" +
                                             OriginalCase.ScheilConfigurationOLD.StepSize.ToString());
 
-            _AMCore_Socket.run_lua_command("template_pixelcase_setScheilLiquidFraction ",
+            _comm.run_lua_command("template_pixelcase_setScheilLiquidFraction ",
                                             OriginalCase.ScheilConfigurationOLD.MinLiquidFraction.ToString());
 
            
@@ -285,8 +311,8 @@ namespace AMFramework.Controller
 
         private void Run_equilibrium_controll()
         {
-            string Query = SelectedCase.IDProject + "||" + SelectedCase.ID + "-" + SelectedCase.ID;
-            string outMessage = _AMCore_Socket.run_lua_command("pixelcase_step_equilibrium_parallel ", Query);
+            string Query = SelectedCaseOLD.IDProject + "||" + SelectedCaseOLD.ID + "-" + SelectedCaseOLD.ID;
+            string outMessage = _comm.run_lua_command("pixelcase_step_equilibrium_parallel ", Query);
             if (outMessage.CompareTo("OK") == 0) 
             { 
             
@@ -351,7 +377,7 @@ namespace AMFramework.Controller
 
         private void Run_Save_Command()
         {
-            save(SelectedCase);
+            save(SelectedCaseOLD);
             refresh();
         }
 
