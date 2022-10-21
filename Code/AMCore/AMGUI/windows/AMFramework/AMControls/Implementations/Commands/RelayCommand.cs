@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace AMControls.Implementations.Commands
 {
-    internal class RelayCommand : ICommand
+    public class RelayCommand : ICommand
     {
         #region Fields 
         readonly Action<object> _execute;

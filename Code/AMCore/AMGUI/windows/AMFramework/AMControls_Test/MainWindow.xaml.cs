@@ -19,6 +19,7 @@ using AMControls.Charts.Implementations;
 using AMControls.Charts.Implementations.DataSeries;
 using AMControls_Test.Custom;
 using AMControls_Test.Charts;
+using AMControls_Test.WindowObjects.Notify;
 
 namespace AMControls_Test
 {
@@ -86,6 +87,9 @@ namespace AMControls_Test
 
             SpyderExample spyderExample = new SpyderExample();
             spyderExample.Show();
+
+            NotifyCorner_Test notyExample = new();
+            notyExample.Show();
         }
 
         private void OnChartMouseMove_Handle(object? sender, MouseEventArgs e)

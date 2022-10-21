@@ -7,10 +7,38 @@
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              d:DataContext="{d:DesignInstance Type=local:Notify_corner}"
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="200">
+             d:DesignHeight="100" d:DesignWidth="200" x:Name="NotifyObject">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type local:Notify_corner}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=NotifyObject, Path=ShowAnimation}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="Margin" BeginTime="00:00:00">
+                                    <SplineThicknessKeyFrame KeyTime="00:00:00" Value="0,0,0,-200" />
+                                    <SplineThicknessKeyFrame KeyTime="00:00:0.4" Value="5,5,5,5" />
+                                </ThicknessAnimationUsingKeyFrames>
+
+                                <DoubleAnimation Duration="0:0:1" From="0" To="1" Storyboard.TargetProperty="Opacity"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Duration="0:0:0.3" From="1" To="0" Storyboard.TargetProperty="Opacity"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <Grid>
 
-        <Border Background="Transparent">
+        <Border Background="SteelBlue" CornerRadius="5">
             <Border.Effect>
                 <DropShadowEffect />
             </Border.Effect>    
@@ -34,7 +62,7 @@
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
                         <GradientStop d:Color="SteelBlue" Color="{Binding Path=TitleBackground, UpdateSourceTrigger=PropertyChanged}" Offset="0.1"/>
-                        <GradientStop Color="Transparent" Offset="1.3"/>
+                        <GradientStop Color="WhiteSmoke" Offset="1.3"/>
                     </LinearGradientBrush>
                 </Border.Background>
                 <TextBlock d:Text="Title"

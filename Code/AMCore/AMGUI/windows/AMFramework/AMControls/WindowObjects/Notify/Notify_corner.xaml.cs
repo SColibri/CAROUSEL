@@ -5,12 +5,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -19,12 +21,16 @@ namespace AMControls.WindowObjects.Notify
 {
     /// <summary>
     /// Interaction logic for Notify_corner.xaml
+    /// 
+    /// 
     /// </summary>
     public partial class Notify_corner : UserControl, INotifyPropertyChanged
     {
         public Notify_corner()
         {
             InitializeComponent();
+            DataContext = this;
+            _showTime.Elapsed += Show_timer_elapsedHandle;
         }
 
         #region Parameters
@@ -39,8 +45,8 @@ namespace AMControls.WindowObjects.Notify
             }
         }
 
-        private Color _contentBackground = Colors.Black;
-        public Color ContentBackground 
+        private Brush _contentBackground = Brushes.Black;
+        public Brush ContentBackground 
         {
             get { return _contentBackground; }
             set 
@@ -72,8 +78,8 @@ namespace AMControls.WindowObjects.Notify
             }
         }
 
-        private Color _iconForeground = Colors.Red;
-        public Color IconForeground
+        private Brush _iconForeground = Brushes.Red;
+        public Brush IconForeground
         {
             get { return _iconForeground; }
             set
@@ -104,11 +110,62 @@ namespace AMControls.WindowObjects.Notify
                 OnPropertyChanged(nameof(ContentTag));
             }
         }
+
+        private bool _showAnimation = false;
+        public bool ShowAnimation
+        {
+            get { return _showAnimation; }
+            set 
+            {
+                _showAnimation = value;
+                OnPropertyChanged(nameof(ShowAnimation));
+            }
+        }
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Timer used for showing the popup in a defined time interval.
+        /// Animations wil start when modifying the ShowAnoímation parameter
+        /// </summary>
+        private Timer _showTime = new();
+
+        /// <summary>
+        /// Show popup for a defined time interval
+        /// </summary>
+        /// <param name="interval"></param>
+        public void Show(double interval = 5000)
+        {
+            this.Visibility = Visibility.Visible;
+            _showTime.Stop();
+            _showTime.Interval  = interval; 
+            _showTime.Start();
+
+            ShowAnimation = true;
+        }
+
+        /// <summary>
+        /// This handle changes the ShowAnimation parameter to false so it can finalize the animation
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Show_timer_elapsedHandle(object? sender, ElapsedEventArgs e) 
+        {
+            ShowAnimation = false;
+            this.Visibility = Visibility.Collapsed;
+            if(sender != null)
+            ((Timer)sender).Stop();
+        }
+
         #endregion
 
         #region Commands
         private ICommand _clickOnItem;
 
+        /// <summary>
+        /// Click on item invokes the clicked event, this happens when clicked on
+        /// the top border object
+        /// </summary>
         public ICommand ClickOnItem
         {
             get
@@ -124,14 +181,21 @@ namespace AMControls.WindowObjects.Notify
             }
         }
 
+        /// <summary>
+        /// Command handle for when command is executed. Invokes the clicked event.
+        /// </summary>
         private void ClickOnItem_Action() 
         {
             Clicked?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Click on item is possible by default, insert conditions if needed
+        /// </summary>
+        /// <returns></returns>
         private bool ClickOnItem_Check() 
         {
-            return false;
+            return true;
         }
 
         #endregion
@@ -145,6 +209,9 @@ namespace AMControls.WindowObjects.Notify
         #endregion
 
         #region Events
+        /// <summary>
+        /// Eventhandler for click action
+        /// </summary>
         public event EventHandler? Clicked;
 
         #endregion
