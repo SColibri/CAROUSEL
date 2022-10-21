@@ -3,4 +3,4 @@
 	url = https://github.com/catchorg/Catch2.git
 [submodule "Code/AMCore/AMLib/external/FTXUI"]
 	path = Code/AMCore/AMLib/external/FTXUI
-	url = https://github.com/ArthurSonzogni/FTXUI
+	url = https://github.com/ArthurSonzogni/FTXUI.git
