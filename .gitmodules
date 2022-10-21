@@ -4,3 +4,4 @@
 [submodule "Code/AMCore/AMLib/external/FTXUI"]
 	path = Code/AMCore/AMLib/external/FTXUI
 	url = https://github.com/ArthurSonzogni/FTXUI.git
+	branch = master
