@@ -16,7 +16,7 @@ namespace AMFramework.Interfaces
         /// <summary>
         /// Object Identifier 
         /// </summary>
-        public object Tag { get; set; }
+        public object? Tag { get; set; }
         /// <summary>
         /// Command as Executor type
         /// </summary>

@@ -21,7 +21,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -52,15 +52,17 @@ namespace AMFramework.Controller
         {
             if (DataRaw.Count < 8) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_PrecipitateSimulationData modely = new();
-            modely.ID = Convert.ToInt32(DataRaw[0]);
-            modely.IDPrecipitationPhase = Convert.ToInt32(DataRaw[1]);
-            modely.IDHeatTreatment = Convert.ToInt32(DataRaw[2]);     
-            modely.Time = Convert.ToDouble(DataRaw[3]);
-            modely.PhaseFraction = Convert.ToDouble(DataRaw[4]);
-            modely.NumberDensity = Convert.ToDouble(DataRaw[5]);
-            modely.MeanRadius = Convert.ToDouble(DataRaw[6]);
-            modely.PrecipitationName = DataRaw[7];
+            Model.Model_PrecipitateSimulationData modely = new()
+            {
+                ID = Convert.ToInt32(DataRaw[0]),
+                IDPrecipitationPhase = Convert.ToInt32(DataRaw[1]),
+                IDHeatTreatment = Convert.ToInt32(DataRaw[2]),
+                Time = Convert.ToDouble(DataRaw[3]),
+                PhaseFraction = Convert.ToDouble(DataRaw[4]),
+                NumberDensity = Convert.ToDouble(DataRaw[5]),
+                MeanRadius = Convert.ToDouble(DataRaw[6]),
+                PrecipitationName = DataRaw[7]
+            };
 
             return modely;
         }

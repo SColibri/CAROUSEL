@@ -29,7 +29,7 @@ namespace AMFramework.Components.Button
             set 
             { 
                 _iconName = value;
-                OnPropertyChanged("IconName");
+                OnPropertyChanged(nameof(IconName));
             } 
         }
 
@@ -40,7 +40,7 @@ namespace AMFramework.Components.Button
             set 
             {
                 _foregroundIcon = value;
-                OnPropertyChanged("ForegroundIcon");
+                OnPropertyChanged(nameof(ForegroundIcon));
             }
         }
 
@@ -51,7 +51,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _gradientColor_2 = value;
-                OnPropertyChanged("GradientColor_2");
+                OnPropertyChanged(nameof(GradientColor_2));
             }
         }
 
@@ -62,7 +62,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _gradientColor_1 = value;
-                OnPropertyChanged("GradientColor_1");
+                OnPropertyChanged(nameof(GradientColor_1));
             }
         }
 
@@ -73,7 +73,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _gradientTransition = value;
-                OnPropertyChanged("GradientTransition");
+                OnPropertyChanged(nameof(GradientTransition));
             }
         }
 
@@ -85,7 +85,7 @@ namespace AMFramework.Components.Button
             set 
             { 
                 _cornerRadius = value;
-                OnPropertyChanged("CornerRadius");
+                OnPropertyChanged(nameof(CornerRadius));
             }
         }
 
@@ -97,7 +97,7 @@ namespace AMFramework.Components.Button
             set 
             { 
                 _modelTag = value;
-                OnPropertyChanged("ModelTag");
+                OnPropertyChanged(nameof(ModelTag));
             }
         }
 
@@ -110,7 +110,7 @@ namespace AMFramework.Components.Button
         }
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {

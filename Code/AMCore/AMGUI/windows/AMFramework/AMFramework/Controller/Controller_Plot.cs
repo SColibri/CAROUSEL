@@ -31,7 +31,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -44,7 +44,7 @@ namespace AMFramework.Controller
         public List<Model.Model_Case> Cases { get { return _projectController.Cases; } }
 
         #region Line_graphs
-        private List<LineGraph> _lineGraphs = new List<LineGraph>();
+        private List<LineGraph> _lineGraphs = new();
         public List<LineGraph> LineGraphs { get { return _lineGraphs; } }
 
         private List<Tuple<List<double>, List<double>>> _dataPlot = new();
@@ -87,17 +87,19 @@ namespace AMFramework.Controller
             Application.Current.Dispatcher.Invoke((Action)delegate
             {
                 // create new line plots
-                var lg = new LineGraph();
-                lg.Stroke = new SolidColorBrush(Color.FromArgb(255, 0, (byte)(1 * 10), 0));
-                lg.Description = String.Format("Data series {0}", phaseSelected.PhaseName);
-                lg.StrokeThickness = 2;
+                var lg = new LineGraph
+                {
+                    Stroke = new SolidColorBrush(Color.FromArgb(255, 0, (byte)(1 * 10), 0)),
+                    Description = String.Format("Data series {0}", phaseSelected.PhaseName),
+                    StrokeThickness = 2
+                };
                 lg.ToolTip = lg.Description;
 
                 // Add ID's into registered list and send onUpdate
                 LineGraphID.Add(new(IDCase, IDPhase));
                 LineGraphs.Add(lg);
-                OnPropertyChanged("LineGraphs");
-                OnPropertyChanged("DataPlot");
+                OnPropertyChanged(nameof(LineGraphs));
+                OnPropertyChanged(nameof(DataPlot));
                 lg.Plot(tempAxis, phaseFraction);
             });
 
@@ -109,7 +111,7 @@ namespace AMFramework.Controller
             LineGraphs.Clear();
             DataPlot.Clear();
             _projectController.Case_clear_phase_fraction_data();
-            OnPropertyChanged("LineGraphs");
+            OnPropertyChanged(nameof(LineGraphs));
         }
 
         public void refresh_used_Phases_inCases() 
@@ -153,10 +155,12 @@ namespace AMFramework.Controller
             double solidificationTemp = model.ScheilPhaseFractionsOLD.Min(e => e.Temperature);
 
             // get data points
-            SpyderDataStructure dataPlotItem = new();
-            dataPlotItem.IDCase = IDCase;
-            dataPlotItem.Phases = Used_Phases_inCases;
-            dataPlotItem.Name = "";
+            SpyderDataStructure dataPlotItem = new()
+            {
+                IDCase = IDCase,
+                Phases = Used_Phases_inCases,
+                Name = ""
+            };
 
             foreach (var item in model.ElementCompositionOLD)
             {
@@ -189,9 +193,11 @@ namespace AMFramework.Controller
             double solidificationTemp = model.ScheilPhaseFractionsOLD.Min(e => e.Temperature);
 
             // get data points
-            SpyderDataStructure dataPlotItem = new();
-            dataPlotItem.IDCase = IDCase;
-            dataPlotItem.Phases = Used_Phases_inCases;
+            SpyderDataStructure dataPlotItem = new()
+            {
+                IDCase = IDCase,
+                Phases = Used_Phases_inCases
+            };
             foreach (Model.Model_Phase phaseModel in Used_Phases_inCases)
             {
                 List<Model.Model_ScheilPhaseFraction> modelList = model.ScheilPhaseFractionsOLD.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
@@ -237,7 +243,7 @@ namespace AMFramework.Controller
             set 
             { 
                 _is_loading = value;
-                OnPropertyChanged("IsLoading");
+                OnPropertyChanged(nameof(IsLoading));
             }
         }
         #endregion
@@ -283,7 +289,7 @@ namespace AMFramework.Controller
                 }
             }
 
-            OnPropertyChanged("LineGraphs");
+            OnPropertyChanged(nameof(LineGraphs));
             IsLoading = false;
         }
 
@@ -311,7 +317,7 @@ namespace AMFramework.Controller
         {
             // This function was only built for test purposes, we should optimize and refactor this part of code after testing
             List<Tuple<double, Tuple<string, string>>> result = new();
-            List<double> phaseFractions = new List<double>();
+            List<double> phaseFractions = new();
 
             string Query = "SELECT a.ID, a.IDHeatTreatment, a.IDPrecipitationPhase, a.PhaseFraction, PrecipitationPhase.Name, HeatTreatment.Name AS htName FROM (SELECT ID, IDHeatTreatment, IDPrecipitationPhase, PhaseFraction FROM PrecipitateSimulationData ORDER BY IDHeatTreatment, ID DESC) AS a INNER JOIN PrecipitationPhase ON PrecipitationPhase.ID = a.IDPrecipitationPhase INNER JOIN HeatTreatment ON HeatTreatment.ID = a.IDHeatTreatment GROUP BY IDHeatTreatment, IDPrecipitationPhase";
             string RawData = _AMCore_Socket.run_lua_command("database_table_custom_query", Query);
@@ -338,7 +344,7 @@ namespace AMFramework.Controller
         {
             // This function was only built for test purposes, we should optimize and refactor this part of code after testing
             List<Tuple<double, Tuple<string, string>>> result = new();
-            List<double> phaseFractions = new List<double>();
+            List<double> phaseFractions = new();
 
             string Query = "SELECT a.ID, a.IDHeatTreatment, a.IDPrecipitationPhase, a.MeanRadius, a.PhaseFraction, PrecipitationPhase.Name, HeatTreatment.Name AS htName FROM (SELECT ID, IDHeatTreatment, IDPrecipitationPhase, MeanRadius, PhaseFraction FROM PrecipitateSimulationData ORDER BY IDHeatTreatment, ID DESC) AS a INNER JOIN PrecipitationPhase ON PrecipitationPhase.ID = a.IDPrecipitationPhase INNER JOIN HeatTreatment ON HeatTreatment.ID = a.IDHeatTreatment GROUP BY IDHeatTreatment, IDPrecipitationPhase";
             string RawData = _AMCore_Socket.run_lua_command("database_table_custom_query", Query);
@@ -377,7 +383,7 @@ namespace AMFramework.Controller
                 if (row.Length == 0) continue;
 
                 ScatterBoxSeries sbs = new();
-                DataPlot_HeatTreatmentSimulations dplot = new DataPlot_HeatTreatmentSimulations(_AMCore_Socket);
+                DataPlot_HeatTreatmentSimulations dplot = new(_AMCore_Socket);
                 dplot.X_Data_Option(2);
                 dplot.Y_Data_Option(0);
                 dplot.Set_where_clause("PrecipitationPhase = \"" + row.Replace(",", "").Trim() + "\"");

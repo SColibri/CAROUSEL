@@ -31,7 +31,7 @@ namespace AMFramework.Model.Controllers
             set
             {
                 _mCObject = value;
-                OnPropertyChanged("MCObject");
+                OnPropertyChanged(nameof(MCObject));
             }
         }
 

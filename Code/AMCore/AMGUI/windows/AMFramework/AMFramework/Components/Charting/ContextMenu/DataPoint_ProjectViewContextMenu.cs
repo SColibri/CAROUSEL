@@ -47,13 +47,13 @@ namespace AMFramework.Components.Charting.ContextMenu
             DataPoint_ContextMenu?.Draw(dc, canvas);
             if (_content.Count < 12) return;
 
-            Point sPoint = new Point(Location.X + 10, Location.Y + 42);
+            Point sPoint = new(Location.X + 10, Location.Y + 42);
             double boxWidth = SizeObject.Width - 20;
             double boxHeight = SizeObject.Height - 20;
 
-            SolidColorBrush subTitleBrush = new SolidColorBrush(Colors.Black);
-            SolidColorBrush RedID = new SolidColorBrush(Colors.Red);
-            SolidColorBrush contentBrush = new SolidColorBrush(Colors.Black);
+            SolidColorBrush subTitleBrush = new(Colors.Black);
+            SolidColorBrush RedID = new(Colors.Red);
+            SolidColorBrush contentBrush = new(Colors.Black);
 
             if (DoAnimation) 
             {
@@ -120,8 +120,8 @@ namespace AMFramework.Components.Charting.ContextMenu
                                                   _contentFontSize, contentBrush, VisualTreeHelper.GetDpi(canvas).PixelsPerDip);
 
             // Project
-            Point lsPoint = new Point(sPoint.X, sPoint.Y + IDProject_sub.Height + 5);
-            Point lePoint = new Point(sPoint.X + boxWidth, sPoint.Y + IDProject_sub.Height + 5);
+            Point lsPoint = new(sPoint.X, sPoint.Y + IDProject_sub.Height + 5);
+            Point lePoint = new(sPoint.X + boxWidth, sPoint.Y + IDProject_sub.Height + 5);
             Do_line(dc, lsPoint, lePoint);
 
             dc.DrawText(IDProject_sub, sPoint);

@@ -28,7 +28,7 @@ namespace AMFramework.Views.Projects.Other
             set 
             {
                 _projectController = value;
-                OnPropertyChanged("ProjectController");
+                OnPropertyChanged(nameof(ProjectController));
             }
         }
 
@@ -40,7 +40,7 @@ namespace AMFramework.Views.Projects.Other
             set 
             { 
                 _caseTemplate = value;
-                OnPropertyChanged("CaseTemplate");
+                OnPropertyChanged(nameof(CaseTemplate));
             }
         }
         #endregion

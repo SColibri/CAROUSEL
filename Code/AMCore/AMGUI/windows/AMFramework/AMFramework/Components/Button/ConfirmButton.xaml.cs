@@ -28,7 +28,7 @@ namespace AMFramework.Components.Button
         }
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -44,7 +44,7 @@ namespace AMFramework.Components.Button
             {
                 _text = value;
                 CurrentText = value;
-                OnPropertyChanged("Text");
+                OnPropertyChanged(nameof(Text));
             }
         }
 
@@ -55,7 +55,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _warningText = value;
-                OnPropertyChanged("WarningText");
+                OnPropertyChanged(nameof(WarningText));
             }
         }
 
@@ -66,7 +66,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _currentText = value;
-                OnPropertyChanged("CurrentText");
+                OnPropertyChanged(nameof(CurrentText));
             }
         }
 
@@ -88,7 +88,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _gradientColor_2 = value;
-                OnPropertyChanged("GradientColor_2");
+                OnPropertyChanged(nameof(GradientColor_2));
             }
         }
 
@@ -99,7 +99,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _gradientColor_1 = value;
-                OnPropertyChanged("GradientColor_1");
+                OnPropertyChanged(nameof(GradientColor_1));
             }
         }
 
@@ -110,7 +110,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _gradientTransition = value;
-                OnPropertyChanged("GradientTransition");
+                OnPropertyChanged(nameof(GradientTransition));
             }
         }
 
@@ -121,7 +121,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _gradientMouseEnter = value;
-                OnPropertyChanged("GradientMouseEnter");
+                OnPropertyChanged(nameof(GradientMouseEnter));
             }
         }
 
@@ -132,7 +132,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _foreColor = value;
-                OnPropertyChanged("ForeColor");
+                OnPropertyChanged(nameof(ForeColor));
             }
         }
 
@@ -143,7 +143,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _Background1_isVisible = value;
-                OnPropertyChanged("Background1_isVisible");
+                OnPropertyChanged(nameof(Background1_isVisible));
             }
         }
 
@@ -154,7 +154,7 @@ namespace AMFramework.Components.Button
             set
             {
                 _Background2_isVisible = value;
-                OnPropertyChanged("Background2_isVisible");
+                OnPropertyChanged(nameof(Background2_isVisible));
             }
         }
 

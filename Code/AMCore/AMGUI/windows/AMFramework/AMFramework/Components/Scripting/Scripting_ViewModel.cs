@@ -35,7 +35,7 @@ namespace AMFramework.Components.Scripting
         private string _autocompleteSelection = "";
         public string autocompleteSelection { get { return _autocompleteSelection; } set { _autocompleteSelection = value; } } // current autocomplete selection
 
-        private static List<string> _autocomplete = new List<string>();
+        private static List<string> _autocomplete = new();
         public static List<string> Autocomplete 
         { 
             get {
@@ -110,7 +110,7 @@ namespace AMFramework.Components.Scripting
             {
                 try
                 {
-                    StreamWriter sw = new StreamWriter(_filename);
+                    StreamWriter sw = new(_filename);
                     sw.Write(scintilla.Text);
                     sw.Close();
                     ChangesMade = false;
@@ -154,9 +154,11 @@ namespace AMFramework.Components.Scripting
         {
             string Result = "";
 
-            System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            saveFileDialog.Filter = "LUA file (*.lua)|*.lua";
-            saveFileDialog.DefaultExt = "lua";
+            System.Windows.Forms.SaveFileDialog saveFileDialog = new()
+            {
+                Filter = "LUA file (*.lua)|*.lua",
+                DefaultExt = "lua"
+            };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -188,7 +190,7 @@ namespace AMFramework.Components.Scripting
         {
             if (File.Exists(pathToAutocomplete))
             {
-                StreamReader sr = new StreamReader(pathToAutocomplete);
+                StreamReader sr = new(pathToAutocomplete);
                 string result = sr.ReadToEnd();
 
                 string[] ListyTemp = result.Replace("\r", "").Split("\n");
@@ -212,8 +214,10 @@ namespace AMFramework.Components.Scripting
 
             if (_scriptingEditor == null)
             {
-                _scriptingEditor = new Scripting_editor();
-                _scriptingEditor.DataContext = this;
+                _scriptingEditor = new Scripting_editor
+                {
+                    DataContext = this
+                };
                 Resut = _scriptingEditor;
             }
             else

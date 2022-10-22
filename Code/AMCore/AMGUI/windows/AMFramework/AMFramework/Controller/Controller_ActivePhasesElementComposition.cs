@@ -30,7 +30,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {

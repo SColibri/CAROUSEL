@@ -13,13 +13,13 @@ namespace AMFramework
 {
     public class MainWindow_ViewModel:Interfaces.ViewModel_Interface
     {
-        private List<Components.Scripting.Scripting_ViewModel> _openScripts = new List<Components.Scripting.Scripting_ViewModel>();
+        private List<Components.Scripting.Scripting_ViewModel> _openScripts = new();
         public List<Components.Scripting.Scripting_ViewModel> OpenScripts { get { return _openScripts; } }
 
-        private Views.Projects.Project_ViewModel _projects = new Views.Projects.Project_ViewModel();
+        private Views.Projects.Project_ViewModel _projects = new();
         public Views.Projects.Project_ViewModel Projects { get { return _projects; } }
 
-        private Views.Case.Case_ViewModel _caseView = new Views.Case.Case_ViewModel();
+        private Views.Case.Case_ViewModel _caseView = new();
         public Views.Case.Case_ViewModel CaseView { get { return _caseView; } }
 
         #region Interface
@@ -37,7 +37,7 @@ namespace AMFramework
         #region Methods
         public TabItem get_new_lua_script(string filename = "")
         {
-            TabItem result = new TabItem();
+            TabItem result = new();
 
             string headerTitle = filename;
             Uri ImageUri = null; //TODO add lua Icon here
@@ -62,7 +62,7 @@ namespace AMFramework
 
         public TabItem get_new_plot(string plotName = "")
         {
-            TabItem result = new TabItem();
+            TabItem result = new();
 
             string headerTitle = plotName;
             Uri ImageUri = null; //TODO add lua Icon here
@@ -76,9 +76,11 @@ namespace AMFramework
             }
 
             Components.Charting.ChartingWindow charty = new();
-            Components.Charting.Axes Testy = new Components.Charting.Axes("Test");
-            Testy.MinValue = 0;
-            Testy.MaxValue = 10;
+            Components.Charting.Axes Testy = new("Test")
+            {
+                MinValue = 0,
+                MaxValue = 10
+            };
 
             charty.Add_Axe(Testy);
             charty.Add_Axe(new Components.Charting.Axes("Test"));
@@ -94,7 +96,7 @@ namespace AMFramework
 
         public TabItem Get_projectMap_plot(Controller.Controller_Plot plotController)
         {
-            TabItem result = new TabItem();
+            TabItem result = new();
 
             string headerTitle = "Project Map";
             Uri ImageUri = null; //TODO add lua Icon here
@@ -118,7 +120,7 @@ namespace AMFramework
 
         public TabItem Get_DataGridTable(IAMCore_Comm comm)
         {
-            TabItem result = new TabItem();
+            TabItem result = new();
 
             string headerTitle = "Data views";
             Uri ImageUri = null; //TODO add lua Icon here
@@ -141,7 +143,7 @@ namespace AMFramework
 
         public TabItem get_project_tab(Controller.Controller_DBS_Projects projectController) 
         {
-            TabItem result = new TabItem();
+            TabItem result = new();
 
             string headerTitle = projectController.SelectedProject.Name;
             Uri ImageUri = null; //TODO add lua Icon here
@@ -162,7 +164,7 @@ namespace AMFramework
 
         public TabItem get_case_list_tab(Controller.Controller_Plot plotController)
         {
-            TabItem result = new TabItem();
+            TabItem result = new();
 
             string headerTitle = plotController.SelectedProject.Name;
             Uri ImageUri = null; //TODO add lua Icon here
@@ -183,7 +185,7 @@ namespace AMFramework
 
         public TabItem get_case_itemTab(Controller.Controller_Cases controllerCase)
         {
-            TabItem result = new TabItem();
+            TabItem result = new();
 
             string headerTitle = "Case: " + controllerCase.SelectedCaseOLD.Name;
             Uri ImageUri = null; //TODO add lua Icon here
@@ -204,7 +206,7 @@ namespace AMFramework
 
         public TabItem get_kinetic_precipitation_itemTab(Controller.Controller_Plot controllerPlot)
         {
-            TabItem result = new TabItem();
+            TabItem result = new();
 
             string headerTitle = "kinetic precipitation: ";
             Uri ImageUri = null; //TODO add lua Icon here
@@ -230,25 +232,29 @@ namespace AMFramework
         #region Formatting
         public Grid get_TabHeader(string TabTitle, Uri uriImage)
         {
-            Grid grid = new Grid();
-            ColumnDefinition CDef_01 = new ColumnDefinition();
-            CDef_01.Width = new GridLength(25);
-            ColumnDefinition CDef_02 = new ColumnDefinition();
+            Grid grid = new();
+            ColumnDefinition CDef_01 = new()
+            {
+                Width = new GridLength(25)
+            };
+            ColumnDefinition CDef_02 = new();
             CDef_01.Width = new GridLength(1, GridUnitType.Star);
 
             grid.ColumnDefinitions.Add(CDef_01);
             grid.ColumnDefinitions.Add(CDef_02);
 
-            Image image = new Image();
+            Image image = new();
             if (uriImage != null)
             {
                 ImageSource imS = new BitmapImage(uriImage);
                 image.Source = imS;
             }
 
-            TextBlock textBlock = new TextBlock();
-            textBlock.FontWeight = FontWeights.DemiBold;
-            textBlock.Text = TabTitle;
+            TextBlock textBlock = new()
+            {
+                FontWeight = FontWeights.DemiBold,
+                Text = TabTitle
+            };
 
             Grid.SetColumn(image, 0);
             Grid.SetColumn(textBlock, 0);

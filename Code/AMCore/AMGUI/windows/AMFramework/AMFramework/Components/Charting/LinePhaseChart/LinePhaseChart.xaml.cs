@@ -38,7 +38,7 @@ namespace AMFramework.Components.Charting.LinePhaseChart
         }
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {

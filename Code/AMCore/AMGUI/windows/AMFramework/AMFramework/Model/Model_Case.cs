@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _id = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _id_project = value;
-                OnPropertyChanged("IDProject");
+                OnPropertyChanged(nameof(IDProject));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _id_group = value;
-                OnPropertyChanged("IDGroup");
+                OnPropertyChanged(nameof(IDGroup));
             }
         }
 
@@ -55,7 +55,7 @@ namespace AMFramework.Model
             set
             {
                 _name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -67,7 +67,7 @@ namespace AMFramework.Model
             set
             {
                 _script = value;
-                OnPropertyChanged("Script");
+                OnPropertyChanged(nameof(Script));
             }
         }
 
@@ -79,7 +79,7 @@ namespace AMFramework.Model
             set
             {
                 _date = value;
-                OnPropertyChanged("Date");
+                OnPropertyChanged(nameof(Date));
             }
         }
 
@@ -91,7 +91,7 @@ namespace AMFramework.Model
             set
             {
                 _pos_x = value;
-                OnPropertyChanged("PosX");
+                OnPropertyChanged(nameof(PosX));
             }
         }
 
@@ -103,7 +103,7 @@ namespace AMFramework.Model
             set
             {
                 _pos_y = value;
-                OnPropertyChanged("PosY");
+                OnPropertyChanged(nameof(PosY));
             }
         }
 
@@ -115,7 +115,7 @@ namespace AMFramework.Model
             set
             {
                 _pos_z = value;
-                OnPropertyChanged("PosZ");
+                OnPropertyChanged(nameof(PosZ));
             }
         }
   
@@ -146,7 +146,7 @@ namespace AMFramework.Model
             }
         }
 
-        private List<CaseTemplateStructure> _caseTemplates = new List<CaseTemplateStructure>();
+        private List<CaseTemplateStructure> _caseTemplates = new();
         public List<CaseTemplateStructure> CaseTemplates 
         { 
             get { return _caseTemplates; }
@@ -164,7 +164,7 @@ namespace AMFramework.Model
             set
             {
                 _selectedCaseTemplate = value;
-                OnPropertyChanged("SelectedCaseTemplate");
+                OnPropertyChanged(nameof(SelectedCaseTemplate));
             }
         }
 
@@ -286,20 +286,20 @@ namespace AMFramework.Model
             set
             {
                 _SelectedPhasesOLD = value;
-                OnPropertyChanged("SelectedPhasesOLD");
+                OnPropertyChanged(nameof(SelectedPhasesOLD));
             }
         }
 
         public void Add_selectedPhasesOLD(Model.Model_SelectedPhases model) 
         {
             _SelectedPhasesOLD.Add(model);
-            OnPropertyChanged("SelectedPhasesOLD");
+            OnPropertyChanged(nameof(SelectedPhasesOLD));
         }
 
         public void Clear_selectedPhasesOLD() 
         {
             _SelectedPhasesOLD.Clear();
-            OnPropertyChanged("SelectedPhasesOLD");
+            OnPropertyChanged(nameof(SelectedPhasesOLD));
         }
 
         List<Model.Model_ElementComposition> _elementCompositionOLD = new();
@@ -309,7 +309,7 @@ namespace AMFramework.Model
             set
             {
                 _elementCompositionOLD = value;
-                OnPropertyChanged("ElementCompositionOLD");
+                OnPropertyChanged(nameof(ElementCompositionOLD));
             }
         }
 
@@ -320,7 +320,7 @@ namespace AMFramework.Model
             set
             {
                 _equilibriumPhaseFractionsOLD = value;
-                OnPropertyChanged("EquilibriumPhaseFractionsOLD");
+                OnPropertyChanged(nameof(EquilibriumPhaseFractionsOLD));
             }
         }
 
@@ -331,7 +331,7 @@ namespace AMFramework.Model
             set
             {
                 _equilibriumConfigurationOLD = value;
-                OnPropertyChanged("EquilibriumConfigurationOLD");
+                OnPropertyChanged(nameof(EquilibriumConfigurationOLD));
             }
         }
 
@@ -342,7 +342,7 @@ namespace AMFramework.Model
             set
             {
                 _scheilPhaseFractionsOLD = value;
-                OnPropertyChanged("ScheilPhaseFractions");
+                OnPropertyChanged(nameof(ScheilPhaseFractions));
             }
         }
 
@@ -353,7 +353,7 @@ namespace AMFramework.Model
             set
             {
                 _scheilConfigurationOLD = value;
-                OnPropertyChanged("ScheilConfiguration");
+                OnPropertyChanged(nameof(ScheilConfiguration));
             }
         }
 
@@ -364,7 +364,7 @@ namespace AMFramework.Model
             set 
             { 
                 _precipitationPhasesOLD = value;
-                OnPropertyChanged("PrecipitationPhases");
+                OnPropertyChanged(nameof(PrecipitationPhases));
             }
         }
 
@@ -375,7 +375,7 @@ namespace AMFramework.Model
             set
             {
                 _precipitationDomainsOLD = value;
-                OnPropertyChanged("PrecipitationDomains");
+                OnPropertyChanged(nameof(PrecipitationDomains));
             }
         }
 
@@ -386,7 +386,7 @@ namespace AMFramework.Model
             set
             {
                 _HeatTreatmentsOLD = value;
-                OnPropertyChanged("HeatTreatments");
+                OnPropertyChanged(nameof(HeatTreatments));
             }
         }
 

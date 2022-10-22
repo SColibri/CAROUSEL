@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _ID = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _IDCase = value;
-                OnPropertyChanged("IDCase");
+                OnPropertyChanged(nameof(IDCase));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _IDPhase = value;
-                OnPropertyChanged("IDPhase");
+                OnPropertyChanged(nameof(IDPhase));
             }
         }
 
@@ -55,7 +55,7 @@ namespace AMFramework.Model
             set
             {
                 _NumberSizeClasses = value;
-                OnPropertyChanged("NumberSizeClasses");
+                OnPropertyChanged(nameof(NumberSizeClasses));
             }
         }
 
@@ -67,7 +67,7 @@ namespace AMFramework.Model
             set
             {
                 _name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -79,7 +79,7 @@ namespace AMFramework.Model
             set
             {
                 _nucleationSites = value;
-                OnPropertyChanged("NucleationSites");
+                OnPropertyChanged(nameof(NucleationSites));
             }
         }
 
@@ -91,7 +91,7 @@ namespace AMFramework.Model
             set
             {
                 _IDPrecipitationDomain = value;
-                OnPropertyChanged("IDPrecipitationDomain");
+                OnPropertyChanged(nameof(IDPrecipitationDomain));
             }
         }
 
@@ -103,7 +103,7 @@ namespace AMFramework.Model
             set
             {
                 _calcType = value;
-                OnPropertyChanged("CalcType");
+                OnPropertyChanged(nameof(CalcType));
             }
         }
 
@@ -115,7 +115,7 @@ namespace AMFramework.Model
             set
             {
                 _minRadius = value;
-                OnPropertyChanged("MinRadius");
+                OnPropertyChanged(nameof(MinRadius));
             }
         }
 
@@ -127,7 +127,7 @@ namespace AMFramework.Model
             set
             {
                 _meanRadius = value;
-                OnPropertyChanged("MeanRadius");
+                OnPropertyChanged(nameof(MeanRadius));
             }
         }
 
@@ -139,7 +139,7 @@ namespace AMFramework.Model
             set
             {
                 _maxRadius = value;
-                OnPropertyChanged("MaxRadius");
+                OnPropertyChanged(nameof(MaxRadius));
             }
         }
 
@@ -151,7 +151,7 @@ namespace AMFramework.Model
             set
             {
                 _stdDev = value;
-                OnPropertyChanged("StdDev");
+                OnPropertyChanged(nameof(StdDev));
             }
         }
 
@@ -163,7 +163,7 @@ namespace AMFramework.Model
             set
             {
                 _precipitateDistribution = value;
-                OnPropertyChanged("PrecipitateDistribution");
+                OnPropertyChanged(nameof(PrecipitateDistribution));
             }
         }
 
@@ -176,7 +176,7 @@ namespace AMFramework.Model
             set 
             { 
                 _phaseName = value;
-                OnPropertyChanged("PhaseName");
+                OnPropertyChanged(nameof(PhaseName));
             }
         }
 
@@ -187,7 +187,7 @@ namespace AMFramework.Model
             set
             {
                 _domainName = value;
-                OnPropertyChanged("DomainName");
+                OnPropertyChanged(nameof(DomainName));
             }
         }
         #endregion

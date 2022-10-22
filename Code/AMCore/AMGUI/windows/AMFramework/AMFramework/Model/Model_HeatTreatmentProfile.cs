@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _id = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _idHeatTreatment = value;
-                OnPropertyChanged("IDHeatTreatment");
+                OnPropertyChanged(nameof(IDHeatTreatment));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _time = value;
-                OnPropertyChanged("Time");
+                OnPropertyChanged(nameof(Time));
             }
         }
 
@@ -55,7 +55,7 @@ namespace AMFramework.Model
             set
             {
                 _temperature = value;
-                OnPropertyChanged("Temperature");
+                OnPropertyChanged(nameof(Temperature));
             }
         }
 

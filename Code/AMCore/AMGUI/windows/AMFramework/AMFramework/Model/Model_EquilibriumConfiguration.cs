@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _ID = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _IDCase = value;
-                OnPropertyChanged("IDCase");
+                OnPropertyChanged(nameof(IDCase));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _Temperature = value;
-                OnPropertyChanged("Temperature");
+                OnPropertyChanged(nameof(Temperature));
             }
         }
 
@@ -55,7 +55,7 @@ namespace AMFramework.Model
             set
             {
                 _startTemperature = value;
-                OnPropertyChanged("StartTemperature");
+                OnPropertyChanged(nameof(StartTemperature));
             }
         }
 
@@ -67,7 +67,7 @@ namespace AMFramework.Model
             set
             {
                 _endTemperature = value;
-                OnPropertyChanged("EndTemperature");
+                OnPropertyChanged(nameof(EndTemperature));
             }
         }
 
@@ -79,7 +79,7 @@ namespace AMFramework.Model
             set
             {
                 _temperatureType = value;
-                OnPropertyChanged("TemperatureType");
+                OnPropertyChanged(nameof(TemperatureType));
             }
         }
 
@@ -91,7 +91,7 @@ namespace AMFramework.Model
             set
             {
                 _stepSize = value;
-                OnPropertyChanged("StepSize");
+                OnPropertyChanged(nameof(StepSize));
             }
         }
 
@@ -103,7 +103,7 @@ namespace AMFramework.Model
             set
             {
                 _stepSize = value;
-                OnPropertyChanged("Pressure");
+                OnPropertyChanged(nameof(Pressure));
             }
         }
 

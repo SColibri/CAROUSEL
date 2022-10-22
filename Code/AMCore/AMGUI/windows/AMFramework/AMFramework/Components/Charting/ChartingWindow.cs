@@ -86,7 +86,7 @@ namespace AMFramework.Components.Charting
             } 
         }
 
-        private List<SolidColorBrush> _PalleteData = new List<SolidColorBrush>() 
+        private List<SolidColorBrush> _PalleteData = new() 
         { 
             Brushes.YellowGreen,
             Brushes.LightBlue,
@@ -148,10 +148,12 @@ namespace AMFramework.Components.Charting
             int IndexTemp = 0;
             foreach (string axy in AxesNames)
             {
-                
-                Axes tempAxe = new(axy);
-                tempAxe.MinValue = 0;
-                tempAxe.MaxValue = maxValues[IndexTemp];
+
+                Axes tempAxe = new(axy)
+                {
+                    MinValue = 0,
+                    MaxValue = maxValues[IndexTemp]
+                };
                 tempAxe.Interval = tempAxe.MaxValue/3;
 
                 _AxesList.Add(tempAxe);
@@ -210,8 +212,8 @@ namespace AMFramework.Components.Charting
             _chartCenter.X = CenterX;
             _chartCenter.Y = CenterY;
 
-            Path path = new Path();
-            EllipseGeometry ellipseGeometry = new EllipseGeometry();
+            Path path = new();
+            EllipseGeometry ellipseGeometry = new();
             path.Data = ellipseGeometry;
             path.Stroke = _AxesColor;
             path.Fill = _AxesColor;
@@ -229,10 +231,11 @@ namespace AMFramework.Components.Charting
                 if (!obj.IsVisible) continue;
 
                 double angle = -Math.PI * CurrentAngle / 180.0;
-                Line BaseLine = new();
-
-                BaseLine.SnapsToDevicePixels = true;
-                BaseLine.StrokeThickness = _AxeThickness;
+                Line BaseLine = new()
+                {
+                    SnapsToDevicePixels = true,
+                    StrokeThickness = _AxeThickness
+                };
                 BaseLine.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
                 BaseLine.Stroke = _AxesColor;
                 BaseLine.Effect = new System.Windows.Media.Effects.BlurEffect
@@ -259,18 +262,18 @@ namespace AMFramework.Components.Charting
                                             new Point(CenterX, CenterY), 
                                             new Point(BaseLine.X2, BaseLine.Y2)).Length);
 
-                    Point unit_vector = new Point(point_difference.X/ Line_length, 
+                    Point unit_vector = new(point_difference.X/ Line_length, 
                                                   point_difference.Y/ Line_length);
                     _AxesUnitVectors.Add(unit_vector);
 
-                    Point perpendicular_vector = new Point(-unit_vector.Y, unit_vector.X);
+                    Point perpendicular_vector = new(-unit_vector.Y, unit_vector.X);
 
                     
                     double LinePerp_length = Math.Abs(Point.Subtract(
                                             new Point(unit_vector.X, unit_vector.Y),
                                             new Point(perpendicular_vector.X, perpendicular_vector.Y)).Length);
 
-                    Point unitPerp_vector = new Point(perpendicular_vector.X / LinePerp_length,
+                    Point unitPerp_vector = new(perpendicular_vector.X / LinePerp_length,
                                                   perpendicular_vector.Y / LinePerp_length);
 
                     //double TestPerp = perpendicular_vector.X * unit_vector.X + perpendicular_vector.Y* unit_vector.Y;
@@ -280,28 +283,30 @@ namespace AMFramework.Components.Charting
                     _AxesStepSize.Add(StepSize);
                     for (int n1 = 1; n1 < SpacingLines; n1++)
                     {
-                        Point point_toDistance = new Point(CenterX - unit_vector.X * CurrentLength, 
+                        Point point_toDistance = new(CenterX - unit_vector.X * CurrentLength, 
                                                            CenterY - unit_vector.Y * CurrentLength);
                         double X_Calc = point_toDistance.X;
                         double Y_Calc = point_toDistance.Y;
 
                         if(Double.IsNaN(X_Calc) != true)
                         {
-                            Line TestLine = new Line();
-                            TestLine.Stroke = _AxesColor;
-                            TestLine.Fill = _AxesColor;
-                            TestLine.StrokeThickness = 0.1;//_AxeThickness - 1;
+                            Line TestLine = new()
+                            {
+                                Stroke = _AxesColor,
+                                Fill = _AxesColor,
+                                StrokeThickness = 0.1,//_AxeThickness - 1;
 
 
 
-                            TestLine.X1 = X_Calc;
-                            TestLine.Y1 = Y_Calc;
+                                X1 = X_Calc,
+                                Y1 = Y_Calc,
 
-                            TestLine.X2 = X_Calc - perpendicular_vector.X * 7;
-                            TestLine.Y2 = Y_Calc - perpendicular_vector.Y * 7;
+                                X2 = X_Calc - perpendicular_vector.X * 7,
+                                Y2 = Y_Calc - perpendicular_vector.Y * 7
+                            };
 
                             double valuePosition = (obj.MinValue) + obj.Interval * n1;
-                            FormattedText formattedText = new System.Windows.Media.FormattedText(valuePosition.ToString("0.0E0"),
+                            FormattedText formattedText = new(valuePosition.ToString("0.0E0"),
                                         CultureInfo.GetCultureInfo("en-us"),
                                         FlowDirection.RightToLeft,
                                         new Typeface(
@@ -312,12 +317,14 @@ namespace AMFramework.Components.Charting
                                         15, Brushes.Black, VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
                             Geometry geometry = formattedText.BuildGeometry(new Point(TestLine.X2-12, TestLine.Y2-12));
-                            Path PT01 = new Path();
-                            PT01.Data = geometry;
-                            PT01.Stroke = _AxesColor;
-                            PT01.Fill = _AxesColor;
-                            PT01.StrokeThickness = 0.1;//_AxeThickness - 1;
-    
+                            Path PT01 = new()
+                            {
+                                Data = geometry,
+                                Stroke = _AxesColor,
+                                Fill = _AxesColor,
+                                StrokeThickness = 0.1//_AxeThickness - 1;
+                            };
+
                             this.Children.Add(TestLine);
                             this.Children.Add(PT01);
 
@@ -327,7 +334,7 @@ namespace AMFramework.Components.Charting
                                 double vector_mult2 = unitPerp_vector.Y * unit_vector.Y;
                                 double angle_text = Math.Acos((unitPerp_vector.Y))*(180/Math.PI);
 
-                                FormattedText formattedAxisName = new System.Windows.Media.FormattedText(obj.Name,
+                                FormattedText formattedAxisName = new(obj.Name,
                                         CultureInfo.GetCultureInfo("en-us"),
                                         FlowDirection.RightToLeft,
                                         new Typeface(
@@ -341,14 +348,16 @@ namespace AMFramework.Components.Charting
 
                                 double textOffset = 60;
                                 geometryAxisName.Transform = new TranslateTransform(geometryAxisName.Bounds.Width / 2 - unit_vector.X * textOffset, -unit_vector.Y * textOffset);
-                                
 
-                                Path PT02 = new Path();
-                                PT02.Data = geometryAxisName;
-                                PT02.Stroke = _AxesColor;
-                                PT02.Fill = _AxesColor;
-                                PT02.StrokeThickness = 0.1;//_AxeThickness - 1;
-                                
+
+                                Path PT02 = new()
+                                {
+                                    Data = geometryAxisName,
+                                    Stroke = _AxesColor,
+                                    Fill = _AxesColor,
+                                    StrokeThickness = 0.1//_AxeThickness - 1;
+                                };
+
                                 this.Children.Add(PT02);
                             }
                         }
@@ -382,27 +391,29 @@ namespace AMFramework.Components.Charting
         {
             for(int n1 = 0; n1 < _DataLength; n1++)
             {
-                Polygon polygon = new();
-                polygon.Stroke = _AxesColor;
-                polygon.StrokeThickness = 1;
-                polygon.Fill = _PalleteData[n1];
-                polygon.Opacity = 0.5;
-                polygon.Effect = new System.Windows.Media.Effects.BlurEffect
+                Polygon polygon = new()
                 {
-                    Radius = 3
+                    Stroke = _AxesColor,
+                    StrokeThickness = 1,
+                    Fill = _PalleteData[n1],
+                    Opacity = 0.5,
+                    Effect = new System.Windows.Media.Effects.BlurEffect
+                    {
+                        Radius = 3
+                    }
                 };
 
                 int Index = 0;
                 foreach (List<double> Listy in _Data)
                 {
-                    Point calculated = new Point(
+                    Point calculated = new(
                             _chartCenter.X - _AxesUnitVectors[Index].X * (Listy[n1] * _AxesStepSize[Index] / _AxesList[Index].Interval), 
                             _chartCenter.Y - _AxesUnitVectors[Index].Y * (Listy[n1] * _AxesStepSize[Index] / _AxesList[Index].Interval));
                     
                     polygon.Points.Add(calculated);
 
-                    Path path = new Path();
-                    EllipseGeometry ellipseGeometry = new EllipseGeometry();
+                    Path path = new();
+                    EllipseGeometry ellipseGeometry = new();
                     path.Data = ellipseGeometry;
                     path.Stroke = _AxesColor;
                     path.Fill = Brushes.Red;
@@ -431,14 +442,16 @@ namespace AMFramework.Components.Charting
             int Index_pallette = 0;
             for (int n1 = 0; n1 < _series.Count; n1++)
             {
-                Polygon polygon = new();
-                polygon.Stroke = _AxesColor;
-                polygon.StrokeThickness = 1;
-                polygon.Fill = _PalleteData[Index_pallette];
-                polygon.Opacity = 0.5;
-                polygon.Effect = new System.Windows.Media.Effects.BlurEffect
+                Polygon polygon = new()
                 {
-                    Radius = 3
+                    Stroke = _AxesColor,
+                    StrokeThickness = 1,
+                    Fill = _PalleteData[Index_pallette],
+                    Opacity = 0.5,
+                    Effect = new System.Windows.Media.Effects.BlurEffect
+                    {
+                        Radius = 3
+                    }
                 };
 
                 Index_pallette += 1;
@@ -449,14 +462,14 @@ namespace AMFramework.Components.Charting
                 foreach (double Listy in _series[n1].Data)
                 {
                     if (!_AxesList[Index].IsVisible) { Index++; continue; }
-                    Point calculated = new Point(
+                    Point calculated = new(
                             _chartCenter.X - _AxesUnitVectors[IndexVisible].X * (Listy * _AxesStepSize[IndexVisible] / _AxesList[Index].Interval),
                             _chartCenter.Y - _AxesUnitVectors[IndexVisible].Y * (Listy * _AxesStepSize[IndexVisible] / _AxesList[Index].Interval));
 
                     polygon.Points.Add(calculated);
 
-                    Path path = new Path();
-                    EllipseGeometry ellipseGeometry = new EllipseGeometry();
+                    Path path = new();
+                    EllipseGeometry ellipseGeometry = new();
                     path.Data = ellipseGeometry;
                     path.Stroke = _AxesColor;
                     path.Fill = Brushes.Red;
@@ -485,23 +498,27 @@ namespace AMFramework.Components.Charting
 
         private void Build_legend() 
         {
-            Border LegendBorder = new();
-            LegendBorder.Background = new SolidColorBrush(Colors.WhiteSmoke);
-            LegendBorder.CornerRadius = new CornerRadius(5);
-            LegendBorder.Effect = new DropShadowEffect 
-                                        { 
-                                            Color = Colors.Black,
-                                            ShadowDepth = 1,
-                                            Opacity = 1,
-                                            BlurRadius = 1
-                                        };
+            Border LegendBorder = new()
+            {
+                Background = new SolidColorBrush(Colors.WhiteSmoke),
+                CornerRadius = new CornerRadius(5),
+                Effect = new DropShadowEffect
+                {
+                    Color = Colors.Black,
+                    ShadowDepth = 1,
+                    Opacity = 1,
+                    BlurRadius = 1
+                }
+            };
 
-            Expander LegendExpander = new();
-            LegendExpander.Header = "Series";
-            LegendExpander.Margin = new Thickness(5);
+            Expander LegendExpander = new()
+            {
+                Header = "Series",
+                Margin = new Thickness(5)
+            };
             LegendBorder.Child = LegendExpander;
 
-            StackPanel LegendStackPanel = new StackPanel();
+            StackPanel LegendStackPanel = new();
             int Index = 0;
             foreach (SpyderSeriesData item in Series)
             {
@@ -510,16 +527,20 @@ namespace AMFramework.Components.Charting
                 seriesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
                 seriesGrid.Margin = new Thickness(3);
 
-                Border seriesColor = new();
-                seriesColor.Background = _PalleteData[Index];
-                seriesColor.CornerRadius = new CornerRadius(2);
-                seriesColor.Margin = new Thickness(2);
+                Border seriesColor = new()
+                {
+                    Background = _PalleteData[Index],
+                    CornerRadius = new CornerRadius(2),
+                    Margin = new Thickness(2)
+                };
                 seriesColor.SetValue(Grid.ColumnProperty, 0);
                 seriesColor.Tag = Index;
                 seriesColor.MouseUp += HandleSelectSeries;
 
-                TextBlock textBlock = new TextBlock();
-                textBlock.Text = item.SeriesName;
+                TextBlock textBlock = new()
+                {
+                    Text = item.SeriesName
+                };
                 textBlock.SetValue(Grid.ColumnProperty, 1);
 
                 seriesGrid.Children.Add(seriesColor);
@@ -540,25 +561,29 @@ namespace AMFramework.Components.Charting
         }
         private void Build_axis_legend() 
         {
-            Border LegendBorder = new();
-            LegendBorder.Background = new SolidColorBrush(Colors.WhiteSmoke);
-            LegendBorder.CornerRadius = new CornerRadius(5);
-            LegendBorder.Effect = new DropShadowEffect
+            Border LegendBorder = new()
             {
-                Color = Colors.Black,
-                ShadowDepth = 1,
-                Opacity = 1,
-                BlurRadius = 1
+                Background = new SolidColorBrush(Colors.WhiteSmoke),
+                CornerRadius = new CornerRadius(5),
+                Effect = new DropShadowEffect
+                {
+                    Color = Colors.Black,
+                    ShadowDepth = 1,
+                    Opacity = 1,
+                    BlurRadius = 1
+                },
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Margin = new Thickness(80, 0, 0, 0)
             };
-            LegendBorder.HorizontalAlignment = HorizontalAlignment.Right;
-            LegendBorder.Margin = new Thickness(80,0,0,0);
 
-            Expander LegendExpander = new();
-            LegendExpander.Header = "Axes";
-            LegendExpander.Margin = new Thickness(5);
+            Expander LegendExpander = new()
+            {
+                Header = "Axes",
+                Margin = new Thickness(5)
+            };
             LegendBorder.Child = LegendExpander;
 
-            StackPanel LegendStackPanel = new StackPanel();
+            StackPanel LegendStackPanel = new();
             int Index = 0;
             foreach (Axes item in AxesList)
             {
@@ -578,8 +603,10 @@ namespace AMFramework.Components.Charting
                 seriesColor.Tag = Index;
                 seriesColor.MouseUp += HandleShowHideAxe;
 
-                TextBlock textBlock = new TextBlock();
-                textBlock.Text = item.Name;
+                TextBlock textBlock = new()
+                {
+                    Text = item.Name
+                };
                 textBlock.SetValue(Grid.ColumnProperty, 1);
 
                 seriesGrid.Children.Add(seriesColor);

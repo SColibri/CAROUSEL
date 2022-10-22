@@ -479,8 +479,6 @@ namespace AMFramework.Components.Scripting
         }
 
         private int maxLineNumberCharLength;
-
-        private string calltipText = "HelloWorld";
         
         private void scintilla_TextChanged(object sender, EventArgs e)
         {

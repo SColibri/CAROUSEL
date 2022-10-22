@@ -29,14 +29,14 @@ namespace AMFramework.Controller
             set
             { 
                 _Phases = value;
-                OnPropertyChanged("Phases");
+                OnPropertyChanged(nameof(Phases));
             }
         }
 
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -63,17 +63,19 @@ namespace AMFramework.Controller
 
                 if (columnItems.Count > 2)
                 {
-                    Model.Model_SelectedPhases model = new Model.Model_SelectedPhases();
-                    model.ID = Convert.ToInt32(columnItems[0]);
-                    model.IDCase = Convert.ToInt32(columnItems[1]);
-                    model.IDPhase = Convert.ToInt32(columnItems[2]);
-                    model.PhaseName = columnItems[3];
+                    Model.Model_SelectedPhases model = new()
+                    {
+                        ID = Convert.ToInt32(columnItems[0]),
+                        IDCase = Convert.ToInt32(columnItems[1]),
+                        IDPhase = Convert.ToInt32(columnItems[2]),
+                        PhaseName = columnItems[3]
+                    };
 
                     _Phases.Add(model);
                 }
             }
 
-            OnPropertyChanged("Phases");
+            OnPropertyChanged(nameof(Phases));
         }
 
         private List<Model.Model_SelectedPhases> get_phas_list(int IDCase)
@@ -90,11 +92,13 @@ namespace AMFramework.Controller
 
                 if (columnItems.Count > 2)
                 {
-                    Model.Model_SelectedPhases model = new Model.Model_SelectedPhases();
-                    model.ID = Convert.ToInt32(columnItems[0]);
-                    model.IDCase = Convert.ToInt32(columnItems[1]);
-                    model.IDPhase = Convert.ToInt32(columnItems[2]);
-                    model.PhaseName = columnItems[3];
+                    Model.Model_SelectedPhases model = new()
+                    {
+                        ID = Convert.ToInt32(columnItems[0]),
+                        IDCase = Convert.ToInt32(columnItems[1]),
+                        IDPhase = Convert.ToInt32(columnItems[2]),
+                        PhaseName = columnItems[3]
+                    };
 
                     PhaseList.Add(model);
                 }

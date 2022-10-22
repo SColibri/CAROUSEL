@@ -285,11 +285,13 @@ namespace AMFramework.AMSystem
                 if (Parser.AMParser.Find(e => e.Name.CompareTo(item) == 0) != null) continue; // avoid repeated classes (this might conflict with something)
 
                 // Create class item
-                ParseObject tempParse = new ParseObject();
-                tempParse.ModuleName = modName;
-                tempParse.ObjectType = ParseObject.PTYPE.CLASS;
-                tempParse.Name = Get_class_name(item);
-                tempParse.ParametersType = Get_Class_parameters_type(item);
+                ParseObject tempParse = new()
+                {
+                    ModuleName = modName,
+                    ObjectType = ParseObject.PTYPE.CLASS,
+                    Name = Get_class_name(item),
+                    ParametersType = Get_Class_parameters_type(item)
+                };
                 tempParse.Parameters = Get_parameter_names(tempParse.ParametersType);
                 Get_parameter_type(file_parameter_types, tempParse.Parameters);
                 tempParse.Description = Get_description(item);
@@ -300,11 +302,13 @@ namespace AMFramework.AMSystem
                 if (classFunctions == null) continue;
                 foreach (var classF in classFunctions)
                 {
-                    ParseObject tempFunction = new ParseObject();
-                    tempFunction.ObjectType = ParseObject.PTYPE.FUNCTION;
-                    tempFunction.Name = Get_classFunction_name(classF);
-                    tempFunction.Description= Get_description(classF);
-                    tempFunction.ParametersType= Get_function_parameters(classF);
+                    ParseObject tempFunction = new()
+                    {
+                        ObjectType = ParseObject.PTYPE.FUNCTION,
+                        Name = Get_classFunction_name(classF),
+                        Description = Get_description(classF),
+                        ParametersType = Get_function_parameters(classF)
+                    };
                     tempFunction.Parameters = Get_parameter_names(tempFunction.ParametersType);
                     tempParse.functions.Add(tempFunction);
                 }
@@ -317,11 +321,13 @@ namespace AMFramework.AMSystem
                 if (functionName.Length == 0) continue;
                 if (Parser.AMParser.Find(e => e.Name.CompareTo(item) == 0) != null) continue;
 
-                ParseObject tempParse = new ParseObject();
-                tempParse.ModuleName = modName;
-                tempParse.ObjectType = ParseObject.PTYPE.FUNCTION;
-                tempParse.Name = Get_function_name(item);
-                tempParse.ParametersType = Get_function_parameters(item);
+                ParseObject tempParse = new()
+                {
+                    ModuleName = modName,
+                    ObjectType = ParseObject.PTYPE.FUNCTION,
+                    Name = Get_function_name(item),
+                    ParametersType = Get_function_parameters(item)
+                };
                 tempParse.Parameters = Get_parameter_names(tempParse.ParametersType);
                 tempParse.Description = Get_description(item);
                 Parser.AMParser.Add(tempParse);
@@ -336,11 +342,13 @@ namespace AMFramework.AMSystem
                 string className = Get_class_name(item);
                 if (Parser.AMParser.Find(e => e.Name.CompareTo(item) == 0) != null) continue;
 
-                ParseObject tempParse = new ParseObject();
-                tempParse.ModuleName = modName;
-                tempParse.ObjectType = ParseObject.PTYPE.GLOBAL_VARIABLE;
-                tempParse.Name = Get_class_name(item);
-                tempParse.ParametersType = Get_variable_className(item);
+                ParseObject tempParse = new()
+                {
+                    ModuleName = modName,
+                    ObjectType = ParseObject.PTYPE.GLOBAL_VARIABLE,
+                    Name = Get_class_name(item),
+                    ParametersType = Get_variable_className(item)
+                };
 
                 tempParse.Parameters = Parser.AMParser.FindAll(e => e.Name.CompareTo(tempParse.ParametersType) == 0 && 
                                                                e.ObjectType == ParseObject.PTYPE.CLASS).Select(e => e.Parameters).ToList().SelectMany(e => e).ToList();
@@ -357,11 +365,13 @@ namespace AMFramework.AMSystem
             {
                 if (Parser.AMParser.Find(e => e.Name.CompareTo(item) == 0) != null) continue;
 
-                ParseObject tempParse = new ParseObject();
-                tempParse.ModuleName = modName;
-                tempParse.ObjectType = ParseObject.PTYPE.LOCAL_VARIABLE;
-                tempParse.Name = Get_class_name(item);
-                tempParse.ParametersType = Get_variable_className(item);
+                ParseObject tempParse = new()
+                {
+                    ModuleName = modName,
+                    ObjectType = ParseObject.PTYPE.LOCAL_VARIABLE,
+                    Name = Get_class_name(item),
+                    ParametersType = Get_variable_className(item)
+                };
 
                 tempParse.Parameters = Parser.AMParser.FindAll(e => e.Name.CompareTo(tempParse.ParametersType) == 0 &&
                                                                e.ObjectType == ParseObject.PTYPE.CLASS).Select(e => e.Parameters).ToList().SelectMany(e => e).ToList();
@@ -480,7 +490,7 @@ namespace AMFramework.AMSystem
         /// <returns>List of indexes</returns>
         public static List<int> Find_all_occurrences(string content, string ToFind) 
         { 
-            List<int> ocurrences = new List<int>();
+            List<int> ocurrences = new();
 
             for (int n1 = 0; n1 < content.Length; n1++) 
             {
@@ -513,10 +523,12 @@ namespace AMFramework.AMSystem
             {
                 int IndexEqSgn = item.IndexOf('=');
                 if (IndexEqSgn == -1) continue;
-                
-                ParseObject tempObj = new();
-                tempObj.ObjectType = ParseObject.PTYPE.LOCAL_VARIABLE;
-                tempObj.Name = item.Substring(0, IndexEqSgn).Trim();
+
+                ParseObject tempObj = new()
+                {
+                    ObjectType = ParseObject.PTYPE.LOCAL_VARIABLE,
+                    Name = item.Substring(0, IndexEqSgn).Trim()
+                };
 
                 classParameters.Add(tempObj);
             }

@@ -41,7 +41,7 @@ namespace AMFramework.Components.Embeding
                 process.Refresh();
             }
 
-            Window NewWindow = new Window();
+            Window NewWindow = new();
             NewWindow.Show();
             var HandleObject = new WindowInteropHelper(NewWindow).Handle;
 

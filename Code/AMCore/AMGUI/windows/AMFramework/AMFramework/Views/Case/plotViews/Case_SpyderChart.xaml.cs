@@ -42,7 +42,7 @@ namespace AMFramework.Views.Case.plotViews
             SpyderMain.Add_axis(T05);
             SpyderMain.Add_axis(T06);
 
-            Random random = new Random();
+            Random random = new();
             for (int n1 = 0; n1 < 5; n1++)
             {
                 IDataSeries nSeries = new SpyderSeries();

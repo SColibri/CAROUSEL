@@ -38,7 +38,7 @@ namespace AMFramework.Controller
             set
             {
                 _selectedProject = value;
-                OnPropertyChanged("SelectedProject");
+                OnPropertyChanged(nameof(SelectedProject));
 
                 if (_selectedProject == null) return; 
                 foreach (var item in ElementList)
@@ -68,7 +68,7 @@ namespace AMFramework.Controller
             set
             {
                 _projectList = value;
-                OnPropertyChanged("ProjectList");
+                OnPropertyChanged(nameof(ProjectList));
             }
         }
 
@@ -152,8 +152,10 @@ namespace AMFramework.Controller
 
             // set loading flag and use threading for loading data.
             LoadingData = true;
-            System.Threading.Thread TH01 = new System.Threading.Thread(Load_project_async);
-            TH01.Priority = System.Threading.ThreadPriority.Highest;
+            System.Threading.Thread TH01 = new(Load_project_async)
+            {
+                Priority = System.Threading.ThreadPriority.Highest
+            };
             TH01.Start(ID);
         }
         private void Load_project_async(object? ID)
@@ -188,8 +190,10 @@ namespace AMFramework.Controller
             if (LoadingData) return;
 
             LoadingData = true;
-            System.Threading.Thread TH01 = new System.Threading.Thread(Load_projectList_async);
-            TH01.Priority = System.Threading.ThreadPriority.Highest;
+            System.Threading.Thread TH01 = new(Load_projectList_async)
+            {
+                Priority = System.Threading.ThreadPriority.Highest
+            };
             TH01.Start();
         }
 

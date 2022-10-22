@@ -107,7 +107,7 @@ namespace AMFramework.Views.Project_Map
             set 
             {
                 _selectePoints = value;
-                OnPropertyChanged("SelectedPoints");
+                OnPropertyChanged(nameof(SelectedPoints));
             } 
         }
 
@@ -118,7 +118,7 @@ namespace AMFramework.Views.Project_Map
             set 
             { 
                 _dataOrigin = value;
-                OnPropertyChanged("DataOrigin");
+                OnPropertyChanged(nameof(DataOrigin));
             }
         }
 
@@ -129,7 +129,7 @@ namespace AMFramework.Views.Project_Map
             set
             {
                 _columnNames = value;
-                OnPropertyChanged("ColumnNames");
+                OnPropertyChanged(nameof(ColumnNames));
             }
         }
 
@@ -140,7 +140,7 @@ namespace AMFramework.Views.Project_Map
             set
             {
                 _selectedDataOrigin = value;
-                OnPropertyChanged("SelectedDataOrigin");
+                OnPropertyChanged(nameof(SelectedDataOrigin));
 
                 IDataPlot? dTemp = _dataPlots.Find(e => e.Name.CompareTo(_selectedDataOrigin) == 0);
                 if (dTemp == null) return;
@@ -155,7 +155,7 @@ namespace AMFramework.Views.Project_Map
             set
             {
                 _xDataColumn = value;
-                OnPropertyChanged("XDataColumn");
+                OnPropertyChanged(nameof(XDataColumn));
 
                 IDataPlot? dTemp = _dataPlots.Find(e => e.Name.CompareTo(_selectedDataOrigin) == 0);
                 if (dTemp == null) return;
@@ -170,7 +170,7 @@ namespace AMFramework.Views.Project_Map
             set
             {
                 _yDataColumn = value;
-                OnPropertyChanged("YDataColumn");
+                OnPropertyChanged(nameof(YDataColumn));
 
                 IDataPlot? dTemp = _dataPlots.Find(e => e.Name.CompareTo(_selectedDataOrigin) == 0);
                 if (dTemp == null) return;
@@ -185,7 +185,7 @@ namespace AMFramework.Views.Project_Map
             set 
             { 
                 _showToolTip = value;
-                OnPropertyChanged("ShowToolTip");
+                OnPropertyChanged(nameof(ShowToolTip));
 
                 if (value) 
                 {
@@ -216,7 +216,7 @@ namespace AMFramework.Views.Project_Map
             {
                 if (!_dataOrigin.Contains(item.Name)) _dataOrigin.Add(item.Name);
             }
-            OnPropertyChanged("DataOrigin");
+            OnPropertyChanged(nameof(DataOrigin));
 
             Plot_Data();
         }
@@ -234,7 +234,7 @@ namespace AMFramework.Views.Project_Map
             _xaxis.Name = _dataPlots[0].DataOptions[_xDataOption];
             _yaxis.Name = _dataPlots[0].DataOptions[_yDataOption];
 
-            Random random = new Random();
+            Random random = new();
 
             foreach (var dplot in _dataPlots)
             {
@@ -292,10 +292,12 @@ namespace AMFramework.Views.Project_Map
                 {
                     SearchControl.Visibility = Visibility.Visible;
 
-                    CubicEase ease = new CubicEase { EasingMode = EasingMode.EaseOut };
-                    DoubleAnimation sTextAnim = new(1, new Duration(TimeSpan.FromMilliseconds(900)));
-                    sTextAnim.From = 0;
-                    sTextAnim.EasingFunction = ease;
+                    CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
+                    DoubleAnimation sTextAnim = new(1, new Duration(TimeSpan.FromMilliseconds(900)))
+                    {
+                        From = 0,
+                        EasingFunction = ease
+                    };
 
                     stringSearch.BeginAnimation(Border.OpacityProperty, sTextAnim);
 
@@ -356,12 +358,14 @@ namespace AMFramework.Views.Project_Map
 
             Storyboard storyboard = new();
 
-            Duration duration = new Duration(TimeSpan.FromMilliseconds(500));
-            CubicEase ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+            Duration duration = new(TimeSpan.FromMilliseconds(500));
+            CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
 
-            DoubleAnimation animation = new DoubleAnimation();
-            animation.EasingFunction = ease;
-            animation.Duration = duration;
+            DoubleAnimation animation = new()
+            {
+                EasingFunction = ease,
+                Duration = duration
+            };
             animation.Completed += Animation_expand_completed;
             storyboard.Children.Add(animation);
             animation.From = ExpanderColumn.ActualWidth;
@@ -389,12 +393,14 @@ namespace AMFramework.Views.Project_Map
 
             Storyboard storyboard = new();
 
-            Duration duration = new Duration(TimeSpan.FromMilliseconds(500));
-            CubicEase ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+            Duration duration = new(TimeSpan.FromMilliseconds(500));
+            CubicEase ease = new() { EasingMode = EasingMode.EaseOut };
 
-            DoubleAnimation animation = new DoubleAnimation();
-            animation.EasingFunction = ease;
-            animation.Duration = duration;
+            DoubleAnimation animation = new()
+            {
+                EasingFunction = ease,
+                Duration = duration
+            };
             animation.Completed += Animation_contract_completed;
             storyboard.Children.Add(animation);
             animation.From = ExpanderColumn.ActualWidth;

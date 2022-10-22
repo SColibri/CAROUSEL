@@ -115,11 +115,12 @@ namespace AMFramework.Core
             IntPtr AddressPointer_run_lua = GetProcAddress(_library, "API_run_lua_command");
             API_run_lua_command apiObject = (API_run_lua_command)Marshal.GetDelegateForFunctionPointer(AddressPointer_run_lua, typeof(API_run_lua_command));
 
-            string outCommand;
+            string? outCommand;
 
             try
             {
                 outCommand = Marshal.PtrToStringAnsi(apiObject(_api, new StringBuilder(command), new StringBuilder(parameters)));
+                if (outCommand == null) outCommand = "";
             }
             catch (Exception e)
             {

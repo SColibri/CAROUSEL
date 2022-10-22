@@ -52,7 +52,7 @@ namespace AMFramework.Views.Tables
                 _tableNames.Add(row.Replace(",", "").Trim());
             }
 
-            OnPropertyChanged("TableNames");
+            OnPropertyChanged(nameof(TableNames));
         }
 
         private string _selectedTable = "";
@@ -103,7 +103,7 @@ namespace AMFramework.Views.Tables
             }
 
            
-            OnPropertyChanged("DView");
+            OnPropertyChanged(nameof(DView));
         }
 
         private void Get_ColumnNames()
@@ -122,7 +122,7 @@ namespace AMFramework.Views.Tables
         }
 
         #region INotifyPropertyChanged_Interface
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {

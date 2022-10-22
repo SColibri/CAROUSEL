@@ -22,7 +22,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -58,18 +58,20 @@ namespace AMFramework.Controller
 
                 if (columnItems.Count > 3)
                 {
-                    Model.Model_SelectedElements model = new Model.Model_SelectedElements();
-                    model.ID = Convert.ToInt32(columnItems[0]);
-                    model.IDProject = Convert.ToInt32(columnItems[1]);
-                    model.IDElement = Convert.ToInt32(columnItems[2]);
-                    model.ISReferenceElement = Convert.ToUInt16(columnItems[3]);
-                    model.ElementName = columnItems[4];
+                    Model.Model_SelectedElements model = new()
+                    {
+                        ID = Convert.ToInt32(columnItems[0]),
+                        IDProject = Convert.ToInt32(columnItems[1]),
+                        IDElement = Convert.ToInt32(columnItems[2]),
+                        ISReferenceElement = Convert.ToUInt16(columnItems[3]),
+                        ElementName = columnItems[4]
+                    };
 
                     _Elements.Add(model);
                 }
             }
 
-            OnPropertyChanged("Elements");
+            OnPropertyChanged(nameof(Elements));
         }
         #endregion
 

@@ -21,7 +21,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -67,15 +67,17 @@ namespace AMFramework.Controller
         {
             if (DataRaw.Count < 7) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_EquilibriumConfiguration modely = new();
-            modely.ID = Convert.ToInt32(DataRaw[0]);
-            modely.IDCase = Convert.ToInt32(DataRaw[1]);
-            modely.Temperature = Convert.ToDouble(DataRaw[2]);
-            modely.StartTemperature = Convert.ToDouble(DataRaw[3]);
-            modely.EndTemperature = Convert.ToDouble(DataRaw[4]);
-            modely.TemperatureType = DataRaw[5];
-            modely.StepSize = 25;//Convert.ToDouble(DataRaw[6]);
-            modely.Pressure = Convert.ToDouble(DataRaw[7]);
+            Model.Model_EquilibriumConfiguration modely = new()
+            {
+                ID = Convert.ToInt32(DataRaw[0]),
+                IDCase = Convert.ToInt32(DataRaw[1]),
+                Temperature = Convert.ToDouble(DataRaw[2]),
+                StartTemperature = Convert.ToDouble(DataRaw[3]),
+                EndTemperature = Convert.ToDouble(DataRaw[4]),
+                TemperatureType = DataRaw[5],
+                StepSize = 25,//Convert.ToDouble(DataRaw[6]);
+                Pressure = Convert.ToDouble(DataRaw[7])
+            };
 
             return modely;
         }

@@ -15,7 +15,7 @@ namespace AMFramework.Interfaces
         /// <summary>
         /// Object Identifier 
         /// </summary>
-        public object Tag { get; set; }
+        public object? Tag { get; set; }
         /// <summary>
         /// String command in csv format for parameters
         /// </summary>

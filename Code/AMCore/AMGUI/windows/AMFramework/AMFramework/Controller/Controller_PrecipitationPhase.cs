@@ -29,7 +29,7 @@ namespace AMFramework.Controller
             set 
             {
                 _precipitationPhases = value;
-                OnPropertyChanged("PrecipitationPhases");
+                OnPropertyChanged(nameof(PrecipitationPhases));
             }
         }
 
@@ -91,21 +91,23 @@ namespace AMFramework.Controller
         {
             if (DataRaw.Count < 14) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_PrecipitationPhase model = new Model.Model_PrecipitationPhase();
-            model.ID = Convert.ToInt32(DataRaw[0]);
-            model.IDCase = Convert.ToInt32(DataRaw[1]);
-            model.IDPhase = Convert.ToInt32(DataRaw[2]);
-            model.NumberSizeClasses = Convert.ToInt16(DataRaw[3]);
-            model.Name = DataRaw[4];
-            model.NucleationSites = DataRaw[5];
-            model.IDPrecipitationDomain = Convert.ToInt32(DataRaw[6]);
-            model.CalcType = DataRaw[7];
-            model.MinRadius = Convert.ToDouble(DataRaw[8]);
-            model.MeanRadius = Convert.ToDouble(DataRaw[9]);
-            model.MaxRadius = Convert.ToDouble(DataRaw[10]);
-            model.StdDev = Convert.ToDouble(DataRaw[11]);
-            model.PrecipitateDistribution = DataRaw[12];
-            model.PhaseName = DataRaw[13];
+            Model.Model_PrecipitationPhase model = new()
+            {
+                ID = Convert.ToInt32(DataRaw[0]),
+                IDCase = Convert.ToInt32(DataRaw[1]),
+                IDPhase = Convert.ToInt32(DataRaw[2]),
+                NumberSizeClasses = Convert.ToInt16(DataRaw[3]),
+                Name = DataRaw[4],
+                NucleationSites = DataRaw[5],
+                IDPrecipitationDomain = Convert.ToInt32(DataRaw[6]),
+                CalcType = DataRaw[7],
+                MinRadius = Convert.ToDouble(DataRaw[8]),
+                MeanRadius = Convert.ToDouble(DataRaw[9]),
+                MaxRadius = Convert.ToDouble(DataRaw[10]),
+                StdDev = Convert.ToDouble(DataRaw[11]),
+                PrecipitateDistribution = DataRaw[12],
+                PhaseName = DataRaw[13]
+            };
 
             return model;
         }
@@ -136,7 +138,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {

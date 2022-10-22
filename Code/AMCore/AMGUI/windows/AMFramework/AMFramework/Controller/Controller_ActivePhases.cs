@@ -27,7 +27,7 @@ namespace AMFramework.Controller
             set 
             { 
                 _ActivePhases = value;
-                OnPropertyChanged("ActivePhases");
+                OnPropertyChanged(nameof(ActivePhases));
             }
         }
 
@@ -61,11 +61,13 @@ namespace AMFramework.Controller
         {
             if (DataRaw.Count < 4) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_ActivePhases modely = new();
-            modely.ID = Convert.ToInt32(DataRaw[0]);
-            modely.IDProject = Convert.ToInt32(DataRaw[1]);
-            modely.IDPhase = Convert.ToInt32(DataRaw[2]);
-            modely.PhaseName = DataRaw[3];
+            Model.Model_ActivePhases modely = new()
+            {
+                ID = Convert.ToInt32(DataRaw[0]),
+                IDProject = Convert.ToInt32(DataRaw[1]),
+                IDPhase = Convert.ToInt32(DataRaw[2]),
+                PhaseName = DataRaw[3]
+            };
 
             return modely;
         }
@@ -79,7 +81,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {

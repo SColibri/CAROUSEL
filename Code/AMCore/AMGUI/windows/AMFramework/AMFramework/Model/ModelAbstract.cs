@@ -131,7 +131,7 @@ namespace AMFramework.Model
             set
             {
                 _isSelected = value;
-                OnPropertyChanged("IsSelected");
+                OnPropertyChanged(nameof(IsSelected));
             }
         }
 
@@ -142,7 +142,7 @@ namespace AMFramework.Model
             set
             {
                 _isVisible = value;
-                OnPropertyChanged("IsVisible");
+                OnPropertyChanged(nameof(IsVisible));
             }
         }
 
@@ -153,7 +153,7 @@ namespace AMFramework.Model
             set
             {
                 _isActive = value;
-                OnPropertyChanged("IsActive");
+                OnPropertyChanged(nameof(IsActive));
             }
         }
         #endregion

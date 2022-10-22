@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _id = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _idProject = value;
-                OnPropertyChanged("IDProject");
+                OnPropertyChanged(nameof(IDProject));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _idElement = value;
-                OnPropertyChanged("IDElement");
+                OnPropertyChanged(nameof(IDElement));
             }
         }
 
@@ -67,7 +67,7 @@ namespace AMFramework.Model
             set 
             { 
                 _elementName = value;
-                OnPropertyChanged("ElementName");
+                OnPropertyChanged(nameof(ElementName));
             }
         }
 
@@ -78,7 +78,7 @@ namespace AMFramework.Model
             set
             {
                 _isReferenceElement = value;
-                OnPropertyChanged("IsReferenceElement");
+                OnPropertyChanged(nameof(IsReferenceElement));
             }
         }
         #endregion

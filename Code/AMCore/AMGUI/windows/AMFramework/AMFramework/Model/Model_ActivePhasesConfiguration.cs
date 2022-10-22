@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _id = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _idProject = value;
-                OnPropertyChanged("IDProject");
+                OnPropertyChanged(nameof(IDProject));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _startTemp = value;
-                OnPropertyChanged("StartTemp");
+                OnPropertyChanged(nameof(StartTemp));
             }
         }
 
@@ -55,7 +55,7 @@ namespace AMFramework.Model
             set
             {
                 _endTemp = value;
-                OnPropertyChanged("EndTemp");
+                OnPropertyChanged(nameof(EndTemp));
             }
         }
 
@@ -67,7 +67,7 @@ namespace AMFramework.Model
             set
             {
                 _stepSize = value;
-                OnPropertyChanged("StepSize");
+                OnPropertyChanged(nameof(StepSize));
             }
         }
 

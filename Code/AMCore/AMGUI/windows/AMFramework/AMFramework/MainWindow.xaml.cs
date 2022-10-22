@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,6 +34,24 @@ namespace AMFramework
             tvc.DataContext = tvmController;
 
             ((Controller.Controller_MainWindow)DataContext).get_project_controller().PropertyChanged += OnProperty_changed_project;
+
+            this.Closing += Closing_window;
+        }
+
+        /// <summary>
+        /// This will close all mcc children, however, if the application crashes, this will not be closed properly either.
+        /// note also that we are closing all mcc named processes, so if we want multiple windows we don't know what will happen.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Closing_window(object? sender, CancelEventArgs e)
+        {
+            Process me = Process.GetCurrentProcess();
+            var listProcesses = Process.GetProcessesByName("mcc");
+            foreach (var process in listProcesses)
+            {
+                process.Kill();
+            }
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -83,10 +102,12 @@ namespace AMFramework
         }
         private void RibbonMenuItem_Click_LoadLuaFile(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
-            ofd.Filter = " lua script | *.lua";
-            ofd.InitialDirectory = Controller.Controller_Global.Configuration?.datamodel.Working_Directory;
-            ofd.Multiselect = false;
+            System.Windows.Forms.OpenFileDialog ofd = new()
+            {
+                Filter = " lua script | *.lua",
+                InitialDirectory = Controller.Controller_Global.Configuration?.datamodel.Working_Directory,
+                Multiselect = false
+            };
 
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -136,10 +157,12 @@ namespace AMFramework
 
         private void RibbonMenuItem_Click_loadApi(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
-            ofd.Multiselect = false;
+            System.Windows.Forms.OpenFileDialog ofd = new()
+            {
+                Multiselect = false
+            };
 
-            if(ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) 
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) 
             { 
                 if(File.Exists(ofd.FileName) == true) 
                 {
@@ -225,8 +248,9 @@ namespace AMFramework
 
         #endregion
         #region project
-        private void OnProperty_changed_project(object sender, PropertyChangedEventArgs propertyName)
+        private void OnProperty_changed_project(object? sender, PropertyChangedEventArgs propertyName)
         {
+            if (sender == null) return;
             if (propertyName.PropertyName == null) return;
 
             Controller.Controller_DBS_Projects controllerReference = (Controller.Controller_DBS_Projects)sender;
@@ -357,7 +381,7 @@ namespace AMFramework
         
         }
 
-        private void Select_kinetic_precipitation(object sender, EventArgs e)
+        private void Select_kinetic_precipitation(object? sender, EventArgs e)
         {
             if (sender is null) return;
             if (!sender.GetType().Equals(typeof(Model.Model_HeatTreatment))) return;

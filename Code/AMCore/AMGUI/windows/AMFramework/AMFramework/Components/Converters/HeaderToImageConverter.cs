@@ -13,9 +13,10 @@ namespace AMFramework.Components.Converters
     /// convert image path to image
     /// </summary>
     [ValueConversion(typeof(string), typeof(BitmapImage))]
+    [Obsolete("Parameters are declared as fonawesomeIcons, this is not needed anymore")]
     internal class HeaderToImageConverter : IValueConverter
     {
-        public static HeaderToImageConverter Instance = new HeaderToImageConverter();
+        public static HeaderToImageConverter Instance = new();
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             //Default image

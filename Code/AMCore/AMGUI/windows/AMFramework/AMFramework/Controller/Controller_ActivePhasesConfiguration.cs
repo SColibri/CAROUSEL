@@ -63,13 +63,8 @@ namespace AMFramework.Controller
             set 
             { 
                 _APConfiguration = value;
-                OnPropertyChanged("APConfiguration");
+                OnPropertyChanged(nameof(APConfiguration));
             }
-        }
-        public void Refresh() 
-        { 
-            // TODO: load AP config
-
         }
 
         public static Model.Model_ActivePhasesConfiguration Get_model(Core.IAMCore_Comm comm,int IDProject) 
@@ -82,9 +77,11 @@ namespace AMFramework.Controller
 
             if (rowItems.Count == 0) 
             {
-                Model.Model_ActivePhasesConfiguration NewModel = new();
-                NewModel.IDProject = IDProject;
-                
+                Model.Model_ActivePhasesConfiguration NewModel = new()
+                {
+                    IDProject = IDProject
+                };
+
             }
 
             return model;
@@ -92,7 +89,7 @@ namespace AMFramework.Controller
 
         private static void FillModel(List<string> DataRaw) 
         {
-            Model.Model_ActivePhasesConfiguration model = new Model.Model_ActivePhasesConfiguration();
+            Model.Model_ActivePhasesConfiguration model = new();
 
         }
 
@@ -162,7 +159,7 @@ namespace AMFramework.Controller
             set 
             {
                 _Searching_Active_Phases = value;
-                OnPropertyChanged("Searching_Active_Phases");
+                OnPropertyChanged(nameof(Searching_Active_Phases));
             }
         }
         #endregion

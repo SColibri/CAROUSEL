@@ -20,7 +20,7 @@ namespace AMFramework.Model
             set
             {
                 _id = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -32,7 +32,7 @@ namespace AMFramework.Model
             set
             {
                 _id_case = value;
-                OnPropertyChanged("IDCase");
+                OnPropertyChanged(nameof(IDCase));
             }
         }
 
@@ -44,7 +44,7 @@ namespace AMFramework.Model
             set
             {
                 _id_element = value;
-                OnPropertyChanged("IDElement");
+                OnPropertyChanged(nameof(IDElement));
             }
         }
 
@@ -56,7 +56,7 @@ namespace AMFramework.Model
             set
             {
                 _typeComposition = value;
-                OnPropertyChanged("TypeComposition");
+                OnPropertyChanged(nameof(TypeComposition));
             }
         }
 
@@ -68,7 +68,7 @@ namespace AMFramework.Model
             set
             {
                 _value = value;
-                OnPropertyChanged("Value");
+                OnPropertyChanged(nameof(Value));
             }
         }
 
@@ -80,7 +80,7 @@ namespace AMFramework.Model
             set
             {
                 _ElementName = value;
-                OnPropertyChanged("ElementName");
+                OnPropertyChanged(nameof(ElementName));
             }
         }
 
@@ -109,7 +109,7 @@ namespace AMFramework.Model
             set
             {
                 _stringValue = value;
-                OnPropertyChanged("StringValue");
+                OnPropertyChanged(nameof(StringValue));
             }
         }
         #endregion

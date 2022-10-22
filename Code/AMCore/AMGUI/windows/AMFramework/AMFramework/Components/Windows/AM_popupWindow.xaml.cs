@@ -33,7 +33,7 @@ namespace AMFramework.Components.Windows
             get { return _title; } 
             set { 
                 _title = value;
-                OnPropertyChanged("Title");
+                OnPropertyChanged(nameof(Title));
             } 
         }
 
@@ -62,7 +62,7 @@ namespace AMFramework.Components.Windows
         public event EventHandler PopupWindowClosed;
         #endregion
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {

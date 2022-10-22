@@ -36,7 +36,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -62,7 +62,7 @@ namespace AMFramework.Controller
             set 
             {
                 _selected_tab = value;
-                OnPropertyChanged("SelectedTab");
+                OnPropertyChanged(nameof(SelectedTab));
             }
         }
 
@@ -73,7 +73,7 @@ namespace AMFramework.Controller
             set 
             {
                 _tab_view = value;
-                OnPropertyChanged("TabView");
+                OnPropertyChanged(nameof(TabView));
             }
         }
 
@@ -88,7 +88,7 @@ namespace AMFramework.Controller
                 _isSelected = value;
                 SelectedTab = TABS.PROJECT;
 
-                OnPropertyChanged("ISselected");
+                OnPropertyChanged(nameof(ISselected));
             }
         }
 
@@ -109,7 +109,7 @@ namespace AMFramework.Controller
                 _selected_caseID = value;
                 SelectedTab = TABS.CASEITEM;
 
-                OnPropertyChanged("SelectedCaseID");
+                OnPropertyChanged(nameof(SelectedCaseID));
             }
         }
 
@@ -126,7 +126,7 @@ namespace AMFramework.Controller
                     SelectedCaseID = false;
                 }
 
-                OnPropertyChanged("SelectedCaseWindow");
+                OnPropertyChanged(nameof(SelectedCaseWindow));
             }
         }
 
@@ -137,7 +137,7 @@ namespace AMFramework.Controller
             set
             {
                 _isWorking = value;
-                OnPropertyChanged("IsWorking");
+                OnPropertyChanged(nameof(IsWorking));
             }
         }
 
@@ -148,7 +148,7 @@ namespace AMFramework.Controller
             set 
             {
                 _loading_project = value;
-                OnPropertyChanged("Loading_project");
+                OnPropertyChanged(nameof(Loading_project));
             }
         }
 
@@ -179,7 +179,7 @@ namespace AMFramework.Controller
             set 
             {
                 _selectionTree = value;
-                OnPropertyChanged("SelectionTree");
+                OnPropertyChanged(nameof(SelectionTree));
             }
         }
 
@@ -209,16 +209,18 @@ namespace AMFramework.Controller
 
                 if (columnItems.Count > 2)
                 {
-                    Model.Model_Projects model = new Model.Model_Projects();
-                    model.ID = Convert.ToInt32(columnItems[0]);
-                    model.Name = columnItems[1];
-                    model.APIName = columnItems[2];
+                    Model.Model_Projects model = new()
+                    {
+                        ID = Convert.ToInt32(columnItems[0]),
+                        Name = columnItems[1],
+                        APIName = columnItems[2]
+                    };
 
                     _DB_projects.Add(model);
                 }
             }
 
-            OnPropertyChanged("DB_projects");
+            OnPropertyChanged(nameof(DB_projects));
             return outy;
         }
 
@@ -249,8 +251,10 @@ namespace AMFramework.Controller
             if (_loading_project) return;
 
             Loading_project = true;
-            System.Threading.Thread TH01 = new System.Threading.Thread(Load_project_async);
-            TH01.Priority = System.Threading.ThreadPriority.Highest;
+            System.Threading.Thread TH01 = new(Load_project_async)
+            {
+                Priority = System.Threading.ThreadPriority.Highest
+            };
             TH01.Start(ID);
         }
 
@@ -271,8 +275,8 @@ namespace AMFramework.Controller
 
             load_database_available_phases();
             Sort_Cases_BySelectedPhases();
-            OnPropertyChanged("SelectedProject");
-            OnPropertyChanged("Cases");
+            OnPropertyChanged(nameof(SelectedProject));
+            OnPropertyChanged(nameof(Cases));
             OnPropertyChanged(nameof(SelectedElements));
 
             if(_treeIDCase > -1 && _treeIDHeatTreatment > -1) 
@@ -290,12 +294,20 @@ namespace AMFramework.Controller
             }
 
             Loading_project = false;
-            Application.Current.Dispatcher.Invoke(new Action(Refresh_DTV));
+
+            try
+            {
+                Application.Current.Dispatcher.Invoke(new Action(Refresh_DTV));
+            }
+            catch (Exception)
+            {
+                // Woops looks like the window was closed before this finished
+            }
         }
 
         public Model.Model_Projects DataModel(int ID)
         {
-            Model.Model_Projects model = new Model.Model_Projects();
+            Model.Model_Projects model = new();
 
             if (ID == -1) return model;
             string outy = _AMCore_Socket.run_lua_command("project_getData ", "");
@@ -354,7 +366,7 @@ namespace AMFramework.Controller
             set
             {
                 _cases_BySelectedPhases = value;
-                OnPropertyChanged("Cases_BySelectedPhases");
+                OnPropertyChanged(nameof(Cases_BySelectedPhases));
             }
         }
 
@@ -383,7 +395,7 @@ namespace AMFramework.Controller
                     }
                 }
             }
-            OnPropertyChanged("Cases_BySelectedPhases");
+            OnPropertyChanged(nameof(Cases_BySelectedPhases));
         }
 
         public void Case_load_equilibrium_phase_fraction(Model.Model_Case model) 
@@ -409,7 +421,7 @@ namespace AMFramework.Controller
             _used_Phases_inCases = Controller.Controller_Phase.get_unique_phases_from_caseList(ref _AMCore_Socket, _selectedProject.ID);
 
             //IsWorking = false;
-            OnPropertyChanged("Used_Phases_inCases");
+            OnPropertyChanged(nameof(Used_Phases_inCases));
         }
 
         #endregion
@@ -421,7 +433,7 @@ namespace AMFramework.Controller
         public void load_database_available_phases()
         {
             _available_Phase = Controller_Phase.get_available_phases_in_database(ref _AMCore_Socket);
-            OnPropertyChanged("AvailablePhase");
+            OnPropertyChanged(nameof(AvailablePhase));
         }
 
         public void get_phase_selection_from_current_case() 
@@ -449,11 +461,12 @@ namespace AMFramework.Controller
             foreach (Model.Model_Phase item in AvailablePhase)
             {
                 if (item.IsSelected == false) continue;
-                Model.Model_SelectedPhases tempSelPhase = new();
-
-                tempSelPhase.IDPhase = item.ID;
-                tempSelPhase.IDCase = controllerCases.SelectedCaseOLD.ID;
-                tempSelPhase.PhaseName = item.Name;
+                Model.Model_SelectedPhases tempSelPhase = new()
+                {
+                    IDPhase = item.ID,
+                    IDCase = controllerCases.SelectedCaseOLD.ID,
+                    PhaseName = item.Name
+                };
                 controllerCases.SelectedCaseOLD.Add_selectedPhasesOLD(tempSelPhase);
             }
 
@@ -495,8 +508,8 @@ namespace AMFramework.Controller
                     else item.IsVisible = false;
                 }
 
-                OnPropertyChanged("search_phase_text");
-                OnPropertyChanged("AvailablePhase");
+                OnPropertyChanged(nameof(search_phase_text));
+                OnPropertyChanged(nameof(AvailablePhase));
             }
         }
         #endregion
@@ -537,7 +550,7 @@ namespace AMFramework.Controller
             }
 
             ElementsIsLoading = false;
-            OnPropertyChanged("AvailableElements");
+            OnPropertyChanged(nameof(AvailableElements));
         }
 
         private bool _elementsIsLoading = false;
@@ -558,7 +571,7 @@ namespace AMFramework.Controller
             set
             {
                 _elementsIsSaving = value;
-                OnPropertyChanged("ElementsIsSaving");
+                OnPropertyChanged(nameof(ElementsIsSaving));
             }
         }
         public void Save_elementSelection_Handle(object sender, EventArgs e) 
@@ -611,7 +624,7 @@ namespace AMFramework.Controller
             }
 
             Update_project();
-            OnPropertyChanged("SelectedElements");
+            OnPropertyChanged(nameof(SelectedElements));
             ElementsIsSaving = false;
         }
         #endregion
@@ -653,7 +666,7 @@ namespace AMFramework.Controller
             set 
             {
                 _dtv_Controller = value;
-                OnPropertyChanged("DTV_Controller");
+                OnPropertyChanged(nameof(DTV_Controller));
             }
         }
 
@@ -664,13 +677,15 @@ namespace AMFramework.Controller
             _dtv_Controller.ID = SelectedProject.ID;
 
             List<object> listy = new();
-            
-            WrapPanel ToolPanel = new();
-            ToolPanel.Orientation = Orientation.Horizontal;
-            ToolPanel.FlowDirection = FlowDirection.RightToLeft;
-            ToolPanel.Margin = new Thickness(3,3,3,3);
 
-            AM_button plotAccess = new Components.Button.AM_button()
+            WrapPanel ToolPanel = new()
+            {
+                Orientation = Orientation.Horizontal,
+                FlowDirection = FlowDirection.RightToLeft,
+                Margin = new Thickness(3, 3, 3, 3)
+            };
+
+            AM_button plotAccess = new()
             {
                 IconName = "AreaChart",
                 Width = 20,
@@ -685,7 +700,7 @@ namespace AMFramework.Controller
             plotAccess.ClickButton += OnMouseClick_Plot_Handle;
             ToolPanel.Children.Add(plotAccess);
 
-            AM_button editAccess = new Components.Button.AM_button()
+            AM_button editAccess = new()
             {
                 IconName = "Edit",
                 Width = 20,
@@ -709,7 +724,7 @@ namespace AMFramework.Controller
             listy.Add(new TV_TopView(dtv_Add_object()));
             _dtv_Controller.Items = listy;
 
-            OnPropertyChanged("DTV_Controller");
+            OnPropertyChanged(nameof(DTV_Controller));
         }
 
         private void OnMouseClick_Plot_Handle(object? sender, EventArgs e) 
@@ -736,12 +751,16 @@ namespace AMFramework.Controller
 
         private TV_TopView_controller dtv_Add_elements() 
         {
-            TV_TopView_controller TC_proj = new();
-            TC_proj.Title = "Selected Elements";
-            TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.Slack;
+            TV_TopView_controller TC_proj = new()
+            {
+                Title = "Selected Elements",
+                IconObject = FontAwesome.WPF.FontAwesomeIcon.Slack
+            };
 
-            WrapPanel sPanel = new();
-            sPanel.Orientation = Orientation.Horizontal;
+            WrapPanel sPanel = new()
+            {
+                Orientation = Orientation.Horizontal
+            };
 
             foreach (var item in SelectedElements)
             {
@@ -755,25 +774,31 @@ namespace AMFramework.Controller
 
         private TV_TopView_controller dtv_Add_activePhases()
         {
-            TV_TopView_controller TC_proj = new();
-            TC_proj.Title = "Active phases";
-            TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.Clipboard;
+            TV_TopView_controller TC_proj = new()
+            {
+                Title = "Active phases",
+                IconObject = FontAwesome.WPF.FontAwesomeIcon.Clipboard
+            };
 
             return TC_proj;
         }
 
         private TV_TopView_controller dtv_Add_singlePixelCases()
         {
-            TV_TopView_controller TC_proj = new();
-            TC_proj.Title = "Single pixel cases";
-            TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.SquareOutline;
+            TV_TopView_controller TC_proj = new()
+            {
+                Title = "Single pixel cases",
+                IconObject = FontAwesome.WPF.FontAwesomeIcon.SquareOutline
+            };
 
-            WrapPanel ToolPanel = new();
-            ToolPanel.Orientation = Orientation.Horizontal;
-            ToolPanel.FlowDirection = FlowDirection.RightToLeft;
-            ToolPanel.Margin = new Thickness(3, 3, 3, 3);
+            WrapPanel ToolPanel = new()
+            {
+                Orientation = Orientation.Horizontal,
+                FlowDirection = FlowDirection.RightToLeft,
+                Margin = new Thickness(3, 3, 3, 3)
+            };
 
-            AM_button plotAccess = new Components.Button.AM_button()
+            AM_button plotAccess = new()
             {
                 IconName = "AreaChart",
                 Width = 20,
@@ -810,16 +835,20 @@ namespace AMFramework.Controller
 
         private TV_TopView_controller dtv_Add_CaseSingle(Model.Model_Case casey)
         {
-            TV_TopView_controller TC_proj = new();
-            TC_proj.Title = "Case " + casey.ID;
-            TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.EllipsisH;
+            TV_TopView_controller TC_proj = new()
+            {
+                Title = "Case " + casey.ID,
+                IconObject = FontAwesome.WPF.FontAwesomeIcon.EllipsisH
+            };
 
-            WrapPanel ToolPanel = new();
-            ToolPanel.Orientation = Orientation.Horizontal;
-            ToolPanel.FlowDirection = FlowDirection.RightToLeft;
-            ToolPanel.Margin = new Thickness(3, 3, 3, 3);
+            WrapPanel ToolPanel = new()
+            {
+                Orientation = Orientation.Horizontal,
+                FlowDirection = FlowDirection.RightToLeft,
+                Margin = new Thickness(3, 3, 3, 3)
+            };
 
-            AM_button plotAccess = new Components.Button.AM_button()
+            AM_button plotAccess = new()
             {
                 IconName = "AreaChart",
                 Width = 20,
@@ -834,7 +863,7 @@ namespace AMFramework.Controller
             //plotAccess.ClickButton += OnMouseClick_Plot_Handle;
             ToolPanel.Children.Add(plotAccess);
 
-            AM_button editAccess = new Components.Button.AM_button()
+            AM_button editAccess = new()
             {
                 IconName = "Edit",
                 Width = 20,
@@ -851,12 +880,16 @@ namespace AMFramework.Controller
             TC_proj.Add_Item(ToolPanel);
 
             // Add case composition
-            TV_TopView_controller TC_Composition = new();
-            TC_Composition.Title = "Element Composition";
-            TC_Composition.IconObject = FontAwesome.WPF.FontAwesomeIcon.PuzzlePiece;
+            TV_TopView_controller TC_Composition = new()
+            {
+                Title = "Element Composition",
+                IconObject = FontAwesome.WPF.FontAwesomeIcon.PuzzlePiece
+            };
 
-            WrapPanel sPanel = new();
-            sPanel.Orientation = Orientation.Horizontal;
+            WrapPanel sPanel = new()
+            {
+                Orientation = Orientation.Horizontal
+            };
 
             foreach (var item in casey.ElementCompositionOLD)
             {
@@ -886,27 +919,35 @@ namespace AMFramework.Controller
 
         private TV_TopView_controller dtv_Add_Precipitation_kinetics(Model.Model_Case casey) 
         {
-            TV_TopView_controller TC_Kinetics = new();
-            TC_Kinetics.Title = "Precipitation kinetics";
-            TC_Kinetics.IconObject = FontAwesome.WPF.FontAwesomeIcon.SnowflakeOutline;
+            TV_TopView_controller TC_Kinetics = new()
+            {
+                Title = "Precipitation kinetics",
+                IconObject = FontAwesome.WPF.FontAwesomeIcon.SnowflakeOutline
+            };
 
             // Heat treatments
-            TV_TopView_controller TC_HT = new();
-            TC_HT.Title = "Heat treatments";
-            TC_HT.IconObject = FontAwesome.WPF.FontAwesomeIcon.Thermometer;
+            TV_TopView_controller TC_HT = new()
+            {
+                Title = "Heat treatments",
+                IconObject = FontAwesome.WPF.FontAwesomeIcon.Thermometer
+            };
 
             foreach (var item in casey.HeatTreatmentsOLD)
             {
-                TV_TopView_controller TC_HT_Item = new();
-                TC_HT_Item.Title = item.ID + " : " + item.Name;
-                TC_HT_Item.IconObject = FontAwesome.WPF.FontAwesomeIcon.None;
+                TV_TopView_controller TC_HT_Item = new()
+                {
+                    Title = item.ID + " : " + item.Name,
+                    IconObject = FontAwesome.WPF.FontAwesomeIcon.None
+                };
 
-                WrapPanel ToolPanel = new();
-                ToolPanel.Orientation = Orientation.Horizontal;
-                ToolPanel.FlowDirection = FlowDirection.RightToLeft;
-                ToolPanel.Margin = new Thickness(3, 3, 3, 3);
+                WrapPanel ToolPanel = new()
+                {
+                    Orientation = Orientation.Horizontal,
+                    FlowDirection = FlowDirection.RightToLeft,
+                    Margin = new Thickness(3, 3, 3, 3)
+                };
 
-                AM_button plotAccess = new Components.Button.AM_button()
+                AM_button plotAccess = new()
                 {
                     IconName = "AreaChart",
                     Width = 20,
@@ -928,15 +969,19 @@ namespace AMFramework.Controller
             TC_Kinetics.Add_Item(new TV_TopView(TC_HT));
 
             // Precipitation phases
-            TV_TopView_controller TC_PR = new();
-            TC_PR.Title = "Precipitation phases";
-            TC_PR.IconObject = FontAwesome.WPF.FontAwesomeIcon.Circle;
+            TV_TopView_controller TC_PR = new()
+            {
+                Title = "Precipitation phases",
+                IconObject = FontAwesome.WPF.FontAwesomeIcon.Circle
+            };
 
             foreach (var item in casey.PrecipitationPhasesOLD)
             {
-                TV_TopView_controller TC_PR_Item = new();
-                TC_PR_Item.Title = item.Name;
-                TC_PR_Item.IconObject = FontAwesome.WPF.FontAwesomeIcon.None;
+                TV_TopView_controller TC_PR_Item = new()
+                {
+                    Title = item.Name,
+                    IconObject = FontAwesome.WPF.FontAwesomeIcon.None
+                };
 
                 TC_PR.Add_Item(new TV_TopView(TC_PR_Item));
             }
@@ -944,15 +989,19 @@ namespace AMFramework.Controller
             TC_Kinetics.Add_Item(new TV_TopView(TC_PR));
 
             // Precipitation Domain
-            TV_TopView_controller TC_DO = new();
-            TC_DO.Title = "Precipitation domain";
-            TC_DO.IconObject = FontAwesome.WPF.FontAwesomeIcon.DotCircleOutline;
+            TV_TopView_controller TC_DO = new()
+            {
+                Title = "Precipitation domain",
+                IconObject = FontAwesome.WPF.FontAwesomeIcon.DotCircleOutline
+            };
 
             foreach (var item in casey.PrecipitationDomainsOLD)
             {
-                TV_TopView_controller TC_DO_Item = new();
-                TC_DO_Item.Title = item.Name;
-                TC_DO_Item.IconObject = FontAwesome.WPF.FontAwesomeIcon.None;
+                TV_TopView_controller TC_DO_Item = new()
+                {
+                    Title = item.Name,
+                    IconObject = FontAwesome.WPF.FontAwesomeIcon.None
+                };
 
                 TC_DO.Add_Item(new TV_TopView(TC_DO_Item));
             }
@@ -975,24 +1024,30 @@ namespace AMFramework.Controller
 
         private TV_TopView_controller dtv_Add_object()
         {
-            TV_TopView_controller TC_proj = new();
-            TC_proj.Title = "Object";
-            TC_proj.IconObject = FontAwesome.WPF.FontAwesomeIcon.Cube;
+            TV_TopView_controller TC_proj = new()
+            {
+                Title = "Object",
+                IconObject = FontAwesome.WPF.FontAwesomeIcon.Cube
+            };
 
             return TC_proj;
         }
 
         private Border dtv_ElementFormat(string content) 
         {
-            Border Belement = new();
-            Belement.Background = new SolidColorBrush(System.Windows.Media.Colors.WhiteSmoke);
-            Belement.BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Silver);
+            Border Belement = new()
+            {
+                Background = new SolidColorBrush(System.Windows.Media.Colors.WhiteSmoke),
+                BorderBrush = new SolidColorBrush(System.Windows.Media.Colors.Silver)
+            };
 
-            TextBlock tBlock = new();
-            tBlock.Text = content;
-            tBlock.HorizontalAlignment = HorizontalAlignment.Center;
-            tBlock.VerticalAlignment = VerticalAlignment.Center;
-            tBlock.Margin = new Thickness(5, 5, 5, 5);
+            TextBlock tBlock = new()
+            {
+                Text = content,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(5, 5, 5, 5)
+            };
             Belement.Child = tBlock;
 
             return Belement;

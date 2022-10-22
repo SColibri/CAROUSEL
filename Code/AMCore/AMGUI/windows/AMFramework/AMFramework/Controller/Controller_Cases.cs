@@ -65,7 +65,7 @@ namespace AMFramework.Controller
 
         #region Data
 
-        List<Model.Model_Case> _cases = new List<Model.Model_Case>();
+        List<Model.Model_Case> _cases = new();
 
         public List<Model.Model_Case> Cases
         {
@@ -132,8 +132,8 @@ namespace AMFramework.Controller
                 _selectedPhases.refresh();
                 _scheilConfigurations.Model = _scheilConfigurations.get_scheil_configuration_case(_selected_caseOLD.ID);
                 OnPropertyChanged("SelectedCase");
-                OnPropertyChanged("SelectedPhases");
-                OnPropertyChanged("ElementComposition");
+                OnPropertyChanged(nameof(SelectedPhases));
+                OnPropertyChanged(nameof(ElementComposition));
             }
         }
 
@@ -144,7 +144,7 @@ namespace AMFramework.Controller
             set 
             {
                 _show_popup = value;
-                OnPropertyChanged("ShowPopup");
+                OnPropertyChanged(nameof(ShowPopup));
             }
         }
         #endregion
@@ -158,7 +158,7 @@ namespace AMFramework.Controller
             set 
             { 
                 _popupView = value;
-                OnPropertyChanged("PopupView");
+                OnPropertyChanged(nameof(PopupView));
             }
         }
         #endregion
@@ -183,17 +183,19 @@ namespace AMFramework.Controller
 
                 if (columnItems.Count > 8)
                 {
-                    Model.Model_Case model = new Model.Model_Case();
-                    model.ID = Convert.ToInt32(columnItems[0]);
-                    model.IDProject = Convert.ToInt32(columnItems[1]);
-                    model.IDGroup = Convert.ToInt32(columnItems[2]);
-                    model.Name = columnItems[3];
-                    model.Script = columnItems[4];
-                    model.Date = columnItems[5];
-                    model.PosX = Convert.ToDouble(columnItems[6]);
-                    model.PosY = Convert.ToDouble(columnItems[7]);
-                    model.PosZ = Convert.ToDouble(columnItems[8]);
-                    model.ElementCompositionOLD = new();
+                    Model.Model_Case model = new()
+                    {
+                        ID = Convert.ToInt32(columnItems[0]),
+                        IDProject = Convert.ToInt32(columnItems[1]),
+                        IDGroup = Convert.ToInt32(columnItems[2]),
+                        Name = columnItems[3],
+                        Script = columnItems[4],
+                        Date = columnItems[5],
+                        PosX = Convert.ToDouble(columnItems[6]),
+                        PosY = Convert.ToDouble(columnItems[7]),
+                        PosZ = Convert.ToDouble(columnItems[8]),
+                        ElementCompositionOLD = new()
+                    };
                     _cases.Add(model);
                     Controller_HeatTreatment.fill_case_model(ref _comm, model);
                 }
@@ -205,7 +207,7 @@ namespace AMFramework.Controller
             _PrecipitationPhase.fill_models_with_precipitation_phases();
             _PrecipitationDomain.fill_models_with_precipitation_domains();
             _precipitationPhasesNames = Controller_PrecipitationPhase.Get_phases_names(_comm, _ControllerProjects.SelectedProject.ID);
-            OnPropertyChanged("Cases");
+            OnPropertyChanged(nameof(Cases));
             return outy;
         }
 

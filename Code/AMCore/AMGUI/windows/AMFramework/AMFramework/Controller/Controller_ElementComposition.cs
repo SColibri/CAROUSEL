@@ -20,7 +20,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -56,13 +56,15 @@ namespace AMFramework.Controller
         {
             if (DataRaw.Count < 6) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_ElementComposition modely = new();
-            modely.ID = Convert.ToInt32(DataRaw[0]);
-            modely.IDCase = Convert.ToInt32(DataRaw[1]);
-            modely.IDElement = Convert.ToInt32(DataRaw[2]);
-            modely.TypeComposition = DataRaw[3];
-            modely.Value = Convert.ToDouble(DataRaw[4]);
-            modely.ElementName = DataRaw[5];
+            Model.Model_ElementComposition modely = new()
+            {
+                ID = Convert.ToInt32(DataRaw[0]),
+                IDCase = Convert.ToInt32(DataRaw[1]),
+                IDElement = Convert.ToInt32(DataRaw[2]),
+                TypeComposition = DataRaw[3],
+                Value = Convert.ToDouble(DataRaw[4]),
+                ElementName = DataRaw[5]
+            };
 
             return modely;
         }

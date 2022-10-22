@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _id = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _idCase = value;
-                OnPropertyChanged("IDCase");
+                OnPropertyChanged(nameof(IDCase));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -55,7 +55,7 @@ namespace AMFramework.Model
             set
             {
                 _maxTemperatureStep = value;
-                OnPropertyChanged("MaxTemperatureStep");
+                OnPropertyChanged(nameof(MaxTemperatureStep));
             }
         }
 
@@ -67,7 +67,7 @@ namespace AMFramework.Model
             set
             {
                 _idPrecipitationDomain = value;
-                OnPropertyChanged("IDPrecipitationDomain");
+                OnPropertyChanged(nameof(IDPrecipitationDomain));
             }
         }
 
@@ -79,7 +79,7 @@ namespace AMFramework.Model
             set
             {               
                 _startTemperature = value;
-                OnPropertyChanged("StartTemperature");
+                OnPropertyChanged(nameof(StartTemperature));
             }
         }
 
@@ -103,7 +103,7 @@ namespace AMFramework.Model
             set
             {
                 _HeatTreatmentProfile = value;
-                OnPropertyChanged("HeatTreatmentProfile");
+                OnPropertyChanged(nameof(HeatTreatmentProfile));
             }
         }
 
@@ -114,7 +114,7 @@ namespace AMFramework.Model
             set
             {
                 _precipitationData = value;
-                OnPropertyChanged("PrecipitationData");
+                OnPropertyChanged(nameof(PrecipitationData));
             }
         }
 

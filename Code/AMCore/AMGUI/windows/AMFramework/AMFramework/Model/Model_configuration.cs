@@ -25,7 +25,7 @@ namespace AMFramework.Model
                     Controller.Controller_Config.ApiHandle?.update_path(_API_path);
                 }
                 
-                OnPropertyChanged("API_path");
+                OnPropertyChanged(nameof(API_path));
             }
         }
 
@@ -37,7 +37,7 @@ namespace AMFramework.Model
             set
             {
                 _external_API_path = value;
-                OnPropertyChanged("External_API_path");
+                OnPropertyChanged(nameof(External_API_path));
             }
         }
 
@@ -49,7 +49,7 @@ namespace AMFramework.Model
             set
             {
                 _working_directory = value;
-                OnPropertyChanged("Working_Directory");
+                OnPropertyChanged(nameof(Working_Directory));
             }
         }
 
@@ -61,7 +61,7 @@ namespace AMFramework.Model
             set
             {
                 _thermodynamic_database_path = value;
-                OnPropertyChanged("Thermodynamic_database_path");
+                OnPropertyChanged(nameof(Thermodynamic_database_path));
             }
         }
 
@@ -73,7 +73,7 @@ namespace AMFramework.Model
             set
             {
                 _physical_database_path = value;
-                OnPropertyChanged("Physical_database_path");
+                OnPropertyChanged(nameof(Physical_database_path));
             }
         }
 
@@ -85,7 +85,7 @@ namespace AMFramework.Model
             set
             {
                 _mobility_database_path = value;
-                OnPropertyChanged("Mobility_database_path");
+                OnPropertyChanged(nameof(Mobility_database_path));
             }
         }
 
@@ -97,7 +97,7 @@ namespace AMFramework.Model
             set 
             {
                 _is_loaded = value;
-                OnPropertyChanged("IsLoaded");
+                OnPropertyChanged(nameof(IsLoaded));
             }
         }
 

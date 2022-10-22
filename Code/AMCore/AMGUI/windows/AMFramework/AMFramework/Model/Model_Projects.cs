@@ -20,7 +20,7 @@ namespace AMFramework.Model
             set 
             {
                 _id = value;
-                OnPropertyChanged("ID"); 
+                OnPropertyChanged(nameof(ID)); 
             } 
         }
 
@@ -32,7 +32,7 @@ namespace AMFramework.Model
             set 
             {
                 _name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -45,7 +45,7 @@ namespace AMFramework.Model
             set 
             {
                 _apiName = value;
-                OnPropertyChanged("APIName");
+                OnPropertyChanged(nameof(APIName));
             }
         }
 
@@ -57,7 +57,7 @@ namespace AMFramework.Model
             set
             {
                 _externalAPI_Name = value;
-                OnPropertyChanged("ExternalAPI_Name");
+                OnPropertyChanged(nameof(ExternalAPI_Name));
             }
         }
 
@@ -75,7 +75,7 @@ namespace AMFramework.Model
             set 
             {
                 _selectedElements = value;
-                OnPropertyChanged("SelectedElements");
+                OnPropertyChanged(nameof(SelectedElements));
             }
         }
 
@@ -91,7 +91,7 @@ namespace AMFramework.Model
             set 
             {
                 _activePhasesConfiguration = value;
-                OnPropertyChanged("ActivePhasesConfiguration");
+                OnPropertyChanged(nameof(ActivePhasesConfiguration));
             }
         }
 
@@ -103,7 +103,7 @@ namespace AMFramework.Model
             set
             {
                 _activePhases = value;
-                OnPropertyChanged("ActivePhases");
+                OnPropertyChanged(nameof(ActivePhases));
             }
         }
 
@@ -116,7 +116,7 @@ namespace AMFramework.Model
             {
                 _activePhasesElementComposition = value;
 
-                OnPropertyChanged("ActivePhasesElementComposition");
+                OnPropertyChanged(nameof(ActivePhasesElementComposition));
 
                 var refElement = SelectedElements.Find(e => e.ModelObject.ISReferenceElement == 1);
                 if (refElement == null) return;

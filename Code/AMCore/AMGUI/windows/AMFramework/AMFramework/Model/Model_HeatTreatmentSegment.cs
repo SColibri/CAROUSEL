@@ -17,7 +17,7 @@ namespace AMFramework.Model
             set
             {
                 _id = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -29,7 +29,7 @@ namespace AMFramework.Model
             set
             {
                 _stepIndex = value;
-                OnPropertyChanged("StepIndex");
+                OnPropertyChanged(nameof(StepIndex));
             }
         }
 
@@ -41,7 +41,7 @@ namespace AMFramework.Model
             set
             {
                 _idHeatTreatment = value;
-                OnPropertyChanged("IDHeatTreatment");
+                OnPropertyChanged(nameof(IDHeatTreatment));
             }
         }
 
@@ -53,7 +53,7 @@ namespace AMFramework.Model
             set
             {
                 _idPrecipitationDomain = value;
-                OnPropertyChanged("IDPrecipitationDomain");
+                OnPropertyChanged(nameof(IDPrecipitationDomain));
             }
         }
 
@@ -65,7 +65,7 @@ namespace AMFramework.Model
             set
             {
                 _endTemperature = value;
-                OnPropertyChanged("EndTemperature");
+                OnPropertyChanged(nameof(EndTemperature));
             }
         }
 

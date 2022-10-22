@@ -44,9 +44,11 @@ namespace AMFramework.Views.Case
             controllerCase.PopupView.Title = "Phases";
             controllerCase.PopupView.clear_buttons();
 
-            Components.Button.AM_button saveSelection = new();
-            saveSelection.IconName = "Check";
-            saveSelection.GradientTransition = "green";
+            Components.Button.AM_button saveSelection = new()
+            {
+                IconName = "Check",
+                GradientTransition = "green"
+            };
             saveSelection.ClickButton += Accept_phase_selection;
 
             controllerCase.PopupView.add_button(saveSelection);
@@ -64,9 +66,11 @@ namespace AMFramework.Views.Case
             controllerCase.PopupView.Title = "Phases";
             controllerCase.PopupView.clear_buttons();
 
-            Components.Button.AM_button saveSelection = new();
-            saveSelection.IconName = "Check";
-            saveSelection.GradientTransition = "green";
+            Components.Button.AM_button saveSelection = new()
+            {
+                IconName = "Check",
+                GradientTransition = "green"
+            };
             saveSelection.ClickButton += Accept_phase_selection;
 
             controllerCase.PopupView.add_button(saveSelection);
@@ -108,9 +112,11 @@ namespace AMFramework.Views.Case
             controllerCase.PopupView.Title = "precipitation Phase";
             controllerCase.PopupView.clear_buttons();
 
-            Components.Button.AM_button saveSelection = new();
-            saveSelection.IconName = "Check";
-            saveSelection.GradientTransition = "green";
+            Components.Button.AM_button saveSelection = new()
+            {
+                IconName = "Check",
+                GradientTransition = "green"
+            };
 
             controllerCase.PopupView.add_button(saveSelection);
 
@@ -130,9 +136,11 @@ namespace AMFramework.Views.Case
             controllerCase.PopupView.Title = model.Name;
             controllerCase.PopupView.clear_buttons();
 
-            Components.Button.AM_button saveSelection = new();
-            saveSelection.IconName = "Check";
-            saveSelection.GradientTransition = "green";
+            Components.Button.AM_button saveSelection = new()
+            {
+                IconName = "Check",
+                GradientTransition = "green"
+            };
             saveSelection.ClickButton += controllerCase.PrecipitationPhaseController.Handle_ClickOnSave_AMButton;
             saveSelection.ClickButton += Close_popup_handle;
 

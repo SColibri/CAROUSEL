@@ -18,7 +18,7 @@ namespace AMFramework.Controller
 
         
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -34,7 +34,7 @@ namespace AMFramework.Controller
             set
             {
                 _coreOutput = value;
-                OnPropertyChanged("CoreOutput");
+                OnPropertyChanged(nameof(CoreOutput));
             }
         }
 

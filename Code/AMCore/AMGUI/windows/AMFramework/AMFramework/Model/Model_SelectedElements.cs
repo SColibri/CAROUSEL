@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _ID = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             } 
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _IDProject = value;
-                OnPropertyChanged("IDProject");
+                OnPropertyChanged(nameof(IDProject));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _IDElement = value;
-                OnPropertyChanged("IDElement");
+                OnPropertyChanged(nameof(IDElement));
             }
         }
 
@@ -59,7 +59,7 @@ namespace AMFramework.Model
                 if (value == 1) ISReferenceElementBool = true;
                 else ISReferenceElementBool = false;
 
-                OnPropertyChanged("ISReferenceElement");
+                OnPropertyChanged(nameof(ISReferenceElement));
             }
         }
 
@@ -70,7 +70,7 @@ namespace AMFramework.Model
             set
             {
                 _ElementName = value;
-                OnPropertyChanged("ElementName");
+                OnPropertyChanged(nameof(ElementName));
             }
         }
 
@@ -87,7 +87,7 @@ namespace AMFramework.Model
             set
             {
                 _isReferenceElement_bool = value;
-                OnPropertyChanged("ISReferenceElementBool");
+                OnPropertyChanged(nameof(ISReferenceElementBool));
             }
         }
         #endregion

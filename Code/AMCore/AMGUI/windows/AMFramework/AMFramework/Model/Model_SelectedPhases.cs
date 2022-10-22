@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _ID = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _IDCase = value;
-                OnPropertyChanged("IDCase");
+                OnPropertyChanged(nameof(IDCase));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _IDPhase = value;
-                OnPropertyChanged("IDPhase");
+                OnPropertyChanged(nameof(IDPhase));
             }
         }
 
@@ -55,7 +55,7 @@ namespace AMFramework.Model
             set
             {
                 _PhaseName = value;
-                OnPropertyChanged("PhaseName");
+                OnPropertyChanged(nameof(PhaseName));
             }
         }
 
@@ -68,7 +68,7 @@ namespace AMFramework.Model
             set
             {
                 _isDependentPhase = value;
-                OnPropertyChanged("IsDependentPhase");
+                OnPropertyChanged(nameof(IsDependentPhase));
             }
         }
         #endregion

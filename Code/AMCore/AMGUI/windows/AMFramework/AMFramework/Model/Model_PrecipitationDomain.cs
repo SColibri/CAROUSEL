@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _ID = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _IDCase = value;
-                OnPropertyChanged("IDCase");
+                OnPropertyChanged(nameof(IDCase));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
 
@@ -55,7 +55,7 @@ namespace AMFramework.Model
             set
             {
                 _IDPhase = value;
-                OnPropertyChanged("IDPhase");
+                OnPropertyChanged(nameof(IDPhase));
             }
         }
 
@@ -67,7 +67,7 @@ namespace AMFramework.Model
             set
             {
                 _initialGrainDiameter = value;
-                OnPropertyChanged("InitialGrainDiameter");
+                OnPropertyChanged(nameof(InitialGrainDiameter));
             }
         }
 
@@ -79,7 +79,7 @@ namespace AMFramework.Model
             set
             {
                 _equilibriumDiDe = value;
-                OnPropertyChanged("EquilibriumDiDe");
+                OnPropertyChanged(nameof(EquilibriumDiDe));
             }
         }
 
@@ -91,7 +91,7 @@ namespace AMFramework.Model
             set
             {
                 _vacancyEvolutionModel = value;
-                OnPropertyChanged("VacancyEvolutionModel");
+                OnPropertyChanged(nameof(VacancyEvolutionModel));
             }
         }
 
@@ -103,7 +103,7 @@ namespace AMFramework.Model
             set
             {
                 _considerExVa = value;
-                OnPropertyChanged("ConsiderExVa");
+                OnPropertyChanged(nameof(ConsiderExVa));
             }
         }
 
@@ -115,7 +115,7 @@ namespace AMFramework.Model
             set
             {
                 _excessVacancyEfficiency = value;
-                OnPropertyChanged("ExcessVacancyEfficiency");
+                OnPropertyChanged(nameof(ExcessVacancyEfficiency));
             }
         }
 

@@ -10,8 +10,10 @@ namespace AMFramework.Views.Popup
     {
         public static Components.Windows.AM_popupWindow popupConfigurations(Controller.Controller_Config config)
         {
-            Views.Config.Configuration Pg = new();
-            Pg.DataContext = config; // new Controller.Controller_Config(_coreSocket);
+            Views.Config.Configuration Pg = new()
+            {
+                DataContext = config // new Controller.Controller_Config(_coreSocket);
+            };
 
             Components.Windows.AM_popupWindow Pw = new() { Title = "Configurations" };
             Pw.ContentPage.Children.Add(Pg);
@@ -71,8 +73,10 @@ namespace AMFramework.Views.Popup
 
         public static Components.Windows.AM_popupWindow popupElementsList(Controller.Controller_DBS_Projects projectController)
         {
-            Views.Elements.ElementsList Pg = new(projectController);
-            Pg.DataContext = projectController; // new Controller.Controller_Config(_coreSocket);
+            Views.Elements.ElementsList Pg = new(projectController)
+            {
+                DataContext = projectController // new Controller.Controller_Config(_coreSocket);
+            };
 
             Components.Windows.AM_popupWindow Pw = new() { Title = "Database element list" };
             Pw.ContentPage.Children.Add(Pg);
@@ -93,9 +97,11 @@ namespace AMFramework.Views.Popup
 
         public static Components.Windows.AM_popupWindow popupCaseWindow(Controller.Controller_Cases caseController, int IDProject)
         {
-            caseController.SelectedCaseOLD = new Model.Model_Case();
-            caseController.SelectedCaseOLD.IDProject = IDProject;
-            caseController.SelectedCaseOLD.Date = DateTime.Now.ToString("dd/MM/yyyy");
+            caseController.SelectedCaseOLD = new Model.Model_Case
+            {
+                IDProject = IDProject,
+                Date = DateTime.Now.ToString("dd/MM/yyyy")
+            };
 
             Views.Case.Case_newitem Pg = new(caseController.SelectedCaseOLD);
 

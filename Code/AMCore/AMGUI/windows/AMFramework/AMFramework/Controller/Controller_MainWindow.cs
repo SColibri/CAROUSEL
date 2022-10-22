@@ -26,26 +26,23 @@ namespace AMFramework.Controller
 {
     public class Controller_MainWindow : Controller_Abstract, IMainWindow
     {
-        private MainWindow_ViewModel _AMView;        
-        private Controller.Controller_AMCore _AMCore;
+        private readonly MainWindow_ViewModel _AMView;        
+        private readonly Controller.Controller_AMCore _AMCore;
         private Controller.Controller_DBS_Projects _DBSProjects;
-        private Controller.Controller_Config _Config;
+        private readonly Controller.Controller_Config _Config;
         private Controller.Controller_Plot _Plot;
 
-        private Controller.Controller_Project _Project;
+        private readonly Controller.Controller_Project _Project;
 
         private Core.IAMCore_Comm _coreSocket = new Core.AMCore_Socket();
 
-        private Views.Projects.Project_contents _viewProjectContents;
+        private readonly Views.Projects.Project_contents _viewProjectContents;
 
         public Controller_MainWindow() 
         {
             AMSystem.UserPreferences? uPref = AMSystem.UserPreferences.load();
             
-            if (Controller_Global.Configuration == null) 
-            {
-                Controller_Global.Configuration = new(Controller_Global.UserPreferences.IAM_API_PATH);
-            }
+            Controller_Global.Configuration ??= new(Controller_Global.UserPreferences.IAM_API_PATH);
 
             _Config = Controller_Global.Configuration;
 
@@ -105,7 +102,7 @@ namespace AMFramework.Controller
             set
             {
                 _show_popup = value;
-                OnPropertyChanged("ShowPopup");
+                OnPropertyChanged(nameof(ShowPopup));
             }
         }
 
@@ -118,7 +115,7 @@ namespace AMFramework.Controller
             set
             {
                 _isComputing = value;
-                OnPropertyChanged("IsComputing");
+                OnPropertyChanged(nameof(IsComputing));
             }
         }
 
@@ -129,7 +126,7 @@ namespace AMFramework.Controller
             set 
             { 
                 _tabControl_Visible=value;
-                OnPropertyChanged("TabControlVisible");
+                OnPropertyChanged(nameof(TabControlVisible));
             }
         }
 
@@ -140,7 +137,7 @@ namespace AMFramework.Controller
             set
             {
                 _selectedTab = value;
-                OnPropertyChanged("SelectedTab");
+                OnPropertyChanged(nameof(SelectedTab));
             }
         }
 
@@ -155,14 +152,13 @@ namespace AMFramework.Controller
             set 
             {
                 _tabItems = value;
-                OnPropertyChanged("TabItems");
+                OnPropertyChanged(nameof(TabItems));
             }
         }
         public void Add_Tab_Item(TabItem itemy) 
         {
-            List<TabItem> nList = new();
+            List<TabItem> nList = new() { itemy };
 
-            nList.Add(itemy);
             foreach (var item in TabItems)
             {
                 nList.Add(item);
@@ -170,18 +166,18 @@ namespace AMFramework.Controller
 
             TabItems = nList;
             SelectedTab = itemy;
-            OnPropertyChanged("TabItems");
+            OnPropertyChanged(nameof(TabItems));
         }
         public void Remove_tab_Item(TabItem itemy) 
         { 
             TabItems.Remove(itemy);
-            OnPropertyChanged("TabItems");
+            OnPropertyChanged(nameof(TabItems));
         }
 
         public void Remove_ByTagType(Type objType) 
         {
             TabItems.RemoveAll(e => e.Tag.GetType().Equals(objType));
-            OnPropertyChanged("TabItems");
+            OnPropertyChanged(nameof(TabItems));
         }
 
         #endregion
@@ -246,7 +242,7 @@ namespace AMFramework.Controller
         
         private TabItem Create_Tab(object itemView, object modelObject, string tabTitle) 
         {
-            TabItem result = new TabItem();
+            TabItem result = new();
 
             string headerTitle = tabTitle;
             Uri ImageUri = null; //TODO add lua Icon here
@@ -267,25 +263,29 @@ namespace AMFramework.Controller
 
         public Grid get_TabHeader(string TabTitle, Uri uriImage)
         {
-            Grid grid = new Grid();
-            ColumnDefinition CDef_01 = new ColumnDefinition();
-            CDef_01.Width = new GridLength(25);
-            ColumnDefinition CDef_02 = new ColumnDefinition();
+            Grid grid = new();
+            ColumnDefinition CDef_01 = new()
+            {
+                Width = new GridLength(25)
+            };
+            ColumnDefinition CDef_02 = new();
             CDef_01.Width = new GridLength(1, GridUnitType.Star);
 
             grid.ColumnDefinitions.Add(CDef_01);
             grid.ColumnDefinitions.Add(CDef_02);
 
-            Image image = new Image();
+            Image image = new();
             if (uriImage != null)
             {
                 ImageSource imS = new BitmapImage(uriImage);
                 image.Source = imS;
             }
 
-            TextBlock textBlock = new TextBlock();
-            textBlock.FontWeight = FontWeights.DemiBold;
-            textBlock.Text = TabTitle;
+            TextBlock textBlock = new()
+            {
+                FontWeight = FontWeights.DemiBold,
+                Text = TabTitle
+            };
 
             Grid.SetColumn(image, 0);
             Grid.SetColumn(textBlock, 0);
@@ -303,7 +303,7 @@ namespace AMFramework.Controller
             set 
             {
                 _coreOut = value;
-                OnPropertyChanged("CoreOut");
+                OnPropertyChanged(nameof(CoreOut));
             } 
         }
         public void Set_Core_Output(string outputString)
@@ -316,8 +316,10 @@ namespace AMFramework.Controller
         #region Configurations
         public Components.Windows.AM_popupWindow popupConfigurations()
         {
-            Views.Config.Configuration Pg = new();
-            Pg.DataContext = _Config; // new Controller.Controller_Config(_coreSocket);
+            Views.Config.Configuration Pg = new()
+            {
+                DataContext = _Config // new Controller.Controller_Config(_coreSocket);
+            };
 
             Components.Windows.AM_popupWindow Pw = new() { Title = "Configurations" };
             Pw.ContentPage.Children.Add(Pg);
@@ -346,7 +348,7 @@ namespace AMFramework.Controller
             set
             {
                 _projects = value;
-                OnPropertyChanged("Projects");
+                OnPropertyChanged(nameof(Projects));
             }
         }
         #endregion
@@ -357,7 +359,7 @@ namespace AMFramework.Controller
             if (e.PropertyName is null) return;
             if(e?.PropertyName?.CompareTo("IsWorking") == 0) 
             {
-                OnPropertyChanged("IsLoading");
+                OnPropertyChanged(nameof(IsLoading));
             }
         }
         #region Methods
@@ -417,15 +419,17 @@ namespace AMFramework.Controller
 
         public System.Windows.Controls.TabItem projectView_Tab()
         {
-            Binding myBinding = new Binding("VisibilityProperty");
-            myBinding.Source = _DBSProjects.ProjectVisibility;
-            myBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding myBinding = new("VisibilityProperty")
+            {
+                Source = _DBSProjects.ProjectVisibility,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
 
             System.Windows.Controls.TabItem Tabby = new();
             Tabby.SetBinding(UIElement.VisibilityProperty, myBinding);
             Tabby.Content = new Views.Projects.Project_contents(ref _DBSProjects);
 
-            OnPropertyChanged("OpenScripts");
+            OnPropertyChanged(nameof(OpenScripts));
             return Tabby;
         }
         #endregion
@@ -464,13 +468,13 @@ namespace AMFramework.Controller
         #endregion
 
         #region Scripting
-        private MainWindow_ViewModel _scriptModel = new();
+        private readonly MainWindow_ViewModel _scriptModel = new();
         public MainWindow_ViewModel ScriptView => _scriptModel;
         public List<RibbonMenuItem> OpenScripts
         {
             get 
             {   
-                List<RibbonMenuItem> menu = new List<RibbonMenuItem>();
+                List<RibbonMenuItem> menu = new();
                 foreach (Components.Scripting.Scripting_ViewModel item in _scriptModel.OpenScripts)
                 {
                     RibbonMenuItem itemy = new()
@@ -492,15 +496,17 @@ namespace AMFramework.Controller
             CurrentRunningScript = (string)itemy.Tag;
 
             Components.Scripting.Scripting_ViewModel? modelScript = _scriptModel.OpenScripts.Find(e => e.Filename.CompareTo(CurrentRunningScript) == 0);
-            if (modelScript != null) modelScript.save();
+            modelScript?.save();
 
             ScriptRunning = true;
             TabControlVisible = false;
             System.Threading.Thread TH01 = new(run_script_async);
             TH01.Start();
 
-            System.Threading.Thread TH02 = new(Check_for_core_output_script);
-            TH02.Priority = System.Threading.ThreadPriority.Lowest;
+            System.Threading.Thread TH02 = new(Check_for_core_output_script)
+            {
+                Priority = System.Threading.ThreadPriority.Lowest
+            };
             TH02.Start();
         }
 
@@ -524,7 +530,7 @@ namespace AMFramework.Controller
         public System.Windows.Controls.TabItem scriptView_new_lua_script(string filename = "") 
         {
             System.Windows.Controls.TabItem Tabby = ScriptView.get_new_lua_script(filename);
-            OnPropertyChanged("OpenScripts");
+            OnPropertyChanged(nameof(OpenScripts));
             return Tabby;
         }
 
@@ -535,7 +541,7 @@ namespace AMFramework.Controller
             set 
             { 
                 _scriptRunning = value;
-                OnPropertyChanged("ScriptRunning");
+                OnPropertyChanged(nameof(ScriptRunning));
             }
         }
 
@@ -548,7 +554,7 @@ namespace AMFramework.Controller
             set 
             {
                 _runningScriptOutput = value;
-                OnPropertyChanged("RunningScriptOutput");
+                OnPropertyChanged(nameof(RunningScriptOutput));
             } 
         }
 
@@ -584,8 +590,7 @@ namespace AMFramework.Controller
             GC.Collect();
 
             // Check parameters
-            TreeView? refTreeView = sender as TreeView;
-            if (refTreeView == null) return;
+            if (sender is not TreeView refTreeView) return;
             if (refTreeView.SelectedItem == null) return;
 
             // get selected item
@@ -687,7 +692,7 @@ namespace AMFramework.Controller
             set
             {
                 _popupWindow = value;
-                OnPropertyChanged("PopupWindow");
+                OnPropertyChanged(nameof(PopupWindow));
             }
         }
         public void Show_Popup(AM_popupWindow pWindow)
@@ -712,7 +717,7 @@ namespace AMFramework.Controller
             set 
             {
                 _popupVisibility = value;
-                OnPropertyChanged("PopupVisibility");
+                OnPropertyChanged(nameof(PopupVisibility));
             }
         }
 
@@ -769,7 +774,7 @@ namespace AMFramework.Controller
             set
             {
                 _isLoading = value;
-                OnPropertyChanged("IsLoading");
+                OnPropertyChanged(nameof(IsLoading));
             }
         }
 
@@ -787,7 +792,7 @@ namespace AMFramework.Controller
             set 
             {
                 _titleAdditionalInformation = value;
-                OnPropertyChanged("TitleAdditionalInformation");
+                OnPropertyChanged(nameof(TitleAdditionalInformation));
                 AdditionalInformationIsExpanded = true;
             }
         }
@@ -799,7 +804,7 @@ namespace AMFramework.Controller
             set 
             {
                 _contentAdditionalInformation = value;
-                OnPropertyChanged("ContentAdditionalInformation");
+                OnPropertyChanged(nameof(ContentAdditionalInformation));
                 AdditionalInformationIsExpanded = true;
             }
         }
@@ -811,7 +816,7 @@ namespace AMFramework.Controller
             set 
             {
                 _additionalInformationIsExpanded = value;
-                OnPropertyChanged("AdditionalInformationIsExpanded");
+                OnPropertyChanged(nameof(AdditionalInformationIsExpanded));
             }
         }
         #endregion

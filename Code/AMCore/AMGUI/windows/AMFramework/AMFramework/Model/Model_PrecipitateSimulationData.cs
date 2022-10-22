@@ -19,7 +19,7 @@ namespace AMFramework.Model
             set
             {
                 _id = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -31,7 +31,7 @@ namespace AMFramework.Model
             set
             {
                 _idPrecipitationPhase = value;
-                OnPropertyChanged("IDPrecipitationPhase");
+                OnPropertyChanged(nameof(IDPrecipitationPhase));
             }
         }
 
@@ -43,7 +43,7 @@ namespace AMFramework.Model
             set
             {
                 _idHeatTreatment = value;
-                OnPropertyChanged("IDHeatTreatment");
+                OnPropertyChanged(nameof(IDHeatTreatment));
             }
         }
 
@@ -55,7 +55,7 @@ namespace AMFramework.Model
             set
             {
                 _time = value;
-                OnPropertyChanged("Time");
+                OnPropertyChanged(nameof(Time));
             }
         }
 
@@ -67,7 +67,7 @@ namespace AMFramework.Model
             set
             {
                 _phaseFraction = value;
-                OnPropertyChanged("PhaseFraction");
+                OnPropertyChanged(nameof(PhaseFraction));
             }
         }
 
@@ -79,7 +79,7 @@ namespace AMFramework.Model
             set
             {
                 _numberDensity = value;
-                OnPropertyChanged("NumberDensity");
+                OnPropertyChanged(nameof(NumberDensity));
             }
         }
 
@@ -91,7 +91,7 @@ namespace AMFramework.Model
             set
             {
                 _meanRadius = value;
-                OnPropertyChanged("MeanRadius");
+                OnPropertyChanged(nameof(MeanRadius));
             }
         }
 
@@ -104,7 +104,7 @@ namespace AMFramework.Model
             set
             {
                 _precipitationName = value;
-                OnPropertyChanged("PrecipitationName");
+                OnPropertyChanged(nameof(PrecipitationName));
             }
         }
 

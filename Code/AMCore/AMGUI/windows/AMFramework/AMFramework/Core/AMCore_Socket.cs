@@ -10,7 +10,7 @@ namespace AMFramework.Core
 {
     public class AMCore_Socket : IAMCore_Comm
     {
-        private Socket s = new Socket(AddressFamily.InterNetwork,
+        private Socket s = new(AddressFamily.InterNetwork,
                 SocketType.Stream,
                 ProtocolType.Tcp);
         private bool _connected = false;

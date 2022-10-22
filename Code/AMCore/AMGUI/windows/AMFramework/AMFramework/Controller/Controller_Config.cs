@@ -122,11 +122,13 @@ namespace AMFramework.Controller
 
         private void Search_API_path_controll()
         {
-            OpenFileDialog OFD = new OpenFileDialog();
-            OFD.Multiselect = false;
-            OFD.Filter = "AM_library|*.dll";
-            OFD.Title = "Select the AM_Framework API library";
-            OFD.CheckFileExists = true;
+            OpenFileDialog OFD = new()
+            {
+                Multiselect = false,
+                Filter = "AM_library|*.dll",
+                Title = "Select the AM_Framework API library",
+                CheckFileExists = true
+            };
 
             if (OFD.ShowDialog() == true)
             {
@@ -161,9 +163,11 @@ namespace AMFramework.Controller
 
         private void Search_externalAPI_path_controll()
         {
-            System.Windows.Forms.FolderBrowserDialog OFD = new System.Windows.Forms.FolderBrowserDialog();
-            OFD.Description = "external API directory";
-            OFD.UseDescriptionForTitle = true;
+            System.Windows.Forms.FolderBrowserDialog OFD = new()
+            {
+                Description = "external API directory",
+                UseDescriptionForTitle = true
+            };
 
             if (OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -198,9 +202,11 @@ namespace AMFramework.Controller
 
         private void Search_workingDirectory_path_controll()
         {
-            System.Windows.Forms.FolderBrowserDialog OFD = new System.Windows.Forms.FolderBrowserDialog();
-            OFD.Description = "working directory";
-            OFD.UseDescriptionForTitle = true;
+            System.Windows.Forms.FolderBrowserDialog OFD = new()
+            {
+                Description = "working directory",
+                UseDescriptionForTitle = true
+            };
 
             if (OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -234,11 +240,13 @@ namespace AMFramework.Controller
 
         private void Search_thermodynamic_database_path_controll()
         {
-            OpenFileDialog OFD = new OpenFileDialog();
-            OFD.Multiselect = false;
-            OFD.Filter = "thermodynamic database|*.tdb";
-            OFD.Title = "Select a thermodynamic database";
-            OFD.CheckFileExists = true;
+            OpenFileDialog OFD = new()
+            {
+                Multiselect = false,
+                Filter = "thermodynamic database|*.tdb",
+                Title = "Select a thermodynamic database",
+                CheckFileExists = true
+            };
 
             if (OFD.ShowDialog() == true)
             {
@@ -272,11 +280,13 @@ namespace AMFramework.Controller
 
         private void Search_physical_database_path_controll()
         {
-            OpenFileDialog OFD = new OpenFileDialog();
-            OFD.Multiselect = false;
-            OFD.Filter = "physical database|*.pdb";
-            OFD.Title = "Select a physical database";
-            OFD.CheckFileExists = true;
+            OpenFileDialog OFD = new()
+            {
+                Multiselect = false,
+                Filter = "physical database|*.pdb",
+                Title = "Select a physical database",
+                CheckFileExists = true
+            };
 
             if (OFD.ShowDialog() == true)
             {
@@ -310,11 +320,13 @@ namespace AMFramework.Controller
 
         private void Search_Mobility_database_path_controll()
         {
-            OpenFileDialog OFD = new OpenFileDialog();
-            OFD.Multiselect = false;
-            OFD.Filter = "physical database|*.ddb";
-            OFD.Title = "Select a physical database";
-            OFD.CheckFileExists = true;
+            OpenFileDialog OFD = new()
+            {
+                Multiselect = false,
+                Filter = "physical database|*.ddb",
+                Title = "Select a physical database",
+                CheckFileExists = true
+            };
 
             if (OFD.ShowDialog() == true)
             {

@@ -21,7 +21,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -37,7 +37,7 @@ namespace AMFramework.Controller
             set
             {
                 _model = value;
-                OnPropertyChanged("Model");
+                OnPropertyChanged(nameof(Model));
             }
         }
 
@@ -72,15 +72,17 @@ namespace AMFramework.Controller
         {
             if (DataRaw.Count < 7) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_ScheilConfiguration modely = new();
-            modely.ID = Convert.ToInt32(DataRaw[0]);
-            modely.IDCase = Convert.ToInt32(DataRaw[1]);
-            modely.StartTemperature = Convert.ToDouble(DataRaw[2]);
-            modely.EndTemperature = Convert.ToDouble(DataRaw[3]);
-            modely.StepSize = Convert.ToDouble(DataRaw[4]);
-            modely.DependentPhase = Convert.ToInt32(DataRaw[5]);
-            modely.MinLiquidFraction = Convert.ToDouble(DataRaw[6]);
-            modely.DependentPhaseName = DataRaw[7];
+            Model.Model_ScheilConfiguration modely = new()
+            {
+                ID = Convert.ToInt32(DataRaw[0]),
+                IDCase = Convert.ToInt32(DataRaw[1]),
+                StartTemperature = Convert.ToDouble(DataRaw[2]),
+                EndTemperature = Convert.ToDouble(DataRaw[3]),
+                StepSize = Convert.ToDouble(DataRaw[4]),
+                DependentPhase = Convert.ToInt32(DataRaw[5]),
+                MinLiquidFraction = Convert.ToDouble(DataRaw[6]),
+                DependentPhaseName = DataRaw[7]
+            };
             return modely;
         }
         #endregion

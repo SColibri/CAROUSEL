@@ -28,7 +28,7 @@ namespace AMFramework.Model
             set
             {
                 _id = value;
-                OnPropertyChanged("ID");
+                OnPropertyChanged(nameof(ID));
             }
         }
 
@@ -40,7 +40,7 @@ namespace AMFramework.Model
             set
             {
                 _idProject = value;
-                OnPropertyChanged("IDProject");
+                OnPropertyChanged(nameof(IDProject));
             }
         }
 
@@ -52,7 +52,7 @@ namespace AMFramework.Model
             set
             {
                 _idPhase = value;
-                OnPropertyChanged("IDPhase");
+                OnPropertyChanged(nameof(IDPhase));
             }
         }
 
@@ -64,7 +64,7 @@ namespace AMFramework.Model
             set 
             {
                 _phaseName = value;
-                OnPropertyChanged("PhaseName");
+                OnPropertyChanged(nameof(PhaseName));
             }
         }
         #endregion

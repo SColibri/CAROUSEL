@@ -29,7 +29,7 @@ namespace AMFramework.Controller
             set
             {
                 _precipitationDomains = value;
-                OnPropertyChanged("PrecipitationDomains");
+                OnPropertyChanged(nameof(PrecipitationDomains));
             }
         }
 
@@ -62,16 +62,18 @@ namespace AMFramework.Controller
         {
             if (DataRaw.Count < 7) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_PrecipitationDomain model = new Model.Model_PrecipitationDomain();
-            model.ID = Convert.ToInt32(DataRaw[0]);
-            model.IDCase = Convert.ToInt32(DataRaw[1]);
-            model.Name = DataRaw[2];
-            model.IDPhase = Convert.ToInt32(DataRaw[3]);
-            model.InitialGrainDiameter = Convert.ToDouble(DataRaw[4]);
-            model.EquilibriumDiDe = Convert.ToDouble(DataRaw[5]);
-            model.VacancyEvolutionModel = DataRaw[6];
-            model.ConsiderExVa = Convert.ToInt16(DataRaw[7]);
-            model.ExcessVacancyEfficiency = Convert.ToDouble(DataRaw[8]);
+            Model.Model_PrecipitationDomain model = new()
+            {
+                ID = Convert.ToInt32(DataRaw[0]),
+                IDCase = Convert.ToInt32(DataRaw[1]),
+                Name = DataRaw[2],
+                IDPhase = Convert.ToInt32(DataRaw[3]),
+                InitialGrainDiameter = Convert.ToDouble(DataRaw[4]),
+                EquilibriumDiDe = Convert.ToDouble(DataRaw[5]),
+                VacancyEvolutionModel = DataRaw[6],
+                ConsiderExVa = Convert.ToInt16(DataRaw[7]),
+                ExcessVacancyEfficiency = Convert.ToDouble(DataRaw[8])
+            };
 
             return model;
         }
@@ -91,7 +93,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Interfaces
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
         {

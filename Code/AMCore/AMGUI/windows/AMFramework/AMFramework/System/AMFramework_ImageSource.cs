@@ -12,7 +12,7 @@ namespace AMFramework.AMsystem
     {
 
         private static List<Tuple<string, BitmapImage>> _images = new();
-        private static BitmapImage _noImage = new BitmapImage(new Uri($"/{ "Resources/Icons/tablerIcons/alert-triangle.png" }", UriKind.Relative));
+        private static BitmapImage _noImage = new(new Uri($"/{ "Resources/Icons/tablerIcons/alert-triangle.png" }", UriKind.Relative));
 
         private static string Get_FullPath(string filename) 
         {
@@ -32,8 +32,10 @@ namespace AMFramework.AMsystem
                 bool testThis = File.Exists(filename);
                 if (File.Exists(filename) == true) 
                 {
-                    BitmapImage Itembitmap = new BitmapImage(new Uri($"/{ filename }", UriKind.Relative));
-                    Itembitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    BitmapImage Itembitmap = new(new Uri($"/{filename}", UriKind.Relative))
+                    {
+                        CacheOption = BitmapCacheOption.OnLoad
+                    };
 
 
                     imageInList = new Tuple<string, BitmapImage>(ImageName, Itembitmap);
@@ -59,7 +61,7 @@ namespace AMFramework.AMsystem
                 return new(17, 17);
             }
 
-            System.Drawing.Bitmap originalIMG = new System.Drawing.Bitmap(filename);
+            System.Drawing.Bitmap originalIMG = new(filename);
             return new System.Drawing.Bitmap(originalIMG,   new System.Drawing.Size(17,17));
         }
     }
