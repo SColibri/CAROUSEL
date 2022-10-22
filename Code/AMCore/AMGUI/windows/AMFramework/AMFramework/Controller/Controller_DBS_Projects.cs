@@ -238,6 +238,9 @@ namespace AMFramework.Controller
             set
             {
                 _selectedProject = value;
+                Controller_Global.MainControl?.Show_Notification("Project", "New Project has been selected", 
+                                                                FontAwesome.WPF.FontAwesomeIcon.Info,
+                                                                null, null,null);
                 SelectProject(_selectedProject.ID);
             }
         }

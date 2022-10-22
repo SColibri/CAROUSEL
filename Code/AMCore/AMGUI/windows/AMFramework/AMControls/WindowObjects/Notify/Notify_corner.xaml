@@ -61,7 +61,7 @@
                     BorderBrush="Silver" BorderThickness="0.3">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
-                        <GradientStop d:Color="SteelBlue" Color="{Binding Path=TitleBackground, UpdateSourceTrigger=PropertyChanged}" Offset="0.1"/>
+                        <GradientStop d:Color="LightBlue" Color="{Binding Path=TitleBackground, UpdateSourceTrigger=PropertyChanged}" Offset="0.1"/>
                         <GradientStop Color="WhiteSmoke" Offset="1.3"/>
                     </LinearGradientBrush>
                 </Border.Background>
@@ -84,7 +84,8 @@
                                  Grid.Column="0"
                                  d:Foreground="Red"
                                  Foreground="{Binding Path=IconForeground}" 
-                                 Width="30" VerticalAlignment="Center"
+                                 Width="30" Height="30" 
+                                 VerticalAlignment="Center"
                                  HorizontalAlignment="Center"/>
                 <TextBlock Grid.Column="1" 
                            d:Text="This is the text content"

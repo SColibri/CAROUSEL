@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace AMFramework.Interfaces
 {
@@ -21,6 +22,8 @@ namespace AMFramework.Interfaces
         public void Show_HeatTreatment_EditWindow(Model.Model_HeatTreatment modelObject);
         public void Show_Popup(AM_popupWindow pWindow);
         public void Show_loading(bool showLoading);
+        public void Show_Notification(string Title, string Content, FontAwesome.WPF.FontAwesomeIcon IconType, 
+                                      Brush? IconForeground, Brush? ContentBackground, Color? TitleBackground);
 
         //---------------------------------------------------------------------------------
         // OUTPUT

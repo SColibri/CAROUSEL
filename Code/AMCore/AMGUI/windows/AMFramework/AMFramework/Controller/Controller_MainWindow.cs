@@ -65,6 +65,7 @@ namespace AMFramework.Controller
             _viewProjectContents = new(ref _DBSProjects);
             _Project = new(_coreSocket);
             _Project.Load_projectList();
+            NotificationObject = new();
 
             reloadProjects();
         }
@@ -368,6 +369,7 @@ namespace AMFramework.Controller
         public void createProject(string Name)
         {
             CoreOut = _DBSProjects.DB_projects_create_new(Name);
+            Show_Notification("Project","Project has been created");
         }
 
         #endregion
@@ -714,6 +716,49 @@ namespace AMFramework.Controller
             }
         }
 
+        #endregion
+
+        #region Notification
+        private AMControls.WindowObjects.Notify.Notify_corner _notificationObject;
+        /// <summary>
+        /// Using Notification object we can notify anything to the user as a small comment box
+        /// </summary>
+        public AMControls.WindowObjects.Notify.Notify_corner NotificationObject 
+        { 
+            get { return _notificationObject; }
+            set 
+            {
+                _notificationObject = value;
+                
+                // set default size max/min sizes
+                _notificationObject.MaxHeight = 300;
+                _notificationObject.MaxWidth = 500;
+                _notificationObject.Visibility = Visibility.Collapsed;
+
+                OnPropertyChanged(nameof(NotificationObject));
+            }
+        }
+        public void Show_Notification(string Title, string Content, FontAwesome.WPF.FontAwesomeIcon IconType = FontAwesome.WPF.FontAwesomeIcon.InfoCircle,
+                                      Brush? IconForeground = null, Brush? ContentBackground = null, Color? TitleBackground = null)
+        {
+            // Set notification parameters
+            NotificationObject.Title = Title;
+            NotificationObject.Text = Content;
+            NotificationObject.Icon = IconType;
+
+            //If Brushes are null, set default values
+            if (IconForeground != null) NotificationObject.IconForeground = IconForeground;
+            else NotificationObject.IconForeground = Brushes.White;
+
+            if (ContentBackground != null) NotificationObject.ContentBackground = ContentBackground;
+            else NotificationObject.ContentBackground = Brushes.Black;
+
+            if (TitleBackground != null) NotificationObject.TitleBackground = (Color)TitleBackground;
+            else NotificationObject.TitleBackground = Colors.LightBlue;
+
+            // show notification (Maybe add the time interavl into the interface as parameter)
+            NotificationObject.Show(5000);
+        }
         #endregion
 
         #region LoadingInformationDisplay

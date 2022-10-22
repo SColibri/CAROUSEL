@@ -10,6 +10,7 @@
         xmlns:controller="clr-namespace:AMFramework.Controller" 
         d:DataContext="{d:DesignInstance Type=controller:Controller_MainWindow}"
         xmlns:tvc ="clr-namespace:AMControls.Custom.ProjectTreeView;assembly=AMControls"
+        xmlns:noty="clr-namespace:AMControls.WindowObjects.Notify;assembly=AMControls"
         mc:Ignorable="d"
         Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
     <Grid>
@@ -342,6 +343,11 @@
             <Border Opacity="70" Background="Black" Visibility="Hidden" Grid.RowSpan="4">
 
             </Border>
+        </Grid>
+
+        <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1" Grid.RowSpan="2" 
+              Panel.ZIndex="16" Margin="3">
+            <ContentControl Content="{Binding Path=NotificationObject, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
     </Grid>
 </Window>

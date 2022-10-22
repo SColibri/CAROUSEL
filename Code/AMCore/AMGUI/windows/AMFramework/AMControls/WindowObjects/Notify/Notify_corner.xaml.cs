@@ -34,7 +34,7 @@ namespace AMControls.WindowObjects.Notify
         }
 
         #region Parameters
-        private Color _titleBackground = Colors.SteelBlue;
+        private Color _titleBackground = Colors.LightBlue;
         public Color TitleBackground
         {
             get { return _titleBackground; }
@@ -152,7 +152,12 @@ namespace AMControls.WindowObjects.Notify
         private void Show_timer_elapsedHandle(object? sender, ElapsedEventArgs e) 
         {
             ShowAnimation = false;
-            this.Visibility = Visibility.Collapsed;
+
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                this.Visibility = Visibility.Collapsed;
+            }));
+            
             if(sender != null)
             ((Timer)sender).Stop();
         }
