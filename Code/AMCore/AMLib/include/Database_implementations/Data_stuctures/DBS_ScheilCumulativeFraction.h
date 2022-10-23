@@ -56,7 +56,7 @@ public:
 
 		set_id(std::stoi(rawData[0]));
 		IDCase = std::stoi(rawData[1]);
-		IDPhase = std::stod(rawData[2]);
+		IDPhase = std::stoi(rawData[2]);
 		TypeComposition = rawData[3];
 		Temperature = std::stod(rawData[4]);
 		Value = std::stod(rawData[5]);

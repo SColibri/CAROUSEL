@@ -62,7 +62,7 @@ namespace string_manipulators
 
     static void replace_token(std::string& replaceThis, std::string Oldvalue, std::string Newvalue)
     {   
-        int index{ 0 };
+        size_t index{ 0 };
         while ((index = replaceThis.find(Oldvalue)) != std::string::npos) {    //for each location where Hello is found
             replaceThis.replace(index, Newvalue.length(), Newvalue); //remove and replace from that position
         }

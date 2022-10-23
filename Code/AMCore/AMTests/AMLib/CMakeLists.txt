@@ -15,6 +15,7 @@ set(TEST_SET
     AM_lua_Test
     AM_Threading_Test
     AM_lua_script_Test
+    AM_Modeling_Test
 )
 
 foreach(target ${TEST_SET})
