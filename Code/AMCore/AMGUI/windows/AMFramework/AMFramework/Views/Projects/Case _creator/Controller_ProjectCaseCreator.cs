@@ -1,10 +1,13 @@
-﻿using AMFramework.Model;
+﻿using AMFramework.Controller;
+using AMFramework.Model;
 using AMFramework.Model.Model_Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace AMFramework.Views.Projects.Other
 {
@@ -16,7 +19,7 @@ namespace AMFramework.Views.Projects.Other
             CaseTemplate = new(_comm);
             UpdateCaseTemplate_Elements();
 
-            PhaseListPage = new Phase.Phase_List();
+            PhaseListPage = new Phase.PhaseList_View(comm);
         }
 
 
@@ -56,6 +59,127 @@ namespace AMFramework.Views.Projects.Other
                 _phaseListPage = value;
                 OnPropertyChanged(nameof(PhaseListPage));
             }
+        }
+
+
+
+        #endregion
+
+        #region Parameters
+        private ControllerM_Phase? _selectedMinLiquidFractionPhase;
+        public ControllerM_Phase? SelectedMinLiquiedFractionPhase
+        {
+            get { return _selectedMinLiquidFractionPhase; }
+            set
+            {
+                _selectedMinLiquidFractionPhase = value;
+                OnPropertyChanged(nameof(SelectedMinLiquiedFractionPhase));
+
+                if (value == null)
+                {
+                    CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.DependentPhase = -1;
+                }
+                else 
+                {
+                    // TODO:Make safe
+                    int ID = _selectedMinLiquidFractionPhase.MCObject.ModelObject.ID;
+                    CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.DependentPhase = ID;
+                }
+                
+            }
+        }
+
+
+        #region Solidification_configuration
+        private double _startTemperature = 700;
+        public double StartTemperature 
+        { 
+            get { return _startTemperature; }
+            set 
+            {
+                _startTemperature = value;
+                OnPropertyChanged(nameof(StartTemperature));
+
+                CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.StartTemperature = StartTemperature;
+                CaseTemplate.MCObject.ModelObject.EquilibriumConfiguration.ModelObject.StartTemperature = StartTemperature;
+            }
+        }
+
+
+        private double _endTemperature = 450;
+        public double EndTemperature
+        {
+            get { return _endTemperature; }
+            set
+            {
+                _endTemperature = value;
+                OnPropertyChanged(nameof(EndTemperature));
+
+                CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.EndTemperature = EndTemperature;
+                CaseTemplate.MCObject.ModelObject.EquilibriumConfiguration.ModelObject.EndTemperature = EndTemperature;
+
+            }
+        }
+
+
+        private double _stepSize = 1;
+        public double StepSize
+        {
+            get { return _stepSize; }
+            set
+            {
+                _stepSize = value;
+                OnPropertyChanged(nameof(StepSize));
+
+
+                CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.StepSize = StepSize;
+                CaseTemplate.MCObject.ModelObject.EquilibriumConfiguration.ModelObject.StepSize = StepSize;
+            }
+        }
+
+        private double _minLiquidFraction = 1;
+        public double MinLiquidFraction
+        {
+            get { return _minLiquidFraction; }
+            set
+            {
+                _minLiquidFraction = value;
+                OnPropertyChanged(nameof(MinLiquidFraction));
+
+                // TODO: Make safe
+                CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.MinLiquidFraction = MinLiquidFraction;
+            }
+        }
+        #endregion
+
+        #endregion
+
+        #region Commands
+
+        private ICommand _removeMinLiquidSelection;
+        public ICommand RemoveMinLiquidSelection
+        {
+            get
+            {
+                if (_removeMinLiquidSelection == null)
+                {
+                    _removeMinLiquidSelection = new RelayCommand(
+                        param => this.RemoveMinLiquidSelection_Action(),
+                        param => this.RemoveMinLiquidSelection_Check()
+                    );
+                }
+                return _removeMinLiquidSelection;
+            }
+        }
+
+        private void RemoveMinLiquidSelection_Action()
+        {
+            SelectedMinLiquiedFractionPhase = null;
+        }
+
+        private bool RemoveMinLiquidSelection_Check()
+        {
+            return true;
         }
 
         #endregion

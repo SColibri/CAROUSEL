@@ -97,7 +97,7 @@ namespace AMFramework.Controller
 
         public void load_database_available_phases()
         {
-            _availablePhases = Controller_Phase.get_available_phases_in_database(ref _comm);
+            _availablePhases = Controller_Phase.Get_available_phases_in_database(ref _comm);
             OnPropertyChanged("AvailablePhase");
         }
 

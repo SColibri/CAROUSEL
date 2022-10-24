@@ -18,6 +18,7 @@ namespace AMFramework.Views.Phase
     /// <summary>
     /// Interaction logic for Phase_List.xaml
     /// </summary>
+    [Obsolete("This view uses the old version of controller DBSProject, use the newer version PhaseList_View")]
     public partial class Phase_List : UserControl
     {
         public Phase_List()

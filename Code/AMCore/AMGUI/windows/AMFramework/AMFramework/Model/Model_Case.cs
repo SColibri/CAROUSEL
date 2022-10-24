@@ -210,8 +210,8 @@ namespace AMFramework.Model
             }
         }
 
-        private ModelController<Model_EquilibriumPhaseFraction>? _equilibriumConfiguration;
-        public ModelController<Model_EquilibriumPhaseFraction>? EquilibriumConfiguration
+        private ModelController<Model_EquilibriumConfiguration>? _equilibriumConfiguration;
+        public ModelController<Model_EquilibriumConfiguration>? EquilibriumConfiguration
         {
             get { return _equilibriumConfiguration; }
             set

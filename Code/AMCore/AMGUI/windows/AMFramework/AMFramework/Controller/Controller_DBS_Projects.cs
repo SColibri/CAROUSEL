@@ -432,7 +432,7 @@ namespace AMFramework.Controller
 
         public void load_database_available_phases()
         {
-            _available_Phase = Controller_Phase.get_available_phases_in_database(ref _AMCore_Socket);
+            _available_Phase = Controller_Phase.Get_available_phases_in_database(ref _AMCore_Socket);
             OnPropertyChanged(nameof(AvailablePhase));
         }
 

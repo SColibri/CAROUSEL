@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AMFramework.Views.Phase" 
              xmlns:fa="http://schemas.fontawesome.io/icons/"
-             xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_DBS_Projects}"
+             xmlns:controller="clr-namespace:AMFramework.Controller" 
+             d:DataContext="{d:DesignInstance Type=controller:Controller_DBS_Projects}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" MinWidth="305">
     <Grid>

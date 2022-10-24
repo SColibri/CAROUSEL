@@ -12,7 +12,9 @@ namespace AMFramework.Model.Model_Controllers
     public class ControllerM_Case : Controller_Abstract_Models<Model_Case>
     {
         public ControllerM_Case(IAMCore_Comm comm) : base(comm)
-        { }
+        {
+            Add_SolidificationConfigurations();
+        }
         public ControllerM_Case(IAMCore_Comm comm, ModelController<Model_Case> modelMC) : base(comm, modelMC)
         { }
 
@@ -23,7 +25,18 @@ namespace AMFramework.Model.Model_Controllers
             // TODO Refactor Case object
             //CaseMC.ModelObject.ElementComposition = ModelController<Model_ElementComposition>.LoadIDCase(ref _comm,CaseMC.ModelObject.ID);
         }
+
+        #region ObjectPrivateMethods
+        private void Add_SolidificationConfigurations()
+        {
+            MCObject.ModelObject.EquilibriumConfiguration = new(ref _comm);
+            MCObject.ModelObject.ScheilConfiguration = new(ref _comm);
+        }
         #endregion
+
+        #endregion
+
+
 
     }
 }

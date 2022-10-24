@@ -1,10 +1,10 @@
 #pragma once
 
 #include <windows.h>
-#include<iostream>
-#include<thread>
-#include<chrono>
-#include<atltime.h>
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include <atltime.h>
 
 #define BUFSIZE 4096 
 using namespace std;
