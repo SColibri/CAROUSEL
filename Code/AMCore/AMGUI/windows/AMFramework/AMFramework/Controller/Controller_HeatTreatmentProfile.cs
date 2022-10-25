@@ -64,7 +64,7 @@ namespace AMFramework.Controller
 
         public static void fill_heatTreatment_model(ref Core.IAMCore_Comm socket, Model.Model_HeatTreatment ObjectModel)
         {
-            ObjectModel.HeatTreatmentProfile = get_data_from_IDHeatTreatment(ref socket, ObjectModel.ID);
+            ObjectModel.HeatTreatmentProfileOLD = get_data_from_IDHeatTreatment(ref socket, ObjectModel.ID);
         }
         #endregion
     }

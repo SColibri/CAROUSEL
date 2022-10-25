@@ -35,7 +35,10 @@ namespace AMControls.Implementations.Commands
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
         }
-        public void Execute(object parameter) { _execute(parameter); }
+        public void Execute(object parameter) 
+        { 
+            _execute(parameter); 
+        }
         #endregion // ICommand Members 
     }
 }

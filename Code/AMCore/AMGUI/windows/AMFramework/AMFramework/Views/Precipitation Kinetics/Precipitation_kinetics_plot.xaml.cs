@@ -38,22 +38,22 @@ namespace AMFramework.Views.Precipitation_Kinetics
         {
             if (ControllerPlot is null) return;
             if (ControllerPlot.HeatModel.ID == -1) return;
-            if (ControllerPlot.HeatModel.PrecipitationData.Count == 0) return;
+            if (ControllerPlot.HeatModel.PrecipitationDataOLD.Count == 0) return;
 
-            double[] time_________ = new double[ControllerPlot.HeatModel.HeatTreatmentProfile.Count];
-            double[] temperature__ = new double[ControllerPlot.HeatModel.HeatTreatmentProfile.Count];
+            double[] time_________ = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];
+            double[] temperature__ = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];
             
 
-            for(int n1 = 0; n1 < ControllerPlot.HeatModel.HeatTreatmentProfile.Count; n1++) 
+            for(int n1 = 0; n1 < ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count; n1++) 
             {
-                time_________[n1] = ControllerPlot.HeatModel.HeatTreatmentProfile[n1].Time/(60*60);
-                temperature__[n1] = ControllerPlot.HeatModel.HeatTreatmentProfile[n1].Temperature;
+                time_________[n1] = ControllerPlot.HeatModel.HeatTreatmentProfileOLD[n1].Time/(60*60);
+                temperature__[n1] = ControllerPlot.HeatModel.HeatTreatmentProfileOLD[n1].Temperature;
             }
 
             if (time_________.Length == 0) return;  // no data available?
             var handl_01 = plot01.Plot.AddScatterLines(time_________, temperature__, label: ControllerPlot.HeatModel.Name);
 
-            List<int> distinctIDphase = ControllerPlot.HeatModel.PrecipitationData.Select(x => x.IDPrecipitationPhase).Distinct().ToList();
+            List<int> distinctIDphase = ControllerPlot.HeatModel.PrecipitationDataOLD.Select(x => x.IDPrecipitationPhase).Distinct().ToList();
 
             List<double[]> listData02 = new();
             List<double[]> listData03 = new();
@@ -61,12 +61,12 @@ namespace AMFramework.Views.Precipitation_Kinetics
 
             for (int n0 = 0; n0 < distinctIDphase.Count; n0++) 
             {
-                List<Model.Model_PrecipitateSimulationData> SlectedMod = ControllerPlot.HeatModel.PrecipitationData.FindAll(x => x.IDPrecipitationPhase == distinctIDphase[n0]);
-                double[] radius_______ = new double[ControllerPlot.HeatModel.HeatTreatmentProfile.Count];
-                double[] phasefraction = new double[ControllerPlot.HeatModel.HeatTreatmentProfile.Count];
-                double[] density______ = new double[ControllerPlot.HeatModel.HeatTreatmentProfile.Count];
+                List<Model.Model_PrecipitateSimulationData> SlectedMod = ControllerPlot.HeatModel.PrecipitationDataOLD.FindAll(x => x.IDPrecipitationPhase == distinctIDphase[n0]);
+                double[] radius_______ = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];
+                double[] phasefraction = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];
+                double[] density______ = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];
 
-                for (int n1 = 0; n1 < ControllerPlot.HeatModel.HeatTreatmentProfile.Count; n1++)
+                for (int n1 = 0; n1 < ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count; n1++)
                 {
                     radius_______[n1] = SlectedMod[n1].MeanRadius*1e+9;
                     phasefraction[n1] = SlectedMod[n1].PhaseFraction;

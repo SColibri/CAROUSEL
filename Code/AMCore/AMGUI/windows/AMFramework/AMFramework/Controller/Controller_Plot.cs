@@ -306,8 +306,8 @@ namespace AMFramework.Controller
             set 
             {
                 _heatModel = value;
-                _heatModel.HeatTreatmentProfile.Clear();
-                _heatModel.PrecipitationData.Clear();
+                _heatModel.HeatTreatmentProfileOLD.Clear();
+                _heatModel.PrecipitationDataOLD.Clear();
                 Controller.Controller_HeatTreatmentProfile.fill_heatTreatment_model(ref _AMCore_Socket, _heatModel);
                 Controller.Controller_PrecipitateSimulationData.fill_heatTreatment_model(ref _AMCore_Socket, _heatModel);
             }

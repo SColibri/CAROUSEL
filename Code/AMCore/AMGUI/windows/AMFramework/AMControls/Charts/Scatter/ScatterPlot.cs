@@ -127,6 +127,7 @@ namespace AMControls.Charts.Scatter
         {
             _series.Add(value);
             _series = _series.OrderBy(e => e.Index).ToList();
+            InvalidateVisual();
         }
         
         #endregion
@@ -256,6 +257,7 @@ namespace AMControls.Charts.Scatter
                 // get axis width
                 int axis_height = (int)(this.ActualHeight - _yAxis_yLocation - _yMargin/2);
                 int axis_width = MajorTickSize;
+                if (axis_height < 1 || axis_width < 1) return;
 
                 // Draw axis Label
                 FormattedText labelFormat = new(axisObject.Name, System.Globalization.CultureInfo.CurrentCulture,

@@ -1,6 +1,7 @@
 ﻿using AMFramework.Controller;
 using AMFramework.Model;
 using AMFramework.Model.Model_Controllers;
+using AMFramework.Views.HeatTreatments;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace AMFramework.Views.Projects.Other
             UpdateCaseTemplate_Elements();
 
             PhaseListPage = new Phase.PhaseList_View(comm);
+            HeatTreatmentPage = new HeatTreatments.HeatTreatment_View(new Controller_HeatTreatmentView(comm, this.CaseTemplate.MCObject.ModelObject));
         }
 
 
@@ -58,6 +60,17 @@ namespace AMFramework.Views.Projects.Other
             {
                 _phaseListPage = value;
                 OnPropertyChanged(nameof(PhaseListPage));
+            }
+        }
+
+        private object? _heatTreatmentPage;
+        public object? HeatTreatmentPage
+        {
+            get { return _heatTreatmentPage; }
+            set
+            {
+                _heatTreatmentPage = value;
+                OnPropertyChanged(nameof(HeatTreatmentPage));
             }
         }
 
@@ -181,6 +194,89 @@ namespace AMFramework.Views.Projects.Other
         {
             return true;
         }
+
+        #region PrecipitationDomains
+        #region Add_PrecipitationDomain
+        private ICommand _addPrecipitationDomain;
+        public ICommand AddPrecipitationDomain
+        {
+            get
+            {
+                if (_addPrecipitationDomain == null)
+                {
+                    _addPrecipitationDomain = new RelayCommand(
+                        param => this.AddPrecipitationDomain_Acction(),
+                        param => this.AddPrecipitationDomain_Check()
+                    );
+                }
+                return _addPrecipitationDomain;
+            }
+        }
+
+        private void AddPrecipitationDomain_Acction()
+        {
+            List<ModelController<Model_PrecipitationDomain>> newList = new();
+
+            foreach (var item in CaseTemplate.MCObject.ModelObject.PrecipitationDomains)
+            {
+                newList.Add(item);
+            }
+            newList.Add(new(ref _comm));
+
+            CaseTemplate.MCObject.ModelObject.PrecipitationDomains = newList;
+        }
+
+        private bool AddPrecipitationDomain_Check()
+        {
+            return true;
+        }
+
+        #endregion
+
+        #region Remove_PrecipitationDomain
+        private ICommand _removePrecipitationDomain;
+        public ICommand RemovePrecipitationDomain
+        {
+            get
+            {
+                if (_removePrecipitationDomain == null)
+                {
+                    _removePrecipitationDomain = new RelayCommand(
+                        param => this.RemovePrecipitationDomain_Acction(param),
+                        param => this.RemovePrecipitationDomain_Check()
+                    );
+                }
+                return _removePrecipitationDomain;
+            }
+        }
+
+        private void RemovePrecipitationDomain_Acction(object? sender)
+        {
+            if (sender == null) return;
+            if (!sender.GetType().Equals(typeof(ModelController<Model_PrecipitationDomain>))) return;
+
+            ModelController<Model_PrecipitationDomain>? refP = sender as ModelController<Model_PrecipitationDomain>; ;
+            if (refP == null) return;
+
+            List<ModelController<Model_PrecipitationDomain>> newList = new();
+
+            foreach (var item in CaseTemplate.MCObject.ModelObject.PrecipitationDomains)
+            {
+                if (item == refP) continue;
+                newList.Add(item);
+            }
+
+            CaseTemplate.MCObject.ModelObject.PrecipitationDomains = newList;
+        }
+
+        private bool RemovePrecipitationDomain_Check()
+        {
+            return true;
+        }
+
+        #endregion
+
+        #endregion
 
         #endregion
 

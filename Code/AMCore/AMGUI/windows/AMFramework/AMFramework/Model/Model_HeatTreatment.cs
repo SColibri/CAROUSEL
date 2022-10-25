@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using AMFramework.Interfaces;
 using AMFramework.AMSystem.Attributes;
+using System.Windows.Data;
 
 namespace AMFramework.Model
 {
@@ -83,6 +84,19 @@ namespace AMFramework.Model
             }
         }
 
+        #region Other
+        private string _templatedStartTemperature = "";
+        public string TemplatedStartTemperature 
+        {
+            get { return _templatedStartTemperature; }
+            set 
+            {
+                _templatedStartTemperature = value;
+                OnPropertyChanged(nameof(TemplatedStartTemperature));
+            }
+        }
+        #endregion
+
 
         #region Interfaces
         public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
@@ -96,8 +110,8 @@ namespace AMFramework.Model
         }
         #endregion
 
-        List<Model.Model_HeatTreatmentProfile> _HeatTreatmentProfile = new();
-        public List<Model.Model_HeatTreatmentProfile> HeatTreatmentProfile
+        List<ModelController<Model_HeatTreatmentProfile>> _HeatTreatmentProfile = new();
+        public List<ModelController<Model_HeatTreatmentProfile>> HeatTreatmentProfile
         {
             get { return _HeatTreatmentProfile; }
             set
@@ -107,14 +121,47 @@ namespace AMFramework.Model
             }
         }
 
-        List<Model.Model_PrecipitateSimulationData> _precipitationData = new();
-        public List<Model.Model_PrecipitateSimulationData> PrecipitationData
+        List<ModelController<Model_HeatTreatmentSegment>> _HeatTreatmentSegment = new();
+        public List<ModelController<Model_HeatTreatmentSegment>> HeatTreatmentSegment
+        {
+            get { return _HeatTreatmentSegment; }
+            set
+            {
+                _HeatTreatmentSegment = value;
+                OnPropertyChanged(nameof(HeatTreatmentSegment));
+            }
+        }
+
+        List<ModelController<Model_PrecipitateSimulationData>> _precipitationData = new();
+        public List<ModelController<Model_PrecipitateSimulationData>> PrecipitationData
         {
             get { return _precipitationData; }
             set
             {
                 _precipitationData = value;
                 OnPropertyChanged(nameof(PrecipitationData));
+            }
+        }
+
+        List<Model.Model_HeatTreatmentProfile> _HeatTreatmentProfileOLD = new();
+        public List<Model.Model_HeatTreatmentProfile> HeatTreatmentProfileOLD
+        {
+            get { return _HeatTreatmentProfileOLD; }
+            set
+            {
+                _HeatTreatmentProfileOLD = value;
+                OnPropertyChanged(nameof(HeatTreatmentProfileOLD));
+            }
+        }
+
+        List<Model.Model_PrecipitateSimulationData> _precipitationDataOLD = new();
+        public List<Model.Model_PrecipitateSimulationData> PrecipitationDataOLD
+        {
+            get { return _precipitationDataOLD; }
+            set
+            {
+                _precipitationDataOLD = value;
+                OnPropertyChanged(nameof(PrecipitationDataOLD));
             }
         }
 
