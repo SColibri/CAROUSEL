@@ -59,6 +59,11 @@ namespace AMFramework.Model
         {
             return "Element";
         }
+
+        public override string Get_Scripting_ClassName()
+        {
+            return "Element";
+        }
         #endregion
 
     }

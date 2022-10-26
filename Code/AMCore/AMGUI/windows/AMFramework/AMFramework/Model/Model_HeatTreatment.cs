@@ -106,7 +106,12 @@ namespace AMFramework.Model
 
         public override string Get_Table_Name()
         {
-            throw new NotImplementedException();
+            return "HeatTreatment";
+        }
+
+        public override string Get_Scripting_ClassName()
+        {
+            return "HeatTreatment";
         }
         #endregion
 

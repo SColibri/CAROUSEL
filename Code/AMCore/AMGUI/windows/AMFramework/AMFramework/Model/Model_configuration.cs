@@ -112,6 +112,11 @@ namespace AMFramework.Model
         {
             throw new NotImplementedException();
         }
+
+        public override string Get_Scripting_ClassName()
+        {
+            return "Configuration";
+        }
         #endregion
 
     }

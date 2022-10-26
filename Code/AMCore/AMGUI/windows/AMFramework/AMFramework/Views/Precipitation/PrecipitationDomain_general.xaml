@@ -5,10 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AMFramework.Views.Precipitation" 
              xmlns:button="clr-namespace:AMFramework.Components.Button"
-             xmlns:model="clr-namespace:AMFramework.Model" d:DataContext="{d:DesignInstance Type=model:Model_PrecipitationDomain}"
+             xmlns:model="clr-namespace:AMFramework.Model" 
+             d:DataContext="{d:DesignInstance Type=model:Model_PrecipitationDomain}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid Background="White">
         <StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -39,7 +40,6 @@
                         <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
                     <TextBox Text="{Binding Path=IDPhase, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0"/>
-                    <button:AM_button IconName="Plus" Width="25" Height="25"/>
                 </Grid>
             </Grid>
 

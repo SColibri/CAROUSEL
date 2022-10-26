@@ -79,6 +79,11 @@ namespace AMFramework.Model
         {
             return "ActivePhases";
         }
+
+        public override string Get_Scripting_ClassName()
+        {
+            return "ActivePhases";
+        }
         #endregion
     }
 }

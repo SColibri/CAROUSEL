@@ -16,8 +16,11 @@ namespace AMFramework.Views.Projects.Other
     {
         public Controller_ProjectCaseCreator(ref Core.IAMCore_Comm comm, ControllerM_Project projectController):base(comm) 
         {
+            // Set project configuration on to new case template
             _projectController = projectController;
             CaseTemplate = new(_comm);
+            CaseTemplate.MCObject.ModelObject.IDProject = _projectController.MCObject.ModelObject.ID;
+
             UpdateCaseTemplate_Elements();
 
             PhaseListPage = new Phase.PhaseList_View(comm);

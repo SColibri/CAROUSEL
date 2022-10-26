@@ -4,26 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework.Model;
 
 namespace AMFramework.Controller
 {
-    public class Controller_PrecipitationDomain : INotifyPropertyChanged
+    public class Controller_PrecipitationDomain : ControllerAbstract
     {
 
         #region Socket
-        private Core.IAMCore_Comm _AMCore_Socket;
         private Controller.Controller_Cases _CaseController;
-        public Controller_PrecipitationDomain(ref Core.IAMCore_Comm socket, Controller.Controller_Cases caseController)
+        public Controller_PrecipitationDomain(ref Core.IAMCore_Comm comm, Controller.Controller_Cases caseController):base(comm)
         {
-            _AMCore_Socket = socket;
             _CaseController = caseController;
+            
         }
 
         #endregion
 
-        #region PrecipitationDomain
-        private List<Model.Model_PrecipitationDomain> _precipitationDomains = new();
-        public List<Model.Model_PrecipitationDomain> PrecipitationDomains
+        #region Parameters
+
+        private List<ModelController<Model_PrecipitationDomain>> _precipitationDomains = new();
+        public List<ModelController<Model_PrecipitationDomain>> PrecipitationDomains
         {
             get { return _precipitationDomains; }
             set
@@ -33,10 +34,24 @@ namespace AMFramework.Controller
             }
         }
 
+        #endregion
+
+        #region PrecipitationDomain
+        private List<Model.Model_PrecipitationDomain> _precipitationDomainsOLD = new();
+        public List<Model.Model_PrecipitationDomain> PrecipitationDomainsOLD
+        {
+            get { return _precipitationDomainsOLD; }
+            set
+            {
+                _precipitationDomainsOLD = value;
+                OnPropertyChanged(nameof(PrecipitationDomainsOLD));
+            }
+        }
+
         public void Refresh()
         {
             if (_CaseController.SelectedCaseOLD == null) return;
-            PrecipitationDomains = Get_model(_AMCore_Socket, _CaseController.SelectedCaseOLD.ID);
+            PrecipitationDomainsOLD = Get_model(_comm, _CaseController.SelectedCaseOLD.ID);
         }
 
         public static List<Model.Model_PrecipitationDomain> Get_model(Core.IAMCore_Comm comm, int IDCase)
@@ -58,6 +73,7 @@ namespace AMFramework.Controller
             return model;
         }
 
+        [Obsolete("This is now done by The modelcontroller<>")]
         private static Model.Model_PrecipitationDomain FillModel(List<string> DataRaw)
         {
             if (DataRaw.Count < 7) throw new Exception("Error: Element RawData is wrong");
@@ -78,28 +94,22 @@ namespace AMFramework.Controller
             return model;
         }
 
+        [Obsolete("This is now donw by the modelController")]
         public static void Save(Core.IAMCore_Comm AMCore_Socket, Model.Model_PrecipitationDomain model)
         {
             AMCore_Socket.run_lua_command("spc_precipitation_domain_save", model.Get_csv());
         }
 
+        [Obsolete("This is done by the modelcontrollers and the M controllers")]
         public void fill_models_with_precipitation_domains()
         {
             foreach (Model.Model_Case casey in _CaseController.Cases)
             {
-                casey.PrecipitationDomainsOLD = Get_model(_AMCore_Socket, casey.ID);
+                casey.PrecipitationDomainsOLD = Get_model(_comm, casey.ID);
             }
         }
         #endregion
 
-        #region Interfaces
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
 
     }
 }

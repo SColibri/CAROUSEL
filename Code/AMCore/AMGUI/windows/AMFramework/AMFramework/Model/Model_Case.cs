@@ -118,10 +118,11 @@ namespace AMFramework.Model
                 OnPropertyChanged(nameof(PosZ));
             }
         }
-  
+
 
         #region Template
         // This is deprecated -- REMOVE AL REFERENCES
+        [Obsolete("Templates are now used on the templated parameters in combination with ControllerM -> Save_Templated_Object")]
         public struct CaseTemplateStructure
         {
             public Model.Model_Element ElementName;
@@ -147,6 +148,7 @@ namespace AMFramework.Model
         }
 
         private List<CaseTemplateStructure> _caseTemplates = new();
+        [Obsolete("Templates are now used on the templated parameters in combination with ControllerM -> Save_Templated_Object")]
         public List<CaseTemplateStructure> CaseTemplates 
         { 
             get { return _caseTemplates; }
@@ -158,6 +160,7 @@ namespace AMFramework.Model
         }
 
         private CaseTemplateStructure _selectedCaseTemplate = new();
+        [Obsolete("Templates are now used on the templated parameters in combination with ControllerM -> Save_Templated_Object")]
         public CaseTemplateStructure SelectedCaseTemplate
         {
             get { return _selectedCaseTemplate; }
@@ -167,7 +170,7 @@ namespace AMFramework.Model
                 OnPropertyChanged(nameof(SelectedCaseTemplate));
             }
         }
-
+        [Obsolete("Templates are now used on the templated parameters in combination with ControllerM -> Save_Templated_Object")]
         public void Add_template(Model.Model_Element ElementN, double startRange, double endRange, int stepsTemplate) 
         {
             CaseTemplateStructure newTemplate = new(ElementN, startRange, endRange, stepsTemplate);
@@ -177,8 +180,8 @@ namespace AMFramework.Model
 
         #region Extended_Parameters
 
-        private List<ModelController<Model_SelectedElements>> _selectedPhases = new();
-        public List<ModelController<Model_SelectedElements>> SelectedPhases 
+        private List<ModelController<Model_SelectedPhases>> _selectedPhases = new();
+        public List<ModelController<Model_SelectedPhases>> SelectedPhases 
         {
             get { return _selectedPhases; }
             set 
@@ -400,6 +403,11 @@ namespace AMFramework.Model
         }
 
         public override string Get_Table_Name()
+        {
+            return "Case";
+        }
+
+        public override string Get_Scripting_ClassName()
         {
             return "Case";
         }

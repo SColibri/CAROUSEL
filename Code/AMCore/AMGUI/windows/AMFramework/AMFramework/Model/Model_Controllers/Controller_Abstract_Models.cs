@@ -1,4 +1,6 @@
-﻿using AMFramework.Interfaces;
+﻿using AMFramework.Core;
+using AMFramework.Interfaces;
+using AMFramework.Model.Model_Controllers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,7 +39,10 @@ namespace AMFramework.Model.Controllers
 
         public Model_Interface Model_Object { get { return MCObject.Model_Object; } }
 
+        #region Static methods
 
+        
+        #endregion
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;

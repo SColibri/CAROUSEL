@@ -93,6 +93,11 @@ namespace AMFramework.Model
         {
             return "ActivePhases_ElementComposition";
         }
+
+        public override string Get_Scripting_ClassName()
+        {
+            return "ActivePhasesElementComposition";
+        }
         #endregion
     }
 }

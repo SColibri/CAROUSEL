@@ -173,6 +173,11 @@ namespace AMFramework.Model
         {
             return "Projects";
         }
+
+        public override string Get_Scripting_ClassName()
+        {
+            return "Project";
+        }
         #endregion
     }
 }

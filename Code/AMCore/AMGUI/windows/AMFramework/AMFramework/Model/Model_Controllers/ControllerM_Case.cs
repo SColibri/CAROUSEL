@@ -34,6 +34,16 @@ namespace AMFramework.Model.Model_Controllers
         }
         #endregion
 
+        #region Save_templated_object
+        public static void Save_Templated_Object(IAMCore_Comm comm, Model_Case modelCase) 
+        {
+            if (modelCase.IDProject == -1) throw new Exception("Case has no reference to any project, this is a sad case :´(");
+
+
+           
+        }
+        #endregion
+
         #endregion
 
 

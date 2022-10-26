@@ -72,6 +72,7 @@ namespace AMFramework.Model
             throw new NotImplementedException();
         }
 
+        public abstract string Get_Scripting_ClassName();
 
         #endregion
 
@@ -197,8 +198,6 @@ namespace AMFramework.Model
         {
             return _commandList.FindAll(e => e.ObjectType.Equals(this.GetType()));
         }
-
-
         #endregion
     }
 }

@@ -17,7 +17,14 @@ namespace AMFramework.Model.Model_Controllers
         { }
 
         #region Model_methods
+        public static List<ModelController<Model_PrecipitationPhase>> Get_PrecipitationDomains(IAMCore_Comm comm, int IDCase) 
+        {
+            List<ModelController<Model_PrecipitationPhase>> result = new();
 
+
+
+            return result;
+        }
         #endregion
     }
 }

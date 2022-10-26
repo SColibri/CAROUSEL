@@ -188,9 +188,14 @@ namespace AMFramework.Model
 
         #region ImplementsModelAbstract
         public override string Get_Table_Name()
-            {
-                throw new NotImplementedException();
-            }
+        {
+            return "HeatTreatmentSegment";
+        }
+
+        public override string Get_Scripting_ClassName()
+        {
+            return "HeatTreatmentSegment";
+        }
         #endregion
     }
 }

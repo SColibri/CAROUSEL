@@ -54,5 +54,12 @@ namespace AMFramework.Interfaces
         /// </summary>
         /// <returns></returns>
         public string Get_Table_Name();
+
+        /// <summary>
+        /// This is the class name used in the scripting languague, e.g. from the projects table
+        /// the project object is called Project
+        /// </summary>
+        /// <returns></returns>
+        public string Get_Scripting_ClassName();
     }
 }
