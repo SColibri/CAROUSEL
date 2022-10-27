@@ -11,6 +11,9 @@ using System.Windows.Media.Imaging;
 
 namespace AMFramework
 {
+    /// <summary>
+    /// TODO: Split the functionality of this pseudo-controller, use the correct controller for the main Window and discard this one
+    /// </summary>
     public class MainWindow_ViewModel:Interfaces.ViewModel_Interface
     {
         private List<Components.Scripting.Scripting_ViewModel> _openScripts = new();
@@ -266,6 +269,7 @@ namespace AMFramework
 
         #endregion
 
+        
         
 
     }
