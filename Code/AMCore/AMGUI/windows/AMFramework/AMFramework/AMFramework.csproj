@@ -2000,6 +2000,8 @@
     <Folder Include="Components\NewFolder\" />
     <Folder Include="Components\Terminal\" />
     <Folder Include="Core\Database\" />
+    <Folder Include="N_GUI\Controllers\" />
+    <Folder Include="N_GUI\Views\" />
     <Folder Include="Resources\img\" />
   </ItemGroup>
 
