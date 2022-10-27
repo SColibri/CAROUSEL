@@ -1,4 +1,7 @@
-﻿using AMFramework.Controller;
+﻿using AMFramework.AMSystem;
+using AMFramework.Controller;
+using AMFramework.Core;
+using AMFramework.Views.Phase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +12,19 @@ namespace AMFramework.N_GUI
 {
     internal class Controller_NorasMainWindow : Controller.ControllerAbstract
     {
+        private IAMCore_Comm _comm;
+
         // This is the constructor
         public Controller_NorasMainWindow() 
         {
             // Load Core communication and user preferences
             AMSystem.UserPreferences? uPref = AMSystem.UserPreferences.load();
             Controller_Global.Configuration ??= new(Controller_Global.UserPreferences.IAM_API_PATH);
-
+            _comm = Controller_Global.ApiHandle;
+            AMFramework_StaticLoader.Load_Model_Commands(ref _comm);
+            
             // TODO: Add static page
-
+            PageContent = new PhaseList_View(Controller_Global.ApiHandle);
 
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AMFramework.AMSystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,16 +13,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace AMFramework.Nora_s_GUI
+namespace AMFramework.N_GUI
 {
     /// <summary>
-    /// Interaction logic for Main_TestWindow.xaml
+    /// Interaction logic for WindowNewTest.xaml
     /// </summary>
-    public partial class Main_TestWindow : Window
+    public partial class WindowNewTest : Window
     {
-        public Main_TestWindow()
+        public WindowNewTest()
         {
             InitializeComponent();
+            DataContext = new Controller_NorasMainWindow();
         }
     }
 }
