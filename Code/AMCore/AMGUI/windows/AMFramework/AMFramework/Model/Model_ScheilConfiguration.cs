@@ -59,7 +59,7 @@ namespace AMFramework.Model
             }
         }
 
-        private string _temperatureType = "";
+        private string _temperatureType = "°C";
         [Order]
         public string TemperatureType
         {

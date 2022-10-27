@@ -2,11 +2,13 @@
 using AMFramework.Model;
 using AMFramework.Model.Model_Controllers;
 using AMFramework.Views.HeatTreatments;
+using AMFramework.Views.Phase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -25,6 +27,14 @@ namespace AMFramework.Views.Projects.Other
 
             PhaseListPage = new Phase.PhaseList_View(comm);
             HeatTreatmentPage = new HeatTreatments.HeatTreatment_View(new Controller_HeatTreatmentView(comm, this.CaseTemplate.MCObject.ModelObject));
+
+            CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.StartTemperature = StartTemperature;
+            CaseTemplate.MCObject.ModelObject.EquilibriumConfiguration.ModelObject.StartTemperature = StartTemperature;
+            CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.EndTemperature = EndTemperature;
+            CaseTemplate.MCObject.ModelObject.EquilibriumConfiguration.ModelObject.EndTemperature = EndTemperature;
+            CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.StepSize = StepSize;
+            CaseTemplate.MCObject.ModelObject.EquilibriumConfiguration.ModelObject.StepSize = StepSize;
+            CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.MinLiquidFraction = MinLiquidFraction;
         }
 
 
@@ -279,6 +289,61 @@ namespace AMFramework.Views.Projects.Other
 
         #endregion
 
+        #endregion
+
+        #region Actions
+        private ICommand _createCases;
+        public ICommand CreateCases
+        {
+            get
+            {
+                if (_createCases == null)
+                {
+                    _createCases = new RelayCommand(
+                        param => this.CreateCases_Action(),
+                        param => this.CreateCases_Check()
+                    );
+                }
+                return _createCases;
+            }
+        }
+
+        private void CreateCases_Action()
+        {
+
+            CreateCases_UpdatePhases();
+            Scripting.Scripting_ProjectCaseCreator pcc = new(_projectController.MCObject.ModelObject, _caseTemplate.MCObject.ModelObject);
+
+            MessageBox.Show(pcc.ScriptText(),"Hello");
+        }
+
+        private bool CreateCases_Check()
+        {
+            return true;
+        }
+
+        private void CreateCases_UpdatePhases() 
+        {
+            if (PhaseListPage == null) return;
+            _caseTemplate.MCObject.ModelObject.SelectedPhases.Clear();
+            Controller_Phase? cp = ((PhaseList_View)PhaseListPage).DataContext as Controller_Phase;
+
+            if (cp == null) return;
+            List<ControllerM_Phase> cmp = cp.Get_Selected();
+            foreach (var item in cmp)
+            {
+                ModelController<Model_SelectedPhases> tempRef = new(ref _comm);
+                tempRef.ModelObject.IDPhase = item.MCObject.ModelObject.ID;
+                tempRef.ModelObject.PhaseName = item.MCObject.ModelObject.Name;
+
+                _caseTemplate.MCObject.ModelObject.SelectedPhases.Add(tempRef);
+            }
+        }
+
+        private void CreateCases_UpdateHeatTreatments() 
+        { 
+        
+        }
         #endregion
 
         #endregion

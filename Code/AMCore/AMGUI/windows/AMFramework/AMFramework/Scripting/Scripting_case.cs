@@ -1,4 +1,5 @@
-﻿using AMFramework.Model;
+﻿using AMFramework.Interfaces;
+using AMFramework.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace AMFramework.Scripting
     internal class Scripting_case : Scripting_Abstract
     {
         private Model_Case _modelCase;
+        private List<Tuple<IScripting, Model_PrecipitationDomain>> _pDomains = new();
 
         public Scripting_case(Model_Case modelCase) 
         {
@@ -19,10 +21,13 @@ namespace AMFramework.Scripting
 
         public string Create_Ranged_Object(Scripting_Project sProject) 
         {
-            string result = Create_Object() + 
-                            Set_Phases() +
-                            Set_Elements(sProject) +
-                            Set_ElementComposition();
+            string result = Create_Object() + "\n" +
+                            Set_Phases() + "\n" +
+                            Set_Elements(sProject) + "\n" +
+                            Set_ScheilConfiguration() + "\n" +
+                            Set_EquilibriumConfiguration() + "\n" +
+                            Set_ElementComposition() + "\n" +
+                            Set_PrecipitationDomains();
 
             return result;
         }
@@ -36,7 +41,7 @@ namespace AMFramework.Scripting
 
         private string Set_Phases() 
         {
-            string result = VariableName + ":set_phases_ByName(" ;
+            string result = VariableName + ":set_phases_ByName(\"" ;
 
             string buildPhaseString = "";
             foreach (var item in _modelCase.SelectedPhases)
@@ -45,7 +50,7 @@ namespace AMFramework.Scripting
             }
             buildPhaseString = buildPhaseString.Trim();
 
-            result += buildPhaseString + ")\n";
+            result += buildPhaseString + "\")\n";
             return result;
         }
 
@@ -62,20 +67,68 @@ namespace AMFramework.Scripting
 
             foreach (var item in _modelCase.ElementComposition)
             {
-                Scripting_AMRange? tempRange = null;
-                if (item.ModelObject.StringValue.Length > 0) 
+                string decalerVar = VariableName + ":find_composition_ByName(\"" + item.ModelObject.ElementName + "\").value = ";
+
+                if (!double.TryParse(item.ModelObject.StringValue, out double tryParseValue))
                 {
+                    Scripting_AMRange? tempRange = null;
                     tempRange = new(item.ModelObject.StringValue);
-                    result += tempRange.Create_Object(); 
+                    result += "\n" + tempRange.Create_Object() + decalerVar + tempRange.VariableName + '\n';
                 }
-
-                result += VariableName + ":find_composition_ByName(\"" + item.ModelObject.ElementName + "\").value = ";
-
-                if (tempRange != null) result += tempRange.VariableName;
-                else result += item.ModelObject.Value;
+                else
+                {
+                    result += decalerVar + tryParseValue + '\n';
+                }
             }
 
             return result;
+        }
+
+        private string Set_ScheilConfiguration() 
+        {
+            string result = "";
+
+            if (_modelCase.ScheilConfiguration == null) return result;
+            Scripting_Template<Model_ScheilConfiguration> sMSC = new(_modelCase.ScheilConfiguration.ModelObject);
+
+            result = sMSC.Create_Object() + "\n";
+            result += VariableName + "." + _modelCase.ScheilConfiguration.ModelObject.Get_Scripting_ClassName() + " = " + sMSC.VariableName + "\n";
+
+            return result;
+        }
+
+        private string Set_EquilibriumConfiguration()
+        {
+            string result = "";
+
+            if (_modelCase.EquilibriumConfiguration == null) return result;
+            Scripting_Template<Model_EquilibriumConfiguration> sMSC = new(_modelCase.EquilibriumConfiguration.ModelObject);
+
+            result = sMSC.Create_Object() + "\n";
+            result += VariableName + "." + _modelCase.EquilibriumConfiguration.ModelObject.Get_Scripting_ClassName() + " = " + sMSC.VariableName + "\n" ;
+
+            return result;
+        }
+
+        private string Set_PrecipitationDomains()
+        {
+            string result = "";
+
+            foreach (var item in _modelCase.PrecipitationDomains)
+            {
+                Scripting_Template<Model_PrecipitationDomain> sPD = new(item.ModelObject);
+                result += sPD.Create_Object();
+                result += VariableName + ".precipitationDomain = " + sPD.VariableName + "\n\n";
+
+                _pDomains.Add(new(sPD, item.ModelObject));
+            }
+
+            return result;
+        }
+
+        private string Set_HeatTreatments() 
+        {
+            return "";
         }
 
         public override string ScriptText()

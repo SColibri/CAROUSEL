@@ -1,8 +1,8 @@
 -- Item
-HeatTreatment = {ID = -1, IDCase = -1, Name = "", MaxTemperatureStep = 10, IDPrecipitationDomain = -1, StartTemperature = 100, TemperatureProfile = {}, SimulationData = {}, Segments = {} } --@Description 
+HeatTreatment = {ID = -1, IDCase = -1, Name = "", MaxTemperatureStep = 10, IDPrecipitationDomain = -1, StartTemperature = 100, TemperatureProfile = {}, SimulationData = {}, Segments = {}, PrecipitationDomain = {} } --@Description 
 
 -- Constructor
-function HeatTreatment:new (o,ID,IDCase,Name,MaxTemperatureStep,IDPrecipitationDomain,StartTemperature,TemperatureProfile,SimulationData, Segments) --@Description 
+function HeatTreatment:new (o,ID,IDCase,Name,MaxTemperatureStep,IDPrecipitationDomain,StartTemperature,TemperatureProfile,SimulationData,Segments,PrecipitationDomain) --@Description 
    o = o or {}
 
    setmetatable(o, self)
@@ -18,6 +18,7 @@ function HeatTreatment:new (o,ID,IDCase,Name,MaxTemperatureStep,IDPrecipitationD
    o.TemperatureProfile = TemperatureProfile or {}
    o.SimulationData = SimulationData or {}
    o.Segments = Segments or {}
+   o.PrecipitationDomain = PrecipitationDomain or PrecipitationDomain:new{}
    
    if o.ID > -1 or string.len(o.Name) > 1 then
     o:load()
@@ -43,6 +44,13 @@ function HeatTreatment:load()
       self.Segments = {}
       local sqlDataSegments = split(spc_heat_treatment_segment_load_IDHeatTreatment(self.ID),"\n")
       load_table_data(self.Segments, HeatTreatmentSegment, sqlDataSegments)
+
+      --load precipitation Domain
+      if self.IDPrecipitationDomain > -1 then
+          self.PrecipitationDomain = {}
+          local sqlPDomain = split(spc_precipitation_domain_loadID(self.ID),"\n")
+          load_table_data(self.PrecipitationDomain, PrecipitationDomain, sqlPDomain)
+      end
 
       -- Note: we do not load temperature profile and simulation data because this should only
       -- be loaded by demand only (a lot of data to load :) ) -> refer to load_temperature_profile

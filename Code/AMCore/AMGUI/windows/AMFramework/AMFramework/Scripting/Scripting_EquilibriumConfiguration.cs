@@ -1,27 +1,24 @@
-﻿using AMFramework.Structures;
+﻿using AMFramework.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.XPath;
 
 namespace AMFramework.Scripting
 {
-    internal class Scripting_AMRange : Scripting_Abstract
+    internal class Scripting_EquilibriumConfiguration : Scripting_Abstract
     {
-        private string _AMRange;
-        public Scripting_AMRange(string value) 
-        { 
-            _AMRange = value;
-            VariableName = "AMRange_" + _count++;
+        private Model_EquilibriumConfiguration _model;
+        public Scripting_EquilibriumConfiguration(Model_EquilibriumConfiguration mEC) 
+        {
+            _model = mEC;
+            VariableName = _model.Get_Scripting_ClassName() + "_" + _count++;
         }
-
+        
         public override string Create_Object()
         {
-            string result = "local " + VariableName + " = AMRange:new{}\n";
-            result += VariableName + ":add_range(" + _AMRange + ")\n";
-            return result;
+            throw new NotImplementedException();
         }
 
         public override string Load_Object()

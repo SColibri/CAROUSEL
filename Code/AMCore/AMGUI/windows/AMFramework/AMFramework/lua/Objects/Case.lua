@@ -151,6 +151,20 @@ function Case:save() --@Description Saves an object into the database, if ID = -
         end
         
         for i,Item in ipairs(self.heatTreatment) do
+            -- Here we check if the precipitation domain was assigned by ID or by name,
+            -- If this is a string, then it means that the precipitation domain
+            -- was not saved before and did not have a ID. After saving the object
+            -- we should be able to find the precipitation domain and set the saved ID
+            if type(self.heatTreatment[i].IDPrecipitationDomain) == "string" then
+                for i,Item in ipairs(self.precipitationDomain) do
+                    if self.heatTreatment[i].IDPrecipitationDomain == Item.Name then
+                        self.heatTreatment[i].IDPrecipitationDomain = Item.ID
+                        goto JUMP_SAVE_HT
+                    end
+                end
+            end
+            
+            ::JUMP_SAVE_HT::
             self.heatTreatment[i].IDCase = self.ID
             self.heatTreatment[i]:save()
         end

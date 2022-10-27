@@ -71,7 +71,7 @@ namespace AMFramework.Model
             }
         }
 
-        private string _temperatureType = "";
+        private string _temperatureType = "°C";
         [Order]
         public string TemperatureType
         {
@@ -99,10 +99,10 @@ namespace AMFramework.Model
         [Order]
         public double Pressure
         {
-            get { return _stepSize; }
+            get { return _pressure; }
             set
             {
-                _stepSize = value;
+                _pressure = value;
                 OnPropertyChanged(nameof(Pressure));
             }
         }

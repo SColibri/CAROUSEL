@@ -33,13 +33,21 @@ namespace AMFramework.Scripting
             Scripting.Scripting_Project sProject = new(_mProject);
 
             string result = "require\"AMFramework\" \n\n";
-            result = sProject.Load_Object();
+            result += sProject.Load_Object();
 
             // Project should already exist when using the project case creator. We make sure that the templated
             // case had the correct project id by just assigning it.
             _mCase.IDProject = _mProject.ID;
 
-            // We now have to create all cases
+            // We now use the case as a template and let it find all
+            // range variables
+            Scripting_case sCase = new(_mCase);
+            result += sCase.Create_Ranged_Object(sProject);
+
+            // Create all cases based on the template model
+            result += sProject.VariableName + ":create_cases(" + sCase.VariableName + ")";
+
+            // Add run command (what do we want to run?)
 
             return result;
         }

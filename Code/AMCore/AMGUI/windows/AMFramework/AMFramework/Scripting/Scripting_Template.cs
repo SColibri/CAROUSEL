@@ -19,25 +19,28 @@ namespace AMFramework.Scripting
         private T _modelTemplate;
 
         /// <summary>
-        /// After creating a variable we can further refer to it by its name
-        /// </summary>
-        private string _variableName;
-
-        /// <summary>
         /// Constructor for Model Interface object
         /// </summary>
         /// <param name="refObject"></param>
         public Scripting_Template(T refObject) 
         { 
             _modelTemplate = refObject;
-            _variableName = refObject.Get_Scripting_ClassName() + "_" + _count;
+            VariableName = refObject.Get_Scripting_ClassName() + "_" + _count;
 
             _count++;
         }
 
         public override string Create_Object()
         {
-            throw new NotImplementedException();
+            var pList = _modelTemplate.Get_parameter_list();
+
+            string newScript = VariableName + " = " + _modelTemplate.Get_Scripting_ClassName() + ":new{}\n";
+            foreach (var item in pList)
+            {
+                newScript += VariableName + "." + item.Name + " = " + item.GetValue(_modelTemplate) + "\n";
+            }
+
+            return newScript;
         }
 
         public override string Load_Object()
@@ -50,12 +53,12 @@ namespace AMFramework.Scripting
         {
             var pList = _modelTemplate.Get_parameter_list();
             
-            string newScript = _variableName + " = " + _modelTemplate.Get_Scripting_ClassName() + ":new{}\n";
+            string newScript = VariableName + " = " + _modelTemplate.Get_Scripting_ClassName() + ":new{}\n";
             foreach (var item in pList)
             {
-                newScript += _variableName + "." + item.Name + " = " + item.GetValue(_modelTemplate) + "\n";
+                newScript += VariableName + "." + item.Name + " = " + item.GetValue(_modelTemplate) + "\n";
             }
-            newScript += _variableName + ":save()";
+            newScript += VariableName + ":save()";
 
             return newScript;
         }

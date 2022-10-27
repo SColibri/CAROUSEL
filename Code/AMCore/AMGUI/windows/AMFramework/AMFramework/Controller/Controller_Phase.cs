@@ -87,6 +87,15 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Returns all selected phases
+        /// </summary>
+        /// <returns></returns>
+        public List<ControllerM_Phase> Get_Selected() 
+        {
+            return PhaseList.FindAll(e => e.MCObject.ModelObject.IsSelected);
+        }
+
         #region LoadData
         /// <summary>
         /// Loads phases from CALPHAD database

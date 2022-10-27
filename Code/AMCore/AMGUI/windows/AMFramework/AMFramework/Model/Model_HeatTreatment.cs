@@ -148,6 +148,18 @@ namespace AMFramework.Model
             }
         }
 
+        List<ModelController<Model_PrecipitationDomain>> _precipitationDomain = new();
+        public List<ModelController<Model_PrecipitationDomain>> PrecipitationDomain
+        {
+            get { return _precipitationDomain; }
+            set
+            {
+                _precipitationDomain = value;
+                OnPropertyChanged(nameof(PrecipitationDomain));
+            }
+        }
+
+
         List<Model.Model_HeatTreatmentProfile> _HeatTreatmentProfileOLD = new();
         public List<Model.Model_HeatTreatmentProfile> HeatTreatmentProfileOLD
         {
