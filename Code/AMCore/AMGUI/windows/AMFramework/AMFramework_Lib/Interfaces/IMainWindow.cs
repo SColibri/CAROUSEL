@@ -1,13 +1,12 @@
-﻿using AMFramework.Components.Windows;
-using AMFramework.Core;
+﻿using AMFramework_Lib.Core;
+using AMFramework_Lib.Structures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
-namespace AMFramework.Interfaces
+namespace AMFramework_Lib.Interfaces
 {
     public interface IMainWindow
     {
@@ -23,7 +22,7 @@ namespace AMFramework.Interfaces
         public void Show_Popup(object pWindow);
         public void Show_loading(bool showLoading);
         public void Show_Notification(string Title, string Content, int IconType,
-                                      Color? IconForeground, Color? ContentBackground, Color? TitleBackground);
+                                      Struct_Color? IconForeground, Struct_Color? ContentBackground, Struct_Color? TitleBackground);
 
         //---------------------------------------------------------------------------------
         // OUTPUT
@@ -35,11 +34,6 @@ namespace AMFramework.Interfaces
         //---------------------------------------------------------------------------------
         public ref IAMCore_Comm Get_socket();
 
-        //---------------------------------------------------------------------------------
-        // CONTROLLERS
-        //---------------------------------------------------------------------------------
-        public Controller.Controller_Plot get_plot_Controller();
-        public Controller.Controller_DBS_Projects get_project_controller();
 
         //---------------------------------------------------------------------------------
         // Parameters

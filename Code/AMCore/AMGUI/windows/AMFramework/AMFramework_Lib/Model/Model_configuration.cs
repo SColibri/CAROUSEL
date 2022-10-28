@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
-using AMFramework.Interfaces;
-using AMFramework.AMSystem.Attributes;
+using AMFramework_Lib.Interfaces;
+using AMFramework_Lib.AMSystem.Attributes;
 
-namespace AMFramework.Model
+namespace AMFramework_Lib.Model
 {
     public class Model_configuration : ModelAbstract
     {

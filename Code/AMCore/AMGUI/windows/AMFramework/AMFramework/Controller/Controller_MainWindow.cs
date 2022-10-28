@@ -21,6 +21,8 @@ using AMFramework.AMSystem;
 using Microsoft.Win32;
 using AMFramework.Components.Windows;
 using System.Windows.Controls.Primitives;
+using System.CodeDom;
+using AMFramework.Views.Popup;
 
 namespace AMFramework.Controller
 {
@@ -695,11 +697,24 @@ namespace AMFramework.Controller
                 OnPropertyChanged(nameof(PopupWindow));
             }
         }
-        public void Show_Popup(AM_popupWindow pWindow)
+
+        /// <summary>
+        /// Implementation that shows a popup object of type AM_popupwindow
+        /// </summary>
+        /// <param name="pObject"></param>
+        /// <exception cref="Exception"></exception>
+        public void Show_Popup(object pObject)
         {
+            if (!pObject.GetType().Equals(typeof(AM_popupWindow)))
+                throw new Exception("Show_Popup: WPF application, objects have to be of type AMFramework_popupWindows and current type is " + pObject.GetType().Name);
+
+            AM_popupWindow? pWindow = pObject as AM_popupWindow;
+            if (pWindow == null) return;
+
+            pWindow.PopupWindowClosed += Close_popup;
             TabControlVisible = false;
             PopupVisibility = true;
-            pWindow.PopupWindowClosed += Close_popup;
+            
             PopupWindow = pWindow;
         }
 
@@ -743,19 +758,19 @@ namespace AMFramework.Controller
                 OnPropertyChanged(nameof(NotificationObject));
             }
         }
-        public void Show_Notification(string Title, string Content, FontAwesome.WPF.FontAwesomeIcon IconType = FontAwesome.WPF.FontAwesomeIcon.InfoCircle,
-                                      Brush? IconForeground = null, Brush? ContentBackground = null, Color? TitleBackground = null)
+        public void Show_Notification(string Title, string Content, int IconType = (int)FontAwesome.WPF.FontAwesomeIcon.InfoCircle,
+                                      Color? IconForeground = null, Color? ContentBackground = null, Color? TitleBackground = null)
         {
             // Set notification parameters
             NotificationObject.Title = Title;
             NotificationObject.Text = Content;
-            NotificationObject.Icon = IconType;
+            NotificationObject.Icon = (FontAwesome.WPF.FontAwesomeIcon)IconType;
 
             //If Brushes are null, set default values
-            if (IconForeground != null) NotificationObject.IconForeground = IconForeground;
+            if (IconForeground != null) NotificationObject.IconForeground = new SolidColorBrush((Color)IconForeground);
             else NotificationObject.IconForeground = Brushes.White;
 
-            if (ContentBackground != null) NotificationObject.ContentBackground = ContentBackground;
+            if (ContentBackground != null) NotificationObject.ContentBackground = new SolidColorBrush((Color)ContentBackground);
             else NotificationObject.ContentBackground = Brushes.Black;
 
             if (TitleBackground != null) NotificationObject.TitleBackground = (Color)TitleBackground;

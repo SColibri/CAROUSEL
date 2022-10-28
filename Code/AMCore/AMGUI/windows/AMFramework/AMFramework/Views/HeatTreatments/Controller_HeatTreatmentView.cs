@@ -435,8 +435,8 @@ namespace AMFramework.Views.HeatTreatments
 
         private void Show_No_Project_Selected_Notification() 
         {
-            Controller_Global.MainControl?.Show_Notification("No ht selected", "Please select a heat treatment", FontAwesome.WPF.FontAwesomeIcon.Warning,
-                                                                 System.Windows.Media.Brushes.Yellow, null, null);
+            Controller_Global.MainControl?.Show_Notification("No ht selected", "Please select a heat treatment", (int)FontAwesome.WPF.FontAwesomeIcon.Warning,
+                                                                 System.Windows.Media.Colors.Yellow, null, null);
         }
         #endregion
 

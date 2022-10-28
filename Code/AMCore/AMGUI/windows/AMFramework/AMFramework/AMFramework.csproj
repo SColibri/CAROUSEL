@@ -2013,6 +2013,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AMControls\AMControls.csproj" />
+    <ProjectReference Include="..\AMFramework_Lib\AMFramework_Lib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
