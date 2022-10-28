@@ -84,8 +84,8 @@ namespace AMFramework_Lib.Model
         // --------------------------------------------------
 
         // Configuration
-        private ModelController<Model_ActivePhasesConfiguration> _activePhasesConfiguration = null;
-        public ModelController<Model_ActivePhasesConfiguration> ActivePhasesConfiguration
+        private ModelController<Model_ActivePhasesConfiguration>? _activePhasesConfiguration = null;
+        public ModelController<Model_ActivePhasesConfiguration>? ActivePhasesConfiguration
         {
             get { return _activePhasesConfiguration; }
             set 

@@ -21,7 +21,7 @@ namespace AMFramework_Lib.Interfaces
         /// <summary>
         /// Returns the model object that contains the data
         /// </summary>
-        public Model_Interface Model_Object { get; }
+        public Model_Interface? Model_Object { get; }
 
     }
 }
