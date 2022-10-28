@@ -18,6 +18,8 @@ namespace AMFramework.AMSystem
         /// it just gets ignored. (e.g. for MCE, we have declared the Save command but for example core might also offer the load project function, which on the gui side is not needed, however
         /// if I want to add it, I would just create a new class named MCE_loadProject. Further commands can be found in the lua_functions.txt, there you cand find a brief description on what it does,
         /// for more infromation please refer the documentation.
+        /// 
+        /// NOTE: If this is not loaded at startup of the application, commands will return as null, so just don't forget to run this static function
         /// </summary>
         /// <param name="comm"></param>
         public static void Load_Model_Commands(ref Core.IAMCore_Comm comm) 
