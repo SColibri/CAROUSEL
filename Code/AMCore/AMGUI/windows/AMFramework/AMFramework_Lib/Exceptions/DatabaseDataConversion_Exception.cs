@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AMFramework_Lib.Exceptions
 {
-    internal class DatabaseDataConversion_Exception:SystemException
+    public class DatabaseDataConversion_Exception:SystemException
     {
         public DatabaseDataConversion_Exception() 
         { 

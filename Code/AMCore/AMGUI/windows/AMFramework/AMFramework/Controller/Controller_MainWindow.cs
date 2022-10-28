@@ -26,7 +26,7 @@ using AMFramework.Views.Popup;
 
 namespace AMFramework.Controller
 {
-    public class Controller_MainWindow : Controller_Abstract, IMainWindow
+    public class Controller_MainWindow : ControllerAbstract, IMainWindow
     {
         private readonly MainWindow_ViewModel _AMView;        
         private readonly Controller.Controller_AMCore _AMCore;

@@ -61,7 +61,7 @@ namespace AMFramework.Model
 
             try
             { Abstract_load(parameterList, DataRaw); }
-            catch (Exceptions.DatabaseDataConversion_Exception e)
+            catch (AMFramework_Lib.Exceptions.DatabaseDataConversion_Exception e)
             { return 1; }
 
             return 0;
@@ -91,7 +91,7 @@ namespace AMFramework.Model
                     {
                         int tempValue = 0;
                         if (!int.TryParse(rawData[Index],out tempValue)) 
-                        { throw new Exceptions.DatabaseDataConversion_Exception(item.Name + ", input from database: " + rawData[Index] + " is not convertible to int! "); }
+                        { throw new AMFramework_Lib.Exceptions.DatabaseDataConversion_Exception(item.Name + ", input from database: " + rawData[Index] + " is not convertible to int! "); }
 
                         item.SetValue(this, tempValue);
                     }
