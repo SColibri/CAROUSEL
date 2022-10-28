@@ -4,15 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
 
 namespace AMFramework.Controller
 {
     internal class Controller_HeatTreatmentProfile : INotifyPropertyChanged
     {
         #region Socket
-        private Core.IAMCore_Comm _AMCore_Socket;
+        private IAMCore_Comm _AMCore_Socket;
         private Controller_HeatTreatment _heatTreatmentController;
-        public Controller_HeatTreatmentProfile(ref Core.IAMCore_Comm socket, Controller_HeatTreatment heatTreatmentController)
+        public Controller_HeatTreatmentProfile(ref IAMCore_Comm socket, Controller_HeatTreatment heatTreatmentController)
         {
             _AMCore_Socket = socket;
             _heatTreatmentController = heatTreatmentController;
@@ -30,9 +32,9 @@ namespace AMFramework.Controller
 
         #region Object
 
-        public static List<Model.Model_HeatTreatmentProfile> get_data_from_IDHeatTreatment(ref Core.IAMCore_Comm socket, int HeatT)
+        public static List<Model_HeatTreatmentProfile> get_data_from_IDHeatTreatment(ref IAMCore_Comm socket, int HeatT)
         {
-            List<Model.Model_HeatTreatmentProfile> composition = new();
+            List<Model_HeatTreatmentProfile> composition = new();
             string Query = "database_table_custom_query SELECT HeatTreatmentProfile.* FROM HeatTreatmentProfile WHERE IDHeatTreatment = " + HeatT;
             string outCommand = socket.run_lua_command(Query, "");
             List<string> rowItems = outCommand.Split("\n").ToList();
@@ -47,11 +49,11 @@ namespace AMFramework.Controller
             return composition;
         }
 
-        private static Model.Model_HeatTreatmentProfile fillModel(List<string> DataRaw)
+        private static Model_HeatTreatmentProfile fillModel(List<string> DataRaw)
         {
             if (DataRaw.Count < 4) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_HeatTreatmentProfile modely = new()
+            Model_HeatTreatmentProfile modely = new()
             {
                 ID = Convert.ToInt32(DataRaw[0]),
                 IDHeatTreatment = (int)Convert.ToDouble(DataRaw[1]),
@@ -62,7 +64,7 @@ namespace AMFramework.Controller
             return modely;
         }
 
-        public static void fill_heatTreatment_model(ref Core.IAMCore_Comm socket, Model.Model_HeatTreatment ObjectModel)
+        public static void fill_heatTreatment_model(ref IAMCore_Comm socket, Model_HeatTreatment ObjectModel)
         {
             ObjectModel.HeatTreatmentProfileOLD = get_data_from_IDHeatTreatment(ref socket, ObjectModel.ID);
         }

@@ -10,8 +10,8 @@ using System.Windows.Media.Animation;
 using AMControls.Charts.DataPointContextMenu;
 using AMControls.Charts.Implementations.DataPointContextMenu;
 using AMControls.Charts.Interfaces;
-using AMFramework.Interfaces;
-using AMFramework.Model;
+using AMFramework_Lib.Interfaces;
+using AMFramework_Lib.Model;
 
 namespace AMFramework.Components.Charting.ContextMenu
 {

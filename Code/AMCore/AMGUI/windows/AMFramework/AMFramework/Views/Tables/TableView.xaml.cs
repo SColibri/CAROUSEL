@@ -1,4 +1,4 @@
-﻿using AMFramework.Core;
+﻿using AMFramework_Lib.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

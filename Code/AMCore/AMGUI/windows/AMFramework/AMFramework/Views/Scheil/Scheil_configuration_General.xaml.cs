@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AMFramework_Lib.Model;
 
 namespace AMFramework.Views.Scheil
 {
@@ -57,7 +58,7 @@ namespace AMFramework.Views.Scheil
         private void ButtonSavePhase_ClickButton(object sender, EventArgs e)
         {
             if (_scheilController == null) return;
-            Model.Model_SelectedPhases tempRef = _scheilController.CaseController.SelectedPhases.Find(e => e.IsDependentPhase);
+            Model_SelectedPhases tempRef = _scheilController.CaseController.SelectedPhases.Find(e => e.IsDependentPhase);
             if (tempRef == null) 
             {
                 MainWindow.notify.ShowBalloonTip(5000, "No phase selected!", "Please select a dependent phase", System.Windows.Forms.ToolTipIcon.Warning);

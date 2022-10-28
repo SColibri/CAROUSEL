@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AMFramework_Lib.Interfaces
 {
-    internal interface ViewModel_Interface
+    public interface ViewModel_Interface
     {
 
         public bool save();

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using AMFramework_Lib.Model;
 
 namespace AMFramework.Components.Converters
 {
@@ -26,8 +27,8 @@ namespace AMFramework.Components.Converters
             // if Tag is of tyype string
             if (value is null) tagType = "PROJECT";
             else if (value.GetType().Equals(typeof(string))) { tagType = (string)value; }
-            else if (value.GetType().Equals(typeof(Model.Model_Projects))) { tagType = "PROJECT"; }
-            else if (value.GetType().Equals(typeof(Model.Model_Case))) { tagType = "CASEITEM"; }
+            else if (value.GetType().Equals(typeof(Model_Projects))) { tagType = "PROJECT"; }
+            else if (value.GetType().Equals(typeof(Model_Case))) { tagType = "CASEITEM"; }
 
             if (tagType.ToUpper().CompareTo("PROJECT") == 0)
             {

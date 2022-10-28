@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AMFramework_Lib.Interfaces;
 
 namespace AMFramework.Views.Case
 {
-    public class Case_ViewModel : Interfaces.ViewModel_Interface
+    public class Case_ViewModel : ViewModel_Interface
     {
         #region interface
         public bool close()

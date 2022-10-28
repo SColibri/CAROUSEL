@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows;
-using AMFramework.Model.Model_Controllers;
-using AMFramework.Core;
+using AMFramework_Lib.Model.Model_Controllers;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
@@ -17,7 +19,7 @@ namespace AMFramework.Controller
         private Controller_Cases _CaseController;
 
         [Obsolete("Controller is independent from other controllers, bad design for the phase object")]
-        public Controller_Phase(ref Core.IAMCore_Comm socket, Controller_Cases caseController):base(socket)
+        public Controller_Phase(ref IAMCore_Comm socket, Controller_Cases caseController):base(socket)
         {
             _CaseController = caseController;
         }
@@ -156,10 +158,10 @@ namespace AMFramework.Controller
         /// <param name="socket"></param>
         /// <returns></returns>
         [Obsolete("We should now return the M controllers: ControllerM_Phase")]
-        public static List<Model.Model_Phase> Get_available_phases_in_database(ref Core.IAMCore_Comm socket)
+        public static List<Model_Phase> Get_available_phases_in_database(ref IAMCore_Comm socket)
         {
             // get available element names from database
-            List<Model.Model_Phase> composition = new();
+            List<Model_Phase> composition = new();
             string Query = "matcalc_database_phaseNames";
             string outCommand = socket.run_lua_command(Query, "");
             List<string> pahseList = outCommand.Split("\n").ToList();
@@ -181,11 +183,11 @@ namespace AMFramework.Controller
         }
 
         [Obsolete("Models are now loaded using the ModelAbstract object and model core executors")]
-        private static Model.Model_Phase fillModel(List<string> DataRaw)
+        private static Model_Phase fillModel(List<string> DataRaw)
         {
             if (DataRaw.Count < 2) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_Phase modely = new()
+            Model_Phase modely = new()
             {
                 ID = Convert.ToInt32(DataRaw[0]),
                 Name = DataRaw[1]
@@ -195,9 +197,9 @@ namespace AMFramework.Controller
         }
 
         [Obsolete("Use ControllerM to call this function")]
-        public static List<Model.Model_Phase> get_unique_phases_from_caseList(ref Core.IAMCore_Comm socket, int IDProject)
+        public static List<Model_Phase> get_unique_phases_from_caseList(ref IAMCore_Comm socket, int IDProject)
         {
-            List<Model.Model_Phase> composition = new();
+            List<Model_Phase> composition = new();
             string Query = "database_table_custom_query SELECT DISTINCT Phase.*, SelectedPhases.IDPhase FROM Phase INNER JOIN SelectedPhases ON Phase.ID = SelectedPhases.IDPhase INNER JOIN \'Case\' ON \'Case\'.IDProject = " + IDProject;
 
             string outCommand = socket.run_lua_command(Query,"");
@@ -213,9 +215,9 @@ namespace AMFramework.Controller
             return composition;
         }
         [Obsolete("Use controllerM to call this function")]
-        public List<Model.Model_Phase> get_phases_from_case(int IDCase)
+        public List<Model_Phase> get_phases_from_case(int IDCase)
         {
-            List<Model.Model_Phase> composition = new();
+            List<Model_Phase> composition = new();
             string Query = "database_table_custom_query SELECT Phase.ID as IDP, Phase.Name, SelectedPhases.* FROM SelectedPhases INNER JOIN Phase ON Phase.ID=SelectedPhases.IDPhase WHERE IDCase = " + IDCase;
             string outCommand = _comm.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
@@ -230,9 +232,9 @@ namespace AMFramework.Controller
             return composition;
         }
         [Obsolete("Use controllerM to call this function")]
-        public List<Model.Model_Phase> get_phaselist()
+        public List<Model_Phase> get_phaselist()
         {
-            List<Model.Model_Phase> composition = new();
+            List<Model_Phase> composition = new();
             string Query = "database_table_custom_query SELECT Phase.* FROM Phase";
             string outCommand = _comm.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();

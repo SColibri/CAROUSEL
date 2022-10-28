@@ -7,13 +7,14 @@ using System.IO;
 using System.Windows.Forms;
 using ScintillaNET;
 using System.Windows.Forms.Integration;
+using AMFramework_Lib.Interfaces;
 
 namespace AMFramework.Components.Scripting
 {
     /// <summary>
     /// Scripting viewmodel
     /// </summary>
-    public class Scripting_ViewModel : Interfaces.ViewModel_Interface
+    public class Scripting_ViewModel : ViewModel_Interface
     {
         private bool _changesMade = false; 
         public bool ChangesMade { get { return _changesMade; } 

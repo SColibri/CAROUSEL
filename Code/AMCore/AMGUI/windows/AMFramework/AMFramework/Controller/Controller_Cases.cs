@@ -8,7 +8,10 @@ using System.Windows.Data;
 using System.Collections;
 using System.Windows.Input;
 using System.Net.Sockets;
-using AMFramework.Core;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Controller;
+
 
 namespace AMFramework.Controller
 {
@@ -20,7 +23,7 @@ namespace AMFramework.Controller
         private int _idProject = -1;
         private int _selectedIDCase = -1;
 
-        public Controller_Cases(ref Core.IAMCore_Comm socket,
+        public Controller_Cases(ref IAMCore_Comm socket,
                                Controller.Controller_DBS_Projects _project) : base(socket)
         {
             _comm = socket;
@@ -65,9 +68,9 @@ namespace AMFramework.Controller
 
         #region Data
 
-        List<Model.Model_Case> _cases = new();
+        List<Model_Case> _cases = new();
 
-        public List<Model.Model_Case> Cases
+        public List<Model_Case> Cases
         {
             get
             {
@@ -75,7 +78,7 @@ namespace AMFramework.Controller
             }
         }
 
-        public void save(Model.Model_Case model)
+        public void save(Model_Case model)
         {
             string outComm = _comm.run_lua_command("singlepixel_case_save", model.Get_csv());
             if (outComm.CompareTo("OK") != 0)
@@ -92,8 +95,8 @@ namespace AMFramework.Controller
 
         List<string> _precipitationPhasesNames = new();
 
-        private List<Model.Model_Phase> _availablePhases = new();
-        public List<Model.Model_Phase> AvailablePhases { get { return _availablePhases; } }
+        private List<Model_Phase> _availablePhases = new();
+        public List<Model_Phase> AvailablePhases { get { return _availablePhases; } }
 
         public void load_database_available_phases()
         {
@@ -103,14 +106,14 @@ namespace AMFramework.Controller
 
         public void get_phase_selection_from_current_case()
         {
-            foreach (Model.Model_Phase item in AvailablePhases)
+            foreach (Model_Phase item in AvailablePhases)
             {
                 item.IsSelected = false;
             }
 
             foreach (var item in SelectedPhases)
             {
-                Model.Model_Phase? tempFindPhase = AvailablePhases.Find(e => e.ID == item.IDPhase);
+                Model_Phase? tempFindPhase = AvailablePhases.Find(e => e.ID == item.IDPhase);
                 if (tempFindPhase is null) continue;
                 tempFindPhase.IsSelected = true;
             }
@@ -119,8 +122,8 @@ namespace AMFramework.Controller
         #endregion
 
         #region Flags
-        private Model.Model_Case _selected_caseOLD;
-        public Model.Model_Case SelectedCaseOLD 
+        private Model_Case _selected_caseOLD;
+        public Model_Case SelectedCaseOLD 
         { 
             get { return _selected_caseOLD; } 
             set 
@@ -174,7 +177,7 @@ namespace AMFramework.Controller
             string Query = "database_table_custom_query SELECT * FROM \'Case\' WHERE IDProject = " + _ControllerProjects.SelectedProject.ID.ToString();
             string outy = _comm.run_lua_command(Query,"");
             List<string> rowItems = outy.Split("\n").ToList();
-            _cases = new List<Model.Model_Case>();
+            _cases = new List<Model_Case>();
 
             foreach (string item in rowItems)
             {
@@ -183,7 +186,7 @@ namespace AMFramework.Controller
 
                 if (columnItems.Count > 8)
                 {
-                    Model.Model_Case model = new()
+                    Model_Case model = new()
                     {
                         ID = Convert.ToInt32(columnItems[0]),
                         IDProject = Convert.ToInt32(columnItems[1]),
@@ -211,14 +214,14 @@ namespace AMFramework.Controller
             return outy;
         }
 
-        public void update_phaseFractions(Model.Model_Case model) 
+        public void update_phaseFractions(Model_Case model) 
         {
             if (model is null) return;
             _equilibriumPhaseFractions.fill_model_phase_fraction(model);
             _scheilPhaseFractions.fill_model_phase_fraction(model);
         }
 
-        public void Clear_phase_fractions(Model.Model_Case model)
+        public void Clear_phase_fractions(Model_Case model)
         {
             _equilibriumPhaseFractions.clear_models_phaseFractions();
         }
@@ -236,10 +239,10 @@ namespace AMFramework.Controller
         private Controller.Controller_PrecipitateSimulationData _Controller_PrecipitateSimulationData;
         private Controller.Controller_HeatTreatment _Controller_HeatTreatment;
 
-        public List<Model.Model_SelectedPhases> SelectedPhases { get { return _selectedPhases.Phases; } }
-        public List<Model.Model_ElementComposition> ElementComposition { get { return _elementComposition.Composition; } }
-        public List<Model.Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }
-        public List<Model.Model_ScheilPhaseFraction> ScheilPhaseFraction { get { return _scheilPhaseFractions.Equilibrium; } }
+        public List<Model_SelectedPhases> SelectedPhases { get { return _selectedPhases.Phases; } }
+        public List<Model_ElementComposition> ElementComposition { get { return _elementComposition.Composition; } }
+        public List<Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }
+        public List<Model_ScheilPhaseFraction> ScheilPhaseFraction { get { return _scheilPhaseFractions.Equilibrium; } }
 
         public Controller.Controller_PrecipitationPhase PrecipitationPhaseController { get { return _PrecipitationPhase; } }
         public Controller.Controller_ScheilConfiguration ScheilConfigurationsController { get { return _scheilConfigurations; } }
@@ -248,7 +251,7 @@ namespace AMFramework.Controller
 
         #region Templates
 
-        public void Create_templates(Model.Model_Case OriginalCase) 
+        public void Create_templates(Model_Case OriginalCase) 
         { 
             if(OriginalCase.CaseTemplates.Count == 0) 
             {
@@ -261,14 +264,14 @@ namespace AMFramework.Controller
 
             // send element composition
             string compositionString = OriginalCase.ElementCompositionOLD[0].ElementName + "||" + OriginalCase.ElementCompositionOLD[0].Value.ToString();
-            foreach (Model.Model_ElementComposition comp in OriginalCase.ElementCompositionOLD.Skip(1))
+            foreach (Model_ElementComposition comp in OriginalCase.ElementCompositionOLD.Skip(1))
             {
                 compositionString += "||" + comp.ElementName + "||" + comp.Value.ToString();
             }
             _comm.run_lua_command("template_pixelcase_setComposition ", compositionString);
 
             string phaseString = OriginalCase.SelectedPhasesOLD[0].PhaseName;
-            foreach (Model.Model_SelectedPhases comp in OriginalCase.SelectedPhasesOLD.Skip(1))
+            foreach (Model_SelectedPhases comp in OriginalCase.SelectedPhasesOLD.Skip(1))
             {
                 phaseString += "||" + comp.PhaseName ;
             }

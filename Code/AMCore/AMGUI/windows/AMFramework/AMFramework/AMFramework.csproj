@@ -1999,7 +1999,6 @@
   <ItemGroup>
     <Folder Include="Components\NewFolder\" />
     <Folder Include="Components\Terminal\" />
-    <Folder Include="Core\Database\" />
     <Folder Include="Resources\img\" />
   </ItemGroup>
 

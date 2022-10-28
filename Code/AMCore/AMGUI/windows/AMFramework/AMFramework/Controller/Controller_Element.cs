@@ -4,27 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework_Lib.Interfaces;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
-    internal class Controller_Element : INotifyPropertyChanged
+    internal class Controller_Element : ControllerAbstract
     {
         #region Socket
-        private Core.IAMCore_Comm _AMCore_Socket;
+        private IAMCore_Comm _AMCore_Socket;
         private Controller_DBS_Projects _projectController;
-        public Controller_Element(ref Core.IAMCore_Comm socket, Controller_DBS_Projects projectController)
+        public Controller_Element(ref IAMCore_Comm socket, Controller_DBS_Projects projectController)
         {
             _AMCore_Socket = socket;
             _projectController = projectController;
-        }
-        #endregion
-
-        #region Interfaces
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
 
@@ -37,11 +32,11 @@ namespace AMFramework.Controller
         #endregion
 
         #region Data
-        private List<Model.Model_Element> _elements = new();
-        public List<Model.Model_Element> Elements { get { return _elements; } } 
-        public List<Model.Model_Element> get_elements_from_project(int IDProject)
+        private List<Model_Element> _elements = new();
+        public List<Model_Element> Elements { get { return _elements; } } 
+        public List<Model_Element> get_elements_from_project(int IDProject)
         {
-            List<Model.Model_Element> composition = new();
+            List<Model_Element> composition = new();
             string Query = "database_table_custom_query SELECT Element.ID as IDE, Element.Name, SelectedElements.* FROM SelectedElements INNER JOIN Element ON Element.ID=SelectedElements.IDElement WHERE IDProject = " + IDProject;
             string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
@@ -55,9 +50,9 @@ namespace AMFramework.Controller
 
             return composition;
         }
-        public List<Model.Model_Element> get_elements_list()
+        public List<Model_Element> get_elements_list()
         {
-            List<Model.Model_Element> composition = new();
+            List<Model_Element> composition = new();
             string Query = "database_table_custom_query SELECT Element.* FROM Element";
             string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
@@ -72,10 +67,10 @@ namespace AMFramework.Controller
             return composition;
         }
 
-        public List<Model.Model_Element> get_available_elements_in_database()
+        public List<Model_Element> get_available_elements_in_database()
         {
             // get available element names from database
-            List<Model.Model_Element> composition = new();
+            List<Model_Element> composition = new();
             string Query = "matcalc_database_elementNames";
             string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> elementList = outCommand.Split("\n").ToList();
@@ -99,11 +94,11 @@ namespace AMFramework.Controller
 
             return composition;
         }
-        private Model.Model_Element fillModel(List<string> DataRaw)
+        private Model_Element fillModel(List<string> DataRaw)
         {
             if (DataRaw.Count < 2) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_Element modely = new()
+            Model_Element modely = new()
             {
                 ID = Convert.ToInt32(DataRaw[0]),
                 Name = DataRaw[1]

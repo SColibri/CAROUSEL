@@ -13,17 +13,18 @@ using AutocompleteMenuNS;
 using System.Windows.Media;
 using System.Windows.Threading;
 using AMFramework.Components.Button;
-using AMFramework.Interfaces;
-using AMFramework.Model;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
     [Obsolete("This was a prototyping function used for all fast edits, the time has come to use the controllers correctly, refer to controller_project. Many other controllers have to be updated :)")]
-    public class Controller_DBS_Projects : INotifyPropertyChanged
+    public class Controller_DBS_Projects : ControllerAbstract
     {
         #region Socket
-        private Core.IAMCore_Comm _AMCore_Socket;
-        public Controller_DBS_Projects(Core.IAMCore_Comm socket)
+        private IAMCore_Comm _AMCore_Socket;
+        public Controller_DBS_Projects(IAMCore_Comm socket)
         {
             _AMCore_Socket = socket;
             controllerCases = new(ref socket, this);
@@ -187,8 +188,8 @@ namespace AMFramework.Controller
 
         #region Methods
 
-        private List<Model.Model_Projects> _DB_projects = new();
-        public List<Model.Model_Projects> DB_projects
+        private List<Model_Projects> _DB_projects = new();
+        public List<Model_Projects> DB_projects
         {
             get
             {
@@ -198,7 +199,7 @@ namespace AMFramework.Controller
 
         public string DB_projects_reload()
         {
-            string outy = Controller.Controller_Config.ApiHandle.run_lua_command("dataController_csv", "0");
+            string outy = Controller_Config.ApiHandle.run_lua_command("dataController_csv", "0");
             List<string> rowItems = outy.Split("\n").ToList();
             _DB_projects = new();
 
@@ -209,7 +210,7 @@ namespace AMFramework.Controller
 
                 if (columnItems.Count > 2)
                 {
-                    Model.Model_Projects model = new()
+                    Model_Projects model = new()
                     {
                         ID = Convert.ToInt32(columnItems[0]),
                         Name = columnItems[1],
@@ -232,9 +233,9 @@ namespace AMFramework.Controller
             return outy;
         }
 
-        private Model.Model_Projects _selectedProject;
+        private Model_Projects _selectedProject;
 
-        public Model.Model_Projects SelectedProject
+        public Model_Projects SelectedProject
         {
             get { return _selectedProject; }
             set
@@ -281,10 +282,10 @@ namespace AMFramework.Controller
 
             if(_treeIDCase > -1 && _treeIDHeatTreatment > -1) 
             {
-                Model.Model_Case? CaseID = Cases.Find(e => e.ID == _treeIDCase);
+                Model_Case? CaseID = Cases.Find(e => e.ID == _treeIDCase);
                 if(CaseID != null) 
                 {
-                    Model.Model_HeatTreatment? Htreat = CaseID.HeatTreatmentsOLD.Find(e => e.ID == _treeIDHeatTreatment);
+                    Model_HeatTreatment? Htreat = CaseID.HeatTreatmentsOLD.Find(e => e.ID == _treeIDHeatTreatment);
                     if(Htreat != null) 
                     {
                         Htreat.IsSelected = true;
@@ -305,9 +306,9 @@ namespace AMFramework.Controller
             }
         }
 
-        public Model.Model_Projects DataModel(int ID)
+        public Model_Projects DataModel(int ID)
         {
-            Model.Model_Projects model = new();
+            Model_Projects model = new();
 
             if (ID == -1) return model;
             string outy = _AMCore_Socket.run_lua_command("project_getData ", "");
@@ -316,7 +317,7 @@ namespace AMFramework.Controller
             return model;
         }
 
-        public int save_DataModel(Model.Model_Projects model)
+        public int save_DataModel(Model_Projects model)
         {
             int result = 0;
 
@@ -333,7 +334,7 @@ namespace AMFramework.Controller
             return result;
         }
 
-        private void fillModel(ref Model.Model_Projects model, List<string> dataIn)
+        private void fillModel(ref Model_Projects model, List<string> dataIn)
         {
             if (dataIn.Count < 3) return;
             model.ID = Convert.ToInt32(dataIn[0]);
@@ -351,7 +352,7 @@ namespace AMFramework.Controller
         #region Cases
         private Controller.Controller_Cases controllerCases;
         public Controller.Controller_Cases ControllerCases { get { return controllerCases; } }
-        public List<Model.Model_Case> Cases
+        public List<Model_Case> Cases
         {
             get
             {
@@ -359,8 +360,8 @@ namespace AMFramework.Controller
             }
         }
 
-        private List<List<Model.Model_Case>> _cases_BySelectedPhases = new();
-        public List<List<Model.Model_Case>> Cases_BySelectedPhases
+        private List<List<Model_Case>> _cases_BySelectedPhases = new();
+        public List<List<Model_Case>> Cases_BySelectedPhases
         {
             get { return _cases_BySelectedPhases; }
             set
@@ -378,7 +379,7 @@ namespace AMFramework.Controller
             _cases_BySelectedPhases.Add(new());
             _cases_BySelectedPhases[0].Add(Cases[0]);
 
-            foreach (Model.Model_Case caseItem in Cases.Skip(1))
+            foreach (Model_Case caseItem in Cases.Skip(1))
             {
                 for (int n1 = 0; n1 < _cases_BySelectedPhases.Count; n1++)
                 {
@@ -398,7 +399,7 @@ namespace AMFramework.Controller
             OnPropertyChanged(nameof(Cases_BySelectedPhases));
         }
 
-        public void Case_load_equilibrium_phase_fraction(Model.Model_Case model) 
+        public void Case_load_equilibrium_phase_fraction(Model_Case model) 
         {
             controllerCases.update_phaseFractions(model);
         }
@@ -408,8 +409,8 @@ namespace AMFramework.Controller
             //controllerCases.Clear_phase_fractions();
         }
 
-        private List<Model.Model_Phase> _used_Phases_inCases;
-        public List<Model.Model_Phase> Used_Phases_inCases
+        private List<Model_Phase> _used_Phases_inCases;
+        public List<Model_Phase> Used_Phases_inCases
         { get { return _used_Phases_inCases; } }
 
         public void refresh_used_Phases_inCases() 
@@ -427,8 +428,8 @@ namespace AMFramework.Controller
         #endregion
 
         #region Phases
-        private List<Model.Model_Phase> _available_Phase = new();
-        public List<Model.Model_Phase> AvailablePhase { get { return _available_Phase; } }
+        private List<Model_Phase> _available_Phase = new();
+        public List<Model_Phase> AvailablePhase { get { return _available_Phase; } }
 
         public void load_database_available_phases()
         {
@@ -438,15 +439,15 @@ namespace AMFramework.Controller
 
         public void get_phase_selection_from_current_case() 
         {
-            foreach (Model.Model_Phase item in AvailablePhase)
+            foreach (Model_Phase item in AvailablePhase)
             {
                 item.IsSelected = false;
             }
 
             if (controllerCases.SelectedCaseOLD is null) return;
-            foreach (Model.Model_SelectedPhases item in controllerCases.SelectedCaseOLD.SelectedPhasesOLD)
+            foreach (Model_SelectedPhases item in controllerCases.SelectedCaseOLD.SelectedPhasesOLD)
             {
-                Model.Model_Phase? tempFindPhase = AvailablePhase.Find(e => e.ID == item.IDPhase);
+                Model_Phase? tempFindPhase = AvailablePhase.Find(e => e.ID == item.IDPhase);
                 if (tempFindPhase is null) continue;
                 tempFindPhase.IsSelected = true;
             }
@@ -458,10 +459,10 @@ namespace AMFramework.Controller
             if (controllerCases.SelectedCaseOLD is null) return;
 
             controllerCases.SelectedCaseOLD.Clear_selectedPhasesOLD();
-            foreach (Model.Model_Phase item in AvailablePhase)
+            foreach (Model_Phase item in AvailablePhase)
             {
                 if (item.IsSelected == false) continue;
-                Model.Model_SelectedPhases tempSelPhase = new()
+                Model_SelectedPhases tempSelPhase = new()
                 {
                     IDPhase = item.ID,
                     IDCase = controllerCases.SelectedCaseOLD.ID,
@@ -478,7 +479,7 @@ namespace AMFramework.Controller
 
             foreach (var item in AvailablePhase)
             {
-                Model.Model_ActivePhases tempRef = _ActivePhasesController.ActivePhases.Find(e => e.IDPhase == item.ID);
+                Model_ActivePhases tempRef = _ActivePhasesController.ActivePhases.Find(e => e.IDPhase == item.ID);
                 if (tempRef is null) 
                 {
                     item.IsActive = false;
@@ -502,7 +503,7 @@ namespace AMFramework.Controller
             { 
                 _search_phase_text = value;
 
-                foreach (Model.Model_Phase item in AvailablePhase)
+                foreach (Model_Phase item in AvailablePhase)
                 { 
                     if(item.Name.ToUpper().Contains(_search_phase_text.ToUpper())) item.IsVisible = true;
                     else item.IsVisible = false;
@@ -525,23 +526,23 @@ namespace AMFramework.Controller
 
         private Controller.Controller_Element Controller_Elements;
 
-        private List<Model.Model_SelectedElements> _selectedElements = new();
-        public List<Model.Model_SelectedElements> SelectedElements
+        private List<Model_SelectedElements> _selectedElements = new();
+        public List<Model_SelectedElements> SelectedElements
         {
             get { return _selectedElements; }
         }
 
-        private List<Model.Model_Element> _available_Elements = new();
-        public List<Model.Model_Element> AvailableElements { get { return _available_Elements; } }
+        private List<Model_Element> _available_Elements = new();
+        public List<Model_Element> AvailableElements { get { return _available_Elements; } }
 
         public void load_database_available_elements() 
         {
             ElementsIsLoading = true;
             _available_Elements = Controller_Elements.get_available_elements_in_database();
 
-            foreach (Model.Model_SelectedElements Elementy in SelectedElements)
+            foreach (Model_SelectedElements Elementy in SelectedElements)
             {
-                Model.Model_Element SelElement = AvailableElements.Find(e => e.ID == Elementy.IDElement);
+                Model_Element SelElement = AvailableElements.Find(e => e.ID == Elementy.IDElement);
                 
                 if (SelElement == null) continue;
                 SelElement.IsSelected = true;
@@ -576,7 +577,7 @@ namespace AMFramework.Controller
         }
         public void Save_elementSelection_Handle(object sender, EventArgs e) 
         {
-            List<Model.Model_Element> ElementListy = AvailableElements.FindAll(e => e.IsSelected == true);
+            List<Model_Element> ElementListy = AvailableElements.FindAll(e => e.IsSelected == true);
 
             if(ElementListy.Count == 0) 
             {
@@ -588,7 +589,7 @@ namespace AMFramework.Controller
             if (ElementListy.Count == SelectedElements.Count) 
             {
                 bool somethingChanged = false;
-                foreach (Model.Model_Element Elementy in ElementListy)
+                foreach (Model_Element Elementy in ElementListy)
                 {
                     int Index = SelectedElements.FindIndex(e => e.IDElement == Elementy.ID);
                     if(Index == -1) 
@@ -607,7 +608,7 @@ namespace AMFramework.Controller
 
             // proceed with selection
             string selectedElements = ElementListy[0].Name;
-            foreach (Model.Model_Element Elementy in ElementListy.Skip(1))
+            foreach (Model_Element Elementy in ElementListy.Skip(1))
             {
                 selectedElements += "||" + Elementy.Name;
             }
@@ -616,7 +617,7 @@ namespace AMFramework.Controller
             if (commOut.Contains("Error")) { MainWindow.notify.ShowBalloonTip(5000, "Error project", "Elements could not be selected", System.Windows.Forms.ToolTipIcon.Error); }
 
             // reference element
-            Model.Model_Element refElement = ElementListy.Find(e => e.IsReferenceElement == true);
+            Model_Element refElement = ElementListy.Find(e => e.IsReferenceElement == true);
             if (refElement != null)
             {
                 commOut = _AMCore_Socket.run_lua_command("project_setReferenceElement ", refElement.Name);
@@ -833,7 +834,7 @@ namespace AMFramework.Controller
             Controller_Global.MainControl?.Show_Case_PlotView(mRef);
         }
 
-        private TV_TopView_controller dtv_Add_CaseSingle(Model.Model_Case casey)
+        private TV_TopView_controller dtv_Add_CaseSingle(Model_Case casey)
         {
             TV_TopView_controller TC_proj = new()
             {
@@ -917,7 +918,7 @@ namespace AMFramework.Controller
             Controller_Global.MainControl?.Show_Case_EditWindow(mRef);
         }
 
-        private TV_TopView_controller dtv_Add_Precipitation_kinetics(Model.Model_Case casey) 
+        private TV_TopView_controller dtv_Add_Precipitation_kinetics(Model_Case casey) 
         {
             TV_TopView_controller TC_Kinetics = new()
             {
@@ -1108,15 +1109,15 @@ namespace AMFramework.Controller
             else if (refTree.Tag.ToString().ToUpper().Contains("CASE"))
             {
                 StackPanel refStack = (StackPanel)refTree.Header;
-                Model.Model_Case? model = null;
+                Model_Case? model = null;
 
                 for (int n1 = 0; n1 < refStack.Children.Count; n1++)
                 {
                     if (refStack.Children[n1].GetType().Equals(typeof(TextBlock)))
                     {
-                        if (((TextBlock)refStack.Children[n1]).Tag.GetType().Equals(typeof(Model.Model_Case)))
+                        if (((TextBlock)refStack.Children[n1]).Tag.GetType().Equals(typeof(Model_Case)))
                         {
-                            model = ((Model.Model_Case)((TextBlock)refStack.Children[n1]).Tag);
+                            model = ((Model_Case)((TextBlock)refStack.Children[n1]).Tag);
                         }
                     }
                 }
@@ -1135,9 +1136,9 @@ namespace AMFramework.Controller
         private bool selected_treeview_item_tagType(object refTreeItem)
         {
             //Check if Tag is of type string
-            if (refTreeItem.GetType().Equals(typeof(Model.Model_Case))) 
+            if (refTreeItem.GetType().Equals(typeof(Model_Case))) 
             {
-                controllerCases.SelectedCaseOLD = (Model.Model_Case)refTreeItem;
+                controllerCases.SelectedCaseOLD = (Model_Case)refTreeItem;
                 SelectedCaseID = true;
                 return true;
             }

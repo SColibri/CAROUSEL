@@ -17,6 +17,9 @@ using System.Windows.Shapes;
 using AMFramework.Controller;
 using Microsoft.VisualBasic;
 using ScintillaNET;
+using AMFramework_Lib.AMSystem;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Interfaces;
 
 namespace AMFramework.Components.Scripting
 {
@@ -26,7 +29,7 @@ namespace AMFramework.Components.Scripting
     /// </summary>
     public partial class Scripting_editor : System.Windows.Controls.UserControl
     {
-        private AMSystem.LUA_FileParser AMParser = new();
+        private LUA_FileParser AMParser = new();
         public Scripting_editor()
         {
             InitializeComponent();
@@ -326,8 +329,8 @@ namespace AMFramework.Components.Scripting
 
         private void Update_Highlight(object sender) 
         {
-            AMSystem.LUA_FileParser.Remove_module("Local", AMParser);
-            AMSystem.LUA_FileParser.File_parse(((Scintilla)sender).Text, AMParser, "Local");
+            LUA_FileParser.Remove_module("Local", AMParser);
+            LUA_FileParser.File_parse(((Scintilla)sender).Text, AMParser, "Local");
 
             ((Scintilla)sender).SetKeywords(4, AMParser.Remove_Icon_tags(AMParser.Get_Classes_keywords().Replace("?3", "")));
             ((Scintilla)sender).SetKeywords(5, AMParser.Remove_Icon_tags(AMParser.Get_Functions_keywords().Replace("?1", "")));
@@ -429,11 +432,11 @@ namespace AMFramework.Components.Scripting
             if (word.Length == 0) return;
             string titleData = "";
             string infoData = "";
-            AMSystem.ParseObject? referenceP = AMParser.AMParser.Find(e => e.Name.CompareTo(word) == 0);
+            ParseObject? referenceP = AMParser.AMParser.Find(e => e.Name.CompareTo(word) == 0);
             if (referenceP == null) 
             {
                 int posIterate = pos - 2;
-                AMSystem.ParseObject? mainClass = null;
+                ParseObject? mainClass = null;
                 while (((Scintilla)sender).LineFromPosition(posIterate) == cLine && 
                                                                  posIterate >= 0 &&
                                                                  mainClass == null) 
@@ -450,16 +453,16 @@ namespace AMFramework.Components.Scripting
                 referenceP = mainClass;
             }
 
-            if (referenceP.ObjectType == AMSystem.ParseObject.PTYPE.CLASS || 
-                referenceP.ObjectType == AMSystem.ParseObject.PTYPE.GLOBAL_VARIABLE ||
-                referenceP.ObjectType == AMSystem.ParseObject.PTYPE.LOCAL_VARIABLE)
+            if (referenceP.ObjectType == ParseObject.PTYPE.CLASS || 
+                referenceP.ObjectType == ParseObject.PTYPE.GLOBAL_VARIABLE ||
+                referenceP.ObjectType == ParseObject.PTYPE.LOCAL_VARIABLE)
             {
                 infoData = referenceP.Description;
                 titleData = referenceP.ObjectType.ToString() + " " + referenceP.Name;
             }
-            else if (referenceP.ObjectType == AMSystem.ParseObject.PTYPE.FUNCTION) 
+            else if (referenceP.ObjectType == ParseObject.PTYPE.FUNCTION) 
             {
-                AMSystem.ParseObject? mainClass = AMParser.AMParser.Find(e => e.functions.FindAll(e  => e.Name.CompareTo(referenceP.ParametersType) == 0).Count > 0 );
+                ParseObject? mainClass = AMParser.AMParser.Find(e => e.functions.FindAll(e  => e.Name.CompareTo(referenceP.ParametersType) == 0).Count > 0 );
 
                 if (mainClass == null) return;
             }

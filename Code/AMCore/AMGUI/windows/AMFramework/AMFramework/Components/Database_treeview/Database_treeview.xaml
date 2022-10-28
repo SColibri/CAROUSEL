@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AMFramework.Components.Database_treeview"
              xmlns:controllers ="clr-namespace:AMFramework.Controller"
-             xmlns:models ="clr-namespace:AMFramework.Model"
+             xmlns:models ="clr-namespace:AMFramework_Lib.Model"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              xmlns:converters ="clr-namespace:AMFramework.Components.Converters" d:DataContext="{d:DesignInstance Type=controllers:Controller_DBS_Projects}"
              xmlns:amc ="clr-namespace:AMControls.Custom;assembly=AMControls"

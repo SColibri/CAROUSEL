@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
 using System.Windows.Data;
 using System.Windows;
 using System.Windows.Input;
-using AMFramework.Core;
-using AMFramework.Interfaces;
-using AMFramework.Model;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Interfaces;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.AMSystem;
+using AMFramework_Lib.Structures;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using AMFramework.Views.Projects;
 using AMFramework.Views.Case;
 using AMFramework.Views.Precipitation_Kinetics;
-using AMFramework.AMSystem;
-using Microsoft.Win32;
 using AMFramework.Components.Windows;
-using System.Windows.Controls.Primitives;
-using System.CodeDom;
-using AMFramework.Views.Popup;
 
 namespace AMFramework.Controller
 {
@@ -36,21 +31,22 @@ namespace AMFramework.Controller
 
         private readonly Controller.Controller_Project _Project;
 
-        private Core.IAMCore_Comm _coreSocket = new Core.AMCore_Socket();
+        private IAMCore_Comm _coreSocket = new AMCore_Socket();
 
         private readonly Views.Projects.Project_contents _viewProjectContents;
 
         public Controller_MainWindow() 
         {
-            AMSystem.UserPreferences? uPref = AMSystem.UserPreferences.load();
+            UserPreferences? uPref = UserPreferences.load();
             
-            Controller_Global.Configuration ??= new(Controller_Global.UserPreferences.IAM_API_PATH);
+            Controller_Config cConfig = new(Controller_Global.UserPreferences.IAM_API_PATH);
+            Controller_Global.Configuration = cConfig.datamodel;
 
-            _Config = Controller_Global.Configuration;
+            _Config = cConfig;
 
             _coreSocket = Controller.Controller_Config.ApiHandle;
 
-            AMSystem.AMFramework_startup.Start(ref _coreSocket);
+            AMFramework_startup.Start(ref _coreSocket);
             
             _AMCore = new(_coreSocket);
             _AMView = new();
@@ -343,8 +339,8 @@ namespace AMFramework.Controller
         #region Projects
 
         #region Data
-        private List<Model.Model_Projects> _projects = new();
-        public List<Model.Model_Projects> Projects
+        private List<Model_Projects> _projects = new();
+        public List<Model_Projects> Projects
         {
             get => _projects;
             set
@@ -617,8 +613,8 @@ namespace AMFramework.Controller
         // kinetic is not the same as kinetick xp
         public void Selected_kinetick_precipitation_heatT_Handle(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (!sender.GetType().Equals(typeof(Model.Model_HeatTreatment))) return;
-            Model.Model_HeatTreatment tempRef = (Model.Model_HeatTreatment)sender;
+            if (!sender.GetType().Equals(typeof(Model_HeatTreatment))) return;
+            Model_HeatTreatment tempRef = (Model_HeatTreatment)sender;
             Controller.Controller_PrecipitateSimulationData.fill_heatTreatment_model(ref _coreSocket, tempRef);
 
             //Remove old tab
@@ -667,9 +663,9 @@ namespace AMFramework.Controller
         /// <param name="refItem"></param>
         private void Selected_treeview_item_ByModel(object refItem)
         {
-            if (refItem.GetType().Equals(typeof(Model.Model_Case)))
+            if (refItem.GetType().Equals(typeof(Model_Case)))
             {
-                _DBSProjects.ControllerCases.SelectedCaseOLD = (Model.Model_Case)refItem;
+                _DBSProjects.ControllerCases.SelectedCaseOLD = (Model_Case)refItem;
                 _treeview_selected_tab = _AMView.get_case_itemTab(_DBSProjects.ControllerCases);
             }
             else if (refItem.GetType().Equals(typeof(Controller_DBS_Projects)))
@@ -759,7 +755,7 @@ namespace AMFramework.Controller
             }
         }
         public void Show_Notification(string Title, string Content, int IconType = (int)FontAwesome.WPF.FontAwesomeIcon.InfoCircle,
-                                      Color? IconForeground = null, Color? ContentBackground = null, Color? TitleBackground = null)
+                                      Struct_Color? IconForeground = null, Struct_Color? ContentBackground = null, Struct_Color? TitleBackground = null)
         {
             // Set notification parameters
             NotificationObject.Title = Title;
@@ -767,13 +763,25 @@ namespace AMFramework.Controller
             NotificationObject.Icon = (FontAwesome.WPF.FontAwesomeIcon)IconType;
 
             //If Brushes are null, set default values
-            if (IconForeground != null) NotificationObject.IconForeground = new SolidColorBrush((Color)IconForeground);
+            if (IconForeground != null) 
+            {
+                Color nColor = Color.FromArgb((byte)IconForeground.A, (byte)IconForeground.R, (byte)IconForeground.G, (byte)IconForeground.B);
+                NotificationObject.IconForeground = new SolidColorBrush(nColor); 
+            }
             else NotificationObject.IconForeground = Brushes.White;
 
-            if (ContentBackground != null) NotificationObject.ContentBackground = new SolidColorBrush((Color)ContentBackground);
+            if (ContentBackground != null)
+            {
+                Color nColor = Color.FromArgb((byte)ContentBackground.A, (byte)ContentBackground.R, (byte)ContentBackground.G, (byte)ContentBackground.B);
+                NotificationObject.ContentBackground = new SolidColorBrush(nColor);
+            }
             else NotificationObject.ContentBackground = Brushes.Black;
 
-            if (TitleBackground != null) NotificationObject.TitleBackground = (Color)TitleBackground;
+            if (TitleBackground != null)
+            {
+                Color nColor = Color.FromArgb((byte)TitleBackground.A, (byte)TitleBackground.R, (byte)TitleBackground.G, (byte)TitleBackground.B);
+                NotificationObject.TitleBackground = nColor;
+            }
             else NotificationObject.TitleBackground = Colors.LightBlue;
 
             // show notification (Maybe add the time interavl into the interface as parameter)

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
-using AMFramework.Model;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
 
 namespace AMFramework.Controller
 {
@@ -13,7 +15,7 @@ namespace AMFramework.Controller
 
         #region Socket
         private Controller.Controller_Cases _CaseController;
-        public Controller_PrecipitationDomain(ref Core.IAMCore_Comm comm, Controller.Controller_Cases caseController):base(comm)
+        public Controller_PrecipitationDomain(ref IAMCore_Comm comm, Controller.Controller_Cases caseController):base(comm)
         {
             _CaseController = caseController;
             
@@ -37,8 +39,8 @@ namespace AMFramework.Controller
         #endregion
 
         #region PrecipitationDomain
-        private List<Model.Model_PrecipitationDomain> _precipitationDomainsOLD = new();
-        public List<Model.Model_PrecipitationDomain> PrecipitationDomainsOLD
+        private List<Model_PrecipitationDomain> _precipitationDomainsOLD = new();
+        public List<Model_PrecipitationDomain> PrecipitationDomainsOLD
         {
             get { return _precipitationDomainsOLD; }
             set
@@ -54,9 +56,9 @@ namespace AMFramework.Controller
             PrecipitationDomainsOLD = Get_model(_comm, _CaseController.SelectedCaseOLD.ID);
         }
 
-        public static List<Model.Model_PrecipitationDomain> Get_model(Core.IAMCore_Comm comm, int IDCase)
+        public static List<Model_PrecipitationDomain> Get_model(IAMCore_Comm comm, int IDCase)
         {
-            List<Model.Model_PrecipitationDomain> model = new();
+            List<Model_PrecipitationDomain> model = new();
 
             string Query = "SELECT PrecipitationDomain.* FROM PrecipitationDomain WHERE IDCase=" + IDCase;
             string outCommand = comm.run_lua_command("database_table_custom_query", Query);
@@ -74,11 +76,11 @@ namespace AMFramework.Controller
         }
 
         [Obsolete("This is now done by The modelcontroller<>")]
-        private static Model.Model_PrecipitationDomain FillModel(List<string> DataRaw)
+        private static Model_PrecipitationDomain FillModel(List<string> DataRaw)
         {
             if (DataRaw.Count < 7) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_PrecipitationDomain model = new()
+            Model_PrecipitationDomain model = new()
             {
                 ID = Convert.ToInt32(DataRaw[0]),
                 IDCase = Convert.ToInt32(DataRaw[1]),
@@ -95,7 +97,7 @@ namespace AMFramework.Controller
         }
 
         [Obsolete("This is now donw by the modelController")]
-        public static void Save(Core.IAMCore_Comm AMCore_Socket, Model.Model_PrecipitationDomain model)
+        public static void Save(IAMCore_Comm AMCore_Socket, Model_PrecipitationDomain model)
         {
             AMCore_Socket.run_lua_command("spc_precipitation_domain_save", model.Get_csv());
         }
@@ -103,7 +105,7 @@ namespace AMFramework.Controller
         [Obsolete("This is done by the modelcontrollers and the M controllers")]
         public void fill_models_with_precipitation_domains()
         {
-            foreach (Model.Model_Case casey in _CaseController.Cases)
+            foreach (Model_Case casey in _CaseController.Cases)
             {
                 casey.PrecipitationDomainsOLD = Get_model(_comm, casey.ID);
             }

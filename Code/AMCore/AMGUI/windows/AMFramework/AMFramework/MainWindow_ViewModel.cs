@@ -1,4 +1,4 @@
-﻿using AMFramework.Core;
+﻿using AMFramework_Lib.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +8,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using AMFramework_Lib.Interfaces;
 
 namespace AMFramework
 {
     /// <summary>
     /// TODO: Split the functionality of this pseudo-controller, use the correct controller for the main Window and discard this one
     /// </summary>
-    public class MainWindow_ViewModel:Interfaces.ViewModel_Interface
+    public class MainWindow_ViewModel:ViewModel_Interface
     {
         private List<Components.Scripting.Scripting_ViewModel> _openScripts = new();
         public List<Components.Scripting.Scripting_ViewModel> OpenScripts { get { return _openScripts; } }

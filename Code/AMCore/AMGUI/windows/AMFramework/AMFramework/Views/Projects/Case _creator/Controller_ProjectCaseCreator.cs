@@ -1,8 +1,11 @@
 ﻿using AMFramework.Controller;
-using AMFramework.Model;
-using AMFramework.Model.Model_Controllers;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Model.Model_Controllers;
 using AMFramework.Views.HeatTreatments;
 using AMFramework.Views.Phase;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +17,9 @@ using System.Windows.Input;
 
 namespace AMFramework.Views.Projects.Other
 {
-    public class Controller_ProjectCaseCreator : Controller.ControllerAbstract
+    public class Controller_ProjectCaseCreator : ControllerAbstract
     {
-        public Controller_ProjectCaseCreator(ref Core.IAMCore_Comm comm, ControllerM_Project projectController):base(comm) 
+        public Controller_ProjectCaseCreator(ref IAMCore_Comm comm, ControllerM_Project projectController):base(comm) 
         {
             // Set project configuration on to new case template
             _projectController = projectController;
@@ -312,7 +315,7 @@ namespace AMFramework.Views.Projects.Other
         {
 
             CreateCases_UpdatePhases();
-            Scripting.Scripting_ProjectCaseCreator pcc = new(_projectController.MCObject.ModelObject, _caseTemplate.MCObject.ModelObject);
+            Scripting_ProjectCaseCreator pcc = new(_projectController.MCObject.ModelObject, _caseTemplate.MCObject.ModelObject);
 
             MessageBox.Show(pcc.ScriptText(),"Hello");
         }

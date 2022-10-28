@@ -7,7 +7,9 @@ using System.Windows;
 using System.Windows.Controls;
 using AMControls.Custom.ProjectTreeView;
 using AMFramework.Controller;
-using AMFramework.Interfaces;
+using AMFramework_Lib.Interfaces;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Model;
 using ScintillaNET;
 
 namespace AMFramework
@@ -75,14 +77,14 @@ namespace AMFramework
         {
             if (MainTabControl.SelectedItem != null)
             {
-                if (((Interfaces.ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).close())
+                if (((ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).close())
                 {
                     ((Border)sender).Triggers.Clear();
                     ((TabItem)MainTabControl.SelectedItem).Visibility = Visibility.Collapsed;
 
-                    if(((TabItem)MainTabControl.SelectedItem).Tag.GetType().Equals(typeof(Interfaces.ViewModel_Interface))) 
+                    if(((TabItem)MainTabControl.SelectedItem).Tag.GetType().Equals(typeof(ViewModel_Interface))) 
                     {
-                        ((Interfaces.ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).close();
+                        ((ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).close();
                     }
 
                     Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
@@ -97,7 +99,7 @@ namespace AMFramework
         {
             if(MainTabControl.SelectedItem != null)
             {
-                ((Interfaces.ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).save();
+                ((ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).save();
             }
         }
         private void RibbonMenuItem_Click_LoadLuaFile(object sender, RoutedEventArgs e)
@@ -105,7 +107,7 @@ namespace AMFramework
             System.Windows.Forms.OpenFileDialog ofd = new()
             {
                 Filter = " lua script | *.lua",
-                InitialDirectory = Controller.Controller_Global.Configuration?.datamodel.Working_Directory,
+                InitialDirectory = Controller_Global.Configuration?.Working_Directory,
                 Multiselect = false
             };
 
@@ -384,8 +386,8 @@ namespace AMFramework
         private void Select_kinetic_precipitation(object? sender, EventArgs e)
         {
             if (sender is null) return;
-            if (!sender.GetType().Equals(typeof(Model.Model_HeatTreatment))) return;
-            Model.Model_HeatTreatment refModel = (Model.Model_HeatTreatment)sender;
+            if (!sender.GetType().Equals(typeof(Model_HeatTreatment))) return;
+            Model_HeatTreatment refModel = (Model_HeatTreatment)sender;
 
             // clear all tabs and reload selection
             Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);

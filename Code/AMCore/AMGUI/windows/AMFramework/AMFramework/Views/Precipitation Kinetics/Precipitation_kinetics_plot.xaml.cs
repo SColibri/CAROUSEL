@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Model;
 
 namespace AMFramework.Views.Precipitation_Kinetics
 {
@@ -61,7 +63,7 @@ namespace AMFramework.Views.Precipitation_Kinetics
 
             for (int n0 = 0; n0 < distinctIDphase.Count; n0++) 
             {
-                List<Model.Model_PrecipitateSimulationData> SlectedMod = ControllerPlot.HeatModel.PrecipitationDataOLD.FindAll(x => x.IDPrecipitationPhase == distinctIDphase[n0]);
+                List<Model_PrecipitateSimulationData> SlectedMod = ControllerPlot.HeatModel.PrecipitationDataOLD.FindAll(x => x.IDPrecipitationPhase == distinctIDphase[n0]);
                 double[] radius_______ = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];
                 double[] phasefraction = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];
                 double[] density______ = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];

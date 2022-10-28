@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AMFramework_Lib.Interfaces;
 
 namespace AMFramework.Views.Precipitation_Kinetics
 {
-    internal class PrecipitationKinetics_ViewModel : Interfaces.ViewModel_Interface
+    internal class PrecipitationKinetics_ViewModel : ViewModel_Interface
     {
         #region interface
         public bool close()

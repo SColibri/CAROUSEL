@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Input;
-using AMFramework.Model;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
 
 namespace AMFramework.Controller
 {
@@ -20,21 +22,21 @@ namespace AMFramework.Controller
         /// </summary>
         /// <param name="comm"></param>
         /// <param name="projectController"></param>
-        public Controller_ActivePhasesConfiguration(ref Core.IAMCore_Comm comm, Controller_DBS_Projects projectController) : base(comm)
+        public Controller_ActivePhasesConfiguration(ref IAMCore_Comm comm, Controller_DBS_Projects projectController) : base(comm)
         {
             _ProjectController = projectController;
         }
 
         #region New_implementation
 
-        public Controller_ActivePhasesConfiguration(ref Core.IAMCore_Comm comm, int IDProject) : base(comm)
+        public Controller_ActivePhasesConfiguration(ref IAMCore_Comm comm, int IDProject) : base(comm)
         {
             //_ProjectController = projectController;
             var tRef = ModelController<Model_ActivePhasesConfiguration>.LoadIDProject(ref _comm, IDProject);
             if(tRef.Count > 0) _activePhasesConfiguration = tRef[0];
         }
 
-        public Controller_ActivePhasesConfiguration(ref Core.IAMCore_Comm comm, ModelController<Model_ActivePhasesConfiguration> activePhaseConfig) : base(comm)
+        public Controller_ActivePhasesConfiguration(ref IAMCore_Comm comm, ModelController<Model_ActivePhasesConfiguration> activePhaseConfig) : base(comm)
         {
             //_ProjectController = projectController;
             _activePhasesConfiguration = activePhaseConfig;
@@ -56,8 +58,8 @@ namespace AMFramework.Controller
 
         #region ActivePhases
 
-        private Model.Model_ActivePhasesConfiguration _APConfiguration = new();
-        public Model.Model_ActivePhasesConfiguration APConfiguration
+        private Model_ActivePhasesConfiguration _APConfiguration = new();
+        public Model_ActivePhasesConfiguration APConfiguration
         { 
             get { return _APConfiguration; }
             set 
@@ -67,9 +69,9 @@ namespace AMFramework.Controller
             }
         }
 
-        public static Model.Model_ActivePhasesConfiguration Get_model(Core.IAMCore_Comm comm,int IDProject) 
+        public static Model_ActivePhasesConfiguration Get_model(IAMCore_Comm comm,int IDProject) 
         { 
-            Model.Model_ActivePhasesConfiguration model = null;
+            Model_ActivePhasesConfiguration model = null;
 
             string Query = "SELECT ActivePhases_Configuration.* FROM ActivePhases_Configuration WHERE IDProject=" + IDProject;
             string outCommand = comm.run_lua_command("database_table_custom_query", Query);
@@ -77,7 +79,7 @@ namespace AMFramework.Controller
 
             if (rowItems.Count == 0) 
             {
-                Model.Model_ActivePhasesConfiguration NewModel = new()
+                Model_ActivePhasesConfiguration NewModel = new()
                 {
                     IDProject = IDProject
                 };
@@ -89,11 +91,11 @@ namespace AMFramework.Controller
 
         private static void FillModel(List<string> DataRaw) 
         {
-            Model.Model_ActivePhasesConfiguration model = new();
+            Model_ActivePhasesConfiguration model = new();
 
         }
 
-        public static void Save(Model.Model_ActivePhasesConfiguration model) 
+        public static void Save(Model_ActivePhasesConfiguration model) 
         { 
             
         }

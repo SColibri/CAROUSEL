@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.IO;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
 
 namespace AMFramework.Controller
 {
@@ -35,7 +38,7 @@ namespace AMFramework.Controller
         /// <param name="PathToLib">Path to library that implements the IAM_API interface</param>
             public Controller_Config(string PathToLib)
         {
-            Controller_Global.ApiHandle = new Core.AMCore_libHandle(PathToLib);
+            Controller_Global.ApiHandle = new AMCore_libHandle(PathToLib);
             load_model_data();
         }
 
@@ -90,12 +93,12 @@ namespace AMFramework.Controller
         #endregion
 
         #region getters
-        public static Core.IAMCore_Comm? ApiHandle { get { return Controller_Global.ApiHandle; } }
+        public static IAMCore_Comm? ApiHandle { get { return Controller_Global.ApiHandle; } }
         #endregion
 
         #region Model
 
-        public Model.Model_configuration datamodel { get; set; } = new Model.Model_configuration();
+        public Model_configuration datamodel { get; set; } = new Model_configuration();
 
         #endregion
 

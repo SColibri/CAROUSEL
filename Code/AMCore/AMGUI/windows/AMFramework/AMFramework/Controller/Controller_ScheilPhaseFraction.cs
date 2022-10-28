@@ -4,29 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Controller;
+
 
 namespace AMFramework.Controller
 {
-    public class Controller_ScheilPhaseFraction : INotifyPropertyChanged
+    public class Controller_ScheilPhaseFraction : ControllerAbstract
     {
 
 
         #region Socket
-        private Core.IAMCore_Comm _AMCore_Socket;
+        private IAMCore_Comm _AMCore_Socket;
         private Controller_Cases _CaseController;
-        public Controller_ScheilPhaseFraction(ref Core.IAMCore_Comm socket, Controller_Cases caseController)
+        public Controller_ScheilPhaseFraction(ref IAMCore_Comm socket, Controller_Cases caseController)
         {
             _AMCore_Socket = socket;
             _CaseController = caseController;
-        }
-        #endregion
-
-        #region Interfaces
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
 
@@ -42,15 +37,15 @@ namespace AMFramework.Controller
             }
         }
 
-        List<Model.Model_ScheilPhaseFraction> _equilibrium = new();
-        public List<Model.Model_ScheilPhaseFraction> Equilibrium
+        List<Model_ScheilPhaseFraction> _equilibrium = new();
+        public List<Model_ScheilPhaseFraction> Equilibrium
         {
             get { return _equilibrium; }
         }
 
-        public List<Model.Model_ScheilPhaseFraction> get_equilibrium_list(int IDCase)
+        public List<Model_ScheilPhaseFraction> get_equilibrium_list(int IDCase)
         {
-            List<Model.Model_ScheilPhaseFraction> result = new();
+            List<Model_ScheilPhaseFraction> result = new();
             string Query = "database_table_custom_query SELECT ScheilPhaseFraction.*, Phase.Name FROM ScheilPhaseFraction INNER JOIN Phase ON Phase.ID=ScheilPhaseFraction.IDPhase WHERE IDCase = " + IDCase;
             string outCommand = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outCommand.Split("\n").ToList();
@@ -65,11 +60,11 @@ namespace AMFramework.Controller
             return result;
         }
 
-        private Model.Model_ScheilPhaseFraction fillModel(List<string> DataRaw)
+        private Model_ScheilPhaseFraction fillModel(List<string> DataRaw)
         {
             if (DataRaw.Count < 6) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_ScheilPhaseFraction modely = new()
+            Model_ScheilPhaseFraction modely = new()
             {
                 ID = Convert.ToInt32(DataRaw[0]),
                 IDCase = Convert.ToInt32(DataRaw[1]),
@@ -85,20 +80,20 @@ namespace AMFramework.Controller
 
         public void fill_models_with_phaseFractions()
         {
-            foreach (Model.Model_Case casey in _CaseController.Cases)
+            foreach (Model_Case casey in _CaseController.Cases)
             {
                 casey.ScheilPhaseFractionsOLD = get_equilibrium_list(casey.ID);
             }
         }
 
-        public void fill_model_phase_fraction(Model.Model_Case casey)
+        public void fill_model_phase_fraction(Model_Case casey)
         {
             casey.ScheilPhaseFractionsOLD = get_equilibrium_list(casey.ID);
         }
 
         public void clear_models_phaseFractions()
         {
-            foreach (Model.Model_Case casey in _CaseController.Cases)
+            foreach (Model_Case casey in _CaseController.Cases)
             {
                 casey.ScheilPhaseFractionsOLD = new();
             }

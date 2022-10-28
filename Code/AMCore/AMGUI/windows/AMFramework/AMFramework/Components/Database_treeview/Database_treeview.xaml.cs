@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AMFramework_Lib.Model;
 
 namespace AMFramework.Components.Database_treeview
 {
@@ -34,7 +35,7 @@ namespace AMFramework.Components.Database_treeview
         public event EventHandler click_heat_treatment;
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Model.Model_HeatTreatment heatTreatment = (Model.Model_HeatTreatment)(((Border)sender).Tag);
+            Model_HeatTreatment heatTreatment = (Model_HeatTreatment)(((Border)sender).Tag);
             click_heat_treatment?.Invoke(heatTreatment, new EventArgs());
         }
     }

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AMFramework_Lib.Model;
 
 namespace AMFramework.Views.Case
 {
@@ -25,7 +26,7 @@ namespace AMFramework.Views.Case
             InitializeComponent();
         }
 
-        public Case_newitem(Model.Model_Case caseModel)
+        public Case_newitem(Model_Case caseModel)
         {
             InitializeComponent();
             DataContext = caseModel;

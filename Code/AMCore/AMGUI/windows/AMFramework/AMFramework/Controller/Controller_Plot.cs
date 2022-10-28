@@ -14,6 +14,8 @@ using AMControls.Charts.Implementations;
 using AMControls.Charts.Implementations.DataSeries;
 using AMFramework.Components.Charting.DataPlot;
 using AMFramework.Components.Charting.Interfaces;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Core;
 
 namespace AMFramework.Controller
 {
@@ -21,9 +23,9 @@ namespace AMFramework.Controller
     {
 
         #region Socket
-        private Core.IAMCore_Comm _AMCore_Socket;
+        private IAMCore_Comm _AMCore_Socket;
         private Controller_DBS_Projects _projectController;
-        public Controller_Plot(ref Core.IAMCore_Comm socket, Controller_DBS_Projects projectController)
+        public Controller_Plot(ref IAMCore_Comm socket, Controller_DBS_Projects projectController)
         {
             _AMCore_Socket = socket;
             _projectController = projectController;
@@ -39,9 +41,9 @@ namespace AMFramework.Controller
         }
         #endregion
 
-        public List<Model.Model_Phase> Used_Phases_inCases { get { return _projectController.Used_Phases_inCases; } }
-        public Model.Model_Projects SelectedProject { get { return _projectController.SelectedProject; } }
-        public List<Model.Model_Case> Cases { get { return _projectController.Cases; } }
+        public List<Model_Phase> Used_Phases_inCases { get { return _projectController.Used_Phases_inCases; } }
+        public Model_Projects SelectedProject { get { return _projectController.SelectedProject; } }
+        public List<Model_Case> Cases { get { return _projectController.Cases; } }
 
         #region Line_graphs
         private List<LineGraph> _lineGraphs = new();
@@ -63,16 +65,16 @@ namespace AMFramework.Controller
             if (LineGraphID.Any(m => m.Item1 == IDCase && m.Item2 == IDPhase)) return;
 
             // find model from project controller
-            Model.Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
+            Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
             if (model is null) return;
 
             // load Data
             _projectController.Case_load_equilibrium_phase_fraction(model);
-            List<Model.Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractionsOLD.FindAll(e => e.IDPhase == IDPhase);
+            List<Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractionsOLD.FindAll(e => e.IDPhase == IDPhase);
             if (modelList.Count == 0) return;
 
             //get data points
-            Model.Model_SelectedPhases phaseSelected = model.SelectedPhasesOLD.Find(e => e.IDCase == IDCase && e.IDPhase == IDPhase) ?? new();
+            Model_SelectedPhases phaseSelected = model.SelectedPhasesOLD.Find(e => e.IDCase == IDCase && e.IDPhase == IDPhase) ?? new();
             List<double> tempAxis = modelList.Select(e => e.Temperature).ToList();
             List<double> phaseFraction = modelList.Select(e => e.Value).ToList();
 
@@ -125,7 +127,7 @@ namespace AMFramework.Controller
         public struct SpyderDataStructure
         {
             public int IDCase;
-            public List<Model.Model_Phase> Phases;
+            public List<Model_Phase> Phases;
             public List<List<double>> Values;
             public string Name;
 
@@ -133,7 +135,7 @@ namespace AMFramework.Controller
             {
                 Name = "New series";
                 IDCase = -1;
-                Phases = new List<Model.Model_Phase>();
+                Phases = new List<Model_Phase>();
                 Values = new List<List<double>>();
             }
         }
@@ -147,7 +149,7 @@ namespace AMFramework.Controller
             if (SpyderGraphID.Any(m => m == IDCase)) return;
 
             // find model from project controller
-            Model.Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
+            Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
             if (model is null) return;
 
             // load Data
@@ -168,12 +170,12 @@ namespace AMFramework.Controller
                 dataPlotItem.Name += item.ElementName + ":" + item.Value;
             }
 
-            foreach (Model.Model_Phase phaseModel in Used_Phases_inCases)
+            foreach (Model_Phase phaseModel in Used_Phases_inCases)
             {
-                List<Model.Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractionsOLD.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
+                List<Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractionsOLD.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
                 if (modelList.Count == 0) continue;
 
-                Tuple<Model.Model_Phase, List<double>> tempItem = new(phaseModel, new());
+                Tuple<Model_Phase, List<double>> tempItem = new(phaseModel, new());
                 dataPlotItem.Values.Add(modelList.Select(e => e.Value).ToList());
             }
             _spyderDataPlot.Add(dataPlotItem);
@@ -185,7 +187,7 @@ namespace AMFramework.Controller
             if (SpyderGraphID.Any(m => m == IDCase)) return;
 
             // find model from project controller
-            Model.Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
+            Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
             if (model is null) return;
 
             // load Data
@@ -198,12 +200,12 @@ namespace AMFramework.Controller
                 IDCase = IDCase,
                 Phases = Used_Phases_inCases
             };
-            foreach (Model.Model_Phase phaseModel in Used_Phases_inCases)
+            foreach (Model_Phase phaseModel in Used_Phases_inCases)
             {
-                List<Model.Model_ScheilPhaseFraction> modelList = model.ScheilPhaseFractionsOLD.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
+                List<Model_ScheilPhaseFraction> modelList = model.ScheilPhaseFractionsOLD.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
                 if (modelList.Count == 0) continue;
 
-                Tuple<Model.Model_Phase, List<double>> tempItem = new(phaseModel, new());
+                Tuple<Model_Phase, List<double>> tempItem = new(phaseModel, new());
                 dataPlotItem.Values.Add(modelList.Select(e => e.Value).ToList());
             }
             _spyderDataPlot.Add(dataPlotItem);
@@ -222,8 +224,8 @@ namespace AMFramework.Controller
         {
             _projectController.Cases[0].IsSelected = true;
             _projectController.Cases[2].IsSelected = true;
-            List<Model.Model_Case> selCases = _projectController.Cases.FindAll(e => e.IsSelected == true);
-            List<Model.Model_Phase> selPhases = Used_Phases_inCases.FindAll(e => e.IsSelected == true);
+            List<Model_Case> selCases = _projectController.Cases.FindAll(e => e.IsSelected == true);
+            List<Model_Phase> selPhases = Used_Phases_inCases.FindAll(e => e.IsSelected == true);
             _spyderDataPlot.Clear();
 
 
@@ -278,8 +280,8 @@ namespace AMFramework.Controller
 
         private void Plot_linear_phases_async() 
         {
-            List<Model.Model_Case> selCases = _projectController.Cases.FindAll(e => e.IsSelected == true);
-            List<Model.Model_Phase> selPhases = Used_Phases_inCases.FindAll(e => e.IsSelected == true);
+            List<Model_Case> selCases = _projectController.Cases.FindAll(e => e.IsSelected == true);
+            List<Model_Phase> selPhases = Used_Phases_inCases.FindAll(e => e.IsSelected == true);
 
             for (int n1 = 0; n1 < selCases.Count; n1++)
             {
@@ -299,8 +301,8 @@ namespace AMFramework.Controller
         }
         #endregion
 
-        private Model.Model_HeatTreatment _heatModel = new();
-        public Model.Model_HeatTreatment HeatModel 
+        private Model_HeatTreatment _heatModel = new();
+        public Model_HeatTreatment HeatModel 
         {
             get { return _heatModel; } 
             set 

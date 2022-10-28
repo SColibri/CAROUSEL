@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AMFramework_Lib.Model;
 
 namespace AMFramework.Views.Case
 {
@@ -126,7 +127,7 @@ namespace AMFramework.Views.Case
             PopupFrame.Navigate(controllerCase.PopupView);
         }
 
-        private void Show_popup_precipitate_phase(Model.Model_PrecipitationPhase model)
+        private void Show_popup_precipitate_phase(Model_PrecipitationPhase model)
         {
             Controller.Controller_Cases controllerCase = (Controller.Controller_Cases)DataContext;
 
@@ -165,11 +166,11 @@ namespace AMFramework.Views.Case
         #region Handles
         private void Handle_edit_precipitation_phase(object sender, EventArgs e) 
         {
-            if (!sender.GetType().Equals(typeof(Model.Model_PrecipitationPhase))) return;
+            if (!sender.GetType().Equals(typeof(Model_PrecipitationPhase))) return;
 
-            Model.Model_PrecipitationPhase phase = (Model.Model_PrecipitationPhase)sender;
+            Model_PrecipitationPhase phase = (Model_PrecipitationPhase)sender;
 
-            Show_popup_precipitate_phase((Model.Model_PrecipitationPhase)sender);
+            Show_popup_precipitate_phase((Model_PrecipitationPhase)sender);
         }
 
 

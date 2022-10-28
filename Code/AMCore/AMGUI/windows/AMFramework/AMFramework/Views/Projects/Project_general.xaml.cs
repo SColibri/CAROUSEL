@@ -1,4 +1,4 @@
-﻿using AMFramework.Model;
+﻿using AMFramework_Lib.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +37,7 @@ namespace AMFramework.Views.Projects
 
         public void save() 
         {
-          _dbs.save_DataModel((Model.Model_Projects)DataContext);
+          _dbs.save_DataModel((Model_Projects)DataContext);
         }
 
         public void saveClickHandle(object sender, EventArgs e) { save(); }

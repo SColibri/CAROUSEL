@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework_Lib.Core;
 
 namespace AMFramework.Controller
 {
     public class Controller_AMCore : INotifyPropertyChanged
     {
 
-        private Core.IAMCore_Comm _AMCore_comm;
-        public Controller_AMCore(Core.IAMCore_Comm socket) 
+        private IAMCore_Comm _AMCore_comm;
+        public Controller_AMCore(IAMCore_Comm socket) 
         {
             _AMCore_comm = socket;
         }

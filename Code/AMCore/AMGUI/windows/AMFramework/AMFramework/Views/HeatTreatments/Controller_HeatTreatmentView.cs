@@ -4,9 +4,10 @@ using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Interfaces;
 using AMControls.Charts.Scatter;
 using AMFramework.Controller;
-using AMFramework.Core;
-using AMFramework.Model;
-using AMFramework.Structures;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Structures;
+using AMFramework_Lib.Controller;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,9 @@ using System.Windows.Media;
 
 namespace AMFramework.Views.HeatTreatments
 {
-    public class Controller_HeatTreatmentView : Controller.ControllerAbstract
+    public class Controller_HeatTreatmentView : ControllerAbstract
     {
-        public Controller_HeatTreatmentView(IAMCore_Comm comm, Model.Model_Case caseModel) : base(comm) 
+        public Controller_HeatTreatmentView(IAMCore_Comm comm, Model_Case caseModel) : base(comm) 
         {
             CaseModel = caseModel;
             HeatTreatmentPlot = new();
@@ -40,8 +41,8 @@ namespace AMFramework.Views.HeatTreatments
         }
 
         #region Properties
-        private Model.Model_Case _caseModel;
-        public Model.Model_Case CaseModel 
+        private Model_Case _caseModel;
+        public Model_Case CaseModel 
         {
             get { return _caseModel; }
             set 
@@ -51,8 +52,8 @@ namespace AMFramework.Views.HeatTreatments
             }
         }
 
-        private ModelController<Model.Model_HeatTreatment>? _selectedHeatTreatment;
-        public ModelController<Model.Model_HeatTreatment>? SelectedHeatTreatment
+        private ModelController<Model_HeatTreatment>? _selectedHeatTreatment;
+        public ModelController<Model_HeatTreatment>? SelectedHeatTreatment
         {
             get { return _selectedHeatTreatment; }
             set 
@@ -435,8 +436,15 @@ namespace AMFramework.Views.HeatTreatments
 
         private void Show_No_Project_Selected_Notification() 
         {
+            AMFramework_Lib.Structures.Struct_Color struct_Color = new();
+            struct_Color.G = System.Windows.Media.Colors.Yellow.G;
+            struct_Color.B = System.Windows.Media.Colors.Yellow.B;
+            struct_Color.R = System.Windows.Media.Colors.Yellow.R;
+            struct_Color.A = System.Windows.Media.Colors.Yellow.A;
+
+
             Controller_Global.MainControl?.Show_Notification("No ht selected", "Please select a heat treatment", (int)FontAwesome.WPF.FontAwesomeIcon.Warning,
-                                                                 System.Windows.Media.Colors.Yellow, null, null);
+                                                                 struct_Color, null, null);
         }
         #endregion
 

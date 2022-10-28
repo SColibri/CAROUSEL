@@ -4,16 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework_Lib.Interfaces;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
-    public class Controller_Selected_Elements : INotifyPropertyChanged
+    public class Controller_Selected_Elements : ControllerAbstract
     {
 
         #region Socket
-        private Core.IAMCore_Comm _AMCore_Socket;
+        private IAMCore_Comm _AMCore_Socket;
         private Controller.Controller_DBS_Projects _ProjectController;
-        public Controller_Selected_Elements(ref Core.IAMCore_Comm socket, Controller.Controller_DBS_Projects projectController)
+        public Controller_Selected_Elements(ref IAMCore_Comm socket, Controller.Controller_DBS_Projects projectController)
         {
             _AMCore_Socket = socket;
             _ProjectController = projectController;
@@ -21,18 +25,9 @@ namespace AMFramework.Controller
         
         #endregion
 
-        #region Interfaces
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
         #region Data
-        private List<Model.Model_SelectedElements> _Elements = new();
-        public List<Model.Model_SelectedElements> Elements 
+        private List<Model_SelectedElements> _Elements = new();
+        public List<Model_SelectedElements> Elements 
         { 
             get { return _Elements; } 
         }
@@ -58,7 +53,7 @@ namespace AMFramework.Controller
 
                 if (columnItems.Count > 3)
                 {
-                    Model.Model_SelectedElements model = new()
+                    Model_SelectedElements model = new()
                     {
                         ID = Convert.ToInt32(columnItems[0]),
                         IDProject = Convert.ToInt32(columnItems[1]),

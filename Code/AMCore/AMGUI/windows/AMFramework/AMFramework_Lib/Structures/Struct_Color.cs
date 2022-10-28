@@ -13,7 +13,7 @@ namespace AMFramework_Lib.Structures
     {
         public int G { get; set; }
         public int B { get; set; }
-        public int C { get; set; }
+        public int R { get; set; }
         public int A { get; set; }
 
     }

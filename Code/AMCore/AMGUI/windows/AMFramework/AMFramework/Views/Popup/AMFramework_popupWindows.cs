@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AMFramework_Lib.Model;
 
 namespace AMFramework.Views.Popup
 {
@@ -97,7 +98,7 @@ namespace AMFramework.Views.Popup
 
         public static Components.Windows.AM_popupWindow popupCaseWindow(Controller.Controller_Cases caseController, int IDProject)
         {
-            caseController.SelectedCaseOLD = new Model.Model_Case
+            caseController.SelectedCaseOLD = new Model_Case
             {
                 IDProject = IDProject,
                 Date = DateTime.Now.ToString("dd/MM/yyyy")

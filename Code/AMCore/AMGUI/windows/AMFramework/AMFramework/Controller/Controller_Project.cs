@@ -1,7 +1,8 @@
 ﻿using AMFramework.Components.Windows;
-using AMFramework.Core;
-using AMFramework.Model;
-using AMFramework.Model.Model_Controllers;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Model.Model_Controllers;
+using AMFramework_Lib.Controller;
 using AMFramework.Views.ActivePhases;
 using AMFramework.Views.Elements;
 using AMFramework.Views.Projects.Other;
@@ -12,6 +13,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+
+
 
 namespace AMFramework.Controller
 {

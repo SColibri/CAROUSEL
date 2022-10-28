@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Core;
 
 namespace AMFramework.Controller
 {
@@ -11,9 +13,9 @@ namespace AMFramework.Controller
     {
 
         #region Socket
-        private Core.IAMCore_Comm _AMCore_Socket;
+        private IAMCore_Comm _AMCore_Socket;
         private Controller.Controller_Cases _CaseController;
-        public Controller_PrecipitationPhase(ref Core.IAMCore_Comm socket, Controller.Controller_Cases caseController)
+        public Controller_PrecipitationPhase(ref IAMCore_Comm socket, Controller.Controller_Cases caseController)
         {
             _AMCore_Socket = socket;
             _CaseController = caseController;
@@ -22,8 +24,8 @@ namespace AMFramework.Controller
         #endregion
 
         #region PrecipitationPhase
-        private List<Model.Model_PrecipitationPhase> _precipitationPhases = new();
-        public List<Model.Model_PrecipitationPhase> PrecipitationPhases 
+        private List<Model_PrecipitationPhase> _precipitationPhases = new();
+        public List<Model_PrecipitationPhase> PrecipitationPhases 
         { 
             get { return _precipitationPhases; }
             set 
@@ -39,9 +41,9 @@ namespace AMFramework.Controller
             PrecipitationPhases = Get_model(_AMCore_Socket, _CaseController.SelectedCaseOLD.ID);
         }
 
-        public static List<Model.Model_PrecipitationPhase> Get_model(Core.IAMCore_Comm comm, int IDCase)
+        public static List<Model_PrecipitationPhase> Get_model(IAMCore_Comm comm, int IDCase)
         {
-            List<Model.Model_PrecipitationPhase> model = new();
+            List<Model_PrecipitationPhase> model = new();
 
             string Query = "SELECT PrecipitationPhase.* , Phase.Name AS PhaseName, PrecipitationDomain.Name FROM PrecipitationPhase INNER JOIN Phase ON Phase.ID=PrecipitationPhase.IDPhase LEFT JOIN PrecipitationDomain ON PrecipitationDomain.ID=PrecipitationPhase.IDPrecipitationDomain WHERE PrecipitationPhase.IDCase=" + IDCase;
             string outCommand = comm.run_lua_command("database_table_custom_query", Query);
@@ -58,7 +60,7 @@ namespace AMFramework.Controller
             return model;
         }
 
-        public static List<string> Get_phases_names(Core.IAMCore_Comm comm, int IDProject)
+        public static List<string> Get_phases_names(IAMCore_Comm comm, int IDProject)
         {
             List<string> Result = new();
 
@@ -87,11 +89,11 @@ namespace AMFramework.Controller
             return Result;
         }
 
-        private static Model.Model_PrecipitationPhase FillModel(List<string> DataRaw)
+        private static Model_PrecipitationPhase FillModel(List<string> DataRaw)
         {
             if (DataRaw.Count < 14) throw new Exception("Error: Element RawData is wrong");
 
-            Model.Model_PrecipitationPhase model = new()
+            Model_PrecipitationPhase model = new()
             {
                 ID = Convert.ToInt32(DataRaw[0]),
                 IDCase = Convert.ToInt32(DataRaw[1]),
@@ -112,14 +114,14 @@ namespace AMFramework.Controller
             return model;
         }
 
-        public static void Save(Core.IAMCore_Comm AMCore_Socket, Model.Model_PrecipitationPhase model)
+        public static void Save(IAMCore_Comm AMCore_Socket, Model_PrecipitationPhase model)
         {
             AMCore_Socket.run_lua_command("spc_precipitation_phase_save", model.Get_csv());
         }
 
         public void fill_models_with_precipitation_phases()
         {
-            foreach (Model.Model_Case casey in _CaseController.Cases)
+            foreach (Model_Case casey in _CaseController.Cases)
             {
                 casey.PrecipitationPhasesOLD = Get_model(_AMCore_Socket, casey.ID);
             }
@@ -129,9 +131,9 @@ namespace AMFramework.Controller
         public void Handle_ClickOnSave_AMButton(object sender, EventArgs e) 
         {
             if (!sender.GetType().Equals(typeof(Components.Button.AM_button))) return;
-            if (!((Components.Button.AM_button)sender).Tag.GetType().Equals(typeof(Model.Model_PrecipitationPhase))) return;
+            if (!((Components.Button.AM_button)sender).Tag.GetType().Equals(typeof(Model_PrecipitationPhase))) return;
 
-            Model.Model_PrecipitationPhase phase = (Model.Model_PrecipitationPhase)((Components.Button.AM_button)sender).Tag;
+            Model_PrecipitationPhase phase = (Model_PrecipitationPhase)((Components.Button.AM_button)sender).Tag;
             Save(_AMCore_Socket, phase);
         }
         #endregion

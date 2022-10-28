@@ -4,16 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
-    public class Controller_Selected_Phases : INotifyPropertyChanged
+    public class Controller_Selected_Phases : ControllerAbstract
     {
 
         #region Socket
-        private Core.IAMCore_Comm _AMCore_Socket;
+        private IAMCore_Comm _AMCore_Socket;
         private Controller.Controller_Cases _CaseController;
-        public Controller_Selected_Phases(ref Core.IAMCore_Comm socket, Controller.Controller_Cases caseController)
+        public Controller_Selected_Phases(ref IAMCore_Comm socket, Controller.Controller_Cases caseController)
         {
             _AMCore_Socket = socket;
             _CaseController = caseController;
@@ -22,8 +25,8 @@ namespace AMFramework.Controller
         #endregion
 
         #region Data
-        private List<Model.Model_SelectedPhases> _Phases = new();
-        public List<Model.Model_SelectedPhases> Phases
+        private List<Model_SelectedPhases> _Phases = new();
+        public List<Model_SelectedPhases> Phases
         {
             get { return _Phases; }
             set
@@ -63,7 +66,7 @@ namespace AMFramework.Controller
 
                 if (columnItems.Count > 2)
                 {
-                    Model.Model_SelectedPhases model = new()
+                    Model_SelectedPhases model = new()
                     {
                         ID = Convert.ToInt32(columnItems[0]),
                         IDCase = Convert.ToInt32(columnItems[1]),
@@ -78,12 +81,12 @@ namespace AMFramework.Controller
             OnPropertyChanged(nameof(Phases));
         }
 
-        private List<Model.Model_SelectedPhases> get_phas_list(int IDCase)
+        private List<Model_SelectedPhases> get_phas_list(int IDCase)
         {
             string Query = "database_table_custom_query SELECT SelectedPhases.*, Phase.Name FROM SelectedPhases INNER JOIN Phase ON Phase.ID=SelectedPhases.IDPhase WHERE IDCase = " + IDCase;
             string outy = _AMCore_Socket.run_lua_command(Query,"");
             List<string> rowItems = outy.Split("\n").ToList();
-            List<Model.Model_SelectedPhases> PhaseList = new();
+            List<Model_SelectedPhases> PhaseList = new();
 
             foreach (string item in rowItems)
             {
@@ -92,7 +95,7 @@ namespace AMFramework.Controller
 
                 if (columnItems.Count > 2)
                 {
-                    Model.Model_SelectedPhases model = new()
+                    Model_SelectedPhases model = new()
                     {
                         ID = Convert.ToInt32(columnItems[0]),
                         IDCase = Convert.ToInt32(columnItems[1]),
@@ -109,7 +112,7 @@ namespace AMFramework.Controller
 
         public void fill_models_with_selectedPhases() 
         {
-            foreach (Model.Model_Case casey in _CaseController.Cases) 
+            foreach (Model_Case casey in _CaseController.Cases) 
             {
                 casey.SelectedPhasesOLD = get_phas_list(casey.ID);
             }

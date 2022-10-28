@@ -12,7 +12,7 @@ namespace AMFramework_Lib.Core
     /// <summary>
     /// Link to the AmFramework library instead of using IPC.
     /// </summary>
-    internal class AMCore_libHandle: IAMCore_Comm
+    public class AMCore_libHandle: IAMCore_Comm
     {
 
         private IntPtr _library; // AMFramework_Lib

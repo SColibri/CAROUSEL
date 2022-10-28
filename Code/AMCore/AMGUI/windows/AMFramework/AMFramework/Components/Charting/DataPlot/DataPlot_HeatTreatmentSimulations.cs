@@ -3,7 +3,7 @@ using AMControls.Charts.Implementations;
 using AMControls.Charts.Interfaces;
 using AMFramework.Components.Charting.ContextMenu;
 using AMFramework.Components.Charting.Interfaces;
-using AMFramework.Core;
+using AMFramework_Lib.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Text;
@@ -27,10 +27,10 @@ namespace AMFramework.Components.Charting.DataPlot
         private string _yDataName = "";
         private string _zDataName = "";
         private string _whereClause = "";
-        private Core.IAMCore_Comm _socket;
+        private IAMCore_Comm _socket;
         private List<List<string>> _cellData;
 
-        public DataPlot_HeatTreatmentSimulations(Core.IAMCore_Comm socket) 
+        public DataPlot_HeatTreatmentSimulations(IAMCore_Comm socket) 
         {
             _compositionData = new();
             _socket = socket;
