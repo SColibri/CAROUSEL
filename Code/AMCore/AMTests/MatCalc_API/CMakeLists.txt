@@ -16,6 +16,7 @@ message(${CMAKE_CURRENT_BINARY_DIR})
 set(TEST_SET 
 	API_lua_functions_Test
     API_lua_script_test
+    API_Phases
 )
 
 foreach(target ${TEST_SET})

@@ -53,7 +53,7 @@ namespace AMFramework_Lib.Model.Model_Controllers
             List<ControllerM_Phase> result = new();
 
             // get and load into local database available phase names from CALPHAD database
-            string Query = "matcalc_database_phaseNames";
+            string Query = "get_phaseNames";
             string outCommand = comm.run_lua_command(Query, "");
             List<string> pahseList = outCommand.Split("\n").ToList();
 
