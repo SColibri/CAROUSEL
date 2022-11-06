@@ -26,11 +26,6 @@ namespace AMFramework
             DataContext = new Controller.Controller_MainWindow();
             Controller_Global.MainControl = (IMainWindow)DataContext;
 
-            databaseView.DataContext = ((Controller.Controller_MainWindow)DataContext).get_project_controller();
-            databaseView.Navigator.SelectedItemChanged += ((Controller.Controller_MainWindow)DataContext).Selected_treeview_item_Handle;
-            databaseView.Navigator.SelectedItemChanged += Treeview_selectionChanged_Handle;
-            databaseView.click_heat_treatment += Select_kinetic_precipitation;
-
             TV_Menu_Controller tvmController = new();
             tvmController.Main_Nodes.Add(new TV_TopView(((Controller.Controller_MainWindow)DataContext).get_project_controller().DTV_Controller));
             tvc.DataContext = tvmController;

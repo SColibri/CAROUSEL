@@ -24,5 +24,11 @@ namespace AMFramework.Views.Case
         {
             InitializeComponent();
         }
+
+        public CaseView_Data(Controller.Controller_Cases cCase)
+        {
+            InitializeComponent();
+            DataContext = cCase;
+        }
     }
 }

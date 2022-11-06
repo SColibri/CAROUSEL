@@ -217,7 +217,9 @@ namespace AMFramework.Controller
             Remove_ByTagType(typeof(Case_ViewModel));
             Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
             tController.SelectedCaseOLD = modelObject;
-            TabItem tabContainer = Create_Tab(new Views.Case.Case_general(ref tController), new Case_ViewModel(), "Case item");
+
+
+            TabItem tabContainer = Create_Tab(new Views.Case.CaseView_Data(tController), new Case_ViewModel(), "Case item");
             Add_Tab_Item(tabContainer);
         }
 

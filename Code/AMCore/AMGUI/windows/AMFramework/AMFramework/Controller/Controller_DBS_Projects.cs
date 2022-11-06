@@ -27,7 +27,9 @@ namespace AMFramework.Controller
         public Controller_DBS_Projects(IAMCore_Comm socket)
         {
             _AMCore_Socket = socket;
+
             controllerCases = new(ref socket, this);
+
             Controller_Selected_Elements = new(ref socket, this);
             Controller_Elements = new(ref socket, this);
             _ActivePhasesConfigurationController = new(ref socket, this);

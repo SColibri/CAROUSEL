@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AMFramework" 
-        xmlns:local2="clr-namespace:AMFramework.Components.Database_treeview"
         xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
         xmlns:AMWindow="clr-namespace:AMFramework.Components.Windows" 
         xmlns:controller="clr-namespace:AMFramework.Controller" 
@@ -125,10 +124,6 @@
             </Grid.ColumnDefinitions>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
-            <local2:Database_treeview x:Name="databaseView" Visibility="Collapsed">
-
-            </local2:Database_treeview>
-            
             <tvc:TV_Menu x:Name="tvc" Margin="1,1,5,1" Visibility="Visible"/>
             
             <TabControl x:Name="MainTabControl" Grid.Column="2" ItemsSource="{Binding Path=TabItems, UpdateSourceTrigger=PropertyChanged}"
