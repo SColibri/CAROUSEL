@@ -92,7 +92,7 @@
                 </GroupBox>
 
                 <GroupBox Header="Solidification simulation" Style="{StaticResource AM_OptionSection}">
-                    <ContentPresenter />
+                    <ContentPresenter  />
                 </GroupBox>
 
                 <GroupBox Header="Heat treatment" Style="{StaticResource AM_OptionSection}">

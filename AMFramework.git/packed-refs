@@ -1,0 +1,6 @@
+# pack-refs with: peeled fully-peeled sorted 
+f5b7e4b6541b19e612d9ab5887337e952ee48943 refs/heads/AMFramework-pages
+c90330b91bf4a5d65ee82c33836646fc6ae991e2 refs/heads/GUI_Testing
+e9310971fab3687fccc28e7988eb3fe8ad6224b8 refs/heads/SUP
+01e463f8c822671ee0de65f8b4884fa3f3e16d4b refs/heads/main
+bf3240c2fd0cf84e24d0f071fec10fe080b22256 refs/tags/Beta
