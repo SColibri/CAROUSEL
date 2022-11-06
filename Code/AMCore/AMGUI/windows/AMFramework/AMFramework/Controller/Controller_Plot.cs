@@ -30,6 +30,7 @@ namespace AMFramework.Controller
             _AMCore_Socket = socket;
             _projectController = projectController;
         }
+
         #endregion
 
         #region Interfaces
@@ -43,7 +44,7 @@ namespace AMFramework.Controller
 
         public List<Model_Phase> Used_Phases_inCases { get { return _projectController.Used_Phases_inCases; } }
         public Model_Projects SelectedProject { get { return _projectController.SelectedProject; } }
-        public List<Model_Case> Cases { get { return _projectController.Cases; } }
+        //public List<Model_Case> Cases { get { return _projectController.Cases; } }
 
         #region Line_graphs
         private List<LineGraph> _lineGraphs = new();

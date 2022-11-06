@@ -25,7 +25,10 @@ namespace AMFramework.Controller
     {
         private readonly MainWindow_ViewModel _AMView;        
         private readonly Controller.Controller_AMCore _AMCore;
+
+        private Controller_Project _projectController;
         private Controller.Controller_DBS_Projects _DBSProjects;
+
         private readonly Controller.Controller_Config _Config;
         private Controller.Controller_Plot _Plot;
 
@@ -51,6 +54,7 @@ namespace AMFramework.Controller
             _AMCore = new(_coreSocket);
             _AMView = new();
 
+            _projectController = new(_coreSocket);
             _DBSProjects = new(_coreSocket);
             _DBSProjects.PropertyChanged += Project_property_changed_handle;
 
@@ -76,11 +80,6 @@ namespace AMFramework.Controller
 
         #region getters
         public Controller.Controller_DBS_Projects get_project_controller() { return _DBSProjects; }
-
-        public Views.Projects.Project_contents get_project_view_content()
-        {
-            return _viewProjectContents;
-        }
 
         public Controller.Controller_Plot get_plot_Controller() { return _Plot; }
 
@@ -572,116 +571,6 @@ namespace AMFramework.Controller
             return result;
         }
 
-        #endregion
-
-        #region TreeView
-        private TabItem _treeview_selected_tab;
-
-        #region Handles
-        /// <summary>
-        /// Handles treeview selection in main window
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public void Selected_treeview_item_Handle(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            //Remove old tab
-            if (_treeview_selected_tab != null) Remove_tab_Item(_treeview_selected_tab);
-            GC.Collect();
-
-            // Check parameters
-            if (sender is not TreeView refTreeView) return;
-            if (refTreeView.SelectedItem == null) return;
-
-            // get selected item
-            object refTreeItem = refTreeView.SelectedItem;
-            if (refTreeItem == null) return;
-
-            // check if object is a treeview or a model
-            if (refTreeItem.GetType().Equals(typeof(TreeViewItem)))
-            {
-                Selected_treeview_item_ByString(refTreeItem as TreeViewItem);
-            }
-            else
-            {
-                Selected_treeview_item_ByModel(refTreeItem);
-            }
-
-            if (_treeview_selected_tab == null) return;
-            if (!TabItems.Contains(_treeview_selected_tab))
-                Add_Tab_Item(_treeview_selected_tab);
-        }
-
-        // kinetic is not the same as kinetick xp
-        public void Selected_kinetick_precipitation_heatT_Handle(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            if (!sender.GetType().Equals(typeof(Model_HeatTreatment))) return;
-            Model_HeatTreatment tempRef = (Model_HeatTreatment)sender;
-            Controller.Controller_PrecipitateSimulationData.fill_heatTreatment_model(ref _coreSocket, tempRef);
-
-            //Remove old tab
-            if (_treeview_selected_tab != null) Remove_tab_Item(_treeview_selected_tab);
-            GC.Collect();
-
-            _treeview_selected_tab = _AMView.get_case_itemTab(_DBSProjects.ControllerCases);
-        }
-
-        /// <summary>
-        /// Adds tab item w.r.t the header text of the treeview item
-        /// </summary>
-        /// <param name="refItem"></param>
-        private void Selected_treeview_item_ByString(TreeViewItem refItem)
-        {
-            // check if tag has a object type
-            if (refItem.Tag == null) return;
-
-            // If tag is of another type than string switch to ByModel function
-            if (!refItem.Tag.GetType().Equals(typeof(string))) 
-            {
-                Selected_treeview_item_ByModel(refItem.Tag);
-                return;
-            }
-
-            // get tab item from value set
-            string selectedHeader = (string)refItem.Tag;
-            if (selectedHeader.ToUpper().CompareTo("PROJECT") == 0)
-            {
-                _treeview_selected_tab = _AMView.get_project_tab(_DBSProjects);
-            }
-            else if (selectedHeader.ToUpper().Contains("SINGLE"))
-            {
-                if (get_plot_Controller().SelectedProject == null) return;
-                _treeview_selected_tab = _AMView.get_case_list_tab(get_plot_Controller());
-            }
-            else if (selectedHeader.ToUpper().Contains("CASEITEM"))
-            {
-                _treeview_selected_tab = _AMView.get_case_itemTab(_DBSProjects.ControllerCases);
-            }
-        }
-
-        /// <summary>
-        /// Adds tab item w.r.t the model
-        /// </summary>
-        /// <param name="refItem"></param>
-        private void Selected_treeview_item_ByModel(object refItem)
-        {
-            if (refItem.GetType().Equals(typeof(Model_Case)))
-            {
-                _DBSProjects.ControllerCases.SelectedCaseOLD = (Model_Case)refItem;
-                _treeview_selected_tab = _AMView.get_case_itemTab(_DBSProjects.ControllerCases);
-            }
-            else if (refItem.GetType().Equals(typeof(Controller_DBS_Projects)))
-            {
-                _treeview_selected_tab = _AMView.get_project_tab((Controller_DBS_Projects)refItem);
-            }
-        }
-
-
-
-
-
-
-        #endregion
         #endregion
 
         #region Popup
