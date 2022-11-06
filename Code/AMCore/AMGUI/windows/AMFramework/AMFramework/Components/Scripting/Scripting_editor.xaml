@@ -10,10 +10,9 @@
     <Grid>
 
         
-        <WindowsFormsHost
+        <WindowsFormsHost Panel.ZIndex="0"
                 Margin="5" 
-                x:Name="Hosty" 
-                Grid.Row="1">
+                x:Name="Hosty">
             <Scint:Scintilla
                     Enabled="True"
                     Height="485"

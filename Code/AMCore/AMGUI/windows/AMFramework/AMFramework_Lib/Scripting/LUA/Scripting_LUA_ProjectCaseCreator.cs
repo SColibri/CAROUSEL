@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AMFramework_Lib.Scripting
+namespace AMFramework_Lib.Scripting.LUA
 {
-    public class Scripting_ProjectCaseCreator : Scripting_Abstract
+    public class Scripting_LUA_ProjectCaseCreator : Scripting_LUA_Abstract
     {
         private Model_Projects _mProject;
         private Model_Case _mCase;
-        public Scripting_ProjectCaseCreator(Model_Projects mProject, Model_Case mCase) 
+        public Scripting_LUA_ProjectCaseCreator(Model_Projects mProject, Model_Case mCase)
         {
             _mProject = mProject;
             _mCase = mCase;
@@ -19,17 +19,7 @@ namespace AMFramework_Lib.Scripting
 
         public override string Create_Object()
         {
-            throw new NotImplementedException();
-        }
-
-        public override string Load_Object()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string ScriptText()
-        {
-            Scripting.Scripting_Project sProject = new(_mProject);
+            Scripting_LUA_Project sProject = new(_mProject);
 
             string result = "require\"AMFramework_Lib\" \n\n";
             result += sProject.Load_Object();
@@ -40,7 +30,7 @@ namespace AMFramework_Lib.Scripting
 
             // We now use the case as a template and let it find all
             // range variables
-            Scripting_case sCase = new(_mCase);
+            Scripting_LUA_Case sCase = new(_mCase);
             result += sCase.Create_Ranged_Object(sProject);
 
             // Create all cases based on the template model
@@ -49,6 +39,16 @@ namespace AMFramework_Lib.Scripting
             // Add run command (what do we want to run?)
 
             return result;
+        }
+
+        public override string Load_Object()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string Save_Object()
+        {
+            throw new NotImplementedException();
         }
     }
 }

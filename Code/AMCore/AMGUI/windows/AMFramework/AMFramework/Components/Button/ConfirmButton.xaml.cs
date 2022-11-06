@@ -171,6 +171,7 @@ namespace AMFramework.Components.Button
             if (Convert.ToInt32(timeDiff.TotalSeconds) > 2.5) 
             {
                 ClickButton?.Invoke(this, new EventArgs());
+                if(Command != null) Command.Execute(null);
             }
 
             Background2_isVisible = false;
@@ -190,6 +191,21 @@ namespace AMFramework.Components.Button
 
         #region Events
         public event EventHandler ClickButton;
+        #endregion
+
+        #region Commands
+        private ICommand? _command;
+        public ICommand? Command
+        {
+            get
+            {
+                return _command;
+            }
+            set 
+            {
+                _command = value;
+            }
+        }
         #endregion
 
     }

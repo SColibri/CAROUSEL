@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AMFramework_Lib.Scripting
+namespace AMFramework_Lib.Scripting.LUA
 {
-    internal class Scripting_Project : Scripting_Abstract
+    public class Scripting_LUA_Project : Scripting_LUA_Abstract
     {
         private Model_Projects MObject;
-        public Scripting_Project(Model_Projects modelP)  
+        public Scripting_LUA_Project(Model_Projects modelP)
         {
             MObject = modelP;
             VariableName = MObject.Get_Scripting_ClassName() + "_" + _count++;
@@ -18,25 +18,23 @@ namespace AMFramework_Lib.Scripting
 
         public override string Create_Object()
         {
-            throw new NotImplementedException();
+            Scripting_LUA_Template<Model_Projects> projectObject_Script = new(MObject);
+
+            // Create project object first
+            string ScriptingText = projectObject_Script.Create_Object();
+
+            return ScriptingText;
         }
 
-        public override string Load_Object() 
+        public override string Load_Object()
         {
             string loadScript = "local " + VariableName + " = " + MObject.Get_Scripting_ClassName() + ":new{ ID = " + MObject.ID + "} \n\n";
 
             return loadScript;
         }
 
-
-        public override string ScriptText()
+        public override string Save_Object()
         {
-            Scripting_Template<Model_Projects> projectObject_Script = new(MObject);
-            
-            // Create project object first
-            string ScriptingText = projectObject_Script.ScriptText();
-
-
             throw new NotImplementedException();
         }
     }

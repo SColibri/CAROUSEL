@@ -195,7 +195,7 @@ namespace AMFramework_Lib.Model
         #region Interfaces
         public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
         {
-            return ModelAbstract.Get_parameters<Model_ActivePhasesConfiguration>();
+            return ModelAbstract.Get_parameters<Model_PrecipitationPhase>();
         }
         public override string Get_Table_Name()
         {

@@ -5,7 +5,6 @@ using AMFramework.Views.HeatTreatments;
 using AMFramework.Views.Phase;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Controller;
-using AMFramework_Lib.Scripting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using AMFramework_Lib.Scripting.LUA;
 
 namespace AMFramework.Views.Projects.Other
 {
@@ -30,6 +30,8 @@ namespace AMFramework.Views.Projects.Other
 
             PhaseListPage = new Phase.PhaseList_View(comm);
             HeatTreatmentPage = new HeatTreatments.HeatTreatment_View(new Controller_HeatTreatmentView(comm, this.CaseTemplate.MCObject.ModelObject));
+            ScriptSectionPrecipitation = new Components.Scripting.Scripting_editor() { DataContext = new Components.Scripting.Scripting_ViewModel()};
+            ScriptPrecipitationText = "require\"AMFramework.lua\"\n\r";
 
             CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.StartTemperature = StartTemperature;
             CaseTemplate.MCObject.ModelObject.EquilibriumConfiguration.ModelObject.StartTemperature = StartTemperature;
@@ -90,6 +92,16 @@ namespace AMFramework.Views.Projects.Other
             }
         }
 
+        private object? _scriptSectionPrecipitation;
+        public object? ScriptSectionPrecipitation 
+        {
+            get { return _scriptSectionPrecipitation; }
+            set 
+            {
+                _scriptSectionPrecipitation = value;
+                OnPropertyChanged(nameof(ScriptSectionPrecipitation));
+            }
+        }
 
 
         #endregion
@@ -177,6 +189,19 @@ namespace AMFramework.Views.Projects.Other
 
                 // TODO: Make safe
                 CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.MinLiquidFraction = MinLiquidFraction;
+            }
+        }
+
+        private string _scriptPrecipitationText = "";
+        public string ScriptPrecipitationText 
+        {
+            get { return _scriptPrecipitationText; }
+            set 
+            {
+                _scriptPrecipitationText = value;
+
+                ((Components.Scripting.Scripting_editor)ScriptSectionPrecipitation).Scripting.Text = value;
+                OnPropertyChanged(nameof(ScriptPrecipitationText));
             }
         }
         #endregion
@@ -315,9 +340,40 @@ namespace AMFramework.Views.Projects.Other
         {
 
             CreateCases_UpdatePhases();
-            Scripting_ProjectCaseCreator pcc = new(_projectController.MCObject.ModelObject, _caseTemplate.MCObject.ModelObject);
+            Scripting_LUA_ProjectCaseCreator pcc = new(_projectController.MCObject.ModelObject, _caseTemplate.MCObject.ModelObject);
 
-            MessageBox.Show(pcc.ScriptText(),"Hello");
+            foreach (var item in CaseTemplate.MCObject.ModelObject.SelectedPhases)
+            {
+                if (CaseTemplate.MCObject.ModelObject.PrecipitationPhases.Find(e => e.ModelObject.IDPhase == item.ModelObject.IDPhase) != null) continue;
+
+                Model_PrecipitationPhase P0Set_Model = new()
+                {
+                    IDPhase = item.ModelObject.IDPhase,
+                    Name = item.ModelObject.PhaseName + "_P0"
+                };
+
+                CaseTemplate.MCObject.ModelObject.PrecipitationPhases.Add(new(ref _comm, P0Set_Model));
+                Scripting_LUA_Template<Model_PrecipitationPhase> P0Set = new(P0Set_Model);
+
+            }
+
+            string precipitatePhasesSection = "";
+            foreach (var item in CaseTemplate.MCObject.ModelObject.PrecipitationPhases)
+            {
+                Scripting_LUA_Template<Model_PrecipitationPhase> P0Set = new(item.ModelObject);
+
+                precipitatePhasesSection += P0Set.Create_Object();
+            }
+
+            ScriptPrecipitationText = precipitatePhasesSection;
+
+            Window nWind = new();
+            Components.Scripting.Scripting_editor sEdit = new() { DataContext= new Components.Scripting.Scripting_ViewModel() };
+            sEdit.Scripting.Text = pcc.Create_Object();
+            nWind.Content = sEdit;
+            nWind.Show();
+
+            // MessageBox.Show(pcc.ScriptText(),"Hello");
         }
 
         private bool CreateCases_Check()

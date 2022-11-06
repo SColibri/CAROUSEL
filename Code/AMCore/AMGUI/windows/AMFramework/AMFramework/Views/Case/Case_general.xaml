@@ -11,7 +11,7 @@
              xmlns:scheil ="clr-namespace:AMFramework.Views.Scheil"
                 xmlns:AMCase="clr-namespace:AMFramework.Views.Case"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="1450" d:DesignWidth="800">
     <Grid Background="White">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>

@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.XPath;
 
-namespace AMFramework_Lib.Scripting
+namespace AMFramework_Lib.Scripting.LUA
 {
-    internal class Scripting_AMRange : Scripting_Abstract
+    internal class Scripting_LUA_AMRange : Scripting_LUA_Abstract
     {
         private string _AMRange;
-        public Scripting_AMRange(string value) 
-        { 
+        public Scripting_LUA_AMRange(string value)
+        {
             _AMRange = value;
             VariableName = "AMRange_" + _count++;
         }
@@ -29,7 +29,7 @@ namespace AMFramework_Lib.Scripting
             throw new NotImplementedException();
         }
 
-        public override string ScriptText()
+        public override string Save_Object()
         {
             throw new NotImplementedException();
         }

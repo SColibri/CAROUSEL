@@ -42,6 +42,11 @@ namespace AMFramework_Lib.Model.Model_Controllers
 
            
         }
+
+        public static List<ModelController<Model_Case>> Get_CasesByIDProject(IAMCore_Comm comm, int IDProject) 
+        {
+            return ModelController<Model_Case>.LoadIDProject(ref comm, IDProject);
+        }
         #endregion
 
         #endregion

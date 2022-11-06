@@ -121,7 +121,7 @@ namespace AMFramework.Controller
 
         public void fill_models_with_precipitation_phases()
         {
-            foreach (Model_Case casey in _CaseController.Cases)
+            foreach (Model_Case casey in _CaseController.CasesOLD)
             {
                 casey.PrecipitationPhasesOLD = Get_model(_AMCore_Socket, casey.ID);
             }

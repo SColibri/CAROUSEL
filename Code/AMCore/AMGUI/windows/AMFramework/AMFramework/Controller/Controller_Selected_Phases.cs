@@ -112,7 +112,7 @@ namespace AMFramework.Controller
 
         public void fill_models_with_selectedPhases() 
         {
-            foreach (Model_Case casey in _CaseController.Cases) 
+            foreach (Model_Case casey in _CaseController.CasesOLD) 
             {
                 casey.SelectedPhasesOLD = get_phas_list(casey.ID);
             }

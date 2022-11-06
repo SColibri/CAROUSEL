@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AMFramework_Lib.Scripting
+namespace AMFramework_Lib.Scripting.LUA
 {
-    internal class Scripting_HeatTreatment
+    internal class Scripting_LUA_HeatTreatment
     {
     }
 }

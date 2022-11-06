@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AMFramework_Lib.Scripting
+namespace AMFramework_Lib.Scripting.LUA
 {
-    internal class Scripting_ScheilConfiguration : Scripting_Abstract
+    internal class Scripting_LUA_ScheilConfiguration : Scripting_LUA_Abstract
     {
         private Model_ScheilConfiguration _model;
-        public Scripting_ScheilConfiguration(Model_ScheilConfiguration mSC) 
-        { 
+        public Scripting_LUA_ScheilConfiguration(Model_ScheilConfiguration mSC)
+        {
             _model = mSC;
             VariableName = _model.Get_Scripting_ClassName() + "_" + _count++;
         }
@@ -26,7 +26,7 @@ namespace AMFramework_Lib.Scripting
             return "local " + VariableName + " = " + _model.Get_Scripting_ClassName() + ":new{ ID = " + _model.ID + " }";
         }
 
-        public override string ScriptText()
+        public override string Save_Object()
         {
             throw new NotImplementedException();
         }

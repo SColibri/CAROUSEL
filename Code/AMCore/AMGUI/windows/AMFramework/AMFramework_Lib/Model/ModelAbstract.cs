@@ -8,9 +8,18 @@ using System.Threading.Tasks;
 
 namespace AMFramework_Lib.Model
 {
+    /// <summary>
+    /// Main class that handles the load and save implementation for all models, as also some
+    /// other base functionalities.
+    /// </summary>
     public abstract class ModelAbstract : Interfaces.Model_Interface
     {
         #region Reflection
+        /// <summary>
+        /// Extract all parameters marked as model parameters in order.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameters<T>() 
         {
             IOrderedEnumerable<System.Reflection.PropertyInfo> properties = from property in typeof(T).GetProperties() 
@@ -27,6 +36,7 @@ namespace AMFramework_Lib.Model
 
         protected void OnPropertyChanged(string propertyName)
         {
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
@@ -51,10 +61,20 @@ namespace AMFramework_Lib.Model
         #endregion
 
         #region Model_interface
+        /// <summary>
+        /// Returns csv data string oof the model with marked parameters
+        /// </summary>
+        /// <returns></returns>
         public virtual string Get_csv() 
         {
             return Get_csv(Get_parameter_list());
         }
+
+        /// <summary>
+        /// Loads string list into model marked parameters
+        /// </summary>
+        /// <param name="DataRaw"></param>
+        /// <returns></returns>
         public virtual int Load_csv(List<string> DataRaw) 
         {
             var parameterList = Get_parameter_list();
@@ -66,17 +86,41 @@ namespace AMFramework_Lib.Model
 
             return 0;
         }
+
+        /// <summary>
+        /// Returns the table name where the model data is stored
+        /// </summary>
+        /// <returns></returns>
         public abstract string Get_Table_Name();
+
+        /// <summary>
+        /// Returns the ordered parameters of the model
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list() 
         { 
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// For scripting porpuses we can change the name of the model, and instead of using the tablename
+        /// we can declare our own class name. For now, most of them have the same name as the table where
+        /// the data is stored.
+        /// </summary>
+        /// <returns></returns>
         public abstract string Get_Scripting_ClassName();
 
         #endregion
 
         #region LoadData
+        /// <summary>
+        /// Function that loads data from string list. This function uses reflection to access all
+        /// parameters and parameter order. Data has to be in specific order (from csv format).
+        /// </summary>
+        /// <param name="ParamInput"></param>
+        /// <param name="rawData"></param>
+        /// <exception cref="Exceptions.DatabaseDataConversion_Exception"></exception>
         protected void Abstract_load(IOrderedEnumerable<System.Reflection.PropertyInfo> ParamInput, 
                                      List<string> rawData) 
         {
@@ -126,6 +170,9 @@ namespace AMFramework_Lib.Model
 
         #region parameters
         private bool _isSelected = false;
+        /// <summary>
+        /// Returns true if object is selected
+        /// </summary>
         public bool IsSelected
         {
             get { return _isSelected; }
@@ -137,6 +184,9 @@ namespace AMFramework_Lib.Model
         }
 
         private bool _isVisible = true;
+        /// <summary>
+        /// Returns true if object is visible
+        /// </summary>
         public bool IsVisible
         {
             get { return _isVisible; }
@@ -148,6 +198,9 @@ namespace AMFramework_Lib.Model
         }
 
         private bool _isActive = false;
+        /// <summary>
+        /// Return true if model is active or enabled
+        /// </summary>
         public bool IsActive
         {
             get { return _isActive; }
@@ -155,6 +208,20 @@ namespace AMFramework_Lib.Model
             {
                 _isActive = value;
                 OnPropertyChanged(nameof(IsActive));
+            }
+        }
+
+        private bool _hasChanged = false;
+        /// <summary>
+        /// Returns true if content in the model has changed
+        /// </summary>
+        public bool HasChanged 
+        { 
+            get { return _hasChanged; }
+            set 
+            {
+                _hasChanged = value;
+                OnPropertyChanged(nameof(HasChanged));
             }
         }
         #endregion

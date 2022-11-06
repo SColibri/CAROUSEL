@@ -20,6 +20,7 @@ using ScintillaNET;
 using AMFramework_Lib.AMSystem;
 using AMFramework_Lib.Controller;
 using AMFramework_Lib.Interfaces;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace AMFramework.Components.Scripting
 {
@@ -49,6 +50,7 @@ namespace AMFramework.Components.Scripting
             if (File.Exists(filename)) 
             {
                 ((Scripting_ViewModel)DataContext).load(Scripting, filename);
+                Scripting.FoldAll(FoldAction.Contract);
                 Update_Highlight(Scripting);
             }
         }
@@ -176,6 +178,7 @@ namespace AMFramework.Components.Scripting
 
             // Enable automatic folding
             scintilla.AutomaticFold = (AutomaticFold.Show | AutomaticFold.Click | AutomaticFold.Change);
+            scintilla.SetFoldFlags(FoldFlags.LineAfterContracted);
 
             // Images
             scintilla.RegisterRgbaImage(0, AMsystem.AMFramework_ImageSource.Get_faIcon_bitmap("variable"));
@@ -192,7 +195,6 @@ namespace AMFramework.Components.Scripting
             scintilla.MouseMove += MouseMove_Scintilla;
             UpdateLineNumbers(0);
         }
-
 
         public static System.Drawing.Color IntToColor(int rgb)
         {
@@ -231,9 +233,88 @@ namespace AMFramework.Components.Scripting
         #endregion
 
         #region Handles
+        private void Folding_Styles(object sender)
+        {
+            var scintilla = ((Scintilla)sender);
+
+            foreach (var item in scintilla.Lines)
+            {
+                item.FoldLevelFlags = 0;
+                item.FoldLevel = 1024;
+            }
+
+            var startList = scintilla.Lines.ToList().FindAll(e => e.Text.ToLower().Contains("-- region"));
+            var endList = scintilla.Lines.ToList().FindAll(e => e.Text.ToLower().Contains("-- endregion"));
+
+            for (int i = 0; i < startList.Count; i++)
+            {
+                if (endList.Count <= i) continue;
+                AddFoldRegion(scintilla, startList[i].Index, endList[i].Index, 1024);
+                //tartList[i].Expanded = false;
+                //startList[i].FoldLine(FoldAction.Contract);
+            }
+        }
+        private void FoldGroups_loadedText(Scintilla sender) 
+        {
+            foreach (var item in sender.Lines)
+            {
+                item.FoldLine(FoldAction.Contract);
+            }
+        }
+
+        #region Code from source
+
+        /// <summary>
+        ///  Add-remove functions copy from source https://github.com/jacobslusser/ScintillaNET/issues/328, Author Deepchand-Calm
+        ///  This fraction of the code is an implementation for the code folding using scintillanet. Note. I just modifed de signature, for
+        ///  more info, refer to the link. (yeah, copy and paste is not the best practice)
+        /// </summary>
+        /// <param name="TextEditor"></param>
+        /// <param name="StartLine"></param>
+        /// <param name="EndLine"></param>
+        /// <param name="CurrentLevel"></param>
+        private void AddFoldRegion(Scintilla TextEditor, int StartLine, int EndLine, int CurrentLevel)
+        {
+            int Start = StartLine, End = EndLine;
+
+            if (StartLine > EndLine)
+            {
+                Start = EndLine;
+                End = StartLine;
+            }
+            TextEditor.Lines[Start].FoldLevelFlags = FoldLevelFlags.Header;
+            TextEditor.Lines[Start].FoldLevel = CurrentLevel;
+            for (int i = Start + 1; i < End; ++i)
+            {
+                TextEditor.Lines[i].FoldLevel = TextEditor.Lines[Start].FoldLevel + 1;
+                TextEditor.Lines[i].FoldLevelFlags = FoldLevelFlags.White;
+            }
+            TextEditor.Lines[End].FoldLevel = TextEditor.Lines[Start].FoldLevel + 1;
+        }
+        private void RemoveFoldRegion(Scintilla TextEditor, int StartLine, int EndLine, int CurrentLevel)
+        {
+            int Start = StartLine, End = EndLine;
+
+            if (StartLine > EndLine)
+            {
+                Start = EndLine;
+                End = StartLine;
+            }
+            TextEditor.Lines[Start].FoldLevelFlags = 0;
+            TextEditor.Lines[Start].FoldLevel = CurrentLevel;
+            for (int i = Start + 1; i < End; ++i)
+            {
+                TextEditor.Lines[i].FoldLevel = TextEditor.Lines[Start].FoldLevel;
+                TextEditor.Lines[i].FoldLevelFlags = 0;
+            }
+            TextEditor.Lines[End].FoldLevel = TextEditor.Lines[Start].FoldLevel;
+        }
+        #endregion
         private void Scripting_KeyDown(object? sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (sender == null) return;
+
+            //Folding_Styles(sender);
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) 
             {
                 var pos = ((Scintilla)sender).CurrentPosition;
@@ -246,6 +327,12 @@ namespace AMFramework.Components.Scripting
                 e.SuppressKeyPress = true;
                 e.Handled = true;
                 ((Components.Scripting.Scripting_ViewModel)DataContext).save();
+            }
+            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.O)
+            {
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+                Scripting.FoldAll(FoldAction.Toggle);
             }
             else if (e.KeyCode == Keys.Back) 
             {

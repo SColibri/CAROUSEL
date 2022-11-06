@@ -78,7 +78,7 @@ namespace AMFramework.Controller
 
         public void fill_models_with_equilibroiumConfiguration()
         {
-            foreach (Model_Case casey in _CaseController.Cases)
+            foreach (Model_Case casey in _CaseController.CasesOLD)
             {
                 casey.EquilibriumConfigurationOLD = get_configuration_list(casey.ID);
             }

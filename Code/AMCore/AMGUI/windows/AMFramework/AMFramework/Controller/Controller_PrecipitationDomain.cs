@@ -105,7 +105,7 @@ namespace AMFramework.Controller
         [Obsolete("This is done by the modelcontrollers and the M controllers")]
         public void fill_models_with_precipitation_domains()
         {
-            foreach (Model_Case casey in _CaseController.Cases)
+            foreach (Model_Case casey in _CaseController.CasesOLD)
             {
                 casey.PrecipitationDomainsOLD = Get_model(_comm, casey.ID);
             }
