@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 
 namespace AMFramework.Components.Charting
 {
+    [Obsolete("Use AMControls instead")]
     public class ChartingWindow:Canvas
     {
 

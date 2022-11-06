@@ -20,6 +20,7 @@ namespace AMFramework.Components.Charting.LinePhaseChart
     /// <summary>
     /// Interaction logic for LinePhaseChart.xaml
     /// </summary>
+    [Obsolete("Use AMControls instead")]
     public partial class LinePhaseChart : UserControl, INotifyPropertyChanged
     {
         private Controller.Controller_Plot _plotController; 

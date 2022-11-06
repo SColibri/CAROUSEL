@@ -1997,8 +1997,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\NewFolder\" />
-    <Folder Include="Components\Terminal\" />
     <Folder Include="Resources\img\" />
   </ItemGroup>
 

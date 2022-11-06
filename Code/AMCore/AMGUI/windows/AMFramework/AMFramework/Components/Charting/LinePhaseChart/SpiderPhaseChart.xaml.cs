@@ -19,6 +19,7 @@ namespace AMFramework.Components.Charting.LinePhaseChart
     /// <summary>
     /// Interaction logic for SpiderPhaseChart.xaml
     /// </summary>
+    [Obsolete("This spyde chart is obsolete, use AMControls instead")]
     public partial class SpiderPhaseChart : UserControl
     {
         private Controller.Controller_Plot _plotController;

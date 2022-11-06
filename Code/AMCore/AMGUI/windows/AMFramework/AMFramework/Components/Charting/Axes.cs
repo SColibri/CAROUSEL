@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AMFramework.Components.Charting
 {
+    [Obsolete("Use AMControls instead")]
     public class Axes
     {
         public Axes()

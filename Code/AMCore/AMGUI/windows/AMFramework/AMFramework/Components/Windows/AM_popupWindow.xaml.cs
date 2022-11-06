@@ -17,7 +17,7 @@ using System.ComponentModel;
 namespace AMFramework.Components.Windows
 {
     /// <summary>
-    /// Interaction logic for AM_popupWindow.xaml
+    /// Interaction logic for AM_popupWindow.xaml. consider moving this control to the AMControls project
     /// </summary>
     public partial class AM_popupWindow : UserControl, INotifyPropertyChanged
     {
