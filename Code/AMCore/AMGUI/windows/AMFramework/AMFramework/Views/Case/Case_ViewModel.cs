@@ -21,11 +21,6 @@ namespace AMFramework.Views.Case
         }
         #endregion
 
-        public Views.Case.Case_contents get_content(Controller.Controller_Plot plotController)
-        {
-            return new Case_contents(ref plotController);
-        }
-
         public Views.Case.Case_general get_item(Controller.Controller_Cases caseController)
         {
             return new Case_general(ref caseController);

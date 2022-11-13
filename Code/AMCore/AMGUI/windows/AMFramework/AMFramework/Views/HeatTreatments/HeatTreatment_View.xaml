@@ -122,7 +122,7 @@
                                                 </Grid.RowDefinitions>
 
                                                 <TextBlock Text="Precipitation Domain" Margin="2" VerticalAlignment="Center"/>
-                                                <ComboBox Grid.Row="1" VerticalAlignment="Center" ItemsSource=""/>
+                                                <ComboBox Grid.Row="1" VerticalAlignment="Center" />
                                             </Grid>
                                         </StackPanel>
                                     </Grid>

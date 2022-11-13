@@ -24,7 +24,9 @@ namespace AMFramework_Lib.Model
 
             // Create instance of template using the activator class
             var refT = Activator.CreateInstance(typeof(T));
-            if(refT != null) ModelObject = (T)refT;
+
+            if (refT != null) ModelObject = (T)refT;
+            else throw new Exception("ModelController: Instance was not created because it was not found!");
         }
 
         public ModelController(ref IAMCore_Comm comm, T modely)
@@ -33,6 +35,9 @@ namespace AMFramework_Lib.Model
             ModelObject = modely;
         }
 
+        /// <summary>
+        /// Returns the data model object of generic type T
+        /// </summary>
         public T? ModelObject 
         { 
             get 
@@ -45,6 +50,7 @@ namespace AMFramework_Lib.Model
                 if (value == null) return;
                 _model = (Model_Interface)value;
 
+                // Add default commands to current data model
                 SaveAction = new(ref _coreCommunication, ref _model);
                 DeleteAction = new(ref _coreCommunication, ref _model);
                 LoadByIDAction = new(ref _coreCommunication, ref _model);

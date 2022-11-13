@@ -166,27 +166,6 @@ namespace AMFramework
             return result;
         }
 
-        public TabItem get_case_list_tab(Controller.Controller_Plot plotController)
-        {
-            TabItem result = new();
-
-            string headerTitle = plotController.SelectedProject.Name;
-            Uri ImageUri = null; //TODO add lua Icon here
-            if (headerTitle.Length == 0)
-            {
-                result.Header = get_TabHeader("Cases", ImageUri);
-            }
-            else
-            {
-                result.Header = get_TabHeader(headerTitle, ImageUri);
-            }
-
-            result.Content = _caseView.get_content(plotController);
-            result.Tag = _caseView;
-
-            return result;
-        }
-
         public TabItem get_case_itemTab(Controller.Controller_Cases controllerCase)
         {
             TabItem result = new();
