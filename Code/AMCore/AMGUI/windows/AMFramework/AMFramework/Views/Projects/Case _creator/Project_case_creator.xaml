@@ -199,8 +199,8 @@
 
                 </Border>
                 
-                <!-- This was an idea for mixing script with gui, but this concept does not make much sense (at least not yet), if not needed revert -->
-                <Border Background="White" Margin="5" CornerRadius="5,5,5,5" Visibility="Hidden">
+                <!-- START This was an idea for mixing script with gui, but this concept does not make much sense (at least not yet), if not needed revert -->
+                <Border Background="White" Margin="5" CornerRadius="5,5,5,5" Visibility="Collapsed">
                     <Border.Effect>
                         <DropShadowEffect ShadowDepth="2"/>
                     </Border.Effect>
@@ -221,6 +221,7 @@
                     </Grid>
 
                 </Border>
+                <!-- END of bad idea -->
 
                 <Border Background="White" Margin="5" CornerRadius="5,5,5,5">
                     <Border.Effect>
