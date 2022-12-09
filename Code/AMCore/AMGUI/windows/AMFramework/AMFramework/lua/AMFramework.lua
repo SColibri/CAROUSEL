@@ -1,0 +1,31 @@
+﻿-- AMFramework objects
+-- require"json.json"
+
+require"Database.Views"
+
+require"Objects.AM_StringManipulators"
+require"Objects.AMRange"
+require"Objects.Configuration"
+require"Objects.Element"
+require"Objects.ElementComposition"
+require"Objects.EquilibriumConfig"
+require"Objects.EquilibriumPhaseFraction"
+require"Objects.Phase"
+require"Objects.ScheilConfig"
+require"Objects.ScheilPhaseFraction"
+require"Objects.SelectedElement"
+require"Objects.SelectedPhase"
+require"Objects.Case"
+require"Objects.Project"
+require"Objects.ActivePhases"
+require"Objects.ActivePhasesConfig"
+require"Objects.ActivePhasesElementComposition"
+require"Objects.PrecipitateSimulationData"
+require"Objects.PrecipitationPhase"
+require"Objects.PrecipitationDomain"
+require"Objects.HeatTreatment"
+require"Objects.HeatTreatmentProfile"
+require"Objects.HeatTreatmentSegment"
+require"Objects.Framework"
+
+print("loaded!")

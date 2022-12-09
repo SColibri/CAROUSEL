@@ -1,0 +1,374 @@
+﻿<UserControl x:Class="AMFramework.Views.Projects.Other.Project_case_creator"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AMFramework.Views.Projects.Other"
+             xmlns:pd="clr-namespace:AMFramework.Views.Precipitation"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             d:DataContext="{d:DesignInstance Type=local:Controller_ProjectCaseCreator}"
+             mc:Ignorable="d" 
+             d:DesignHeight="750" d:DesignWidth="500">
+    <Grid Background="WhiteSmoke">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Margin="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                            Text="Project name:" 
+                            FontWeight="Bold" Margin="3"/>
+
+                <TextBlock Grid.Column="1"
+                            Text="{Binding Path=ProjectController.Model_Object.Name}" 
+                            FontWeight="Light" Margin="3"/>
+            </Grid>
+
+
+        </Grid>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="5" Panel.ZIndex="0">
+            <StackPanel>
+
+                <Border Background="White" Margin="5" CornerRadius="5,5,5,5">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="SteelBlue" CornerRadius="5,5,0,0">
+                            <TextBlock Text="Element compositions" 
+                                   Grid.Row="0" Margin="5" Foreground="White"/>
+                        </Border>
+
+                        <Grid Margin="5" Grid.Row="1" MinHeight="50">
+                            <ItemsControl ItemsSource="{Binding Path=CaseTemplate.MCObject.ModelObject.ElementComposition, UpdateSourceTrigger=PropertyChanged}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="50"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding Path=ModelObject.ElementName, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <TextBox Grid.Column="1" Text="{Binding Path=ModelObject.StringValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="100" HorizontalAlignment="Left"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Grid>
+
+                </Border>
+
+                <Border Background="White" Margin="5" CornerRadius="5,5,5,5">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="SteelBlue" CornerRadius="5,5,0,0">
+                            <TextBlock Text="Phases" 
+                                   Grid.Row="0" Margin="5" Foreground="White"/>
+                        </Border>
+
+                        <Grid Margin="5" Grid.Row="1" MinHeight="50">
+                            <ContentControl Content="{Binding Path=PhaseListPage}" Panel.ZIndex="0"/>
+                        </Grid>
+                    </Grid>
+
+                </Border>
+
+                <Border Background="White" Margin="5" CornerRadius="5,5,5,5">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="SteelBlue" CornerRadius="5,5,0,0">
+                            <TextBlock Text="Solidification configuration" 
+                                   Grid.Row="0" Margin="5" Foreground="White"/>
+                        </Border>
+                        
+                        <Grid Margin="5" Grid.Row="1" MinHeight="50">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25" />
+                                <RowDefinition Height="auto"/>
+
+                                <RowDefinition Height="10" />
+                                
+                                <RowDefinition Height="25" />
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Temperature range" VerticalAlignment="Bottom"/>
+                            <Border BorderBrush="Silver" BorderThickness="0.5" 
+                                    CornerRadius="5" Grid.Row="1" Background="WhiteSmoke">
+                                <StackPanel Orientation="Vertical">
+                                    <Grid Margin="3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="55"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Start" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                        <TextBox Text="{Binding Path=StartTemperature, Mode=TwoWay}" Grid.Column="1" Style="{StaticResource AM_RoundedTextbox}"/>
+                                    </Grid>
+                                    <Grid Margin="3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="55"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="End" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                        <TextBox Text="{Binding Path=EndTemperature,Mode=TwoWay}" Grid.Column="1" Style="{StaticResource AM_RoundedTextbox}"/>
+                                    </Grid>
+                                    <Grid Margin="3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="55"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Step size" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                        <TextBox Text="{Binding Path=StepSize,Mode=TwoWay}" Grid.Column="1" Style="{StaticResource AM_RoundedTextbox}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock Text="Scheil" VerticalAlignment="Bottom" Grid.Row="3"/>
+                            <Border BorderBrush="Silver" BorderThickness="0.5" 
+                                    CornerRadius="5" Grid.Row="4" Background="WhiteSmoke">
+                                <StackPanel Orientation="Vertical">
+                                    <Grid Margin="3">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="25"/>
+                                            <RowDefinition Height="25"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="25"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Dependent Phase:" HorizontalAlignment="Left" VerticalAlignment="Bottom" 
+                                                   Margin="0,0,5,0" Grid.Row="0" Grid.ColumnSpan="2"/>
+                                        <ComboBox Grid.Row="1" ItemsSource="{Binding Path=PhaseListPage.DataContext.PhaseList, UpdateSourceTrigger=PropertyChanged}"
+                                                  SelectedItem="{Binding Path=SelectedMinLiquiedFractionPhase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Path=MCObject.ModelObject.Name}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <fa:ImageAwesome Grid.Column="1" Grid.Row="1" Icon="Remove" Foreground="Red" Margin="5"/>
+                                        <Border Style="{StaticResource AM_MouseBorder}" Grid.Column="1" Grid.Row="1">
+                                            <Border.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" Command="{Binding Path=RemoveMinLiquidSelection}"/>
+                                            </Border.InputBindings>
+                                        </Border>
+                                    </Grid>
+                                    <Grid Margin="3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="75"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Min. Liquid" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                                                   Margin="0,0,5,0"/>
+                                        <TextBox Text="{Binding Path=MinLiquidFraction, Mode=TwoWay}" Grid.Column="1" 
+                                                 Style="{StaticResource AM_RoundedTextbox}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Grid>
+
+                </Border>
+                
+                <!-- This was an idea for mixing script with gui, but this concept does not make much sense (at least not yet), if not needed revert -->
+                <Border Background="White" Margin="5" CornerRadius="5,5,5,5" Visibility="Hidden">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="SteelBlue" CornerRadius="5,5,0,0">
+                            <TextBlock Text="Precipitation kinetics Version" 
+                                   Grid.Row="0" Margin="5" Foreground="White"/>
+                        </Border>
+
+                        <Grid Margin="5" Grid.Row="1" Height="250">
+                            <ContentPresenter Content="{Binding Path=ScriptSectionPrecipitation, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </Grid>
+
+                </Border>
+
+                <Border Background="White" Margin="5" CornerRadius="5,5,5,5">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="SteelBlue" CornerRadius="5,5,0,0">
+                            <TextBlock Text="Precipitation kinetics" 
+                                   Grid.Row="0" Margin="5" Foreground="White"/>
+                        </Border>
+
+                        <Grid Margin="5" Grid.Row="1" MinHeight="50">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Text="Precipitation domains" Margin="5,5,5,5"
+                                               VerticalAlignment="Center"/>
+                                    <fa:ImageAwesome Icon="Plus" Foreground="Green" Width="15"
+                                                     Grid.Column="1" HorizontalAlignment="Center" ToolTip="Add new precipitation domain"/>
+                                    <Border Style="{StaticResource AM_MouseBorder}" Grid.Column="1">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" Command="{Binding Path=AddPrecipitationDomain}"/>
+                                        </Border.InputBindings>
+                                    </Border>
+                                </Grid>
+                                
+                                <Border Grid.Row="1" BorderBrush="Silver" BorderThickness="0.5"
+                                        CornerRadius="5" MinHeight="100">
+                                    <ItemsControl ItemsSource="{Binding Path=CaseTemplate.MCObject.ModelObject.PrecipitationDomains, UpdateSourceTrigger=PropertyChanged}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
+                                                        <fa:ImageAwesome Icon="Remove" Width="15" Foreground="Red"/>
+                                                        <Border Style="{StaticResource AM_MouseBorder}">
+                                                            <Border.InputBindings>
+                                                                <MouseBinding MouseAction="LeftClick" Command="{Binding Path= RemovePrecipitationDomain, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                                                            </Border.InputBindings>
+                                                        </Border>
+                                                    </Grid>
+                                                    <pd:PrecipitationDomain_general DataContext="{Binding Path=ModelObject}"/>
+                                                </Grid>
+                                                
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Border>
+                            </Grid>
+
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Precipitation phases (p0)" Margin="5,5,0,0"/>
+                                <Border Grid.Row="1" BorderBrush="Silver" BorderThickness="0.5"
+                                        CornerRadius="5" MinHeight="100">
+                                    
+                                </Border>
+                            </Grid>
+
+                            <Grid Grid.Row="3">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Precipitation phases (p1)" Margin="5,5,0,0"/>
+                                <Border Grid.Row="1" BorderBrush="Silver" BorderThickness="0.5"
+                                        CornerRadius="5" MinHeight="100">
+
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                </Border>
+
+                <Border Background="White" Margin="5" CornerRadius="5,5,5,5">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="SteelBlue" CornerRadius="5,5,0,0">
+                            <TextBlock Text="Heat treatments" 
+                                   Grid.Row="0" Margin="5" Foreground="White"/>
+                        </Border>
+
+                        <Grid Margin="5" Grid.Row="1" MinHeight="50">
+                            <ContentControl Content="{Binding Path=HeatTreatmentPage}"/>
+                        </Grid>
+                    </Grid>
+
+                </Border>
+
+                <Border Background="White" Margin="5" CornerRadius="5,5,5,5">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="SteelBlue" CornerRadius="5,5,0,0">
+                            <TextBlock Text="Options" 
+                                   Grid.Row="0" Margin="5" Foreground="White"/>
+                        </Border>
+
+                        <Grid Margin="5" Grid.Row="1" MinHeight="50">
+                            <StackPanel MaxWidth="400">
+                                <Button Content="Create cases and run all" Margin="3"/>
+                                <Button Content="Create cases only" Margin="3" Command="{Binding Path=CreateCases}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

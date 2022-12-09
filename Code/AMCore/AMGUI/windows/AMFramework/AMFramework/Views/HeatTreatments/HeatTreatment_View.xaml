@@ -1,0 +1,270 @@
+﻿<UserControl x:Class="AMFramework.Views.HeatTreatments.HeatTreatment_View"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AMFramework.Views.HeatTreatments"
+             xmlns:fa="http://schemas.fontawesome.io/icons/"
+             d:DataContext="{d:DesignInstance Type=local:Controller_HeatTreatmentView}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="500">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="auto" MaxHeight="300"/>
+        </Grid.RowDefinitions>
+        
+        <!-- List heat treatments -->
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="35"/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid Grid.Column="0">
+                <TextBlock Text="Heat treatments:" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+            </Grid>
+            
+            <Grid Grid.Column="1">
+                <Border Background="Green" Opacity="0.3" CornerRadius="5" Margin="2" BorderThickness="1" BorderBrush="Silver"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Add new" 
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Margin="3"
+                               Foreground="DarkGreen"/>
+                    <fa:ImageAwesome Icon="Plus" Foreground="Green" HorizontalAlignment="Left" Margin="0,0,0,0"
+                                 Height="12"/>
+                </StackPanel>
+                <Border Style="{StaticResource AM_MouseBorder}" ToolTip="Add new heat treatment">
+                    <Border.InputBindings>
+                        <MouseBinding MouseAction="LeftClick" Command="{Binding Path=AddHeatTreatment}"/>
+                    </Border.InputBindings>
+                </Border>
+            </Grid>
+
+            <Border Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="Silver" BorderThickness="1" Background="WhiteSmoke" CornerRadius="5">
+                
+            </Border>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="500" Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0.3" BorderBrush="Silver" Margin="5,5,5,5">
+                <StackPanel>
+                    <ItemsControl ItemsSource="{Binding Path=CaseModel.HeatTreatments}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="3,15,8,3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="5"/>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="20"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Border Grid.ColumnSpan="5" Grid.RowSpan="2" 
+                                            Background="White" Opacity="0.2" Margin="-5">
+                                        <Border.Effect>
+                                            <BlurEffect Radius="8"/>
+                                        </Border.Effect>
+                                    </Border>
+
+                                    <TextBlock Text="ht:" Margin="2"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Path=ModelObject.Name, Mode=TwoWay}" />
+                                    <Grid Grid.Column="4">
+                                        <fa:ImageAwesome Icon="Remove" Margin="3" Foreground="DarkRed"/>
+                                        <Border Style="{StaticResource AM_MouseBorder}" BorderThickness="0.3" BorderBrush="Silver" 
+                                                CornerRadius="5">
+                                            <Border.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" Command="{Binding Path=DataContext.RemoveHeatTreatment,RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}"/>
+                                            </Border.InputBindings>
+                                        </Border>
+                                    </Grid>
+                                    <Grid Grid.Column="3">
+                                        <fa:ImageAwesome Icon="Edit" Margin="3" Foreground="SteelBlue"/>
+                                        <Border Style="{StaticResource AM_MouseBorder}" BorderThickness="0.3" BorderBrush="Silver" 
+                                                CornerRadius="5">
+                                            <Border.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" Command="{Binding Path=DataContext.SelectHeatTreatment,RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}"/>
+                                            </Border.InputBindings>
+                                        </Border>
+                                    </Grid>
+
+                                    <Grid Grid.ColumnSpan="5" Grid.Row="1" Margin="20,10,0,0">
+                                        <Line Margin="-10,0,0,0" Stroke="Black" StrokeThickness="1" 
+                                              X1="0" X2="0" Y1="-10" Y2="12"/>
+                                        <Line Margin="-10,0,0,0" Stroke="Black" StrokeThickness="1" 
+                                              X1="0" X2="12" Y1="12" Y2="12"/>
+
+
+                                        <Border Background="LightGray" CornerRadius="5" Margin="-5" 
+                                                BorderThickness="0.3" BorderBrush="Silver"></Border>
+                                        <StackPanel>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto"/>
+                                                    <ColumnDefinition Width="45"/>
+                                                    <ColumnDefinition Width="auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="Temperature" Margin="2" VerticalAlignment="Center"/>
+                                                <TextBlock Text="°C" Margin="2" VerticalAlignment="Center" Grid.Column="2"/>
+                                                <TextBox Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource AM_RoundedTextbox}"
+                                                         Text="{Binding Path=ModelObject.TemplatedStartTemperature, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                            </Grid>
+
+                                            <Grid Margin="0,10,0,0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="auto"/>
+                                                    <RowDefinition Height="auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <TextBlock Text="Precipitation Domain" Margin="2" VerticalAlignment="Center"/>
+                                                <ComboBox Grid.Row="1" VerticalAlignment="Center" 
+                                                          SelectedItem="{Binding Path=ModelObject.PrecipitationDomain}"
+                                                          ItemsSource="{Binding DataContext.CaseModel.PrecipitationDomains ,RelativeSource={RelativeSource AncestorType=local:HeatTreatment_View}}">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding Path=ModelObject.Name}"/>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+        
+        <!-- Table segments -->
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="350" Margin="0,15,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="29" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Segments:" Margin="5"/>
+                <Grid Grid.Column="1" >
+                    <Border Background="Green" Opacity="0.3" CornerRadius="5" Margin="2" BorderThickness="1" BorderBrush="Silver"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Add new" 
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Margin="3"
+                               Foreground="DarkGreen"/>
+                        <fa:ImageAwesome Icon="Plus" Foreground="Green" HorizontalAlignment="Left" Margin="0,0,4,0"
+                                 Height="12"/>
+                    </StackPanel>
+                    <Border Style="{StaticResource AM_MouseBorder}" BorderThickness="0.3" BorderBrush="Silver" 
+                                                CornerRadius="5">
+                        <Border.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" Command="{Binding Path=DataContext.AddHeatTreatmentSegment,RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}"/>
+                        </Border.InputBindings>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Border Background="WhiteSmoke" BorderBrush="Silver" BorderThickness="1" 
+                        CornerRadius="5" MinHeight="150"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="80"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border MinHeight="25" Background="White" 
+                                                BorderBrush="Silver" BorderThickness="0.3"
+                                                Grid.ColumnSpan="4"/>
+                    
+                    <Border BorderBrush="Silver" BorderThickness="0.3" Grid.Column="0"/>
+                    <Border BorderBrush="Silver" BorderThickness="0.3" Grid.Column="1"/>
+                    <Border BorderBrush="Silver" BorderThickness="0.3" Grid.Column="2"/>
+                    <Border BorderBrush="Silver" BorderThickness="0.3" Grid.Column="3"/>
+
+                    <TextBlock Grid.Column="0" Text="End Temperature" ToolTip="End Temperature" VerticalAlignment="Center" HorizontalAlignment="center"/>
+                    <TextBlock Grid.Column="1" Text="Type" ToolTip="Choose between Time interval or cooling/heating rate" VerticalAlignment="Center" HorizontalAlignment="center"/>
+                    <TextBlock Grid.Column="2" Text="Value" ToolTip="Value" VerticalAlignment="Center" HorizontalAlignment="center"/>
+                </Grid>
+                
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding Path=SelectedHeatTreatment.ModelObject.HeatTreatmentSegment, UpdateSourceTrigger=PropertyChanged}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,5,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="80"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border MinHeight="25" Background="WhiteSmoke" 
+                                                BorderBrush="Silver" BorderThickness="0.3"
+                                                Grid.ColumnSpan="4"/>
+                                        <TextBox Text="{Binding Path=ModelObject.TemplatedEndTemperature, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <ComboBox ItemsSource="{Binding Path=ModelObject.ModeTypeValues}" 
+                                                  SelectedItem="{Binding Path=ModelObject.SelectedModeType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  Grid.Column="1"/>
+                                        <TextBox Text="{Binding Path=ModelObject.TemplateValue,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Grid.Column="2"/>
+
+                                        <Border Background="Red" Opacity="0.3" CornerRadius="5" Margin="2" 
+                                                BorderThickness="1" BorderBrush="Silver" Grid.Column="3" Height="25"/>
+                                        <StackPanel Orientation="Horizontal" Grid.Column="3">
+                                            <TextBlock Text="Remove" 
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Margin="10,3,3,3"
+                                                       Foreground="DarkRed"/>
+                                            <fa:ImageAwesome  Height="12"  Icon="Remove" Foreground="DarkRed" Margin="0,0,5,0"/>
+                                        </StackPanel>
+
+                                        <Border Style="{StaticResource AM_MouseBorder}" ToolTip="Remove segment" Grid.Column="3">
+                                            <Border.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" Command="{Binding Path=DataContext.RemoveHeatTreatmentSegment,RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}"/>
+                                            </Border.InputBindings>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+            
+        </Grid>
+        
+        <!-- Plot for current selected heat treatment -->
+        <Grid Grid.Row="0" Grid.Column="1" MinWidth="700" MinHeight="350">
+            <ContentPresenter Content="{Binding Path=HeatTreatmentPlot, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+
+    </Grid>
+</UserControl>

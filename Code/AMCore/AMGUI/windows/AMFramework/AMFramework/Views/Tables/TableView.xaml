@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="AMFramework.Views.Tables.TableView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:AMFramework.Views.Tables"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Label Content="Database view:"/>
+            <ComboBox MinWidth="150" 
+                      Margin="2" 
+                      ItemsSource="{Binding Path=TableNames}"
+                      SelectionChanged="ComboBox_SelectionChanged">
+                
+            </ComboBox>
+        </StackPanel>
+
+        <DataGrid x:Name="MainGrid" Grid.Row="2" ItemsSource="{Binding Path = DView}">
+            
+        </DataGrid>  
+    </Grid>
+</UserControl>

@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="AMFramework.Views.Projects.Project_general"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:con="clr-namespace:AMFramework.Controller"
+             xmlns:local="clr-namespace:AMFramework.Views.Projects"
+             d:DataContext="{d:DesignInstance Type=con:Controller_Project}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" 
+             d:DesignWidth="800"
+             MinWidth="500">
+    <Grid>
+        <StackPanel>
+
+            <Grid Height="auto" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="ID:" FontSize="9" Margin="3" VerticalAlignment="Bottom"/>
+                <TextBlock Text="{Binding Path=SelectedProject.MCObject.ModelObject.ID}" Grid.Column="1" FontSize="9" Margin="3" VerticalAlignment="Bottom" Foreground="Red"/>
+            </Grid>
+            
+            <Grid Height="auto" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Project name:" FontWeight="Bold" FontSize="12" Margin="3,3,3,3" VerticalAlignment="Bottom"/>
+                <TextBox Grid.Row="1" 
+                         x:Name="Pname"
+                         Margin="3,0,3,5" 
+                         FontSize="15" 
+                         Text="{Binding Path=SelectedProject.MCObject.ModelObject.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         TextAlignment="Left"
+                         TextWrapping="WrapWithOverflow"
+                         VerticalContentAlignment="Center"
+                         Padding="15,0,0,0"
+                         MinHeight="50"
+                         Height="auto">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="10"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+            </Grid>
+            
+            <Grid Height="auto" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="API type" FontWeight="Bold" FontSize="12" Margin="3" VerticalAlignment="Bottom"/>
+                <TextBox Grid.Row="1" 
+                         Margin="3,0,3,5" 
+                         FontSize="15" IsEnabled="false" 
+                         Text="{Binding Path=SelectedProject.MCObject.ModelObject.APIName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         TextAlignment="Left"
+                         TextWrapping="WrapWithOverflow"
+                         VerticalContentAlignment="Center"
+                         Padding="15,0,0,0"
+                         MinHeight="50">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="10"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+            </Grid>
+        </StackPanel>
+
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,290 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AMFramework.Controller.Controller_ActivePhases" Collapsed="true">
+    <Position X="3.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAgAgAAABEDCAAAAAAAAgAAAAAAABAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Controller\Controller_ActivePhases.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_ActivePhasesConfiguration" Collapsed="true">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAIAAAAAAAAQAAWAgBAAEQgiAAAAAEBAAAAE=</HashCode>
+      <FileName>Controller\Controller_ActivePhasesConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_ActivePhasesElementComposition" Collapsed="true">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAEAAAAAICAAAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controller\Controller_ActivePhasesElementComposition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_AMCore" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.75" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEBICAAAAAAgAAAAIAAAAAAAAAAEgA=</HashCode>
+      <FileName>Controller\Controller_AMCore.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_Cases">
+    <Position X="18.25" Y="13" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IgYLDMFQFECQIEwQYAxCEyUUEDUAKAAARMYAEQIEgkg=</HashCode>
+      <FileName>Controller\Controller_Cases.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SelectedCase" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_Config" Collapsed="true">
+    <Position X="12" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ICAgCgAAAADIACAAARQhAAgSAgAIEAYAAQACQUAIAAA=</HashCode>
+      <FileName>Controller\Controller_Config.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_DBS_Projects">
+    <Position X="3" Y="10.25" Width="2" />
+    <NestedTypes>
+      <Enum Name="AMFramework.Controller.Controller_DBS_Projects.TABS" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controller\Controller_DBS_Projects.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <AssociationLine Name="controllerCases" Type="AMFramework.Controller.Controller_Cases" ManuallyRouted="true">
+      <Path>
+        <Point X="4" Y="10.25" />
+        <Point X="4" Y="10.779" />
+        <Point X="5.813" Y="10.779" />
+        <Point X="5.813" Y="15.105" />
+        <Point X="10.125" Y="15.105" />
+        <Point X="10.125" Y="20.318" />
+        <Point X="18.25" Y="20.318" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>KVQixQCkFADDCjAAIB4CQ0SEjEIZmrEEDgFIgR/gCdQ=</HashCode>
+      <FileName>Controller\Controller_DBS_Projects.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="controllerCases" />
+      <Field Name="Controller_Elements" />
+      <Field Name="Controller_Selected_Elements" />
+      <Property Name="SelectedProject" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_Element" Collapsed="true">
+    <Position X="8.75" Y="28.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>IAAAgAAABABAAQAAAAAQAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Controller\Controller_Element.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_ElementComposition" Collapsed="true">
+    <Position X="6.75" Y="1.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAwAAAAAoICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controller\Controller_ElementComposition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_EquilibriumConfiguration" Collapsed="true">
+    <Position X="8.5" Y="1.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IAAAgAAAIAiAAAIAAAAAAAAAAAAAAAAAgAEAAAAAAAA=</HashCode>
+      <FileName>Controller\Controller_EquilibriumConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_EquilibriumPhaseFraction" Collapsed="true">
+    <Position X="10.25" Y="1.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IgAAgCAAAEgAAAAAAAAAAAIgAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Controller\Controller_EquilibriumPhaseFraction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_HeatTreatment" Collapsed="true">
+    <Position X="12" Y="1.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IBAAoAAAAAAAAAAAIAAAAAAAMAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controller\Controller_HeatTreatment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_HeatTreatmentProfile" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="3.25" Y="2.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAgAAAAAAAAAAAIAAAAAAAgAAAAgAAIAAAAIAAAAA=</HashCode>
+      <FileName>Controller\Controller_HeatTreatmentProfile.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_MainWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>WE0DANQBB2iwAAlYBKnCClEkgQUQpAgkASCCgNJEDUY=</HashCode>
+      <FileName>Controller\Controller_MainWindow.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_Phase" Collapsed="true">
+    <Position X="6.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAgAAAQAgBAEQUCAAAAAABoAAAAAgAAAAAACIAAAE=</HashCode>
+      <FileName>Controller\Controller_Phase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_Plot" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MASoCQCABBCAAAAAIIAAAAEQkIIAIAAAGoACAgEAQIo=</HashCode>
+      <FileName>Controller\Controller_Plot.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_PrecipitateSimulationData" Collapsed="true">
+    <Position X="10.25" Y="2.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IAAAgAAAAAAAAAAAAAAAAAAAAAAAAgAAIAAAAIAAAAA=</HashCode>
+      <FileName>Controller\Controller_PrecipitateSimulationData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_PrecipitationDomain" Collapsed="true">
+    <Position X="12" Y="2.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAIAAAIhAAAAQQAAAAAAAAAAAAACAAAACACAAAAA=</HashCode>
+      <FileName>Controller\Controller_PrecipitationDomain.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_PrecipitationPhase" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="3.25" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>IAAAAIAAAohCAAAAIAAAAAAEgAAAAACAAAAAAAACBAA=</HashCode>
+      <FileName>Controller\Controller_PrecipitationPhase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_Project">
+    <Position X="8.75" Y="16.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>BEBFAQAEgAECAFQSaAEWAAEBBCABAWgABAAAAAggAIw=</HashCode>
+      <FileName>Controller\Controller_Project.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SelectedProject" />
+      <Property Name="CaseController" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_ScheilConfiguration" Collapsed="true">
+    <Position X="6.75" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>IAAAgAAAAAGAAAAAIgAAAAAAAAAAAAAAAAgBAAAAAAA=</HashCode>
+      <FileName>Controller\Controller_ScheilConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_ScheilPhaseFraction" Collapsed="true">
+    <Position X="8.5" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>IkAAhCAAAEgACAAAAAAAAAIgAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Controller\Controller_ScheilPhaseFraction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_Selected_Elements" Collapsed="true">
+    <Position X="8.75" Y="30.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>IAAAAEAAAAAAAAAAAAAQAAAABAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>Controller\Controller_Selected_Elements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_Selected_Phases" Collapsed="true">
+    <Position X="12" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>IAAAAEgAQAgAAAAAIAAAAEAAgAAAAAAAAAAAAAAABQA=</HashCode>
+      <FileName>Controller\Controller_Selected_Phases.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_SpyderPlot" Collapsed="true">
+    <Position X="3.25" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAIAQIAABAAAgEQAAAAAAAAEAAEAJAAAAAhAgAAAEAE=</HashCode>
+      <FileName>Controller\Controller_SpyderPlot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_Tabs" Collapsed="true">
+    <Position X="5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAEAAAAgAAASAAAABAGAAQAggAAQAAAEAAAAACAAAQA=</HashCode>
+      <FileName>Controller\Controller_Tabs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.Controller_XDataTreeView" Collapsed="true">
+    <Position X="6.75" Y="4.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>CFAAQAAAAAACCAAAABgAQAAABAAACAEAAAAAgQIAAAA=</HashCode>
+      <FileName>Controller\Controller_XDataTreeView.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.Controller.RelayCommand" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEACAAQAAECAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controller\RelayCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework.AMsystem.AMFramework_ImageSource" Collapsed="true">
+    <Position X="10.5" Y="5.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQCIAAAAAAAAAAAAAAAAAABCAAAAAAAAAA=</HashCode>
+      <FileName>System\AMFramework_ImageSource.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.AMsystem.AMFramework_library_APIHandle" Collapsed="true">
+    <Position X="12.25" Y="5.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAggAAAAAAAAAAQAAAAAAQAACAACAAAQAAQAAAAAA=</HashCode>
+      <FileName>System\AMFramework_library_APIHandle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework.MainWindow">
+    <Position X="15.5" Y="3.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAABAAACCQAQAAIAcAAMAAAQAAAAAAAAEQBAEAAA=</HashCode>
+      <FileName>MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AMFramework.MainWindow_ViewModel" Collapsed="true">
+    <Position X="18.25" Y="3.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BBBAAAIAAACQAAAAACAEAAAAAAAAAEAAAIAAAFAIBQA=</HashCode>
+      <FileName>MainWindow_ViewModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Projects">
+    <Position X="6.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelAbstract" Collapsed="true">
+    <Position X="6.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_Project">
+    <Position X="13.75" Y="19.75" Width="2.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Controllers.Controller_Abstract_Models&lt;T&gt;">
+    <Position X="13.75" Y="16.75" Width="2.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelController&lt;T&gt;">
+    <Position X="22.5" Y="13" Width="2.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

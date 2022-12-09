@@ -1,0 +1,7 @@
+Flag:Description:Usage
+-cf: Load/Create configuration file, working directory will change to this location: -cf <filename>
+-h: help, diplays options: -h
+-t: open interactive terminal: -t
+-l: run lua script: -l <lua_filename.lua>
+-sc: run external script (run by api): -sc <filename.(mcs, lua, other)>
+-s: open socket communication: -s <port number>

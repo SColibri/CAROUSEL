@@ -1,0 +1,470 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AMFramework_Lib.Model.ModelAbstract">
+    <Position X="23" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QBAAAAAgAIBEEAEAMJACAACAgIAAAAAAAAAAKAAAABA=</HashCode>
+      <FileName>Model\ModelAbstract.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelController&lt;T&gt;" BaseTypeListCollapsed="true">
+    <Position X="59.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAEAAAAAgAAACApgEAAAAAgAAABAAAAAAAABAAIEE=</HashCode>
+      <FileName>Model\ModelController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_coreCommunication" />
+      <Field Name="_model" />
+      <Property Name="DeleteAction" />
+      <Property Name="LoadByIDAction" />
+      <Property Name="LoadByNameAction" />
+      <Property Name="SaveAction" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreCommand" BaseTypeListCollapsed="true">
+    <Position X="55.75" Y="6" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAgAAIARAAAAAAA=</HashCode>
+      <FileName>Model\ModelCoreCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreCommunicationExecutor" BaseTypeListCollapsed="true">
+    <Position X="75" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAGgAAAAAiAAAEAAEAIAAAAAAIAiEgAAAAAAAAEEA=</HashCode>
+      <FileName>Model\ModelCoreCommunicationExecutor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelFactory">
+    <Position X="49.75" Y="5.75" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="AMFramework_Lib.Model.ModelFactory.MODELS" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Model\ModelFactory.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ModelFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_ActivePhases" Collapsed="true">
+    <Position X="38.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BBAAECAgAIAEgAAAABBAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_ActivePhases.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_ActivePhasesConfiguration" Collapsed="true">
+    <Position X="0.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABQAEDAAAIAEgAAAABBAAAACAAAAAAAAAAAAQIAAAAA=</HashCode>
+      <FileName>Model\Model_ActivePhasesConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_ActivePhasesElementComposition" Collapsed="true">
+    <Position X="9.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAECACAIAEgAAAABBAAAAQEAAAAAAAAAIgAAABAAA=</HashCode>
+      <FileName>Model\Model_ActivePhasesElementComposition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Case" Collapsed="true">
+    <Position X="18.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AjAwMCkMAAFOgAAARRhSwQZQAgASIBCJBACKUCEiFAA=</HashCode>
+      <FileName>Model\Model_Case.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_configuration" Collapsed="true">
+    <Position X="25.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAABAgAgAAkEAAoABAAAAAgIQAAEAQAAAAgAAAAACA=</HashCode>
+      <FileName>Model\Model_configuration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Element" Collapsed="true">
+    <Position X="32" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAIAAAAAAEgAAAABBAAAQQAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Model\Model_Element.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_ElementComposition" Collapsed="true">
+    <Position X="41" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gBABQAKCAAAEgAAAABBAAAAQAAAAAAAhAAIgAAABEAA=</HashCode>
+      <FileName>Model\Model_ElementComposition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_EquilibriumConfiguration" Collapsed="true">
+    <Position X="2.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ghEAIIAMAIAEwAAAARAAAAAAAAAAAAAAAAAAQgAEAAI=</HashCode>
+      <FileName>Model\Model_EquilibriumConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_EquilibriumPhaseFraction" Collapsed="true">
+    <Position X="11.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gBABIAIkAIAEgAAABBAAAAAAAAABAAAAAAAgAAAEAAA=</HashCode>
+      <FileName>Model\Model_EquilibriumPhaseFraction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_HeatTreatment" Collapsed="true">
+    <Position X="20.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gBAIIIBIMAAEgAAAsRBAEEQAAAAgACBgAAAAACAAAgA=</HashCode>
+      <FileName>Model\Model_HeatTreatment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_HeatTreatmentProfile" Collapsed="true">
+    <Position X="27.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABCAAAAAAAAmgAAAABBAAAAAAAAAAAAAAAQAAAAEAQA=</HashCode>
+      <FileName>Model\Model_HeatTreatmentProfile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_HeatTreatmentSegment" Collapsed="true">
+    <Position X="34.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABSIAIYAAAACgAAAIDjAEAAACAAAREEAAAAAAAAgAAI=</HashCode>
+      <FileName>Model\Model_HeatTreatmentSegment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Phase" Collapsed="true">
+    <Position X="43.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAIAAAAAAEgAAAABBAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Phase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_PrecipitateSimulationData" Collapsed="true">
+    <Position X="5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBCBAAAAAAAmgAAABBBAAAAAAAEAQAAAEAAAAQAAgRA=</HashCode>
+      <FileName>Model\Model_PrecipitateSimulationData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_PrecipitationDomain" Collapsed="true">
+    <Position X="14" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gBAAIEAAAIAEgCAAFBAAAAQCAJAAAAgAAAAAAAAEAAE=</HashCode>
+      <FileName>Model\Model_PrecipitationDomain.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_PrecipitationPhase" Collapsed="true">
+    <Position X="23" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>iBAAJwAoAMAEgAAAJBAQAAQIAAABBABAMAhAARAEAAA=</HashCode>
+      <FileName>Model\Model_PrecipitationPhase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Projects" Collapsed="true">
+    <Position X="29.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAEIAAEAABGgCAAAhZAAQQEAAACYAAAAAAAEQAAAAA=</HashCode>
+      <FileName>Model\Model_Projects.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_ScheilConfiguration" Collapsed="true">
+    <Position X="36.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ghECIIAIAIAEgAAAAxBAIAAAAQAAAAAAIAAAQAAAAAI=</HashCode>
+      <FileName>Model\Model_ScheilConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_ScheilPhaseFraction" Collapsed="true">
+    <Position X="45.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gBABIAIkAIAEgAAABBAAAAAAAAABAAAAAAAgAAAEAAA=</HashCode>
+      <FileName>Model\Model_ScheilPhaseFraction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_SelectedElements" Collapsed="true">
+    <Position X="7.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAEAACAAAEgAAAABAAASAQICAAAAAAAAIAgAAEEAA=</HashCode>
+      <FileName>Model\Model_SelectedElements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_SelectedPhases" Collapsed="true">
+    <Position X="16.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gBAAIAAAAIAEgAAABBAIAACAgAABAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Model\Model_SelectedPhases.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreExecutors.MCE_Delete" Collapsed="true">
+    <Position X="66.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ModelCoreExecutors\MCE_Delete.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreExecutors.MCE_Factory" Collapsed="true">
+    <Position X="84.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ModelCoreExecutors\MCE_Factory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreExecutors.MCE_LoadALL" Collapsed="true">
+    <Position X="77.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ModelCoreExecutors\MCE_LoadALL.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreExecutors.MCE_LoadByID" Collapsed="true">
+    <Position X="68.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ModelCoreExecutors\MCE_LoadByID.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreExecutors.MCE_LoadByIDCase" Collapsed="true">
+    <Position X="73" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ModelCoreExecutors\MCE_LoadByIDCase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreExecutors.MCE_LoadByIDProject" Collapsed="true">
+    <Position X="79.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ModelCoreExecutors\MCE_LoadByIDProject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreExecutors.MCE_LoadByName" Collapsed="true">
+    <Position X="70.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ModelCoreExecutors\MCE_LoadByName.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreExecutors.MCE_LoadByQuery" Collapsed="true">
+    <Position X="75.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ModelCoreExecutors\MCE_LoadByQuery.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.ModelCoreExecutors.MCE_Save" Collapsed="true">
+    <Position X="82" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ModelCoreExecutors\MCE_Save.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_ActivePhases" Collapsed="true">
+    <Position X="54" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_ActivePhases.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_ActivePhasesConfiguration" Collapsed="true">
+    <Position X="63" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_ActivePhasesConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_ActivePhasesElementComposition" Collapsed="true">
+    <Position X="72" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_ActivePhasesElementComposition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_Case" Collapsed="true">
+    <Position X="81" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAACAAAACAAAIAAAAAIAAAAAAAAAIAAIAAAAAAAAI=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_Case.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_Element" Collapsed="true">
+    <Position X="90" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAIAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_Element.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_ElementComposition" Collapsed="true">
+    <Position X="56.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_ElementComposition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_EquilibriumConfiguration" Collapsed="true">
+    <Position X="65.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_EquilibriumConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_EquilibriumPhaseFraction" Collapsed="true">
+    <Position X="74.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_EquilibriumPhaseFraction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_HeatTreatment" Collapsed="true">
+    <Position X="83.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_HeatTreatment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_HeatTreatmentProfile" Collapsed="true">
+    <Position X="92.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_HeatTreatmentProfile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_HeatTreatmentSegment" Collapsed="true">
+    <Position X="58.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_HeatTreatmentSegment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_Phase" Collapsed="true">
+    <Position X="67.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAARIAAAAAAAAAAAEAIgABA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_Phase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_PrecipitateSimulationData" Collapsed="true">
+    <Position X="76.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_PrecipitateSimulationData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_PrecipitationDomain" Collapsed="true">
+    <Position X="85.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_PrecipitationDomain.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_PrecipitationPhase" Collapsed="true">
+    <Position X="94.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_PrecipitationPhase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_Project" Collapsed="true">
+    <Position X="60.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAIgAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_Project.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_ScheilConfiguration" Collapsed="true">
+    <Position X="69.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_ScheilConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_SelectedElements" Collapsed="true">
+    <Position X="78.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_SelectedElements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Model_Controllers.ControllerM_SelectedPhases" Collapsed="true">
+    <Position X="87.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\ControllerM_SelectedPhases.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AMFramework_Lib.Model.Controllers.Controller_Abstract_Models&lt;T&gt;">
+    <Position X="74.5" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAIAAAAAAIAAAIAAAgAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Model_Controllers\Controller_Abstract_Models.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_comm" />
+      <Field Name="_mCObject" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AMFramework_Lib.Core.AMCore_Empty" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="66.75" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\AMCore_Empty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.212" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework_Lib.Core.AMCore_libHandle" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="68.5" Y="13" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="AMFramework_Lib.Core.AMCore_libHandle.get_API_controll_default" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Core\AMCore_libHandle.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="AMFramework_Lib.Core.AMCore_libHandle.API_run_lua_command" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Core\AMCore_libHandle.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AQCAgoAAAAAAAAAEQAAAACQQAACAgCAAAQAAQAAAABA=</HashCode>
+      <FileName>Core\AMCore_libHandle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AMFramework_Lib.Core.AMCore_Socket" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="65" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAgBAAAAAAAEgAAAAwAAAAAAAAAIAAIAAAAAAAAA=</HashCode>
+      <FileName>Core\AMCore_Socket.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="AMFramework_Lib.Interfaces.Model_Interface">
+    <Position X="25.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAgAABEAAEAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Model_Interface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AMFramework_Lib.Core.IAMCore_Comm">
+    <Position X="66.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Core\IAMCore_Comm.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="AMFramework_Lib.Interfaces.CoreCommand_Interface">
+    <Position X="55.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAIARAAAAAAA=</HashCode>
+      <FileName>Interfaces\CoreCommand_Interface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

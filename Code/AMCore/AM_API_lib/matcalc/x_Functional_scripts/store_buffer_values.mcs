@@ -1,0 +1,8 @@
+
+set-variable-string variable=TableContent string=""
+ 
+for(i;1..BUFFERSIZE)
+@ load-buffer-state line-index=i
+@ FORMATTEDSTRING
+@ format-variable-string variable=TableContent format-string="%s||%s" #TableContent #TEMPDATA
+endfor
