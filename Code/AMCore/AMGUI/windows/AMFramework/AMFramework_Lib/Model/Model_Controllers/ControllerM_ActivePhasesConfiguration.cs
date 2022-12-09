@@ -17,6 +17,29 @@ namespace AMFramework_Lib.Model.Model_Controllers
         { }
 
         #region Model_methods
+        public static ModelController<Model_ActivePhasesConfiguration> Get_ActivePhaseConfiguration_FromIDProject(IAMCore_Comm comm, int IDProject) 
+        {
+            ModelController<Model_ActivePhasesConfiguration> result;
+
+            // load configuration
+            List<ModelController<Model_ActivePhasesConfiguration>> refConfig = ModelController<Model_ActivePhasesConfiguration>.LoadIDProject(ref comm, IDProject);
+            
+            // If no configuration exists, add one else return [0] position, this is done because the loadby project returns a list.
+            // no other reason.
+            if (refConfig.Count > 0)
+            {
+                result = refConfig[0];
+            }
+            else
+            {
+                Model_ActivePhasesConfiguration refModelConfig = new() { IDProject = IDProject };
+                result = new ModelController<Model_ActivePhasesConfiguration>(ref comm, refModelConfig);
+                result.SaveAction?.DoAction();
+            }
+
+            return result;
+        }
+
 
         #endregion
     }

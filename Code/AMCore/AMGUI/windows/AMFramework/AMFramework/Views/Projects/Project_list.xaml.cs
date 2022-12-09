@@ -25,10 +25,10 @@ namespace AMFramework.Views.Projects
             InitializeComponent();
         }
 
-        public Project_list(Controller.Controller_DBS_Projects dbs)
+        public Project_list(Controller.Controller_Project dbs)
         {
             InitializeComponent();
-            dbs.DB_projects_reload();
+            dbs.Load_projectList();
             DataContext = dbs;
         }
     }

@@ -13,27 +13,13 @@ namespace AMFramework.Controller
 {
     public class Controller_ActivePhasesConfiguration : ControllerAbstract
     {
-        #region Socket
-        private Controller_DBS_Projects _ProjectController;
-
-        [Obsolete("Constructor type is obsolete, we should avoid the usage of the prototype Controller_DBS_project")]
-        /// <summary>
-        /// Thid function will be deprecated for the new restructured method
-        /// </summary>
-        /// <param name="comm"></param>
-        /// <param name="projectController"></param>
-        public Controller_ActivePhasesConfiguration(ref IAMCore_Comm comm, Controller_DBS_Projects projectController) : base(comm)
-        {
-            _ProjectController = projectController;
-        }
-
-        #region New_implementation
+        #region Constructor
 
         public Controller_ActivePhasesConfiguration(ref IAMCore_Comm comm, int IDProject) : base(comm)
         {
             //_ProjectController = projectController;
             var tRef = ModelController<Model_ActivePhasesConfiguration>.LoadIDProject(ref _comm, IDProject);
-            if(tRef.Count > 0) _activePhasesConfiguration = tRef[0];
+            if (tRef.Count > 0) _activePhasesConfiguration = tRef[0];
         }
 
         public Controller_ActivePhasesConfiguration(ref IAMCore_Comm comm, ModelController<Model_ActivePhasesConfiguration> activePhaseConfig) : base(comm)
@@ -42,7 +28,16 @@ namespace AMFramework.Controller
             _activePhasesConfiguration = activePhaseConfig;
         }
 
+
+
+        #endregion
+
+        #region Properties
+
         private ModelController<Model_ActivePhasesConfiguration>? _activePhasesConfiguration;
+        /// <summary>
+        /// get/set Configuration for obtaining the active phases
+        /// </summary>
         public ModelController<Model_ActivePhasesConfiguration>? ActivePhasesConfiguration
         {
             get { return _activePhasesConfiguration; }
@@ -52,53 +47,23 @@ namespace AMFramework.Controller
                 OnPropertyChanged(nameof(ActivePhasesConfiguration));
             }
         }
-        #endregion
 
-        #endregion
-
-        #region ActivePhases
-
-        private Model_ActivePhasesConfiguration _APConfiguration = new();
-        public Model_ActivePhasesConfiguration APConfiguration
-        { 
-            get { return _APConfiguration; }
-            set 
-            { 
-                _APConfiguration = value;
-                OnPropertyChanged(nameof(APConfiguration));
-            }
-        }
-
-        public static Model_ActivePhasesConfiguration Get_model(IAMCore_Comm comm,int IDProject) 
-        { 
-            Model_ActivePhasesConfiguration model = null;
-
-            string Query = "SELECT ActivePhases_Configuration.* FROM ActivePhases_Configuration WHERE IDProject=" + IDProject;
-            string outCommand = comm.run_lua_command("database_table_custom_query", Query);
-            List<string> rowItems = outCommand.Split("\n").ToList();
-
-            if (rowItems.Count == 0) 
-            {
-                Model_ActivePhasesConfiguration NewModel = new()
-                {
-                    IDProject = IDProject
-                };
-
-            }
-
-            return model;
-        }
-
-        private static void FillModel(List<string> DataRaw) 
+        private bool _Searching_Active_Phases = false;
+        /// <summary>
+        /// get/set flag for reporting working status
+        /// </summary>
+        public bool Searching_Active_Phases
         {
-            Model_ActivePhasesConfiguration model = new();
+            get { return _Searching_Active_Phases; }
+            set
+            {
+                _Searching_Active_Phases = value;
+                OnPropertyChanged(nameof(Searching_Active_Phases));
 
+                //TODO: Report progress on main window using Controller_global
+            }
         }
 
-        public static void Save(Model_ActivePhasesConfiguration model) 
-        { 
-            
-        }
         #endregion
 
         #region Commands
@@ -137,14 +102,6 @@ namespace AMFramework.Controller
         #endregion
 
         #region Methods
-        [Obsolete("use Method_Find_Active_Phases instead")]
-        private void Method_Find_Active_Phases_OLD() 
-        {
-            string outy = _comm.run_lua_command("get_active_phases",_ProjectController.SelectedProject.ID.ToString());
-            Searching_Active_Phases = false;
-            _ProjectController.Refresh_ActivePhases();
-        }
-
         private void Method_Find_Active_Phases()
         {
             if (_activePhasesConfiguration == null) return;
@@ -154,16 +111,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Flags
-        private bool _Searching_Active_Phases = false;
-        public bool Searching_Active_Phases 
-        {
-            get { return _Searching_Active_Phases; } 
-            set 
-            {
-                _Searching_Active_Phases = value;
-                OnPropertyChanged(nameof(Searching_Active_Phases));
-            }
-        }
+        
         #endregion
 
     }

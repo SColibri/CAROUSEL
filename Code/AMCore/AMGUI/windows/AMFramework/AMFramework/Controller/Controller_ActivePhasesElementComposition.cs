@@ -7,29 +7,32 @@ using System.ComponentModel;
 using AMFramework_Lib.Model;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Controller;
+using AMFramework_Lib.Model.Model_Controllers;
 
 namespace AMFramework.Controller
 {
     public class Controller_ActivePhasesElementComposition : ControllerAbstract
     {
         #region Socket
-        private IAMCore_Comm _AMCore_Socket;
-        private Controller_DBS_Projects _ProjectController;
-        public Controller_ActivePhasesElementComposition(ref IAMCore_Comm socket, Controller_DBS_Projects projectController)
+        public Controller_ActivePhasesElementComposition(ref IAMCore_Comm comm, Controller_Project projectController) : base(comm)
         {
-            _AMCore_Socket = socket;
-            _ProjectController = projectController;
+            if(projectController.SelectedProject != null)
+                Composition = ControllerM_ActivePhasesElementComposition.Get_ActivePhaseElementComposition_FromIDProject(_comm, projectController.SelectedProject.MCObject.ModelObject.ID);
         }
         #endregion
 
         #region Composition
-        private List<Model_ActivePhasesElementComposition> _composition = new();
-        public List<Model_ActivePhasesElementComposition> Composition { get { return _composition; } }
-
-        public void refresh() 
+        private List<ModelController<Model_ActivePhasesElementComposition>> _composition = new();
+        public List<ModelController<Model_ActivePhasesElementComposition>> Composition 
         { 
-            // Todo load all components and values
+            get { return _composition; } 
+            set 
+            {
+                _composition = value;
+                OnPropertyChanged(nameof(Composition));
+            }
         }
+
         #endregion
 
     }

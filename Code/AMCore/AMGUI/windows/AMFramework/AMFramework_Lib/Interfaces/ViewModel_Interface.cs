@@ -16,14 +16,14 @@ namespace AMFramework_Lib.Interfaces
         /// Returns if save was possible.
         /// </summary>
         /// <returns></returns>
-        public bool save();
+        public bool Save();
 
         /// <summary>
         /// Returns if close was possible, this allows prompting the user before closing a tab or object
         /// inside main window.
         /// </summary>
         /// <returns></returns>
-        public bool close();
+        public bool Close();
 
     }
 }

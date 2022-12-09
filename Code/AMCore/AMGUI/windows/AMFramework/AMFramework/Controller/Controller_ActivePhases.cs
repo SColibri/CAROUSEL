@@ -8,33 +8,67 @@ using AMFramework_Lib;
 using AMFramework_Lib.Interfaces;
 using AMFramework_Lib.Model;
 using AMFramework_Lib.Core;
+using AMFramework_Lib.Model.Model_Controllers;
+using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
-    public class Controller_ActivePhases : INotifyPropertyChanged
+    /// <summary>
+    /// Active phases controller
+    /// </summary>
+    public class Controller_ActivePhases : AMFramework_Lib.Controller.ControllerAbstract 
     {
-        #region Socket
+        #region Constructor
         private IAMCore_Comm _AMCore_Socket;
-        private Controller_DBS_Projects _ProjectController;
-        public Controller_ActivePhases(ref IAMCore_Comm socket, Controller_DBS_Projects projectController)
+        private Controller_Project _projectController;
+
+        public Controller_ActivePhases(Controller_Project projectController)
         {
-            _AMCore_Socket = socket;
-            _ProjectController = projectController;
+            _projectController = projectController;
         }
         #endregion
 
-        #region ActivePhases
-        private List<Model_ActivePhases> _ActivePhases;
-        public List<Model_ActivePhases> ActivePhases 
+
+        #region Properties
+        #region Activephases
+        private List<ModelController<Model_ActivePhases>> _ActivePhases;
+        /// <summary>
+        /// List of all active phases
+        /// </summary>
+        public List<ModelController<Model_ActivePhases>> ActivePhases 
         { 
-            get { return _ActivePhases; } 
+            get => _ActivePhases;
             set 
-            { 
+            {
                 _ActivePhases = value;
                 OnPropertyChanged(nameof(ActivePhases));
             }
         }
 
+        /// <summary>
+        /// Update active phases for current project
+        /// </summary>
+        private void RefreshActivePhases() 
+        {
+            if (_projectController.SelectedProject?.MCObject?.ModelObject == null) return;
+            ActivePhases = ControllerM_ActivePhases.Get_ActivePhaseList(Controller_Global.ApiHandle, 
+                                                    _projectController.SelectedProject.MCObject.ModelObject.ID);
+        }
+        #endregion
+        #endregion
+
+        #region ActivePhases
+        private List<Model_ActivePhases> _ActivePhasesOLD;
+        public List<Model_ActivePhases> ActivePhasesOLD 
+        { 
+            get { return _ActivePhasesOLD; } 
+            set 
+            { 
+                _ActivePhasesOLD = value;
+                OnPropertyChanged(nameof(ActivePhasesOLD));
+            }
+        }
+        [Obsolete("Save is done in ModelController<>")]
         public void save(Model_ActivePhases model)
         {
             string outComm = _AMCore_Socket.run_lua_command("project_active_phases_save", model.Get_csv());
@@ -44,10 +78,11 @@ namespace AMFramework.Controller
             }
         }
 
+        [Obsolete("Use ControllerM for all data manipulations")]
         public List<Model_ActivePhases> get_ativePhaselist()
         {
             List<Model_ActivePhases> composition = new();
-            string Query = "database_table_custom_query SELECT ActivePhases.*, Phase.Name As PhaseName FROM ActivePhases INNER JOIN Phase ON Phase.ID=ActivePhases.IDPhase WHERE IDProject=" + _ProjectController.SelectedProject.ID;
+            string Query = "database_table_custom_query SELECT ActivePhases.*, Phase.Name As PhaseName FROM ActivePhases INNER JOIN Phase ON Phase.ID=ActivePhases.IDPhase WHERE IDProject="; //_ProjectController.SelectedProject.ID;
             string outCommand = _AMCore_Socket.run_lua_command(Query, "");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
@@ -61,6 +96,7 @@ namespace AMFramework.Controller
             return composition;
         }
 
+        [Obsolete("This is done in ModelController when loading data")]
         private static Model_ActivePhases fillModel(List<string> DataRaw)
         {
             if (DataRaw.Count < 4) throw new Exception("Error: Element RawData is wrong");
@@ -78,20 +114,13 @@ namespace AMFramework.Controller
         #endregion
 
         #region Methods
-        public void Refresh() 
+        /// <summary>
+        /// Update values
+        /// </summary>
+        public override void Refresh() 
         {
-            ActivePhases = get_ativePhaselist();
+            RefreshActivePhases();
         }
         #endregion
-
-        #region Interfaces
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
     }
 }

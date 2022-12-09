@@ -17,7 +17,25 @@ namespace AMFramework_Lib.Model.Model_Controllers
         { }
 
         #region Model_methods
+        /// <summary>
+        /// Loads all selected phases in IDCase
+        /// </summary>
+        /// <param name="comm"></param>
+        /// <param name="IDCase"></param>
+        /// <returns></returns>
+        public static List<ModelController<Model_SelectedPhases>> Get_SelectedPhases_FromIDCase(IAMCore_Comm comm, int IDCase)
+        {
+            // load Selected phases
+            List<ModelController<Model_SelectedPhases>> result = ModelController<Model_SelectedPhases>.LoadIDCase(ref comm, IDCase);
 
+            // Get phase name
+            foreach (var item in result)
+            {
+                item.ModelObject.PhaseName = ControllerM_Phase.Get_PhaseByID(comm, item.ModelObject.IDPhase).ModelObject.Name;
+            }
+
+            return result;
+        }
         #endregion
     }
 }

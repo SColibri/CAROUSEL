@@ -18,6 +18,7 @@ using AMFramework_Lib.Model.Model_Controllers;
 using System.Threading;
 using AMFramework_Lib.Model;
 using System.ComponentModel;
+using AMFramework_Lib.Interfaces;
 
 namespace AMFramework.Views.Phase
 {
@@ -26,6 +27,8 @@ namespace AMFramework.Views.Phase
     /// </summary>
     public partial class PhaseList_View : UserControl
     {
+        private ModelController<Model_Case>? _caseModelController;
+
         /// <summary>
         /// Default constructor, loads phases from current database 
         /// </summary>
@@ -37,16 +40,16 @@ namespace AMFramework.Views.Phase
             Create_DataContext(comm);
         }
 
-
         /// <summary>
         /// Shows phases from CALPHAD database and sets as selected all the phases selected in the case level, deprecate?
         /// </summary>
         /// <param name="comm"></param>
         /// <param name="IDCase"></param>
-        public PhaseList_View(IAMCore_Comm comm, int IDCase)
+        public PhaseList_View(IAMCore_Comm comm, ModelController<Model_Case> caseModel)
         {
             InitializeComponent();
 
+            _caseModelController = caseModel;
             Create_DataContext(comm);
         }
 
@@ -60,8 +63,25 @@ namespace AMFramework.Views.Phase
             var dC = new Controller_Phase(comm);
             DataContext = dC;
 
-            Thread TH01 = new(dC.LoadFromDatabase);
-            TH01.Start();
+            dC.IsLoading = true;
+            Thread TH01 = new(LoadPhases_Async);
+            TH01.Start((Controller_Phase)DataContext);
+        }
+
+        /// <summary>
+        /// Loads phase list and selection.
+        /// </summary>
+        private void LoadPhases_Async(object? param) 
+        {
+            if (param == null) return;
+
+            Controller_Phase tRef = (Controller_Phase)param;
+            tRef.LoadFromDatabase();
+
+            if(_caseModelController != null)
+                tRef.SetSelected(_caseModelController);
+
+            tRef.IsLoading = false;
         }
 
         /// <summary>

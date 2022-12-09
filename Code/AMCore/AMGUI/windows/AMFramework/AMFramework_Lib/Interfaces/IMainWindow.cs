@@ -24,6 +24,8 @@ namespace AMFramework_Lib.Interfaces
         public void Show_Notification(string Title, string Content, int IconType,
                                       Struct_Color? IconForeground, Struct_Color? ContentBackground, Struct_Color? TitleBackground);
 
+        public void Add_View() { }
+
         //---------------------------------------------------------------------------------
         // OUTPUT
         //---------------------------------------------------------------------------------

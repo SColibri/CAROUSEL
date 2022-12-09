@@ -18,55 +18,52 @@ using AMFramework.Views.Projects;
 using AMFramework.Views.Case;
 using AMFramework.Views.Precipitation_Kinetics;
 using AMFramework.Components.Windows;
+using AMControls.Custom.ProjectTreeView;
+using AMFramework.Components.Scripting;
+using System.IO;
+using System.Linq;
 
 namespace AMFramework.Controller
 {
     public class Controller_MainWindow : ControllerAbstract, IMainWindow
-    {
-        private readonly MainWindow_ViewModel _AMView;        
-        private readonly Controller.Controller_AMCore _AMCore;
+    {      
+        private readonly Controller_AMCore _AMCore;
 
-        private Controller_Project _projectController;
-        private Controller.Controller_DBS_Projects _DBSProjects;
+        private readonly Controller_Config _configurationController;
+        private Controller_Plot _plotController;
 
-        private readonly Controller.Controller_Config _Config;
-        private Controller.Controller_Plot _Plot;
-
-        private readonly Controller.Controller_Project _Project;
-
-        private IAMCore_Comm _coreSocket = new AMCore_Socket();
-
-        private readonly Views.Projects.Project_contents _viewProjectContents;
-
-        public Controller_MainWindow() 
+        public Controller_MainWindow()
         {
             UserPreferences? uPref = UserPreferences.load();
             
             Controller_Config cConfig = new(Controller_Global.UserPreferences.IAM_API_PATH);
             Controller_Global.Configuration = cConfig.datamodel;
 
-            _Config = cConfig;
+            _configurationController = cConfig;
 
-            _coreSocket = Controller.Controller_Config.ApiHandle;
+            _comm = Controller.Controller_Config.ApiHandle;
 
-            AMFramework_startup.Start(ref _coreSocket);
+            AMFramework_startup.Start(ref _comm);
             
-            _AMCore = new(_coreSocket);
-            _AMView = new();
+            _AMCore = new Controller_AMCore(_comm);
 
-            _projectController = new(_coreSocket);
-            _DBSProjects = new(_coreSocket);
-            _DBSProjects.PropertyChanged += Project_property_changed_handle;
+            _projectController = new(_comm);
+            _projectController.Load_projectList();
 
-            _Plot = new(ref _coreSocket, _DBSProjects);
+            //_DBSProjects = new(_comm);
+            //_DBSProjects.PropertyChanged += Project_property_changed_handle;
+
+            _plotController = new(ref _comm, _projectController);
             _AMCore.PropertyChanged += Core_output_changed_Handle;
 
-            _viewProjectContents = new(ref _DBSProjects);
-            _Project = new(_coreSocket);
-            _Project.Load_projectList();
             NotificationObject = new();
 
-            reloadProjects();
+            // Add tab controller used as datacontext
+            _dataContextTabs = new();
+            _dataContextTabs.TabClosed += ClosedTab_Handle;
+            _dataContextScripting = new();
+            _dataContextScripting.SavedFileEvent += SavedFileEvent_Handle;
+
         }
 
         private void Core_output_changed_Handle(object sender, PropertyChangedEventArgs e) 
@@ -79,224 +76,68 @@ namespace AMFramework.Controller
         }
 
         #region getters
-        public Controller.Controller_DBS_Projects get_project_controller() { return _DBSProjects; }
 
-        public Controller.Controller_Plot get_plot_Controller() { return _Plot; }
+        public Controller_Plot get_plot_Controller() { return _plotController; }
 
         public ref IAMCore_Comm Get_socket() 
         {
-            return ref _coreSocket;
+            return ref _comm;
         }
 
         #endregion
 
         #region GUIElements
-        #region Flags
-        private bool _show_popup = false;
-        public bool ShowPopup
-        {
-            get { return _show_popup; }
-            set
-            {
-                _show_popup = value;
-                OnPropertyChanged(nameof(ShowPopup));
-            }
-        }
 
-        
-
-        private bool _isComputing = false;
-        public bool IsComputing
-        {
-            get { return _isComputing; }
-            set
-            {
-                _isComputing = value;
-                OnPropertyChanged(nameof(IsComputing));
-            }
-        }
-
-        private bool _tabControl_Visible = true;
-        public bool TabControlVisible 
-        { 
-            get { return _tabControl_Visible; } 
-            set 
-            { 
-                _tabControl_Visible=value;
-                OnPropertyChanged(nameof(TabControlVisible));
-            }
-        }
-
-        private TabItem _selectedTab;
-        public TabItem SelectedTab
-        {
-            get { return _selectedTab; }
-            set
-            {
-                _selectedTab = value;
-                OnPropertyChanged(nameof(SelectedTab));
-            }
-        }
-
-        #endregion
-
-        #region Control_Elements
-        #region TabItems
-        private List<TabItem> _tabItems = new();
-        public List<TabItem> TabItems 
-        { 
-            get { return _tabItems; } 
-            set 
-            {
-                _tabItems = value;
-                OnPropertyChanged(nameof(TabItems));
-            }
-        }
-        public void Add_Tab_Item(TabItem itemy) 
-        {
-            List<TabItem> nList = new() { itemy };
-
-            foreach (var item in TabItems)
-            {
-                nList.Add(item);
-            }
-
-            TabItems = nList;
-            SelectedTab = itemy;
-            OnPropertyChanged(nameof(TabItems));
-        }
-        public void Remove_tab_Item(TabItem itemy) 
-        { 
-            TabItems.Remove(itemy);
-            OnPropertyChanged(nameof(TabItems));
-        }
-
-        public void Remove_ByTagType(Type objType) 
-        {
-            TabItems.RemoveAll(e => e.Tag.GetType().Equals(objType));
-            OnPropertyChanged(nameof(TabItems));
-        }
-
-        #endregion
+        #region TreeViewItem
+            public TV_TopView_controller TreeViewController { get => _projectController.Controller_xDataTreeView.DTV_Controller; }
         #endregion
 
         #endregion
 
-        #region IMainWindow
+        #region Open_Views_Tabs
         public void Show_Project_PlotView(Model_Projects modelObject)
         {
-            Remove_ByTagType(typeof(Project_ViewModel));
-            TabItem tabContainer = Create_Tab(new Views.Project_Map.Project_Map(get_plot_Controller()), new Project_ViewModel(), "Project view");
-            Add_Tab_Item(tabContainer);
+            DataContext_Tabs.Create_Tab(new Views.Project_Map.Project_Map(get_plot_Controller()), new Project_ViewModel(), "Project view");
         }
 
         public void Show_Project_EditView(Model_Projects modelObject)
         {
-            _Project.Load_project(_DBSProjects.SelectedProject.ID);
-
-            Remove_ByTagType(typeof(Project_ViewModel));
-            TabItem tabContainer = Create_Tab(new Views.Projects.ProjectView_Data(_Project), new Project_ViewModel(), "Project");
-            Add_Tab_Item(tabContainer);
-            //Remove_ByTagType(typeof(Project_ViewModel));
-            //TabItem tabContainer = Create_Tab(new Views.Projects.Project_contents(ref _DBSProjects), new Project_ViewModel(), "Project");
-            //Add_Tab_Item(tabContainer);
+            _projectController.Load_project(modelObject.ID);
+            DataContext_Tabs.Create_Tab(new Views.Projects.ProjectView_Data(_projectController), new Project_ViewModel(), "Project");
         }
 
         public void Show_Case_PlotView(Model_Case modelObject)
         {
-            Remove_ByTagType(typeof(Case_ViewModel));
-            Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
-            tController.SelectedCaseOLD = modelObject;
-            TabItem tabContainer = Create_Tab(null, new Case_ViewModel(), "Case plot");
-            Add_Tab_Item(tabContainer);
+            DataContext_Tabs.Create_Tab(new Views.Case.plotViews.Case_SpyderChart(_comm, _projectController), new Case_ViewModel(), "Case plot");
         }
 
         public void Show_Case_EditWindow(Model_Case modelObject)
         {
-            Remove_ByTagType(typeof(Case_ViewModel));
-            Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
-            tController.SelectedCaseOLD = modelObject;
+            Controller.Controller_Cases tController = _projectController.CaseController;
+            tController.Set_SelectedCase(modelObject);
 
-
-            TabItem tabContainer = Create_Tab(new Views.Case.CaseView_Data(tController), new Case_ViewModel(), "Case item");
-            Add_Tab_Item(tabContainer);
+            DataContext_Tabs.Create_Tab(new Views.Case.CaseView_Data(tController), new Case_ViewModel(), "Case item");
         }
 
         public void Show_HeatTreatment_PlotView(Model_HeatTreatment modelObject)
         {
-            Remove_ByTagType(typeof(PrecipitationKinetics_ViewModel));
-            Controller.Controller_Cases tController = _DBSProjects.ControllerCases;
             get_plot_Controller().HeatModel = modelObject;
-            TabItem tabContainer = Create_Tab(new Views.Precipitation_Kinetics.Precipitation_kinetics_plot(get_plot_Controller()), new PrecipitationKinetics_ViewModel(), "Heat treatment");
-            Add_Tab_Item(tabContainer);
+
+            DataContext_Tabs.Create_Tab(new Precipitation_kinetics_plot(get_plot_Controller()), new PrecipitationKinetics_ViewModel(), "Heat treatment");
         }
 
         public void Show_HeatTreatment_EditWindow(Model_HeatTreatment modelObject)
         {
-            Remove_ByTagType(modelObject.GetType());
-
             throw new NotImplementedException();
         }
 
-        
-        private TabItem Create_Tab(object itemView, object modelObject, string tabTitle) 
-        {
-            TabItem result = new();
-
-            string headerTitle = tabTitle;
-            Uri ImageUri = null; //TODO add lua Icon here
-            if (headerTitle.Length == 0)
-            {
-                result.Header = get_TabHeader(tabTitle, ImageUri);
-            }
-            else
-            {
-                result.Header = get_TabHeader(headerTitle, ImageUri);
-            }
-
-            result.Content = itemView;
-            result.Tag = modelObject;
-
-            return result;
-        }
-
-        public Grid get_TabHeader(string TabTitle, Uri uriImage)
-        {
-            Grid grid = new();
-            ColumnDefinition CDef_01 = new()
-            {
-                Width = new GridLength(25)
-            };
-            ColumnDefinition CDef_02 = new();
-            CDef_01.Width = new GridLength(1, GridUnitType.Star);
-
-            grid.ColumnDefinitions.Add(CDef_01);
-            grid.ColumnDefinitions.Add(CDef_02);
-
-            Image image = new();
-            if (uriImage != null)
-            {
-                ImageSource imS = new BitmapImage(uriImage);
-                image.Source = imS;
-            }
-
-            TextBlock textBlock = new()
-            {
-                FontWeight = FontWeights.DemiBold,
-                Text = TabTitle
-            };
-
-            Grid.SetColumn(image, 0);
-            Grid.SetColumn(textBlock, 0);
-            grid.Children.Add(textBlock);
-            grid.Children.Add(image);
-
-            return grid;
-        }
         #endregion
 
         #region Core
         private string _coreOut = "";
+        /// <summary>
+        /// Set/get core output text
+        /// </summary>
         public string CoreOut { 
             get { return _coreOut; } 
             set 
@@ -305,6 +146,11 @@ namespace AMFramework.Controller
                 OnPropertyChanged(nameof(CoreOut));
             } 
         }
+
+        /// <summary>
+        /// Update core output on GUI
+        /// </summary>
+        /// <param name="outputString"></param>
         public void Set_Core_Output(string outputString)
         {
             CoreOut = outputString;
@@ -317,7 +163,7 @@ namespace AMFramework.Controller
         {
             Views.Config.Configuration Pg = new()
             {
-                DataContext = _Config // new Controller.Controller_Config(_coreSocket);
+                DataContext = _configurationController // new Controller.Controller_Config(_coreSocket);
             };
 
             Components.Windows.AM_popupWindow Pw = new() { Title = "Configurations" };
@@ -338,6 +184,11 @@ namespace AMFramework.Controller
         #endregion
 
         #region Projects
+        private Controller_Project _projectController;
+        /// <summary>
+        /// Project content
+        /// </summary>
+        public Controller_Project ProjectController => _projectController;
 
         #region Data
         private List<Model_Projects> _projects = new();
@@ -361,27 +212,19 @@ namespace AMFramework.Controller
                 OnPropertyChanged(nameof(IsLoading));
             }
         }
-        #region Methods
-        public void reloadProjects()
-        {
-            CoreOut = _DBSProjects.DB_projects_reload();
-            Projects = _DBSProjects.DB_projects;
-        }
-        public void createProject(string Name)
-        {
-            CoreOut = _DBSProjects.DB_projects_create_new(Name);
-            Show_Notification("Project","Project has been created");
-        }
-
-        #endregion
 
         #region Controls
         public Components.Windows.AM_popupWindow popupProject(int ID)
         {
-            Views.Projects.Project_general Pg = new(_DBSProjects, ID);
+            // set new project object as selected
+            _projectController.SelectedProject = new(_comm);
+
+            // Create new view
+            Views.Projects.Project_general Pg = new(_projectController);
             Components.Windows.AM_popupWindow Pw = new() { Title = "New project" };
             Pw.ContentPage.Children.Add(Pg);
 
+            // Add window buttons
             Components.Button.AM_button nbutt = new()
             {
                 IconName = "Save",
@@ -389,7 +232,9 @@ namespace AMFramework.Controller
                 CornerRadius = "20",
                 GradientTransition = "DodgerBlue"
             };
-            nbutt.ClickButton += Pg.saveClickHandle;
+
+            // Add button handles
+            nbutt.Command = _projectController.SaveProject;
             nbutt.ClickButton += Pw.AM_Close_Window_Event;
 
             Pw.add_button(nbutt);
@@ -398,7 +243,7 @@ namespace AMFramework.Controller
 
         public Components.Windows.AM_popupWindow popupProjectList(int ID)
         {
-            Views.Projects.Project_list Pg = new(_DBSProjects);
+            Views.Projects.Project_list Pg = new(_projectController);
             Components.Windows.AM_popupWindow Pw = new() { Title = "Open" };
             Pw.ContentPage.Children.Add(Pg);
 
@@ -409,172 +254,21 @@ namespace AMFramework.Controller
                 CornerRadius = "20",
                 GradientTransition = "DodgerBlue"
             };
-            nbutt.ClickButton += _DBSProjects.Select_project_Handle;
+            nbutt.Command = _projectController.SelectProject;
             nbutt.ClickButton += Pw.AM_Close_Window_Event;
 
             Pw.add_button(nbutt);
             return Pw;
         }
-
-        public System.Windows.Controls.TabItem projectView_Tab()
-        {
-            Binding myBinding = new("VisibilityProperty")
-            {
-                Source = _DBSProjects.ProjectVisibility,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            };
-
-            System.Windows.Controls.TabItem Tabby = new();
-            Tabby.SetBinding(UIElement.VisibilityProperty, myBinding);
-            Tabby.Content = new Views.Projects.Project_contents(ref _DBSProjects);
-
-            OnPropertyChanged(nameof(OpenScripts));
-            return Tabby;
-        }
         #endregion
-
-        #region Commands
-        #region _new_project
-
-        private ICommand _new_project;
-        public ICommand New_project
-        {
-            get
-            {
-                if (_new_project == null)
-                {
-                    _new_project = new RelayCommand(
-                        param => this.New_project_controll(),
-                        param => this.Can_Change_new_project()
-                    );
-                }
-                return _new_project;
-            }
-        }
-
-        private void New_project_controll()
-        {
-
-        }
-
-        private bool Can_Change_new_project()
-        {
-            return true;
-        }
-        #endregion
-        #endregion
-
-        #endregion
-
-        #region Scripting
-        private readonly MainWindow_ViewModel _scriptModel = new();
-        public MainWindow_ViewModel ScriptView => _scriptModel;
-        public List<RibbonMenuItem> OpenScripts
-        {
-            get 
-            {   
-                List<RibbonMenuItem> menu = new();
-                foreach (Components.Scripting.Scripting_ViewModel item in _scriptModel.OpenScripts)
-                {
-                    RibbonMenuItem itemy = new()
-                    {
-                        Header = item.Filename,
-                        Tag = item.Filename
-                    };
-
-                    itemy.Click += run_script;
-                    menu.Add(itemy);
-                }
-                return menu; 
-            }
-        }
-
-        private void run_script(object sender, EventArgs e) 
-        {
-            RibbonMenuItem itemy = (RibbonMenuItem)sender;
-            CurrentRunningScript = (string)itemy.Tag;
-
-            Components.Scripting.Scripting_ViewModel? modelScript = _scriptModel.OpenScripts.Find(e => e.Filename.CompareTo(CurrentRunningScript) == 0);
-            modelScript?.save();
-
-            ScriptRunning = true;
-            TabControlVisible = false;
-            System.Threading.Thread TH01 = new(run_script_async);
-            TH01.Start();
-
-            System.Threading.Thread TH02 = new(Check_for_core_output_script)
-            {
-                Priority = System.Threading.ThreadPriority.Lowest
-            };
-            TH02.Start();
-        }
-
-        private void run_script_async() 
-        {
-            _AMCore.Run_command("run_lua_script " + CurrentRunningScript);
-            TabControlVisible = true;
-            ScriptRunning = false;
-        }
-
-        private void Check_for_core_output_script() 
-        { 
-            while (_scriptRunning) 
-            {
-                //RunningScriptOutput = _AMCore.Run_command("core_buffer ");
-                System.Threading.Thread.Sleep(100);
-                break;
-            }
-        }
-
-        public System.Windows.Controls.TabItem scriptView_new_lua_script(string filename = "") 
-        {
-            System.Windows.Controls.TabItem Tabby = ScriptView.get_new_lua_script(filename);
-            OnPropertyChanged(nameof(OpenScripts));
-            return Tabby;
-        }
-
-        private bool _scriptRunning = false;
-        public bool ScriptRunning
-        {
-            get { return _scriptRunning; }
-            set 
-            { 
-                _scriptRunning = value;
-                OnPropertyChanged(nameof(ScriptRunning));
-            }
-        }
-
-        public string CurrentRunningScript { get; set; } = "Running script";
-        
-        private string _runningScriptOutput = "";
-        public string RunningScriptOutput 
-        { 
-            get { return _runningScriptOutput; }
-            set 
-            {
-                _runningScriptOutput = value;
-                OnPropertyChanged(nameof(RunningScriptOutput));
-            } 
-        }
-
-        public void Cancel_Script() 
-        {
-            CurrentRunningScript = "Cancelling....";
-            _AMCore.Run_command("core_cancel_operation ");
-        }
-        #endregion
-
-        #region Plotting
-        public TabItem get_new_plot(string plotName = "")
-        {
-            TabItem result = ScriptView.get_new_plot();
-            return result;
-        }
 
         #endregion
 
         #region Popup
         private AM_popupWindow? _popupWindow = new();
+        /// <summary>
+        /// Popup window
+        /// </summary>
         public AM_popupWindow? PopupWindow
         {
             get { return _popupWindow; }
@@ -599,26 +293,39 @@ namespace AMFramework.Controller
             if (pWindow == null) return;
 
             pWindow.PopupWindowClosed += Close_popup;
-            TabControlVisible = false;
             PopupVisibility = true;
             
             PopupWindow = pWindow;
         }
 
+        /// <summary>
+        /// Handle that closes the popup
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Close_popup(object? sender, EventArgs e) 
         {
             PopupWindow = null;
             PopupVisibility = false;
-            TabControlVisible = true;
         }
 
         private bool _popupVisibility = false;
+        /// <summary>
+        /// set/get shows or hides the popup control
+        /// </summary>
         public bool PopupVisibility 
         { 
             get { return _popupVisibility; }
             set 
             {
                 _popupVisibility = value;
+
+                // When popup is visible we hide the tabcontrol
+                // only because Scintilla remains as topmost
+                // object
+                if (value) DataContext_Tabs.TabControlVisible = false;
+                else DataContext_Tabs.TabControlVisible = true;
+
                 OnPropertyChanged(nameof(PopupVisibility));
             }
         }
@@ -645,6 +352,15 @@ namespace AMFramework.Controller
                 OnPropertyChanged(nameof(NotificationObject));
             }
         }
+        /// <summary>
+        /// Show notification as a small popupbox that appears on the right bottom corner 
+        /// </summary>
+        /// <param name="Title">Notification title description</param>
+        /// <param name="Content">Notification description</param>
+        /// <param name="IconType">(int)FontAwesome.WPF.FontAwesomeIcon.InfoCircle</param>
+        /// <param name="IconForeground">Struct_Color</param>
+        /// <param name="ContentBackground">Struct_Color</param>
+        /// <param name="TitleBackground">Struct_Color</param>
         public void Show_Notification(string Title, string Content, int IconType = (int)FontAwesome.WPF.FontAwesomeIcon.InfoCircle,
                                       Struct_Color? IconForeground = null, Struct_Color? ContentBackground = null, Struct_Color? TitleBackground = null)
         {
@@ -682,24 +398,47 @@ namespace AMFramework.Controller
 
         #region LoadingInformationDisplay
         private bool _isLoading = false;
+        /// <summary>
+        /// set/get loading flag, if true, shows the loading screen
+        /// </summary>
         public bool IsLoading
         {
             get { return _isLoading; }
             set
             {
                 _isLoading = value;
+
+                // Set tabcontrol visibility
+                if (_isLoading) DataContext_Tabs.TabControlVisible = false;
+                else DataContext_Tabs.TabControlVisible = true;
+
                 OnPropertyChanged(nameof(IsLoading));
             }
         }
-
+        /// <summary>
+        /// Shows loading screen
+        /// </summary>
+        /// <param name="showLoading"></param>
         public void Show_loading(bool showLoading)
         {
-            IsLoading = showLoading;
+            // Using dispatcher for thread safe invoke
+            Application.Current.Dispatcher.Invoke(() => { IsLoading = showLoading; });
         }
         #endregion
 
         #region AdditionalInformation
+        // -----------------------------------------------------------
+        // Additional information displays information from the
+        // scripting editor, such as class definitions or methods.
+        // This can be enabled also outside the scripting editor
+        // and be used in any place where needed to specify additional
+        // information about an object
+        // -----------------------------------------------------------
+
         private string _titleAdditionalInformation = "";
+        /// <summary>
+        /// Set/get the title description
+        /// </summary>
         public string TitleAdditionalInformation 
         { 
             get { return _titleAdditionalInformation; }
@@ -712,6 +451,9 @@ namespace AMFramework.Controller
         }
 
         private string _contentAdditionalInformation = "";
+        /// <summary>
+        /// set/get content for additional information window
+        /// </summary>
         public string ContentAdditionalInformation 
         { 
             get { return _contentAdditionalInformation; }
@@ -724,6 +466,9 @@ namespace AMFramework.Controller
         }
 
         private bool _additionalInformationIsExpanded = false;
+        /// <summary>
+        /// set/get flag used to indicate if window is expanded (visible or not)
+        /// </summary>
         public bool AdditionalInformationIsExpanded 
         { 
             get { return _additionalInformationIsExpanded; }
@@ -735,7 +480,115 @@ namespace AMFramework.Controller
         }
         #endregion
 
+        #region Controllers
+        /// <summary>
+        /// Handles all the tab controls
+        /// </summary>
+        public Controller_Tabs DataContext_Tabs => _dataContextTabs;
+        private readonly Controller_Tabs _dataContextTabs;
+
+        /// <summary>
+        /// Handles all file scripting
+        /// </summary>
+        public Controller_Scripting DataContext_Scripting => _dataContextScripting;
+        private readonly Controller_Scripting _dataContextScripting;
+
+        #endregion
+
         #region Commands
+        #region CancelCoreCommand
+
+        private ICommand? _cancelCoreCommand;
+        /// <summary>
+        /// Command for opening a ne script file
+        /// close command
+        /// </summary>
+        public ICommand? CancelCoreCommand
+        {
+            get
+            {
+                return _cancelCoreCommand ??= new RelayCommand(param => CancelCoreCommand_Action(), param => CancelCoreCommand_Check());
+            }
+        }
+
+        private void CancelCoreCommand_Action()
+        {
+            Cancel_Script();
+        }
+
+        private bool CancelCoreCommand_Check()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Call cancel operation on core
+        /// </summary>
+        public void Cancel_Script()
+        {
+            Controller_Global.MainControl?.Set_Core_Output("Cancelling operation.. ");
+            Controller_Global.ApiHandle.run_lua_command("core_cancel_operation ","");
+        }
+        #endregion
+        #region ClosePopupCommand
+
+        private ICommand? _closePopupCommand;
+        /// <summary>
+        /// Command for opening a ne script file
+        /// close command
+        /// </summary>
+        public ICommand? ClosePopupCommand
+        {
+            get
+            {
+                return _closePopupCommand ??= new RelayCommand(param => ClosePopupCommand_Action(), param => ClosePopupCommand_Check());
+            }
+        }
+
+        private void ClosePopupCommand_Action()
+        {
+            PopupVisibility = false;
+        }
+
+        private bool ClosePopupCommand_Check()
+        {
+            return true;
+        }
+
+        #endregion
+        #endregion
+
+        #region Handles
+        /// <summary>
+        /// After closing the tab we want to notify all objects that need to be notified
+        /// for now, this just checks for the scripting controller
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ClosedTab_Handle(object? sender, EventArgs e) 
+        {
+            if (sender == null) return;
+            if (sender is not TabItem tabObject) return;
+            if (tabObject.Tag is not Scripting_ViewModel scriptViewModel) return;
+
+            _dataContextScripting.Close_Script(scriptViewModel);
+        }
+
+        /// <summary>
+        /// When a scripting file is saved, it updates the filename in the GUI
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SavedFileEvent_Handle(object? sender, EventArgs e) 
+        {
+            if (sender == null) return;
+            if (sender is not Scripting_ViewModel sViewModel) return;
+
+            TabItem tabby = DataContext_Tabs.TabItems.First(e => e.Tag == sViewModel);
+            if (tabby == null) return;
+
+            tabby.Header = sViewModel.Filename;
+        }
 
         #endregion
 

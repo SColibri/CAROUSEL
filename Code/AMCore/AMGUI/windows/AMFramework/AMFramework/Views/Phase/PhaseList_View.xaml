@@ -106,6 +106,14 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Grid>
-        
+
+        <Grid Grid.Row="2" Grid.RowSpan="1" Visibility="{Binding IsLoading, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}" d:Visibility="Collapsed">
+            <Border Background="SteelBlue" Opacity="0.3"/>
+            <fa:ImageAwesome Icon="Spinner" Height="25"
+                             Spin="True"
+                             SpinDuration="10"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Center"/>
+        </Grid>
     </Grid>
 </UserControl>

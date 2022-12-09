@@ -1998,6 +1998,7 @@
 
   <ItemGroup>
     <Folder Include="Resources\img\" />
+    <Folder Include="Views\Scheil\" />
   </ItemGroup>
 
   <ItemGroup>

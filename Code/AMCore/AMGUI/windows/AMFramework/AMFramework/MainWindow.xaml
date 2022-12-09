@@ -10,8 +10,9 @@
         d:DataContext="{d:DesignInstance Type=controller:Controller_MainWindow}"
         xmlns:tvc ="clr-namespace:AMControls.Custom.ProjectTreeView;assembly=AMControls"
         xmlns:noty="clr-namespace:AMControls.WindowObjects.Notify;assembly=AMControls"
+        xmlns:tab="clr-namespace:AMFramework.Components.TabControl"
         mc:Ignorable="d"
-        Title="AMFramework" Height="450" Width="800" SizeChanged="Window_SizeChanged">
+        Title="AMFramework" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -54,10 +55,10 @@
                                    Click="RibbonButton_Click_1"
                                    SmallImageSource="Resources/Icons/tablerIcons/device-desktop-analytics.png"/>
                     <RibbonButton  Label="new" 
-                                   Click="RibbonButton_Click_NewProject" 
+                                   Command="{Binding Path=ProjectController.OpenNewProjectCommand}"
                                    SmallImageSource="Resources/Icons/tablerIcons/layout-grid-add.png"/>
                     <RibbonButton  Label="open" 
-                                   Click="RibbonButton_Click_2"
+                                   Command="{Binding Path=ProjectController.OpenProjectListCommand}"
                                    SmallImageSource="Resources/Icons/tablerIcons/file-search.png"/>
                 </RibbonGroup>
 
@@ -66,11 +67,11 @@
                     <RibbonMenuButton  Label="Connection" 
                                        KeyTip="V"
                                        SmallImageSource="Resources/Icons/tablerIcons/server.png">
-                        <RibbonMenuItem  Header="local" KeyTip="T" Click="RibbonMenuItem_Click_2"/>
+                        <RibbonMenuItem  Header="local" KeyTip="T"/>
                         <RibbonMenuItem  Header="ssh" KeyTip="S"/>
                     </RibbonMenuButton>
                     <RibbonButton  Label="tables" 
-                                   KeyTip="C" Click="RibbonButton_TableView_Click"
+                                   KeyTip="C"
                                    SmallImageSource="Resources/Icons/tablerIcons/table.png"/>
                 </RibbonGroup>
 
@@ -87,29 +88,40 @@
 
                     <RibbonMenuButton  Label="lua_script"
                                        SmallImageSource="Resources/Icons/tablerIcons/file-typography.png">
-                        <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click_new_luaFile" ImageSource="Resources/Icons/tablerIcons/folder-plus.png"/>
-                        <RibbonMenuItem  Header="load" Click="RibbonMenuItem_Click_LoadLuaFile" ImageSource="Resources/Icons/tablerIcons/device-floppy.png"/>
+                        <RibbonMenuItem  Header="new" 
+                                         Command="{Binding Path=DataContext_Scripting.NewScriptCommand}" 
+                                         CommandParameter="{Binding Path=DataContext_Tabs}"
+                                         ImageSource="Resources/Icons/tablerIcons/folder-plus.png"/>
+                        <RibbonMenuItem  Header="load" 
+                                         Command="{Binding Path=DataContext_Scripting.OpenScriptCommand}"
+                                         CommandParameter="{Binding Path=DataContext_Tabs}"
+                                         ImageSource="Resources/Icons/tablerIcons/device-floppy.png"/>
                     </RibbonMenuButton>
-                    <RibbonMenuButton  Label="api_script"
-                                       SmallImageSource="Resources/Icons/tablerIcons/file-symlink.png" Visibility="Collapsed">
-                        <RibbonMenuItem  Header="new" Click="RibbonMenuItem_Click_new_luaFile"/>
-                        <RibbonMenuItem  Header="load" Click="RibbonMenuItem_Click_loadApi"/>
-                    </RibbonMenuButton>
+                    
+                    <!-- Save lua script -->
                     <RibbonButton  Label="Save" 
                                    KeyTip="X"
                                    SmallImageSource="Resources/Icons/tablerIcons/device-floppy.png"
-                                   Click="RibbonMenuItem_Click_save_luaFile"/>
+                                   Command="{Binding Path=DataContext_Scripting.SaveScriptCommand}"
+                                   CommandParameter="{Binding Path=DataContext_Tabs.SelectedTab.Tag}"/>
                     <RibbonGroup/>
-
+                    
+                    <!-- Run lua script -->
                     <RibbonMenuButton  Label="run"
-                                       ItemsSource="{Binding Path=OpenScripts}"
-                                   SmallImageSource="Resources/Icons/tablerIcons/player-play.png">
-
+                                       ItemsSource="{Binding Path=DataContext_Scripting.OpenScripts}"
+                                       SmallImageSource="Resources/Icons/tablerIcons/player-play.png">
+                        <RibbonMenuButton.ItemTemplate>
+                            <DataTemplate>
+                                <RibbonMenuItem Header="{Binding Path=Filename}" 
+                                                Tag="{Binding Path=Filename}"
+                                                Command="{Binding Path=RunScriptCommand}"/>
+                            </DataTemplate>
+                        </RibbonMenuButton.ItemTemplate>
                     </RibbonMenuButton>
 
-                    <RibbonButton Label="Cancel" Visibility="{Binding Path=ScriptRunning, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}"
-                                      SmallImageSource="Resources/Icons/tablerIcons/braces-off.png" Click="RibbonButton_Click_3">
-
+                    <RibbonButton Label="Cancel" Visibility="{Binding Path=IsLoading, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}"
+                                  SmallImageSource="Resources/Icons/tablerIcons/braces-off.png"
+                                  Command="{Binding Path=CancelCoreCommand}">
                     </RibbonButton>
 
                 </RibbonGroup>
@@ -121,133 +133,14 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="4*" />
-            </Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>   
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
             <tvc:TV_Menu x:Name="tvc" Margin="1,1,5,1" Visibility="Visible"/>
             
-            <TabControl x:Name="MainTabControl" Grid.Column="2" ItemsSource="{Binding Path=TabItems, UpdateSourceTrigger=PropertyChanged}"
-                        Visibility="{Binding Path=TabControlVisible, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}, Mode=TwoWay}"
-                        SelectedItem="{Binding Path=SelectedTab, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-                <TabControl.Style>
-                    <Style TargetType="TabControl">
-                        <Setter Property="Visibility" Value="Visible"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=PopupVisibility, Path=Visibility}"
-                                 Value="Collapsed">
-                                <Setter Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding ElementName=PopupVisibility, Path=Visibility}"
-                                 Value="Visible">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TabControl.Style>
-                <TabControl.Resources>
-                    <Style TargetType="TabItem">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="TabItem">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="20"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Border Name="Panel" 
-                                                CornerRadius="25,5,0,0"
-                                                Grid.ColumnSpan="2"
-                                                BorderBrush="silver"
-                                                BorderThickness="1"
-                                                Margin="0,0,-15,0">
-                                            <Border.Background>
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                    <GradientStop Color="white" Offset="0.0"/>
-                                                    <GradientStop Color="LightBlue" Offset="0.2"/>
-                                                    <GradientStop Color="white" Offset="0.90"/>
-                                                </LinearGradientBrush>
-                                            </Border.Background>
-                                        </Border>
-                                        <ContentPresenter x:Name="ContentSite"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        ContentSource="Header"
-                                        Margin="25,5,5,5"/>
-                                        <Border Background="Silver" 
-                                                CornerRadius="10"
-                                                Grid.Column="1"
-                                                Height="10"
-                                                Width="10"
-                                                Opacity="0.9"
-                                                VerticalAlignment="Center"
-                                                HorizontalAlignment="Center"
-                                                ToolTip="Close tab"
-                                                MouseUp="Border_MouseDown">
-                                            <Border.Effect>
-                                                <DropShadowEffect BlurRadius="1" ShadowDepth="1" />
-                                            </Border.Effect>
-                                            <Border.Triggers>
-                                                <EventTrigger RoutedEvent="Border.MouseEnter">
-                                                    <BeginStoryboard>
-                                                        <Storyboard>
-                                                            <ColorAnimation 
-                                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
-                                                                To="Red"
-                                                                Duration="0:0:0.25"/>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger>
+            <tab:AMTabControl Grid.Column="2" DataContext="{Binding Path=DataContext_Tabs}"/>
 
-                                                <EventTrigger RoutedEvent="Border.MouseLeave">
-                                                    <BeginStoryboard>
-                                                        <Storyboard>
-                                                            <ColorAnimation 
-                                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" 
-                                                                To="Silver"
-                                                                Duration="0:0:0.25"/>
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </EventTrigger>
-                                            </Border.Triggers>
-                                            <fa:ImageAwesome Icon="Close" 
-                                                             HorizontalAlignment="Center" 
-                                                             VerticalAlignment="Center" 
-                                                             Width="6"
-                                                             Foreground="White"/>
-                                        </Border>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Panel" Property="Background" >
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <GradientStop Color="white" Offset="0.0"/>
-                                                        <GradientStop Color="LightBlue" Offset="0.2"/>
-                                                        <GradientStop Color="white" Offset="0.95"/>
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                        <Trigger Property="IsSelected" Value="False">
-                                            <Setter TargetName="Panel" Property="Background">
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <GradientStop Color="white" Offset="0.0"/>
-                                                        <GradientStop Color="WhiteSmoke" Offset="0.2"/>
-                                                        <GradientStop Color="white" Offset="0.95"/>
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </TabControl.Resources>
-            </TabControl>
-
-            <Grid Grid.ColumnSpan="3" Visibility="{Binding Path=ScriptRunning, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}" 
+            <Grid Grid.ColumnSpan="3" Visibility="{Binding Path=IsLoading, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}" 
               Background="AliceBlue" Opacity="0.7" Grid.RowSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -259,7 +152,7 @@
                         <DropShadowEffect />
                     </Border.Effect>
                 </Border>
-                <TextBlock Grid.Row="1" Text="{Binding Path=RunningScriptOutput}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="15" Margin="0,12,0,0"/>
+                <TextBlock Grid.Row="1" Text="{Binding Path=IsLoading}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="15" Margin="0,12,0,0"/>
                 <fa:ImageAwesome Icon="Spinner" Spin="True" SpinDuration="2" Margin="5" Width="50"/>
             </Grid>
         </Grid>

@@ -10,21 +10,16 @@ namespace AMFramework.Views.Projects
     public class Project_ViewModel : ViewModel_Interface
     {
 #region interface
-        public bool close()
+        public bool Close()
         {
             return true;
         }
 
-        public bool save()
+        public bool Save()
         {
             return true;
         }
 #endregion  
-
-        public Views.Projects.Project_contents get_project_content(Controller.Controller_DBS_Projects projectController) 
-        {
-            return new Project_contents(ref projectController);
-        }
 
     }
 }

@@ -14,10 +14,8 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        
+
         <Grid Margin="5">
-
-
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -25,12 +23,12 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0"
-                                           Text="Project name:" 
-                                           FontWeight="Bold" Margin="3"/>
+                            Text="Project name:" 
+                            FontWeight="Bold" Margin="3"/>
 
                 <TextBlock Grid.Column="1"
-                                           Text="{Binding Path=ProjectController.Model_Object.Name}" 
-                                           FontWeight="Light" Margin="3"/>
+                            Text="{Binding Path=ProjectController.Model_Object.Name}" 
+                            FontWeight="Light" Margin="3"/>
             </Grid>
 
 
@@ -200,8 +198,9 @@
                     </Grid>
 
                 </Border>
-
-                <Border Background="White" Margin="5" CornerRadius="5,5,5,5">
+                
+                <!-- This was an idea for mixing script with gui, but this concept does not make much sense (at least not yet), if not needed revert -->
+                <Border Background="White" Margin="5" CornerRadius="5,5,5,5" Visibility="Hidden">
                     <Border.Effect>
                         <DropShadowEffect ShadowDepth="2"/>
                     </Border.Effect>
@@ -222,7 +221,6 @@
                     </Grid>
 
                 </Border>
-
 
                 <Border Background="White" Margin="5" CornerRadius="5,5,5,5">
                     <Border.Effect>
@@ -323,7 +321,6 @@
 
                 </Border>
 
-
                 <Border Background="White" Margin="5" CornerRadius="5,5,5,5">
                     <Border.Effect>
                         <DropShadowEffect ShadowDepth="2"/>
@@ -370,7 +367,6 @@
                     </Grid>
 
                 </Border>
-
 
             </StackPanel>
         </ScrollViewer>

@@ -9,7 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <ItemsControl ItemsSource="{Binding Path=SelectedCase.PrecipitationPhases, UpdateSourceTrigger=PropertyChanged}"
+        <ItemsControl ItemsSource="{Binding Path=SelectedCase.ModelObject.PrecipitationPhases, UpdateSourceTrigger=PropertyChanged}"
                       Margin="5">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>

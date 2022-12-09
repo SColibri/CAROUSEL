@@ -326,7 +326,7 @@ namespace AMFramework.Components.Scripting
             {
                 e.SuppressKeyPress = true;
                 e.Handled = true;
-                ((Components.Scripting.Scripting_ViewModel)DataContext).save();
+                ((Components.Scripting.Scripting_ViewModel)DataContext).Save();
             }
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.O)
             {
@@ -380,37 +380,7 @@ namespace AMFramework.Components.Scripting
                 Update_Highlight(sender);
                 return;
             }
-            /*
-            var scintilla = sender as Scintilla;
-
-            var pos = scintilla.CurrentPosition;
-
-            var word = scintilla.GetWordFromPosition(pos);
-
-            if (word == string.Empty) return;
-
-            var list = Scripting_ViewModel.Autocomplete.FindAll(delegate (string item)
-            {
-                return item.StartsWith(word);
-            });
-
-            string TextList = "";
-            foreach (var item in list)
-            {
-                if (TextList.Length != 0) { TextList += scintilla.AutoCSeparator.ToString(); }
-                TextList += item;
-            }
-
-            if (list.Count > 0)
-            {
-                scintilla.CallTipShow(1, "HelloWoel");
-                //scintilla.AutoCShow(word.Length, TextList);
-            }
-            else
-            {
-                scintilla.AutoCCancel();
-            }
-            */
+            
             ((Scripting_ViewModel)DataContext).ChangesMade = true;
         }
 

@@ -10,12 +10,12 @@ namespace AMFramework.Views.Precipitation_Kinetics
     internal class PrecipitationKinetics_ViewModel : ViewModel_Interface
     {
         #region interface
-        public bool close()
+        public bool Close()
         {
             return true;
         }
 
-        public bool save()
+        public bool Save()
         {
             return true;
         }

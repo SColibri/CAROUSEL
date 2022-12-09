@@ -8,6 +8,7 @@ using AMFramework_Lib.Interfaces;
 using AMFramework_Lib.Model;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Controller;
+using AMFramework_Lib.Model.Model_Controllers;
 
 namespace AMFramework.Controller
 {
@@ -15,60 +16,28 @@ namespace AMFramework.Controller
     {
 
         #region Socket
-        private IAMCore_Comm _AMCore_Socket;
-        private Controller.Controller_DBS_Projects _ProjectController;
-        public Controller_Selected_Elements(ref IAMCore_Comm socket, Controller.Controller_DBS_Projects projectController)
+        public Controller_Selected_Elements(ref IAMCore_Comm comm, Controller_Project projectController) : base(comm)
         {
-            _AMCore_Socket = socket;
-            _ProjectController = projectController;
-        }
-        
-        #endregion
-
-        #region Data
-        private List<Model_SelectedElements> _Elements = new();
-        public List<Model_SelectedElements> Elements 
-        { 
-            get { return _Elements; } 
+            if(projectController.SelectedProject != null)
+                SelectedElements = ControllerM_SelectedElements.Get_SelectedElements_FromIDProject(comm, projectController.SelectedProject.MCObject.ModelObject.ID);
         }
 
         #endregion
 
-        #region Methods
-        public void refresh() 
+        #region Properties
+        private List<ModelController<Model_SelectedElements>> _selectedElements = new();
+        /// <summary>
+        /// get/set selected elements
+        /// </summary>
+        public List<ModelController<Model_SelectedElements>> SelectedElements
         {
-            load_elements();
-        }
-        private void load_elements() 
-        {
-            string Query = "database_table_custom_query SELECT SelectedElements.*, Element.Name FROM SelectedElements INNER JOIN Element ON Element.ID=SelectedElements.IDElement WHERE IDProject = " + _ProjectController.SelectedProject.ID.ToString();
-            string outy = _AMCore_Socket.run_lua_command(Query,"");
-            List<string> rowItems = outy.Split("\n").ToList();
-            _Elements.Clear();
-
-            foreach (string item in rowItems)
+            get => _selectedElements;
+            set 
             {
-                List<string> columnItems = item.Split(",").ToList();
-
-
-                if (columnItems.Count > 3)
-                {
-                    Model_SelectedElements model = new()
-                    {
-                        ID = Convert.ToInt32(columnItems[0]),
-                        IDProject = Convert.ToInt32(columnItems[1]),
-                        IDElement = Convert.ToInt32(columnItems[2]),
-                        ISReferenceElement = Convert.ToUInt16(columnItems[3]),
-                        ElementName = columnItems[4]
-                    };
-
-                    _Elements.Add(model);
-                }
+                _selectedElements = value;
+                OnPropertyChanged(nameof(_selectedElements));
             }
-
-            OnPropertyChanged(nameof(Elements));
         }
         #endregion
-
     }
 }

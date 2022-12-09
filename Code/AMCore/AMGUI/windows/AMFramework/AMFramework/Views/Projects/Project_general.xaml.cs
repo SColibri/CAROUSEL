@@ -21,25 +21,23 @@ namespace AMFramework.Views.Projects
     /// </summary>
     public partial class Project_general : UserControl
     {
-        private Controller.Controller_DBS_Projects _dbs;
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public Project_general()
         {
             InitializeComponent();
         }
 
-        public Project_general(Controller.Controller_DBS_Projects dbs, int ID)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dbs"></param>
+        public Project_general(Controller.Controller_Project dbs)
         {
-            _dbs = dbs;
-            DataContext = dbs.DataModel(ID);
+            DataContext = dbs;
             InitializeComponent();
             Pname.Focus();
         }
-
-        public void save() 
-        {
-          _dbs.save_DataModel((Model_Projects)DataContext);
-        }
-
-        public void saveClickHandle(object sender, EventArgs e) { save(); }
     }
 }

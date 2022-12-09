@@ -28,7 +28,7 @@ namespace AMFramework.Views.Project_Map
     /// </summary>
     public partial class Project_Map : UserControl, INotifyPropertyChanged
     {
-        private Controller.Controller_Plot _plotController;
+        private Controller_Plot _plotController;
         private List<IDataPlot> _dataPlots;
         private IAxes _xaxis;
         private IAxes _yaxis;

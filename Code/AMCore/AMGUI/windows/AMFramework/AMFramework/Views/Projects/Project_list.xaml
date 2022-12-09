@@ -5,14 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:butt="clr-namespace:AMFramework.Components.Button"
              xmlns:local="clr-namespace:AMFramework.Views.Projects" 
-             xmlns:controller="clr-namespace:AMFramework.Controller" d:DataContext="{d:DesignInstance Type=controller:Controller_DBS_Projects}"
+             xmlns:controller="clr-namespace:AMFramework.Controller" 
+             d:DataContext="{d:DesignInstance Type=controller:Controller_Project}"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
              mc:Ignorable="d" 
              d:DesignHeight="450" 
              d:DesignWidth="800"
              MinWidth="250">
     <Grid>
-        <ListView Background="Transparent" ItemsSource="{Binding Path=DB_projects}">
+        <ListView Background="Transparent" ItemsSource="{Binding Path=ProjectList}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -22,10 +23,10 @@
                             <ColumnDefinition Width="50" />
                         </Grid.ColumnDefinitions>
                         <Border BorderBrush="White" BorderThickness="1" Opacity="0.5" CornerRadius="5" Grid.ColumnSpan="1"></Border>
-                        <RadioButton IsChecked="{Binding IsSelected, Mode=TwoWay}" Grid.Column="0" GroupName="ProjectSel"
+                        <RadioButton IsChecked="{Binding Path=MCObject.ModelObject.IsSelected, Mode=TwoWay}" Grid.Column="0" GroupName="ProjectSel"
                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                        <TextBlock Text="{Binding Name}" Grid.Column="1" HorizontalAlignment="Left"
+                        <TextBlock Text="{Binding Path=MCObject.ModelObject.Name}" Grid.Column="1" HorizontalAlignment="Left"
                                    VerticalAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
@@ -39,7 +40,7 @@
             </ListView.ItemContainerStyle>
         </ListView>
 
-        <Grid Visibility="{Binding Path=Loading_project, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}" Background="AliceBlue" Opacity="0.5">
+        <Grid Visibility="{Binding Path=LoadingData, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}" Background="AliceBlue" Opacity="0.5">
             <fa:ImageAwesome Icon="Spinner" Spin="True" SpinDuration="2" Margin="5" Width="50"/>
         </Grid>
     </Grid>

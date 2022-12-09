@@ -3,6 +3,7 @@ using AMFramework_Lib.Model.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +18,35 @@ namespace AMFramework_Lib.Model.Model_Controllers
         { }
 
         #region Model_methods
+        /// <summary>
+        /// Returns simulation data
+        /// </summary>
+        /// <param name="comm"></param>
+        /// <param name="IDCase"></param>
+        /// <returns></returns>
+        public static List<ModelController<Model_ScheilPhaseFraction>> Get_ScheilSolidificationSimulation_FromIDCase(IAMCore_Comm comm, int IDCase)
+        {
+            return ModelController<Model_ScheilPhaseFraction>.LoadIDCase(ref comm, IDCase);
+        }
 
+        /// <summary>
+        /// Run scheil solidification simulation
+        /// </summary>
+        /// <param name="comm"></param>
+        /// <param name="IDProject"></param>
+        /// <param name="fromIDCase"></param>
+        /// <param name="toIDCase"></param>
+        /// <returns></returns>
+        public static bool Run_ScheilSimulation(IAMCore_Comm comm, int IDProject, int fromIDCase, int toIDCase)
+        {
+            // Create query and execute
+            string Query = IDProject + "||" + fromIDCase + "-" + toIDCase;
+            string outMessage = comm.run_lua_command("pixelcase_step_scheil_parallel ", Query);
+
+            // Check if simulation was done
+            bool result = (outMessage.CompareTo("OK") == 0);
+            return result;
+        }
         #endregion
     }
 }

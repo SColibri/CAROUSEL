@@ -70,12 +70,12 @@ namespace AMFramework.Components.Windows
         }
         #endregion
 
-        private void AM_button_ClickButton(object sender, EventArgs e)
+        private void AM_button_ClickButton(object? sender, EventArgs e)
         {
             PopupWindowClosed?.Invoke(this, e);
         }
 
-        public void AM_Close_Window_Event(object sender, EventArgs e) 
+        public void AM_Close_Window_Event(object? sender, EventArgs e) 
         {
             PopupWindowClosed?.Invoke(this, e);
         }

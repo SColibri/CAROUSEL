@@ -13,8 +13,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-
-
+using System.Windows.Threading;
+using AMControls.Interfaces;
 
 namespace AMFramework.Controller
 {
@@ -28,9 +28,10 @@ namespace AMFramework.Controller
         public Controller_Project(IAMCore_Comm comm) : base(comm) 
         {
             ElementList = ModelController<Model_Element>.LoadAll(ref _comm);
+            CaseController = new(ref comm, this);
         }
 
-        #region Parameters
+        #region Properties
         private ControllerM_Project? _selectedProject = null;
         /// <summary>
         /// Selected project :)
@@ -43,7 +44,15 @@ namespace AMFramework.Controller
                 _selectedProject = value;
                 OnPropertyChanged(nameof(SelectedProject));
 
-                if (_selectedProject == null) return; 
+                // Check for null value
+                if (_selectedProject == null) return;
+                
+                // Add cases to case controller
+                CaseController.Cases = _selectedProject.MCObject.ModelObject.Cases;
+                // Get list of all used phases
+                Get_UsedPhases();
+                
+                // Update Element list (TODO: we should move this logic somewhere else)
                 foreach (var item in ElementList)
                 {
                     var itemRef = _selectedProject.MCObject.ModelObject.SelectedElements.Find(e => e.ModelObject.IDElement == item.ModelObject.ID);
@@ -72,6 +81,20 @@ namespace AMFramework.Controller
             {
                 _projectList = value;
                 OnPropertyChanged(nameof(ProjectList));
+            }
+        }
+
+        private List<ModelController<Model_Phase>> _usedPhases = new();
+        /// <summary>
+        /// get/set list of phases used in this project
+        /// </summary>
+        public List<ModelController<Model_Phase>> UsedPhases
+        {
+            get => _usedPhases;
+            set 
+            {
+                _usedPhases = value;
+                OnPropertyChanged(nameof(UsedPhases));
             }
         }
 
@@ -133,6 +156,19 @@ namespace AMFramework.Controller
 
         #endregion
 
+        #region Controllers
+        private Controller_Cases _caseController;
+        public Controller_Cases CaseController 
+        { 
+            get { return _caseController; }
+            set 
+            { 
+                _caseController = value;
+                OnPropertyChanged(nameof(_caseController));
+            }
+        }
+        #endregion
+
         #region Methods
         /// <summary>
         /// Create a new project model controller and sets it up as the selected object
@@ -140,6 +176,34 @@ namespace AMFramework.Controller
         public void Create_new_project()
         {
             SelectedProject = new(_comm);
+        }
+
+        /// <summary>
+        /// Fills used phases list with all phases used in all cases
+        /// </summary>
+        private void Get_UsedPhases() 
+        {
+            if (SelectedProject == null) return;
+
+            List<ModelController<Model_Phase>> result = new();
+            foreach (var item in SelectedProject.MCObject.ModelObject.Cases)
+            {
+                List<ModelController<Model_SelectedPhases>> casePhases = item.ModelObject.SelectedPhases;
+
+                foreach (var casePhaseItem in casePhases)
+                {
+                    ModelController<Model_Phase>? iFound = result.Find(e => e.ModelObject.Name == casePhaseItem.ModelObject.PhaseName);
+
+                    if (iFound == null)
+                    {
+                        result.Add(new(ref _comm));
+                        result.Last().ModelObject.ID = casePhaseItem.ModelObject.IDPhase;
+                        result.Last().LoadByIDAction?.DoAction();
+                    }
+                }
+            }
+
+            UsedPhases = result;
         }
 
         #region Load
@@ -160,6 +224,7 @@ namespace AMFramework.Controller
                 Priority = System.Threading.ThreadPriority.Highest
             };
             TH01.Start(ID);
+            
         }
         private void Load_project_async(object? ID)
         {
@@ -180,7 +245,10 @@ namespace AMFramework.Controller
             ((Model_Projects)SelectedProject.Model_Object).IsSelected = true;
             SelectedProject.Load_SelectedElements();
             SelectedProject.Load_ActivePhases();
+            SelectedProject.Load_cases();
 
+            Application.Current.Dispatcher.BeginInvoke(() => { _controller_xDataTreeView.Refresh_DTV(this.SelectedProject); });
+            
             // set loading data to false for visual
             LoadingData = false;
         }
@@ -220,25 +288,27 @@ namespace AMFramework.Controller
 
         #endregion
 
+        #region GUI_Objects
+
+        #region Treeview
+        private Controller_XDataTreeView _controller_xDataTreeView = new Controller_XDataTreeView();
+        public Controller_XDataTreeView Controller_xDataTreeView => _controller_xDataTreeView;
+        #endregion
+
+        #endregion
+
         #region Commands
 
+        //-----------------------------------
+        // Show Views
+        //-----------------------------------
         #region open_case_creator
 
         private ICommand _openCaseCreator;
-        public ICommand OpenCaseCreator
-        {
-            get
-            {
-                if (_openCaseCreator == null)
-                {
-                    _openCaseCreator = new RelayCommand(
-                        param => this.Open_CaseCreator(),
-                        param => this.Can_OpenCaseCreator()
-                    );
-                }
-                return _openCaseCreator;
-            }
-        }
+        /// <summary>
+        /// Opens the case creator view
+        /// </summary>
+        public ICommand OpenCaseCreator => _openCaseCreator ??= new RelayCommand(param => Open_CaseCreator(), param => Can_OpenCaseCreator());
 
         private void Open_CaseCreator()
         {
@@ -257,83 +327,79 @@ namespace AMFramework.Controller
             return true;
         }
         #endregion
+        #region open_project_list
 
-        #region Save
+        private ICommand _openProjectListCommand;
+        /// <summary>
+        /// Shows the project list selector
+        /// </summary>
+        public ICommand OpenProjectListCommand => _openProjectListCommand ??= new RelayCommand(param => OpenProjectListCommand_Command(), param => OpenProjectListCommand_Action());
 
-        private ICommand _saveProject;
-        public ICommand SaveProject
+        private void OpenProjectListCommand_Command()
         {
-            get
+            Views.Projects.Project_list Pg = new(this);
+            AM_popupWindow Pw = new() { Title = "Open" };
+            Pw.ContentPage.Children.Add(Pg);
+
+            Components.Button.AM_button nbutt = new()
             {
-                if (_saveProject == null)
-                {
-                    _saveProject = new RelayCommand(
-                        param => this.SaveProject_Action(),
-                        param => this.SaveProject_Check()
-                    );
-                }
-                return _saveProject;
-            }
+                IconName = FontAwesome.WPF.FontAwesomeIcon.Upload.ToString(),
+                Margin = new Thickness(3),
+                CornerRadius = "20",
+                GradientTransition = "DodgerBlue"
+            };
+            nbutt.Command = SelectProject;
+            nbutt.ClickButton += Pw.AM_Close_Window_Event;
+
+            Pw.add_button(nbutt);
+            Controller_Global.MainControl?.Show_Popup(Pw);
         }
 
-        private void SaveProject_Action()
-        {
-            // TODO: notify the user, he will be confused if nothing happens
-            if (SelectedProject == null) return;
-
-            // Save project data
-            SelectedProject.MCObject.SaveAction.DoAction();
-
-            // Save Active phases. We do not add the activephases since this is a calculated value
-            SelectedProject.MCObject.ModelObject.ActivePhasesConfiguration.SaveAction.DoAction();
-            foreach (var item in SelectedProject.MCObject.ModelObject.ActivePhasesElementComposition)
-            {
-                item.SaveAction.DoAction();
-            }
-        }
-
-        private bool SaveProject_Check()
-        {
-            if (MessageBox.Show("Saving project, proceed?", "Save", MessageBoxButton.YesNo) == MessageBoxResult.Yes) return true;
-            return false;
-        }
-        #endregion
-
-        #region Find_active_phases
-
-        private ICommand _findActivePhases;
-        public ICommand FindActivePhases
-        {
-            get
-            {
-                if (_findActivePhases == null)
-                {
-                    _findActivePhases = new RelayCommand(
-                        param => this.FindActivePhases_Action(),
-                        param => this.FindActivePhases_Check()
-                    );
-                }
-                return _findActivePhases;
-            }
-        }
-
-        private void FindActivePhases_Action()
-        {
-            // TODO: notify the user, he will be confused if nothing happens
-            if (SelectedProject == null) return;
-
-            var refAP = SelectedProject.MCObject.ModelObject.ActivePhasesConfiguration;
-            Controller_ActivePhasesConfiguration conAP = new(ref _comm, refAP);
-
-            if (conAP.Find_Active_Phases.CanExecute(null)) conAP.Find_Active_Phases.Execute(null);
-        }
-
-        private bool FindActivePhases_Check()
+        private bool OpenProjectListCommand_Action()
         {
             return true;
         }
         #endregion
+        #region open_project_list
 
+        private ICommand _openNewProjectCommand;
+        /// <summary>
+        /// Shows the project list selector
+        /// </summary>
+        public ICommand OpenNewProjectCommand => _openNewProjectCommand ??= new RelayCommand(param => OpenNewProjectCommand_Command(), param => OpenNewProjectCommand_Action());
+
+        private void OpenNewProjectCommand_Command()
+        {
+            // set new project object as selected
+            SelectedProject = new(_comm);
+
+            // Create new view
+            Views.Projects.Project_general Pg = new(this);
+            AM_popupWindow Pw = new() { Title = "New project" };
+            Pw.ContentPage.Children.Add(Pg);
+
+            // Add window buttons
+            Components.Button.AM_button nbutt = new()
+            {
+                IconName = "Save",
+                Margin = new Thickness(3),
+                CornerRadius = "20",
+                GradientTransition = "DodgerBlue"
+            };
+
+            // Add button handles
+            nbutt.Command = SaveProject;
+            nbutt.ClickButton += Pw.AM_Close_Window_Event;
+
+            Pw.add_button(nbutt);
+            Controller_Global.MainControl?.Show_Popup(Pw);
+        }
+
+        private bool OpenNewProjectCommand_Action()
+        {
+            return true;
+        }
+        #endregion
         #region Show_element_selection
 
         private ICommand _showElementList;
@@ -369,6 +435,123 @@ namespace AMFramework.Controller
             if (MessageBox.Show("This action will remove all simulation data, do you want to proceed?", "Project reset", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 return true;
             else return false;
+        }
+        #endregion
+
+        //-----------------------------------
+        // Actions
+        //-----------------------------------
+        #region Save
+
+        private ICommand _saveProject;
+        /// <summary>
+        /// Saves the current selected project
+        /// </summary>
+        public ICommand SaveProject
+        {
+            get
+            {
+                if (_saveProject == null)
+                {
+                    _saveProject = new RelayCommand(
+                        param => this.SaveProject_Action(),
+                        param => this.SaveProject_Check()
+                    );
+                }
+                return _saveProject;
+            }
+        }
+
+        private void SaveProject_Action()
+        {
+            // TODO: notify the user, he will be confused if nothing happens
+            if (SelectedProject == null) return;
+
+            // Save project data
+            SelectedProject.MCObject.SaveAction?.DoAction();
+
+            // Save Active phases. We do not add the activephases since this is a calculated value
+            SelectedProject.MCObject.ModelObject?.ActivePhasesConfiguration?.SaveAction?.DoAction();
+            foreach (var item in SelectedProject.MCObject.ModelObject.ActivePhasesElementComposition)
+            {
+                item.SaveAction?.DoAction();
+            }
+        }
+
+        private bool SaveProject_Check()
+        {
+            if (MessageBox.Show("Saving project, proceed?", "Save", MessageBoxButton.YesNo) == MessageBoxResult.Yes) return true;
+            return false;
+        }
+        #endregion
+        #region Find_active_phases
+
+        private ICommand _findActivePhases;
+        public ICommand FindActivePhases
+        {
+            get
+            {
+                if (_findActivePhases == null)
+                {
+                    _findActivePhases = new RelayCommand(
+                        param => this.FindActivePhases_Action(),
+                        param => this.FindActivePhases_Check()
+                    );
+                }
+                return _findActivePhases;
+            }
+        }
+
+        private void FindActivePhases_Action()
+        {
+            // TODO: notify the user, he will be confused if nothing happens
+            if (SelectedProject == null) return;
+
+            var refAP = SelectedProject.MCObject.ModelObject.ActivePhasesConfiguration;
+            Controller_ActivePhasesConfiguration conAP = new(ref _comm, refAP);
+
+            if (conAP.Find_Active_Phases.CanExecute(null)) conAP.Find_Active_Phases.Execute(null);
+        }
+
+        private bool FindActivePhases_Check()
+        {
+            return true;
+        }
+        #endregion
+        #region Select_project
+
+        private ICommand _selectProject;
+        public ICommand SelectProject
+        {
+            get
+            {
+                if (_selectProject == null)
+                {
+                    _selectProject = new RelayCommand(
+                        param => this.SelectProject_Action(),
+                        param => this.SelectProject_Check()
+                    );
+                }
+                return _selectProject;
+            }
+        }
+
+        private void SelectProject_Action()
+        {
+            for (int n1 = 0; n1 < _projectList.Count(); n1++)
+            {
+                if (_projectList[n1].MCObject.ModelObject.IsSelected)
+                {
+                    SelectedProject = _projectList[n1];
+                    Load_project(SelectedProject.MCObject.ModelObject.ID);
+                    break;
+                }
+            }
+        }
+
+        private bool SelectProject_Check()
+        {
+            return true;
         }
         #endregion
         #endregion

@@ -96,7 +96,7 @@ namespace AMFramework_Lib.Model
 
                 // Create new object of type _modelObject, check for null.
                 Interfaces.Model_Interface? tempModel = (Model_Interface)Activator.CreateInstance(_modelObject.GetType());
-                if (tempModel == null || cellItems.Count < 2) continue;
+                if (tempModel == null || cellItems.Count < tempModel.Get_parameter_list().Count()) continue;
                 
                 // load into newly created model and add to
                 tempModel.Load_csv(cellItems);

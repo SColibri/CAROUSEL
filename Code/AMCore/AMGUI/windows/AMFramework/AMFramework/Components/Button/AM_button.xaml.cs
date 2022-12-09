@@ -126,6 +126,9 @@ namespace AMFramework.Components.Button
         }
         #endregion
 
+        #region Commands
+        public ICommand? Command { get; set; }
+        #endregion
 
     }
 }

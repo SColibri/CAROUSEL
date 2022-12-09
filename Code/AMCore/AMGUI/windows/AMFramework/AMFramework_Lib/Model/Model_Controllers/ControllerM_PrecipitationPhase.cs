@@ -17,7 +17,13 @@ namespace AMFramework_Lib.Model.Model_Controllers
         { }
 
         #region Model_methods
+        public static List<ModelController<Model_PrecipitationPhase>> Get_PrecipitationPhases_FromIDCase(IAMCore_Comm comm, int IDCase)
+        {
+            // load precipitation phases
+            var result = ModelController<Model_PrecipitationPhase>.LoadIDCase(ref comm, IDCase);
 
+            return result;
+        }
         #endregion
     }
 }

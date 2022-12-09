@@ -14,64 +14,42 @@ using AMFramework_Lib.Controller;
 using AMFramework_Lib.Model.Model_Controllers;
 using AMFramework.Views.Phase;
 using System.Windows.Controls;
+using AMFramework_Lib.Structures;
+using AMFramework.Views.HeatTreatments;
+using AMFramework.Views.Solidification;
 
 namespace AMFramework.Controller
 {
     public class Controller_Cases : ControllerAbstract
     {
+        #region Fields
+        private Controller_Project _projectController;
 
+        #endregion
         #region Cons_Des
-        private Controller.Controller_DBS_Projects _ControllerProjects;
-        private int _idProject = -1;
-        private int _selectedIDCase = -1;
-
-        [Obsolete("We are now using the Controller_project as input parameter")]
-        public Controller_Cases(ref IAMCore_Comm socket,
-                               Controller.Controller_DBS_Projects _project) : base(socket)
-        {
-            _comm = socket;
-            _ControllerProjects = _project;
-            _selectedPhases = new Controller_Selected_Phases(ref socket, this);
-            _elementComposition = new(ref socket, this);
-            _equilibriumPhaseFractions = new(ref socket, this);
-            _equilibriumConfigurations = new(ref socket, this);
-            _scheilConfigurations = new(ref socket, this);
-            _scheilPhaseFractions = new(ref socket, this);
-            _PrecipitationPhase = new(ref socket, this);
-            _PrecipitationDomain = new(ref socket, this);
-            _Controller_HeatTreatment = new(ref socket, this);
-            _Controller_PrecipitateSimulationData = new(ref socket, _Controller_HeatTreatment);
-
-        }
-
         public Controller_Cases(ref IAMCore_Comm comm, Controller_Project projectController) : base(comm)
         {
             _comm = comm;
 
-            if(projectController.SelectedProject != null)
+            _projectController = projectController;
+
+            if (_projectController.SelectedProject != null)
+                Cases = _projectController.SelectedProject.MCObject.ModelObject.Cases;
+
+            if (projectController.SelectedProject != null)
                 Cases = ControllerM_Case.Get_CasesByIDProject(comm, projectController.SelectedProject.MCObject.ModelObject.ID);
 
-            //_ControllerProjects = _project;
-            _selectedPhases = new Controller_Selected_Phases(ref comm, this);
-            _elementComposition = new(ref comm, this);
-            _equilibriumPhaseFractions = new(ref comm, this);
-            _equilibriumConfigurations = new(ref comm, this);
-            _scheilConfigurations = new(ref comm, this);
-            _scheilPhaseFractions = new(ref comm, this);
-            _PrecipitationPhase = new(ref comm, this);
-            _PrecipitationDomain = new(ref comm, this);
-            _Controller_HeatTreatment = new(ref comm, this);
-            _Controller_PrecipitateSimulationData = new(ref comm, _Controller_HeatTreatment);
+            //_selectedPhases = new Controller_Selected_Phases(ref comm, this);
+            //_elementComposition = new(ref comm, this);
+            //_equilibriumPhaseFractions = new(ref comm, this);
+            //_equilibriumConfigurations = new(ref comm, this);
+            //_scheilConfigurations = new(ref comm, this);
+            //_scheilPhaseFractions = new(ref comm, this);
+            //_PrecipitationPhase = new(ref comm, this);
+            //_PrecipitationDomain = new(ref comm, this);
+            //_Controller_HeatTreatment = new(ref comm, this);
+            //_Controller_PrecipitateSimulationData = new(ref comm, _Controller_HeatTreatment);
         }
-        #endregion
-
-        #region Handles
-        public void save_Handle(object sender, EventArgs e)
-        {
-            save(SelectedCaseOLD);
-            refresh();
-        }
-
         #endregion
 
         #region views
@@ -120,11 +98,46 @@ namespace AMFramework.Controller
 
         #endregion
 
+        #region Solidification simulation
+        private object? _solidificationConfiguration = null;
+        /// <summary>
+        /// Solidification configuration view container
+        /// </summary>
+        public object? SolidificationConfiguration
+        {
+            get => _solidificationConfiguration;
+            set
+            {
+                _solidificationConfiguration = value;
+                OnPropertyChanged(nameof(SolidificationConfiguration));
+            }
+        }
         #endregion
 
-        #region Parameters
-        private List<ModelController<Model_Case>> _cases = new();
+        #region HeatTreatment
+        private object? _heatTreatmentView = null;
+        /// <summary>
+        /// Heat treatment view container
+        /// </summary>
+        public object? HeatTreatmentView 
+        {
+            get => _heatTreatmentView;
+            set 
+            {
+                _heatTreatmentView = value;
+                OnPropertyChanged(nameof(HeatTreatmentView));
+            }
+        }
+        #endregion
 
+        #endregion
+
+        #region Properties
+        #region CaseList
+        private List<ModelController<Model_Case>> _cases = new();
+        /// <summary>
+        /// get/set list of cases available
+        /// </summary>
         public List<ModelController<Model_Case>> Cases
         {
             get
@@ -137,8 +150,12 @@ namespace AMFramework.Controller
                 OnPropertyChanged(nameof(Cases));
             }
         }
-
+        #endregion
+        #region SelectedCase
         private ModelController<Model_Case> _selectedCase;
+        /// <summary>
+        /// get/set Selected case
+        /// </summary>
         public ModelController<Model_Case> SelectedCase
         {
             get { return _selectedCase; }
@@ -147,87 +164,45 @@ namespace AMFramework.Controller
                 _selectedCase = value;
 
                 // creates phaselist_view for selected case
-                Set_PhaseListView();
-
+                CreateViews();
+                
                 OnPropertyChanged(nameof(SelectedCase));
             }
         }
 
-
-        #endregion
-
-
-        #region Methods
-        public void refresh() 
-        {
-            load_data();
-        }
-
-        [Obsolete("This should be managed by a ControllerM object")]
-        private string load_data() 
-        {
-            string Query = "database_table_custom_query SELECT * FROM \'Case\' WHERE IDProject = " + _ControllerProjects.SelectedProject.ID.ToString();
-            string outy = _comm.run_lua_command(Query,"");
-            List<string> rowItems = outy.Split("\n").ToList();
-            _casesOLD = new List<Model_Case>();
-
-            foreach (string item in rowItems)
-            {
-                List<string> columnItems = item.Split(",").ToList();
-
-
-                if (columnItems.Count > 8)
-                {
-                    Model_Case model = new()
-                    {
-                        ID = Convert.ToInt32(columnItems[0]),
-                        IDProject = Convert.ToInt32(columnItems[1]),
-                        IDGroup = Convert.ToInt32(columnItems[2]),
-                        Name = columnItems[3],
-                        Script = columnItems[4],
-                        Date = columnItems[5],
-                        PosX = Convert.ToDouble(columnItems[6]),
-                        PosY = Convert.ToDouble(columnItems[7]),
-                        PosZ = Convert.ToDouble(columnItems[8]),
-                        ElementCompositionOLD = new()
-                    };
-                    _casesOLD.Add(model);
-                    Controller_HeatTreatment.fill_case_model(ref _comm, model);
-                }
-            }
-
-            _selectedPhases.fill_models_with_selectedPhases();
-            _elementComposition.fill_models_with_composition();
-            _equilibriumConfigurations.fill_models_with_equilibroiumConfiguration();
-            _PrecipitationPhase.fill_models_with_precipitation_phases();
-            _PrecipitationDomain.fill_models_with_precipitation_domains();
-            _precipitationPhasesNames = Controller_PrecipitationPhase.Get_phases_names(_comm, _ControllerProjects.SelectedProject.ID);
-            OnPropertyChanged(nameof(CasesOLD));
-            return outy;
-        }
-
-        [Obsolete("This should be managed by a ControllerM object")]
-        public void update_phaseFractions(Model_Case model) 
-        {
-            if (model is null) return;
-            _equilibriumPhaseFractions.fill_model_phase_fraction(model);
-            _scheilPhaseFractions.fill_model_phase_fraction(model);
-        }
-
-        private void Set_PhaseListView() 
+        /// <summary>
+        /// Changing the phase list view happens when we select a new case object, this is
+        /// we update the SelectedCase property
+        /// </summary>
+        private void CreateViews()
         {
             // Set all views
-            _phaseList = new PhaseList_View(_comm, SelectedCase.ModelObject.ID);
+            _phaseList = new PhaseList_View(_comm, SelectedCase);
+            _heatTreatmentView = new HeatTreatment_View(new(_comm, SelectedCase.ModelObject));
+            _solidificationConfiguration = new SolidificationConfigurations(SelectedCase.ModelObject);
+
             _show_popup = false;
         }
-        
+
+        #endregion
         #endregion
 
+        #region Methods
+        public void Set_SelectedCase(Model_Case modelObject) 
+        { 
+            var caseS = Cases.Find(x => x.ModelObject == modelObject);
+            if (caseS is null) return;
+            SelectedCase = caseS;
+        }
+        #endregion
 
         #region Commands
         #region run_equilibrium
 
         private ICommand _run_equilibrium;
+        /// <summary>
+        /// Run Equilibrium solidification simulation
+        /// </summary>
         public ICommand Run_equilibrium
         {
             get
@@ -243,17 +218,20 @@ namespace AMFramework.Controller
             }
         }
 
-        [Obsolete("We should deprecate this function in favor of a controllerM static function call, we should avoid putting any specific core implementations here")]
         private void Run_equilibrium_controll()
         {
-            string Query = SelectedCaseOLD.IDProject + "||" + SelectedCaseOLD.ID + "-" + SelectedCaseOLD.ID;
-            string outMessage = _comm.run_lua_command("pixelcase_step_equilibrium_parallel ", Query);
-            if (outMessage.CompareTo("OK") == 0) 
+            int IDProject = SelectedCase.ModelObject.IDProject;
+            int IDCase = SelectedCase.ModelObject.ID;
+            
+            if (ControllerM_EquilibriumConfiguration.Run_EquilibriumSimulation(_comm, IDProject, IDCase, IDCase))
+            {
+                
+            }
+            else 
             { 
             
             }
 
-            refresh();
         }
 
         private bool Can_Run_equilibrium()
@@ -265,6 +243,10 @@ namespace AMFramework.Controller
         #region run_scheil
 
         private ICommand _run_scheil;
+
+        /// <summary>
+        /// Run scheil solidification simulation
+        /// </summary>
         public ICommand Run_scheil
         {
             get
@@ -280,11 +262,19 @@ namespace AMFramework.Controller
             }
         }
 
-        // TODO: use controllerM for calling the run scheil function
         private void Run_scheil_controll()
         {
+            int IDProject = SelectedCase.ModelObject.IDProject;
+            int IDCase = SelectedCase.ModelObject.ID;
 
-            refresh();
+            if (ControllerM_ScheilConfiguration.Run_ScheilSimulation(_comm, IDProject, IDCase, IDCase))
+            {
+
+            }
+            else
+            {
+
+            }
         }
 
         private bool Can_Run_scheil()
@@ -296,6 +286,9 @@ namespace AMFramework.Controller
         #region Save
 
         private ICommand _saveCommand;
+        /// <summary>
+        /// Saves case object
+        /// </summary>
         public ICommand SaveCommand
         {
             get
@@ -313,8 +306,7 @@ namespace AMFramework.Controller
 
         private void Run_Save_Command()
         {
-            save(SelectedCaseOLD);
-            refresh();
+            SelectedCase.SaveAction?.DoAction();
         }
 
         private bool Can_Save_Command()
@@ -326,6 +318,9 @@ namespace AMFramework.Controller
         #region ShowPhaseList
 
         private ICommand _showPhaseList;
+        /// <summary>
+        /// Show phase list in popup window
+        /// </summary>
         public ICommand ShowPhaseList
         {
             get
@@ -348,7 +343,7 @@ namespace AMFramework.Controller
 
             if (PhaseList != null)
                 PopupView.ContentPage.Children.Add((UserControl)PhaseList);
-            else Controller_Global.MainControl.Show_Notification("","",(int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null ,null);
+            else Controller_Global.MainControl?.Show_Notification("","",(int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null ,null);
         }
 
         private bool ShowPhaseList_Check()
@@ -390,160 +385,6 @@ namespace AMFramework.Controller
             return true;
         }
         #endregion
-        #endregion
-
-
-        #region Remove_Obsolete
-        // These individual controllers are not needed since we are now using the controllerM static functions that will allow us to load all needed data
-        private Controller.Controller_Selected_Phases _selectedPhases;
-        private Controller.Controller_ElementComposition _elementComposition;
-        private Controller.Controller_EquilibriumConfiguration _equilibriumConfigurations;
-        private Controller.Controller_EquilibriumPhaseFraction _equilibriumPhaseFractions;
-        private Controller.Controller_ScheilConfiguration _scheilConfigurations;
-        private Controller.Controller_ScheilPhaseFraction _scheilPhaseFractions;
-        private Controller.Controller_PrecipitationPhase _PrecipitationPhase;
-        private Controller.Controller_PrecipitationDomain _PrecipitationDomain;
-        private Controller.Controller_PrecipitateSimulationData _Controller_PrecipitateSimulationData;
-        private Controller.Controller_HeatTreatment _Controller_HeatTreatment;
-        #region Controllers
-
-
-        public List<Model_SelectedPhases> SelectedPhases { get { return _selectedPhases.Phases; } }
-        public List<Model_ElementComposition> ElementComposition { get { return _elementComposition.Composition; } }
-        public List<Model_EquilibriumPhaseFraction> EquilibriumPhaseFraction { get { return _equilibriumPhaseFractions.Equilibrium; } }
-        public List<Model_ScheilPhaseFraction> ScheilPhaseFraction { get { return _scheilPhaseFractions.Equilibrium; } }
-
-        public Controller.Controller_PrecipitationPhase PrecipitationPhaseController { get { return _PrecipitationPhase; } }
-        public Controller.Controller_ScheilConfiguration ScheilConfigurationsController { get { return _scheilConfigurations; } }
-        public Controller.Controller_ScheilPhaseFraction ScheilPhaseFractionsController { get { return _scheilPhaseFractions; } }
-        #endregion
-
-        [Obsolete("Use the ModelController<model> save() function instead")]
-        public void save(Model_Case model)
-        {
-            string outComm = _comm.run_lua_command("singlepixel_case_save", model.Get_csv());
-            if (outComm.CompareTo("OK") != 0)
-            {
-                MainWindow.notify.ShowBalloonTip(5000, "Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);
-            }
-        }
-
-        [Obsolete("Just use the global controller")]
-        public Controller.Controller_DBS_Projects get_project_controller()
-        {
-            return _ControllerProjects;
-        }
-
-        // this was never used?
-        List<string> _precipitationPhasesNames = new();
-
-
-        List<Model_Case> _casesOLD = new();
-        [Obsolete("Deprecate in favor of Cases parameter using ModelController")]
-        public List<Model_Case> CasesOLD
-        {
-            get
-            {
-                return _casesOLD;
-            }
-        }
-
-
-        private Model_Case _selected_caseOLD;
-        [Obsolete("We want to use the ModelController for all data loading")]
-        public Model_Case SelectedCaseOLD
-        {
-            get { return _selected_caseOLD; }
-            set
-            {
-                _selected_caseOLD = value;
-                _selectedIDCase = _selected_caseOLD.ID;
-                _ControllerProjects.get_phase_selection_from_current_case();
-                _ControllerProjects.set_phase_selection_ifActive();
-                _selectedPhases.refresh();
-                _scheilConfigurations.Model = _scheilConfigurations.get_scheil_configuration_case(_selected_caseOLD.ID);
-                OnPropertyChanged("SelectedCase");
-                OnPropertyChanged(nameof(SelectedPhases));
-                OnPropertyChanged(nameof(ElementComposition));
-            }
-        }
-
-        private List<Model_Phase> _availablePhases = new();
-        [Obsolete("Phase list should be available only from the list selection")]
-        public List<Model_Phase> AvailablePhases { get { return _availablePhases; } }
-        
-        [Obsolete("We should not manage Phase content in the case controller, this just mixes it all up")]
-        public void load_database_available_phases()
-        {
-            _availablePhases = Controller_Phase.Get_available_phases_in_database(ref _comm);
-            OnPropertyChanged("AvailablePhase");
-        }
-
-        [Obsolete("We should use the ModelController<Case> to modify the model content")]
-        public void Clear_phase_fractions(Model_Case model)
-        {
-            _equilibriumPhaseFractions.clear_models_phaseFractions();
-        }
-
-        [Obsolete("This should be managed by the phase controller or modelcontroller")]
-        public void get_phase_selection_from_current_case()
-        {
-            foreach (Model_Phase item in AvailablePhases)
-            {
-                item.IsSelected = false;
-            }
-
-            foreach (var item in SelectedPhases)
-            {
-                Model_Phase? tempFindPhase = AvailablePhases.Find(e => e.ID == item.IDPhase);
-                if (tempFindPhase is null) continue;
-                tempFindPhase.IsSelected = true;
-            }
-
-        }
-
-        [Obsolete("Don't use thi function, this was part of the prototype design, however this is not valid anymore")]
-        public void Create_templates(Model_Case OriginalCase)
-        {
-            if (OriginalCase.CaseTemplates.Count == 0)
-            {
-                MainWindow.notify.ShowBalloonTip(5000, "Missing templates", "Please define one or more templates", System.Windows.Forms.ToolTipIcon.Info);
-                return;
-            }
-
-            // create new case template
-            _comm.run_lua_command("template_pixelcase_new", "");
-
-            // send element composition
-            string compositionString = OriginalCase.ElementCompositionOLD[0].ElementName + "||" + OriginalCase.ElementCompositionOLD[0].Value.ToString();
-            foreach (Model_ElementComposition comp in OriginalCase.ElementCompositionOLD.Skip(1))
-            {
-                compositionString += "||" + comp.ElementName + "||" + comp.Value.ToString();
-            }
-            _comm.run_lua_command("template_pixelcase_setComposition ", compositionString);
-
-            string phaseString = OriginalCase.SelectedPhasesOLD[0].PhaseName;
-            foreach (Model_SelectedPhases comp in OriginalCase.SelectedPhasesOLD.Skip(1))
-            {
-                phaseString += "||" + comp.PhaseName;
-            }
-            _comm.run_lua_command("template_pixelcase_selectPhases ", phaseString);
-            _comm.run_lua_command("template_pixelcase_setEquilibriumTemperatureRange ",
-                                            OriginalCase.EquilibriumConfigurationOLD.StartTemperature.ToString() + "||" +
-                                            OriginalCase.EquilibriumConfigurationOLD.EndTemperature.ToString() + "||" +
-                                            OriginalCase.EquilibriumConfigurationOLD.StepSize.ToString());
-
-            _comm.run_lua_command("template_pixelcase_setScheilTemperatureRange ",
-                                            OriginalCase.ScheilConfigurationOLD.StartTemperature.ToString() + "||" +
-                                            OriginalCase.ScheilConfigurationOLD.EndTemperature.ToString() + "||" +
-                                            OriginalCase.ScheilConfigurationOLD.StepSize.ToString());
-
-            _comm.run_lua_command("template_pixelcase_setScheilLiquidFraction ",
-                                            OriginalCase.ScheilConfigurationOLD.MinLiquidFraction.ToString());
-
-
-
-        }
         #endregion
     }
 }

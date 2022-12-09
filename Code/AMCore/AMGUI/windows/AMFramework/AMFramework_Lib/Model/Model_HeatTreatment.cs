@@ -147,8 +147,8 @@ namespace AMFramework_Lib.Model
             }
         }
 
-        List<ModelController<Model_PrecipitationDomain>> _precipitationDomain = new();
-        public List<ModelController<Model_PrecipitationDomain>> PrecipitationDomain
+        ModelController<Model_PrecipitationDomain>? _precipitationDomain;
+        public ModelController<Model_PrecipitationDomain>? PrecipitationDomain
         {
             get { return _precipitationDomain; }
             set

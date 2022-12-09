@@ -93,7 +93,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region getters
-        public static IAMCore_Comm? ApiHandle { get { return Controller_Global.ApiHandle; } }
+        public static IAMCore_Comm ApiHandle { get { return Controller_Global.ApiHandle; } }
         #endregion
 
         #region Model

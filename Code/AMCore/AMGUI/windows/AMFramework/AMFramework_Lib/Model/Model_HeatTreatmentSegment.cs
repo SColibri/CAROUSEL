@@ -187,6 +187,10 @@ namespace AMFramework_Lib.Model
         #endregion
 
         #region ImplementsModelAbstract
+        public override IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
+        {
+            return ModelAbstract.Get_parameters<Model_HeatTreatmentSegment>();
+        }
         public override string Get_Table_Name()
         {
             return "HeatTreatmentSegment";

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.ComponentModel;
 using AMFramework_Lib.Interfaces;
 using AMFramework_Lib.Core;
+using static AMFramework_Lib.Model.ModelFactory;
 
 namespace AMFramework_Lib.Model
 {
@@ -17,7 +18,7 @@ namespace AMFramework_Lib.Model
     public class ModelController<T> : IModelController where T : Model_Interface
     {
         private IAMCore_Comm _coreCommunication;
-        private Model_Interface? _model = null;
+        private Model_Interface _model;
         public ModelController(ref IAMCore_Comm comm) 
         { 
             _coreCommunication = comm;
@@ -25,29 +26,33 @@ namespace AMFramework_Lib.Model
             // Create instance of template using the activator class
             var refT = Activator.CreateInstance(typeof(T));
 
-            if (refT != null) ModelObject = (T)refT;
+            if (refT != null) 
+            {
+                _model = (T)refT;
+                ModelObject = (T)_model;
+            }
             else throw new Exception("ModelController: Instance was not created because it was not found!");
+
         }
 
         public ModelController(ref IAMCore_Comm comm, T modely)
         {
             _coreCommunication = comm;
-            ModelObject = modely;
+            _model = modely;
+            ModelObject = (T)_model;
         }
 
         /// <summary>
         /// Returns the data model object of generic type T
         /// </summary>
-        public T? ModelObject 
+        public T ModelObject 
         { 
             get 
             {
-                if (_model == null) return default(T);
                 return (T)_model; 
             } 
             set 
             {
-                if (value == null) return;
                 _model = (Model_Interface)value;
 
                 // Add default commands to current data model
@@ -59,7 +64,7 @@ namespace AMFramework_Lib.Model
         }
 
         // Interface implementation
-        public Model_Interface? Model_Object 
+        public Model_Interface Model_Object 
         { 
             get 
             {

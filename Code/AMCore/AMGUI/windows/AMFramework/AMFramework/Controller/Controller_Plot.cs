@@ -16,36 +16,30 @@ using AMFramework.Components.Charting.DataPlot;
 using AMFramework.Components.Charting.Interfaces;
 using AMFramework_Lib.Model;
 using AMFramework_Lib.Core;
+using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
-    public class Controller_Plot : INotifyPropertyChanged
+    public class Controller_Plot : ControllerAbstract
     {
 
         #region Socket
         private IAMCore_Comm _AMCore_Socket;
-        private Controller_DBS_Projects _projectController;
-        public Controller_Plot(ref IAMCore_Comm socket, Controller_DBS_Projects projectController)
+        private Controller_Project _projectController;
+        public Controller_Plot(ref IAMCore_Comm comm, Controller_Project projectController) : base(comm)
         {
-            _AMCore_Socket = socket;
+            _AMCore_Socket = comm;
             _projectController = projectController;
+
+            if(_projectController.SelectedProject != null)
+                SelectedProject = _projectController.SelectedProject.MCObject.ModelObject;
         }
 
         #endregion
 
-        #region Interfaces
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
-        public List<Model_Phase> Used_Phases_inCases { get { return _projectController.Used_Phases_inCases; } }
-        public Model_Projects SelectedProject { get { return _projectController.SelectedProject; } }
-        //public List<Model_Case> Cases { get { return _projectController.Cases; } }
-
+        public List<ModelController<Model_Phase>> Used_Phases_inCases => _projectController.UsedPhases;
+        public Model_Projects SelectedProject { get; }
+        
         #region Line_graphs
         private List<LineGraph> _lineGraphs = new();
         public List<LineGraph> LineGraphs { get { return _lineGraphs; } }
@@ -66,18 +60,18 @@ namespace AMFramework.Controller
             if (LineGraphID.Any(m => m.Item1 == IDCase && m.Item2 == IDPhase)) return;
 
             // find model from project controller
-            Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
+            ModelController<Model_Case>? model = _projectController.CaseController.Cases.Find(e => e.ModelObject.ID == IDCase);
             if (model is null) return;
 
             // load Data
-            _projectController.Case_load_equilibrium_phase_fraction(model);
-            List<Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractionsOLD.FindAll(e => e.IDPhase == IDPhase);
+            //_projectController.Case_load_equilibrium_phase_fraction(model);
+            List<ModelController<Model_EquilibriumPhaseFraction>> modelList = model.ModelObject.EquilibriumPhaseFractions.FindAll(e => e.ModelObject.IDPhase == IDPhase);
             if (modelList.Count == 0) return;
 
             //get data points
-            Model_SelectedPhases phaseSelected = model.SelectedPhasesOLD.Find(e => e.IDCase == IDCase && e.IDPhase == IDPhase) ?? new();
-            List<double> tempAxis = modelList.Select(e => e.Temperature).ToList();
-            List<double> phaseFraction = modelList.Select(e => e.Value).ToList();
+            ModelController<Model_SelectedPhases> phaseSelected = model.ModelObject.SelectedPhases.Find(e => e.ModelObject.IDCase == IDCase && e.ModelObject.IDPhase == IDPhase) ?? new(ref _comm);
+            List<double> tempAxis = modelList.Select(e => e.ModelObject.Temperature).ToList();
+            List<double> phaseFraction = modelList.Select(e => e.ModelObject.Value).ToList();
 
             for (int n1 = 0; n1 < phaseFraction.Count; n1++)
             {
@@ -93,7 +87,7 @@ namespace AMFramework.Controller
                 var lg = new LineGraph
                 {
                     Stroke = new SolidColorBrush(Color.FromArgb(255, 0, (byte)(1 * 10), 0)),
-                    Description = String.Format("Data series {0}", phaseSelected.PhaseName),
+                    Description = String.Format("Data series {0}", phaseSelected.ModelObject.PhaseName),
                     StrokeThickness = 2
                 };
                 lg.ToolTip = lg.Description;
@@ -113,129 +107,15 @@ namespace AMFramework.Controller
             LineGraphID.Clear();
             LineGraphs.Clear();
             DataPlot.Clear();
-            _projectController.Case_clear_phase_fraction_data();
+            //_projectController.Case_clear_phase_fraction_data();
             OnPropertyChanged(nameof(LineGraphs));
         }
 
         public void refresh_used_Phases_inCases() 
         {
-            _projectController.refresh_used_Phases_inCases();
+            //_projectController.refresh_used_Phases_inCases();
         }
 
-        #endregion
-
-        #region spyderChart
-        public struct SpyderDataStructure
-        {
-            public int IDCase;
-            public List<Model_Phase> Phases;
-            public List<List<double>> Values;
-            public string Name;
-
-            public SpyderDataStructure() 
-            {
-                Name = "New series";
-                IDCase = -1;
-                Phases = new List<Model_Phase>();
-                Values = new List<List<double>>();
-            }
-        }
-
-        private List<SpyderDataStructure> _spyderDataPlot = new();
-        public List<SpyderDataStructure> SpyderDataPlot { get { return _spyderDataPlot; } }
-        public List<int> SpyderGraphID = new();
-        public void Add_equilibrium_spyder_phase(int IDCase, double Temperature)
-        {
-            // check if it is already contained before adding
-            if (SpyderGraphID.Any(m => m == IDCase)) return;
-
-            // find model from project controller
-            Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
-            if (model is null) return;
-
-            // load Data
-            _projectController.Case_load_equilibrium_phase_fraction(model);
-            double solidificationTemp = model.ScheilPhaseFractionsOLD.Min(e => e.Temperature);
-
-            // get data points
-            SpyderDataStructure dataPlotItem = new()
-            {
-                IDCase = IDCase,
-                Phases = Used_Phases_inCases,
-                Name = ""
-            };
-
-            foreach (var item in model.ElementCompositionOLD)
-            {
-                if(dataPlotItem.Name.Length > 0) { dataPlotItem.Name += " || "; }
-                dataPlotItem.Name += item.ElementName + ":" + item.Value;
-            }
-
-            foreach (Model_Phase phaseModel in Used_Phases_inCases)
-            {
-                List<Model_EquilibriumPhaseFraction> modelList = model.EquilibriumPhaseFractionsOLD.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
-                if (modelList.Count == 0) continue;
-
-                Tuple<Model_Phase, List<double>> tempItem = new(phaseModel, new());
-                dataPlotItem.Values.Add(modelList.Select(e => e.Value).ToList());
-            }
-            _spyderDataPlot.Add(dataPlotItem);
-        }
-
-        public void Add_scheil_spyder_phase(int IDCase, double Temperature)
-        {
-            // check if it is already contained before adding
-            if (SpyderGraphID.Any(m => m == IDCase)) return;
-
-            // find model from project controller
-            Model_Case? model = _projectController.Cases.Find(e => e.ID == IDCase);
-            if (model is null) return;
-
-            // load Data
-            _projectController.Case_load_equilibrium_phase_fraction(model);
-            double solidificationTemp = model.ScheilPhaseFractionsOLD.Min(e => e.Temperature);
-
-            // get data points
-            SpyderDataStructure dataPlotItem = new()
-            {
-                IDCase = IDCase,
-                Phases = Used_Phases_inCases
-            };
-            foreach (Model_Phase phaseModel in Used_Phases_inCases)
-            {
-                List<Model_ScheilPhaseFraction> modelList = model.ScheilPhaseFractionsOLD.FindAll(e => e.IDPhase == phaseModel.ID && e.Temperature == solidificationTemp);
-                if (modelList.Count == 0) continue;
-
-                Tuple<Model_Phase, List<double>> tempItem = new(phaseModel, new());
-                dataPlotItem.Values.Add(modelList.Select(e => e.Value).ToList());
-            }
-            _spyderDataPlot.Add(dataPlotItem);
-        }
-
-        public void Spyderplot_get_data() 
-        {
-            if (IsLoading) return;
-            IsLoading = true;
-
-            System.Threading.Thread TH01 = new(Spyderplot_get_data_async);
-            TH01.Start();
-        }
-
-        public void Spyderplot_get_data_async() 
-        {
-            _projectController.Cases[0].IsSelected = true;
-            _projectController.Cases[2].IsSelected = true;
-            List<Model_Case> selCases = _projectController.Cases.FindAll(e => e.IsSelected == true);
-            List<Model_Phase> selPhases = Used_Phases_inCases.FindAll(e => e.IsSelected == true);
-            _spyderDataPlot.Clear();
-
-
-            for (int n1 = 0; n1 < selCases.Count; n1++)
-            {
-                Add_equilibrium_spyder_phase(selCases[n1].ID, 0);
-            }
-            IsLoading = false;
-        }
         #endregion
 
         #region Flags
@@ -281,14 +161,14 @@ namespace AMFramework.Controller
 
         private void Plot_linear_phases_async() 
         {
-            List<Model_Case> selCases = _projectController.Cases.FindAll(e => e.IsSelected == true);
-            List<Model_Phase> selPhases = Used_Phases_inCases.FindAll(e => e.IsSelected == true);
+            List<ModelController<Model_Case>> selCases = _projectController.CaseController.Cases.FindAll(e => e.ModelObject.IsSelected == true);
+            List<ModelController<Model_Phase>> selPhases = Used_Phases_inCases.FindAll(e => e.ModelObject.IsSelected == true);
 
             for (int n1 = 0; n1 < selCases.Count; n1++)
             {
                 for (int n2 = 0; n2 < selPhases.Count; n2++)
                 {
-                    Add_Equilibrium_graph(selCases[n1].ID, selPhases[n2].ID);
+                    Add_Equilibrium_graph(selCases[n1].ModelObject.ID, selPhases[n2].ModelObject.ID);
                 }
             }
 
@@ -311,8 +191,8 @@ namespace AMFramework.Controller
                 _heatModel = value;
                 _heatModel.HeatTreatmentProfileOLD.Clear();
                 _heatModel.PrecipitationDataOLD.Clear();
-                Controller.Controller_HeatTreatmentProfile.fill_heatTreatment_model(ref _AMCore_Socket, _heatModel);
-                Controller.Controller_PrecipitateSimulationData.fill_heatTreatment_model(ref _AMCore_Socket, _heatModel);
+                Controller_HeatTreatmentProfile.fill_heatTreatment_model(ref _AMCore_Socket, _heatModel);
+                Controller_PrecipitateSimulationData.fill_heatTreatment_model(ref _AMCore_Socket, _heatModel);
             }
         }
 
@@ -428,21 +308,21 @@ namespace AMFramework.Controller
 
         public void Find_DataPoint(int IDProject, int IDCase, int IDHT) 
         {
-            _projectController.TreeIDCase = IDCase;
-            _projectController.TreeIDHeatTreatment = IDHT;
+            //_projectController.TreeIDCase = IDCase;
+            //_projectController.TreeIDHeatTreatment = IDHT;
 
-            if (_projectController.SelectedProject == null) 
-            {
-                _projectController.DB_projects_reload();
-            }
+            //if (_projectController.SelectedProject == null) 
+            //{
+            //    _projectController.DB_projects_reload();
+            //}
 
-            foreach (var item in _projectController.DB_projects)
-            {
-                if (item.ID == IDProject)
-                {
-                    _projectController.SelectedProject = item;
-                }
-            }
+            //foreach (var item in _projectController.DB_projects)
+            //{
+            //    if (item.ID == IDProject)
+            //    {
+            //        _projectController.SelectedProject = item;
+            //    }
+            //}
         }
     }
 }

@@ -64,6 +64,22 @@ namespace AMFramework_Lib.Model
         #region Relational_properties
 
         // --------------------------------------------------
+        //                   Case
+        // --------------------------------------------------
+
+        // Selected elements
+        private List<ModelController<Model_Case>> _cases = new();
+        public List<ModelController<Model_Case>> Cases
+        {
+            get { return _cases; }
+            set
+            {
+                _cases = value;
+                OnPropertyChanged(nameof(Cases));
+            }
+        }
+
+        // --------------------------------------------------
         //                   ELEMENTS
         // --------------------------------------------------
 

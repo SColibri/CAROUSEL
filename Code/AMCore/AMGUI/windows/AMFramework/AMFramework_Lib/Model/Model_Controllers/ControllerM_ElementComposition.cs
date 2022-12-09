@@ -17,7 +17,19 @@ namespace AMFramework_Lib.Model.Model_Controllers
         { }
 
         #region Model_methods
+        public static List<ModelController<Model_ElementComposition>> Get_ElementComposition_FromIDCase(IAMCore_Comm comm, int IDCase)
+        {
+            // load Selected elements
+            List<ModelController<Model_ElementComposition>> result = ModelController<Model_ElementComposition>.LoadIDCase(ref comm, IDCase);
 
+            // Get element name
+            foreach (var item in result)
+            {
+                item.ModelObject.ElementName = ControllerM_Element.Get_ElementByID(comm, item.ModelObject.IDElement).ModelObject.Name;
+            }
+
+            return result;
+        }
         #endregion
     }
 }

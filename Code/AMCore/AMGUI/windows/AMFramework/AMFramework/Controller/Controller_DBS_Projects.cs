@@ -28,13 +28,13 @@ namespace AMFramework.Controller
         {
             _AMCore_Socket = socket;
 
-            controllerCases = new(ref socket, this);
+            // controllerCases = new(ref socket, this);
 
-            Controller_Selected_Elements = new(ref socket, this);
-            Controller_Elements = new(ref socket, this);
-            _ActivePhasesConfigurationController = new(ref socket, this);
-            _ActivePhasesElementCompositionController = new(ref socket, this);
-            _ActivePhasesController = new(ref socket, this);
+            //Controller_Selected_Elements = new(ref socket, this);
+            //Controller_Elements = new(ref socket, this);
+            //_ActivePhasesConfigurationController = new(ref socket, this);
+            //_ActivePhasesElementCompositionController = new(ref socket, this);
+            //_ActivePhasesController = new(ref socket, this);
         }
         #endregion
 
@@ -271,10 +271,10 @@ namespace AMFramework.Controller
             }
 
             _AMCore_Socket.run_lua_command("project_loadID ", ((int)ID).ToString());
-            controllerCases.refresh();
-            Controller_Selected_Elements.refresh();
+            //controllerCases.refresh();
+            //Controller_Selected_Elements.refresh();
             _ActivePhasesController.Refresh();
-            _selectedElements = Controller_Selected_Elements.Elements;
+            //_selectedElements = Controller_Selected_Elements.ElementsOLD;
 
             load_database_available_phases();
             Sort_Cases_BySelectedPhases();
@@ -353,12 +353,14 @@ namespace AMFramework.Controller
 
         #region Cases
         private Controller.Controller_Cases controllerCases;
+        [Obsolete("Better use ModelController<> from data model")]
         public Controller.Controller_Cases ControllerCases { get { return controllerCases; } }
+        [Obsolete("Better use ModelController<> from data model")]
         public List<Model_Case> Cases
         {
             get
             {
-                return controllerCases.CasesOLD;
+                return null; //controllerCases.CasesOLD;
             }
         }
 
@@ -403,7 +405,7 @@ namespace AMFramework.Controller
 
         public void Case_load_equilibrium_phase_fraction(Model_Case model) 
         {
-            controllerCases.update_phaseFractions(model);
+            //controllerCases.update_phaseFractions(model);
         }
 
         public void Case_clear_phase_fraction_data() 
@@ -446,42 +448,43 @@ namespace AMFramework.Controller
                 item.IsSelected = false;
             }
 
-            if (controllerCases.SelectedCaseOLD is null) return;
-            foreach (Model_SelectedPhases item in controllerCases.SelectedCaseOLD.SelectedPhasesOLD)
-            {
-                Model_Phase? tempFindPhase = AvailablePhase.Find(e => e.ID == item.IDPhase);
-                if (tempFindPhase is null) continue;
-                tempFindPhase.IsSelected = true;
-            }
+            //if (controllerCases.SelectedCaseOLD is null) return;
+            //foreach (Model_SelectedPhases item in controllerCases.SelectedCaseOLD.SelectedPhasesOLD)
+            //{
+            //    Model_Phase? tempFindPhase = AvailablePhase.Find(e => e.ID == item.IDPhase);
+            //    if (tempFindPhase is null) continue;
+            //    tempFindPhase.IsSelected = true;
+            //}
 
         }
 
         public void set_phase_selection_to_current_case()
         {
-            if (controllerCases.SelectedCaseOLD is null) return;
+            //if (controllerCases.SelectedCaseOLD is null) return;
 
-            controllerCases.SelectedCaseOLD.Clear_selectedPhasesOLD();
-            foreach (Model_Phase item in AvailablePhase)
-            {
-                if (item.IsSelected == false) continue;
-                Model_SelectedPhases tempSelPhase = new()
-                {
-                    IDPhase = item.ID,
-                    IDCase = controllerCases.SelectedCaseOLD.ID,
-                    PhaseName = item.Name
-                };
-                controllerCases.SelectedCaseOLD.Add_selectedPhasesOLD(tempSelPhase);
-            }
+            //controllerCases.SelectedCaseOLD.Clear_selectedPhasesOLD();
+            //foreach (Model_Phase item in AvailablePhase)
+            //{
+            //    if (item.IsSelected == false) continue;
+            //    Model_SelectedPhases tempSelPhase = new()
+            //    {
+            //        IDPhase = item.ID,
+            //        IDCase = controllerCases.SelectedCaseOLD.ID,
+            //        PhaseName = item.Name
+            //    };
+            //    controllerCases.SelectedCaseOLD.Add_selectedPhasesOLD(tempSelPhase);
+            //}
 
         }
 
+        [Obsolete("We")]
         public void set_phase_selection_ifActive() 
         {
-            if (_ActivePhasesController.ActivePhases.Count == 0) return;
+            if (_ActivePhasesController.ActivePhasesOLD.Count == 0) return;
 
             foreach (var item in AvailablePhase)
             {
-                Model_ActivePhases tempRef = _ActivePhasesController.ActivePhases.Find(e => e.IDPhase == item.ID);
+                Model_ActivePhases tempRef = _ActivePhasesController.ActivePhasesOLD.Find(e => e.IDPhase == item.ID);
                 if (tempRef is null) 
                 {
                     item.IsActive = false;
@@ -540,7 +543,7 @@ namespace AMFramework.Controller
         public void load_database_available_elements() 
         {
             ElementsIsLoading = true;
-            _available_Elements = Controller_Elements.get_available_elements_in_database();
+            //_available_Elements = Controller_Elements.get_available_elements_in_database();
 
             foreach (Model_SelectedElements Elementy in SelectedElements)
             {
@@ -634,18 +637,21 @@ namespace AMFramework.Controller
 
         #region ActivePhases
         private Controller.Controller_ActivePhasesConfiguration _ActivePhasesConfigurationController;
+        [Obsolete("Beter use ModelController<> from data model")]
         public Controller.Controller_ActivePhasesConfiguration ActivePhasesConfigurationController 
         { 
             get { return _ActivePhasesConfigurationController; } 
         }
 
         private Controller.Controller_ActivePhases _ActivePhasesController;
+        [Obsolete("Beter use ModelController<> from data model")]
         public Controller.Controller_ActivePhases ActivePhasesController
         {
             get { return _ActivePhasesController; }
         }
 
         private Controller.Controller_ActivePhasesElementComposition _ActivePhasesElementCompositionController;
+        [Obsolete("Beter use ModelController<> from data model")]
         public Controller.Controller_ActivePhasesElementComposition ActivePhasesElementCompositionController
         {
             get { return _ActivePhasesElementCompositionController; }
@@ -978,11 +984,11 @@ namespace AMFramework.Controller
                 IconObject = FontAwesome.WPF.FontAwesomeIcon.Circle
             };
 
-            foreach (var item in casey.PrecipitationPhasesOLD)
+            foreach (var item in casey.PrecipitationPhases)
             {
                 TV_TopView_controller TC_PR_Item = new()
                 {
-                    Title = item.Name,
+                    Title = item.ModelObject.Name,
                     IconObject = FontAwesome.WPF.FontAwesomeIcon.None
                 };
 
@@ -1094,43 +1100,43 @@ namespace AMFramework.Controller
         private bool selected_treeview_item_tagString(object refTreeItem) 
         {
             //Check if Tag is of type string
-            if (!refTreeItem.GetType().Equals(typeof(TreeViewItem))) return false;
+            //if (!refTreeItem.GetType().Equals(typeof(TreeViewItem))) return false;
 
-            TreeViewItem refTree = refTreeItem as TreeViewItem;
-            if (refTree.Tag == null) return false;
-            if (!refTree.Tag.GetType().Equals(typeof(string))) return false;
+            //TreeViewItem refTree = refTreeItem as TreeViewItem;
+            //if (refTree.Tag == null) return false;
+            //if (!refTree.Tag.GetType().Equals(typeof(string))) return false;
 
-            if (refTree.Tag.ToString().ToUpper().CompareTo("PROJECT") == 0)
-            {
-                ISselected = true;
-            }
-            else if (refTree.Tag.ToString().ToUpper().Contains("SINGLE"))
-            {
-                SelectedCaseWindow = true;
-            }
-            else if (refTree.Tag.ToString().ToUpper().Contains("CASE"))
-            {
-                StackPanel refStack = (StackPanel)refTree.Header;
-                Model_Case? model = null;
+            //if (refTree.Tag.ToString().ToUpper().CompareTo("PROJECT") == 0)
+            //{
+            //    ISselected = true;
+            //}
+            //else if (refTree.Tag.ToString().ToUpper().Contains("SINGLE"))
+            //{
+            //    SelectedCaseWindow = true;
+            //}
+            //else if (refTree.Tag.ToString().ToUpper().Contains("CASE"))
+            //{
+            //    StackPanel refStack = (StackPanel)refTree.Header;
+            //    Model_Case? model = null;
 
-                for (int n1 = 0; n1 < refStack.Children.Count; n1++)
-                {
-                    if (refStack.Children[n1].GetType().Equals(typeof(TextBlock)))
-                    {
-                        if (((TextBlock)refStack.Children[n1]).Tag.GetType().Equals(typeof(Model_Case)))
-                        {
-                            model = ((Model_Case)((TextBlock)refStack.Children[n1]).Tag);
-                        }
-                    }
-                }
+            //    for (int n1 = 0; n1 < refStack.Children.Count; n1++)
+            //    {
+            //        if (refStack.Children[n1].GetType().Equals(typeof(TextBlock)))
+            //        {
+            //            if (((TextBlock)refStack.Children[n1]).Tag.GetType().Equals(typeof(Model_Case)))
+            //            {
+            //                model = ((Model_Case)((TextBlock)refStack.Children[n1]).Tag);
+            //            }
+            //        }
+            //    }
 
-                if (model is null) return false;
-                controllerCases.SelectedCaseOLD = model;
-            }
-            else
-            {
-                ISselected = false;
-            }
+            //    if (model is null) return false;
+            //    controllerCases.SelectedCaseOLD = model;
+            //}
+            //else
+            //{
+            //    ISselected = false;
+            //}
 
             return true;
         }
@@ -1138,12 +1144,12 @@ namespace AMFramework.Controller
         private bool selected_treeview_item_tagType(object refTreeItem)
         {
             //Check if Tag is of type string
-            if (refTreeItem.GetType().Equals(typeof(Model_Case))) 
-            {
-                controllerCases.SelectedCaseOLD = (Model_Case)refTreeItem;
-                SelectedCaseID = true;
-                return true;
-            }
+            //if (refTreeItem.GetType().Equals(typeof(Model_Case))) 
+            //{
+            //    controllerCases.SelectedCaseOLD = (Model_Case)refTreeItem;
+            //    SelectedCaseID = true;
+            //    return true;
+            //}
 
             return false;
         }

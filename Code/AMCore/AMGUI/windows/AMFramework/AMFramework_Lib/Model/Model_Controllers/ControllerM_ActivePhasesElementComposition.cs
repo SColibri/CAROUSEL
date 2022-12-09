@@ -18,7 +18,25 @@ namespace AMFramework_Lib.Model.Model_Controllers
         { }
 
         #region Model_methods
-        
+        /// <summary>
+        /// Returns all elements used in the active phases based on the ID of the project
+        /// </summary>
+        /// <param name="comm"></param>
+        /// <param name="IDProject"></param>
+        /// <returns></returns>
+        public static List<ModelController<Model_ActivePhasesElementComposition>> Get_ActivePhaseElementComposition_FromIDProject(IAMCore_Comm comm, int IDProject)
+        {
+            // Load all elements
+            List<ModelController<Model_ActivePhasesElementComposition>> result = ModelController<Model_ActivePhasesElementComposition>.LoadIDProject(ref comm, IDProject);
+
+            // Get the element name
+            foreach (var item in result)
+            {
+                item.ModelObject.ElementName = ControllerM_Element.Get_ElementByID(comm, item.ModelObject.IDElement).ModelObject.Name;
+            }
+
+            return result;
+        }
         #endregion
     }
 }

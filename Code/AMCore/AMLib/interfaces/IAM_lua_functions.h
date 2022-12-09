@@ -238,7 +238,7 @@ protected:
 		add_new_function(state, "spc_elementcomposition_save", "<string> OK", "spc_elementcomposition_save <INT> ID", Bind_Templated_Save<DBS_ElementComposition>, "Model_ElementComposition||Save");
 		add_new_function(state, "spc_elementcomposition_delete", "<string> OK", "spc_elementcomposition_delete <INT> ID", Bind_Templated_Delete<DBS_ElementComposition>, "Model_ElementComposition||Delete");
 		add_new_function(state, "spc_elementcomposition_load_id", "<string> OK", "spc_elementcomposition_load_id <String> csv", Bind_Templated_loadID<DBS_ElementComposition>, "Model_ElementComposition||LoadByID");
-		add_new_function(state, "spc_elementcomposition_load_id_case", "<string> OK", "spc_elementcomposition_load_id_project <String> csv", Bind_ElementComposition_Load_CaseID, "Model_ElementComposition||LoadByIDProject");
+		add_new_function(state, "spc_elementcomposition_load_id_case", "<string> OK", "spc_elementcomposition_load_id_project <String> csv", Bind_ElementComposition_Load_CaseID, "Model_ElementComposition||LoadByIDCase");
 #pragma endregion
 
 		//###-> Precipitation

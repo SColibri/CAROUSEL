@@ -66,7 +66,7 @@ namespace AMFramework_Lib.Model.Model_Controllers
 
                 // Add to list
                 int IDObject = Convert.ToInt32(columnItems[0]);
-                ModelController<Model_Element> newElementObject = CreateModelFromID(comm, IDObject);
+                ModelController<Model_Element> newElementObject = Get_ElementByID(comm, IDObject);
                 result.Add(newElementObject);
             }
 
@@ -79,11 +79,11 @@ namespace AMFramework_Lib.Model.Model_Controllers
         /// <param name="comm">IAMCore_Comm object</param>
         /// <param name="ID">Type ID</param>
         /// <returns></returns>
-        private static ModelController<Model_Element> CreateModelFromID(IAMCore_Comm comm, int ID)
+        public static ModelController<Model_Element> Get_ElementByID(IAMCore_Comm comm, int ID)
         {
             ModelController<Model_Element> refTemp = new(ref comm);
             refTemp.ModelObject.ID = ID;
-            refTemp.LoadByIDAction.DoAction();
+            refTemp.LoadByIDAction?.DoAction();
 
             return refTemp;
         }

@@ -7,62 +7,34 @@ using System.ComponentModel;
 using AMFramework_Lib.Model;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Controller;
+using AMFramework_Lib.Model.Model_Controllers;
 
 namespace AMFramework.Controller
 {
     internal class Controller_HeatTreatment : ControllerAbstract
     {
         #region Socket
-        private IAMCore_Comm _AMCore_Socket;
-        private Controller_Cases _caseController;
-        public Controller_HeatTreatment(ref IAMCore_Comm socket, Controller_Cases projectController):base(socket)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="comm"></param>
+        /// <param name="caseController"></param>
+        public Controller_HeatTreatment(ref IAMCore_Comm comm, Controller_Cases caseController):base(comm)
         {
-            _AMCore_Socket = socket;
-            _caseController = projectController;
+            if (caseController.SelectedCase != null)
+                _heatTreatments = ControllerM_HeatTreatment.Get_heatTreatmentsFromCaseID(_comm, caseController.SelectedCase.ModelObject.ID);
+            else
+                _heatTreatments = new();
         }
         #endregion
 
         #region Data
-        private List<Model_HeatTreatment> _heatTreatments = new();
-        public List<Model_HeatTreatment> HeatTreatments { get { return _heatTreatments; } }
-        public static List<Model_HeatTreatment> get_heat_treatments_from_case(ref IAMCore_Comm socket, int IDCase)
-        {
-            List<Model_HeatTreatment> composition = new();
-            string Query = "database_table_custom_query SELECT HeatTreatment.* FROM HeatTreatment WHERE IDCase = " + IDCase;
-            string outCommand = socket.run_lua_command(Query, "");
-            List<string> rowItems = outCommand.Split("\n").ToList();
-
-            foreach (string item in rowItems)
-            {
-                List<string> columnItems = item.Split(",").ToList();
-                if (columnItems.Count < 6) continue;
-                composition.Add(fillModel(columnItems));
-            }
-
-            return composition;
-        }
-
-        private static Model_HeatTreatment fillModel(List<string> DataRaw)
-        {
-            if (DataRaw.Count < 6) throw new Exception("Error: Element RawData is wrong");
-
-            Model_HeatTreatment modely = new()
-            {
-                ID = Convert.ToInt32(DataRaw[0]),
-                IDCase = Convert.ToInt32(DataRaw[1]),
-                Name = DataRaw[2],
-                MaxTemperatureStep = Convert.ToInt32(DataRaw[3]),
-                IDPrecipitationDomain = Convert.ToInt32(DataRaw[4]),
-                StartTemperature = Convert.ToDouble(DataRaw[5])
-            };
-
-            return modely;
-        }
-
-        public static void fill_case_model(ref IAMCore_Comm socket, Model_Case ObjectModel) 
-        {
-            ObjectModel.HeatTreatmentsOLD = get_heat_treatments_from_case(ref socket, ObjectModel.ID);
-        }
+        private List<ModelController<Model_HeatTreatment>> _heatTreatments;
+        /// <summary>
+        /// gets list of heat treatments
+        /// </summary>
+        public List<ModelController<Model_HeatTreatment>> HeatTreatments { get { return _heatTreatments; } }
+        
         #endregion
     }
 }

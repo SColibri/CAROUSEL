@@ -16,6 +16,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using AMFramework.Controller;
+using AMFramework_Lib.Core;
 
 namespace AMFramework.Views.Case.plotViews
 {
@@ -56,6 +58,16 @@ namespace AMFramework.Views.Case.plotViews
                 SpyderMain.Add_series(nSeries);
             }
 
+        }
+        public Case_SpyderChart(Controller_SpyderPlot control) 
+        {
+            DataContext = control;
+        }
+
+        public Case_SpyderChart(IAMCore_Comm comm, Controller_Project control)
+        {
+            Controller_SpyderPlot datacontext = new Controller_SpyderPlot(comm, control);
+            DataContext = datacontext;
         }
     }
 }

@@ -2,8 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:con="clr-namespace:AMFramework.Controller"
              xmlns:local="clr-namespace:AMFramework.Views.Projects"
+             d:DataContext="{d:DesignInstance Type=con:Controller_Project}"
              mc:Ignorable="d" 
              d:DesignHeight="450" 
              d:DesignWidth="800"
@@ -17,7 +19,7 @@
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="ID:" FontSize="9" Margin="3" VerticalAlignment="Bottom"/>
-                <TextBlock Text="{Binding Path=ID}" Grid.Column="1" FontSize="9" Margin="3" VerticalAlignment="Bottom" Foreground="Red"/>
+                <TextBlock Text="{Binding Path=SelectedProject.MCObject.ModelObject.ID}" Grid.Column="1" FontSize="9" Margin="3" VerticalAlignment="Bottom" Foreground="Red"/>
             </Grid>
             
             <Grid Height="auto" Margin="5">
@@ -30,7 +32,7 @@
                          x:Name="Pname"
                          Margin="3,0,3,5" 
                          FontSize="15" 
-                         Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding Path=SelectedProject.MCObject.ModelObject.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          TextAlignment="Left"
                          TextWrapping="WrapWithOverflow"
                          VerticalContentAlignment="Center"
@@ -54,7 +56,7 @@
                 <TextBox Grid.Row="1" 
                          Margin="3,0,3,5" 
                          FontSize="15" IsEnabled="false" 
-                         Text="{Binding Path=APIName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding Path=SelectedProject.MCObject.ModelObject.APIName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          TextAlignment="Left"
                          TextWrapping="WrapWithOverflow"
                          VerticalContentAlignment="Center"

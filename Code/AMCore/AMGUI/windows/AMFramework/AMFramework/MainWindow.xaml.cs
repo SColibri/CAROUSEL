@@ -11,6 +11,9 @@ using AMFramework_Lib.Interfaces;
 using AMFramework_Lib.Controller;
 using AMFramework_Lib.Model;
 using ScintillaNET;
+using AMFramework_Lib.Model.Model_Controllers;
+using AMFramework.Views.Case;
+using AMFramework.Views.Case.plotViews;
 
 namespace AMFramework
 {
@@ -19,8 +22,6 @@ namespace AMFramework
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindow_ViewModel viewModel = new();
-
         /// <summary>
         /// Entry point for the application
         /// </summary>
@@ -31,16 +32,16 @@ namespace AMFramework
 
             // ------------------------------------------
             //          Initialize components
-            // ------------------------------------------
+            // --------------------------------sh----------
 
             // add Main control reference to global controller
             Controller_Global.MainControl = (IMainWindow)DataContext;
 
             // Create new Datagrid view control
             TV_Menu_Controller tvmController = new();
-            tvmController.Main_Nodes.Add(new TV_TopView(((Controller.Controller_MainWindow)DataContext).get_project_controller().DTV_Controller));
+            tvmController.Main_Nodes.Add(new TV_TopView(((Controller.Controller_MainWindow)DataContext).TreeViewController));
             tvc.DataContext = tvmController;
-
+            
             // When closed add the closing handle, this closes all additional
             // windows.
             this.Closing += Closing_window;
@@ -66,53 +67,6 @@ namespace AMFramework
 
         #region Handles
 
-        #region Window_Handles
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //Chartingy.UpdateImage();
-        }
-
-        #endregion
-
-        #region HandlesRibbon
-        private void RibbonMenuItem_Click_new_luaFile(object sender, RoutedEventArgs e)
-        {
-            Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
-            controllerMain.Add_Tab_Item(viewModel.get_new_lua_script());
-            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-            MainTabControl.Items.Refresh();
-        }
-
-        #endregion
-
-        #region HandlesTemplate
-        /// <summary>
-        /// Close tab Icon handle
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (MainTabControl.SelectedItem != null)
-            {
-                if (((ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).close())
-                {
-                    ((Border)sender).Triggers.Clear();
-                    ((TabItem)MainTabControl.SelectedItem).Visibility = Visibility.Collapsed;
-
-                    if (((TabItem)MainTabControl.SelectedItem).Tag.GetType().Equals(typeof(ViewModel_Interface)))
-                    {
-                        ((ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).close();
-                    }
-
-                    Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
-                    controllerMain.Remove_tab_Item((TabItem)MainTabControl.SelectedItem);
-                    MainTabControl.Items.Refresh();
-                }
-            }
-        }
-        #endregion
-
         #region RibbonMenu_Handles
 
         // ------------------------------------------------------------------
@@ -121,11 +75,7 @@ namespace AMFramework
         // Main window controller. This also applies for some of the methods included
         // in this file.
         // ------------------------------------------------------------------
-        
-        private void RibbonMenuItem_Click_2(object sender, RoutedEventArgs e)
-        {
-            //ControllerAMCore.CoreOutput = Sock.send_receive("initialize_core");
-        }
+       
 
         private void RibbonButton_Click(object sender, RoutedEventArgs e)
         {
@@ -138,105 +88,15 @@ namespace AMFramework
                 return;
             }
 
-            controllerMain.Add_Tab_Item(viewModel.Get_projectMap_plot(controllerMain.get_plot_Controller()));
-            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-            MainTabControl.Items.Refresh();
+            //controllerMain.Add_Tab_Item(viewModel.Get_projectMap_plot(controllerMain.get_plot_Controller()));
+            //MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
+            //MainTabControl.Items.Refresh();
         }
 
-        private void RibbonButton_TableView_Click(object sender, RoutedEventArgs e)
-        {
-            Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
-
-            controllerMain.Add_Tab_Item(viewModel.Get_DataGridTable(controllerMain.Get_socket()));
-            MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-            MainTabControl.Items.Refresh();
-        }
-
-        private void RibbonMenuItem_Click_loadApi(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Forms.OpenFileDialog ofd = new()
-            {
-                Multiselect = false
-            };
-
-            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                if (File.Exists(ofd.FileName) == true)
-                {
-
-                    Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
-                    controllerMain.Add_Tab_Item(controllerMain.scriptView_new_lua_script(ofd.FileName));
-                    MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-                    MainTabControl.Items.Refresh();
-                }
-                else
-                {
-                    System.Windows.Forms.MessageBox.Show("Ups, where did the file go?", "Script file", System.Windows.Forms.MessageBoxButtons.OK);
-                }
-            }
-
-        }
-
-        private void RibbonButton_Click_NewProject(object sender, RoutedEventArgs e)
-        {
-            //MainTabControl.Visibility = Visibility.Collapsed;
-            //Popup.Visibility = Visibility.Visible;
-
-            Controller.Controller_MainWindow controller_MainWindow = (Controller.Controller_MainWindow)DataContext;
-            Components.Windows.AM_popupWindow Pw = controller_MainWindow.popupProject(-1);
-            //Pw.PopupWindowClosed += ClosePopup;
-
-            controller_MainWindow.Show_Popup(Pw);
-            //PopupFrame.Navigate(Pw);
-        }
-
-        private void RibbonButton_Click_2(object sender, RoutedEventArgs e)
-        {
-            MainTabControl.Visibility = Visibility.Collapsed;
-            Popup.Visibility = Visibility.Visible;
-
-            Controller.Controller_MainWindow controller_MainWindow = (Controller.Controller_MainWindow)DataContext;
-            Components.Windows.AM_popupWindow Pw = controller_MainWindow.popupProjectList(-1);
-            Pw.PopupWindowClosed += ClosePopup;
-
-            PopupFrame.Navigate(Pw);
-        }
-
-        private void RibbonMenuItem_Click_save_luaFile(object sender, RoutedEventArgs e)
-        {
-            if (MainTabControl.SelectedItem != null)
-            {
-                ((ViewModel_Interface)((TabItem)MainTabControl.SelectedItem).Tag).save();
-            }
-        }
-        private void RibbonMenuItem_Click_LoadLuaFile(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Forms.OpenFileDialog ofd = new()
-            {
-                Filter = " lua script | *.lua",
-                InitialDirectory = Controller_Global.Configuration?.Working_Directory,
-                Multiselect = false
-            };
-
-            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                if (File.Exists(ofd.FileName) == true)
-                {
-                    Controller.Controller_MainWindow controllerMain = ((Controller.Controller_MainWindow)DataContext);
-                    controllerMain.Add_Tab_Item(controllerMain.scriptView_new_lua_script(ofd.FileName));
-                    MainTabControl.SelectedIndex = MainTabControl.Items.Count - 1;
-                    MainTabControl.Items.Refresh();
-                }
-                else
-                {
-                    System.Windows.Forms.MessageBox.Show("Ups, where did the file go?", "Script file", System.Windows.Forms.MessageBoxButtons.OK);
-                }
-            }
-        }
 
         private void RibbonButton_Click_1(object sender, RoutedEventArgs e)
         {
-            MainTabControl.Visibility = Visibility.Collapsed;
+            //MainTabControl.Visibility = Visibility.Collapsed;
             Popup.Visibility = Visibility.Visible;
 
             Controller.Controller_MainWindow controller_MainWindow = (Controller.Controller_MainWindow)DataContext;
@@ -244,11 +104,6 @@ namespace AMFramework
             Pw.PopupWindowClosed += ClosePopup;
 
             PopupFrame.Navigate(Pw);
-        }
-
-        private void RibbonButton_Click_3(object sender, RoutedEventArgs e)
-        {
-            ((Controller.Controller_MainWindow)DataContext).Cancel_Script();
         }
 
         #endregion
@@ -259,17 +114,9 @@ namespace AMFramework
         private void ClosePopup(object? sender, System.EventArgs e)
         {
             Popup.Visibility = Visibility.Collapsed;
-            MainTabControl.Visibility = Visibility.Visible;
+            //MainTabControl.Visibility = Visibility.Visible;
         }
         #endregion
-
-
-
-
-
-
-
-
 
         #region Static methods
         [Obsolete("Deprecate prefer using controller global notify")]

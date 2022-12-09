@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
              xmlns:local="clr-namespace:AMFramework.Components.Button"
+             d:DataContext="{d:DesignInstance Type=local:AM_button}"
              mc:Ignorable="d" 
              d:DesignHeight="25" d:DesignWidth="25">
     <Grid UseLayoutRounding="True">
@@ -79,6 +80,9 @@
                     </EventTrigger.Actions>
                 </EventTrigger>
             </Border.Triggers>
+            <Border.InputBindings>
+                <MouseBinding MouseAction="LeftClick" Command="{Binding Command}"/>
+            </Border.InputBindings>
         </Border>    
     </Grid>
 </UserControl>

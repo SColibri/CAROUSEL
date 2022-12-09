@@ -15,6 +15,7 @@ namespace AMFramework
     /// <summary>
     /// TODO: Split the functionality of this pseudo-controller, use the correct controller for the main Window and discard this one
     /// </summary>
+    [Obsolete("Use the Controller_MainWindow instead")]
     public class MainWindow_ViewModel:ViewModel_Interface
     {
         private List<Components.Scripting.Scripting_ViewModel> _openScripts = new();
@@ -27,12 +28,12 @@ namespace AMFramework
         public Views.Case.Case_ViewModel CaseView { get { return _caseView; } }
 
         #region Interface
-        public bool close()
+        public bool Close()
         {
             throw new NotImplementedException();
         }
 
-        public bool save()
+        public bool Save()
         {
             throw new NotImplementedException();
         }
@@ -56,7 +57,7 @@ namespace AMFramework
 
             _openScripts.Add(new Components.Scripting.Scripting_ViewModel() { Filename=filename });
             
-            result.Content = _openScripts[^1].get_text_editor();
+            result.Content = _openScripts[^1].ScriptingEditor;
             result.Tag = _openScripts[^1];
 
             if (System.IO.File.Exists(filename)) ((Components.Scripting.Scripting_editor)result.Content).loadFile(filename);
@@ -145,47 +146,6 @@ namespace AMFramework
             return result;
         }
 
-        public TabItem get_project_tab(Controller.Controller_DBS_Projects projectController) 
-        {
-            TabItem result = new();
-
-            string headerTitle = projectController.SelectedProject.Name;
-            Uri ImageUri = null; //TODO add lua Icon here
-            if (headerTitle.Length == 0)
-            {
-                result.Header = get_TabHeader("Project without name", ImageUri);
-            }
-            else
-            {
-                result.Header = get_TabHeader(headerTitle, ImageUri);
-            }
-
-            result.Content = _projects.get_project_content(projectController);
-            result.Tag = _projects;
-
-            return result;
-        }
-
-        public TabItem get_case_itemTab(Controller.Controller_Cases controllerCase)
-        {
-            TabItem result = new();
-
-            string headerTitle = "Case: " + controllerCase.SelectedCaseOLD.Name;
-            Uri ImageUri = null; //TODO add lua Icon here
-            if (headerTitle.Length == 0)
-            {
-                result.Header = get_TabHeader("Cases", ImageUri);
-            }
-            else
-            {
-                result.Header = get_TabHeader(headerTitle, ImageUri);
-            }
-
-            result.Content = _caseView.get_item(controllerCase);
-            result.Tag = _caseView;
-
-            return result;
-        }
 
         public TabItem get_kinetic_precipitation_itemTab(Controller.Controller_Plot controllerPlot)
         {

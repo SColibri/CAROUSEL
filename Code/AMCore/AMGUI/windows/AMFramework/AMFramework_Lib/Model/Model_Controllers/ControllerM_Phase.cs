@@ -168,6 +168,34 @@ namespace AMFramework_Lib.Model.Model_Controllers
         }
         #endregion
 
+        #region Load_FromID
+
+        public static ModelController<Model_Phase> Get_PhaseByID(IAMCore_Comm comm, int IDPhase)
+        {
+            ModelController<Model_Phase> pName = new(ref comm);
+            pName.ModelObject.ID = (int)IDPhase;
+            pName.LoadByIDAction?.DoAction();
+
+            return pName;
+        }
+
+        /// <summary>
+        /// Load phase by name
+        /// </summary>
+        /// <param name="comm"></param>
+        /// <param name="Name"></param>
+        /// <returns></returns>
+        public static ModelController<Model_Phase> Get_PhaseByName(IAMCore_Comm comm, string Name)
+        {
+            ModelController<Model_Phase> pName = new(ref comm);
+            pName.ModelObject.Name = Name;
+            pName.LoadByNameAction?.DoAction();
+
+            return pName;
+        }
+
+        #endregion
+
         #endregion
     }
 }

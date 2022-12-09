@@ -10,20 +10,15 @@ namespace AMFramework.Views.Case
     public class Case_ViewModel : ViewModel_Interface
     {
         #region interface
-        public bool close()
+        public bool Close()
         {
             return true;
         }
 
-        public bool save()
+        public bool Save()
         {
             return true;
         }
         #endregion
-
-        public Views.Case.Case_general get_item(Controller.Controller_Cases caseController)
-        {
-            return new Case_general(ref caseController);
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AMFramework_Lib.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,24 +14,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace AMFramework.Views.Phase
+namespace AMFramework.Views.Solidification
 {
     /// <summary>
-    /// Interaction logic for Phase_List.xaml
+    /// Interaction logic for SolidificationConfigurations.xaml
     /// </summary>
-    [Obsolete("This view uses the old version of controller DBSProject, use the newer version PhaseList_View")]
-    public partial class Phase_List : UserControl
+    public partial class SolidificationConfigurations : UserControl
     {
-        public Phase_List()
+        public SolidificationConfigurations()
         {
             InitializeComponent();
         }
 
-        public Phase_List(Controller.Controller_DBS_Projects projectController)
+        public SolidificationConfigurations(Model_Case caseModel)
         {
             InitializeComponent();
-            DataContext = projectController;
-            projectController.get_phase_selection_from_current_case();
+            DataContext = new SolidificationConfigurations_ViewModel(caseModel);
         }
+
     }
 }

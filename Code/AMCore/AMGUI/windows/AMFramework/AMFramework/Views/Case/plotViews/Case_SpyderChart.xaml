@@ -5,11 +5,47 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:am ="clr-namespace:AMControls.Charts.Spyder;assembly=AMControls"
              xmlns:local="clr-namespace:AMFramework.Views.Case.plotViews"
+             xmlns:ct="clr-namespace:AMFramework.Controller"
+             d:DataContext="{d:DesignInstance Type=ct:Controller_SpyderPlot}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
-        <am:SpyderPlot x:Name="SpyderMain">
-            
-        </am:SpyderPlot>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="100" />
+        </Grid.ColumnDefinitions>
+        
+        <!-- Spyder chart -->
+        <ContentControl Content="{Binding Path=SpyderPlot, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0"/>
+
+        <!-- Selection tools -->
+        <Grid Grid.Column="1">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding Path=PhaseList}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <Border BorderBrush="Silver" BorderThickness="0.5" Grid.ColumnSpan="2"/>
+                                        <CheckBox Margin="5" IsChecked="{Binding Path=MCObject.ModelObject.IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <TextBlock Margin="5" Text="{Binding Path=MCObject.ModelObject.Name}"
+                                                   Grid.Column="1"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button Content="Update" Command="{Binding Path=UpdatePlotCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <am:SpyderPlot x:Name="SpyderMain" Visibility="Visible" Grid.ColumnSpan="1" />
     </Grid>
 </UserControl>

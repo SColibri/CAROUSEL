@@ -8,6 +8,12 @@ using System.Windows.Forms;
 using ScintillaNET;
 using System.Windows.Forms.Integration;
 using AMFramework_Lib.Interfaces;
+using System.Windows.Shapes;
+using AMFramework.Controller;
+using System.Windows.Input;
+using Microsoft.Maps.MapControl.WPF;
+using AMFramework_Lib.Controller;
+using System.Windows;
 
 namespace AMFramework.Components.Scripting
 {
@@ -16,7 +22,24 @@ namespace AMFramework.Components.Scripting
     /// </summary>
     public class Scripting_ViewModel : ViewModel_Interface
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public Scripting_ViewModel() 
+        {
+            
+            // Initialize scripting editor
+            _scriptingEditor = new()
+            {
+                DataContext = this
+            };
+
+        }
+
         private bool _changesMade = false; 
+        /// <summary>
+        /// Returns true if document has modifications
+        /// </summary>
         public bool ChangesMade { get { return _changesMade; } 
             set 
             { 
@@ -25,6 +48,9 @@ namespace AMFramework.Components.Scripting
         } // returns true if changes have been made to the document
 
         private string _filename = "";
+        /// <summary>
+        /// Filename of document
+        /// </summary>
         public string Filename { 
             get { return _filename; } 
             set 
@@ -47,6 +73,10 @@ namespace AMFramework.Components.Scripting
         } // autocomplete list
 
         private Scripting_editor _scriptingEditor;
+        /// <summary>
+        /// Scintilla scripting editor
+        /// </summary>
+        public Scripting_editor ScriptingEditor => _scriptingEditor;
 
         #region Methods
         /// <summary>
@@ -148,6 +178,26 @@ namespace AMFramework.Components.Scripting
         }
 
         /// <summary>
+        /// Load file using filename path
+        /// </summary>
+        /// <param name="filename"></param>
+        public void Load(string filename) 
+        {
+            //First check if the open file has modifications
+            if (before_closing(ScriptingEditor.Scripting))
+            {
+                if (File.Exists(filename))
+                {
+                    ScriptingEditor.Scripting.Text = File.ReadAllText(filename);
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Looks like the file does not exist or it is not compatible. Extension needed '.lua' ");
+                }
+            }
+        }
+
+        /// <summary>
         /// create new lua file
         /// </summary>
         /// <returns></returns>
@@ -204,38 +254,58 @@ namespace AMFramework.Components.Scripting
                 sr.Close();
             }
         }
+        #endregion
 
+        #region Commands
+        #region RunScript
+
+        private ICommand? _runcriptCommand;
         /// <summary>
-        /// gets an editor for scripting
+        /// Command for opening a new script file
+        /// close command
         /// </summary>
-        /// <returns></returns>
-        public Scripting_editor get_text_editor()
+        public ICommand? RunScriptCommand
         {
-            Scripting_editor Resut;
-
-            if (_scriptingEditor == null)
+            get
             {
-                _scriptingEditor = new Scripting_editor
-                {
-                    DataContext = this
-                };
-                Resut = _scriptingEditor;
+                return _runcriptCommand ??= new RelayCommand(param => RunScriptCommand_Action(), param => RunScriptCommand_Check());
             }
-            else
-            {
-                Resut = _scriptingEditor;
-            }
-            
-            return Resut;
         }
 
+        private void RunScriptCommand_Action()
+        {
+            // Save file before execute
+            Save();
 
+            // Notify user working on command
+            Controller_Global.MainControl?.Show_loading(true);
 
+            // create thread and execute in background
+            System.Threading.Thread TH01 = new(Run_script_async);
+            TH01.Start();
 
+            // TODO: get progress info from core and update to user
+            // Core should implement a char buffer[500] or similar 
+        }
+
+        private bool RunScriptCommand_Check()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Runs core command in the background
+        /// </summary>
+        private void Run_script_async()
+        {
+            Controller_Global.ApiHandle.run_lua_command("run_lua_script " , Filename);
+            Controller_Global.MainControl?.Show_loading(false);
+        }
+        #endregion
         #endregion
 
         #region Interface
-        public bool save()
+        public bool Save()
         {
             if(_scriptingEditor != null)
             {
@@ -248,8 +318,7 @@ namespace AMFramework.Components.Scripting
             }
             else { return false; }
         }
-
-        public bool close()
+        public bool Close()
         {
             if (_scriptingEditor != null)
             {

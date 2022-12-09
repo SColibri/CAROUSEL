@@ -10,7 +10,7 @@
              d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="170"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -35,8 +35,16 @@
             </Grid>
             
             <Grid Grid.Column="1">
-                <fa:ImageAwesome Icon="Plus" Foreground="Green" HorizontalAlignment="Left" Margin="0,0,0,0"
-                                 Height="15"/>
+                <Border Background="Green" Opacity="0.3" CornerRadius="5" Margin="2" BorderThickness="1" BorderBrush="Silver"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Add new" 
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Margin="3"
+                               Foreground="DarkGreen"/>
+                    <fa:ImageAwesome Icon="Plus" Foreground="Green" HorizontalAlignment="Left" Margin="0,0,0,0"
+                                 Height="12"/>
+                </StackPanel>
                 <Border Style="{StaticResource AM_MouseBorder}" ToolTip="Add new heat treatment">
                     <Border.InputBindings>
                         <MouseBinding MouseAction="LeftClick" Command="{Binding Path=AddHeatTreatment}"/>
@@ -47,12 +55,12 @@
             <Border Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="Silver" BorderThickness="1" Background="WhiteSmoke" CornerRadius="5">
                 
             </Border>
-            <ScrollViewer VerticalScrollBarVisibility="Hidden" Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0.3" BorderBrush="Silver" Margin="5">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="500" Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0.3" BorderBrush="Silver" Margin="5,5,5,5">
                 <StackPanel>
                     <ItemsControl ItemsSource="{Binding Path=CaseModel.HeatTreatments}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="3,15,3,3">
+                                <Grid Margin="3,15,8,3">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="80"/>
@@ -65,7 +73,7 @@
                                         <RowDefinition Height="auto"/>
                                     </Grid.RowDefinitions>
                                     <Border Grid.ColumnSpan="5" Grid.RowSpan="2" 
-                                            Background="SteelBlue" Opacity="0.2" Margin="-5">
+                                            Background="White" Opacity="0.2" Margin="-5">
                                         <Border.Effect>
                                             <BlurEffect Radius="8"/>
                                         </Border.Effect>
@@ -122,7 +130,15 @@
                                                 </Grid.RowDefinitions>
 
                                                 <TextBlock Text="Precipitation Domain" Margin="2" VerticalAlignment="Center"/>
-                                                <ComboBox Grid.Row="1" VerticalAlignment="Center" />
+                                                <ComboBox Grid.Row="1" VerticalAlignment="Center" 
+                                                          SelectedItem="{Binding Path=ModelObject.PrecipitationDomain}"
+                                                          ItemsSource="{Binding DataContext.CaseModel.PrecipitationDomains ,RelativeSource={RelativeSource AncestorType=local:HeatTreatment_View}}">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding Path=ModelObject.Name}"/>
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
                                             </Grid>
                                         </StackPanel>
                                     </Grid>
@@ -144,11 +160,20 @@
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Segments:" Margin="5"/>
                 <Grid Grid.Column="1" >
-                    <fa:ImageAwesome Icon="Plus" Foreground="Green" VerticalAlignment="Center"/>
+                    <Border Background="Green" Opacity="0.3" CornerRadius="5" Margin="2" BorderThickness="1" BorderBrush="Silver"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Add new" 
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Margin="3"
+                               Foreground="DarkGreen"/>
+                        <fa:ImageAwesome Icon="Plus" Foreground="Green" HorizontalAlignment="Left" Margin="0,0,4,0"
+                                 Height="12"/>
+                    </StackPanel>
                     <Border Style="{StaticResource AM_MouseBorder}" BorderThickness="0.3" BorderBrush="Silver" 
                                                 CornerRadius="5">
                         <Border.InputBindings>
@@ -170,7 +195,7 @@
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="150"/>
                         <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="80"/>
                     </Grid.ColumnDefinitions>
 
                     <Border MinHeight="25" Background="White" 
@@ -197,7 +222,7 @@
                                             <ColumnDefinition Width="100"/>
                                             <ColumnDefinition Width="150"/>
                                             <ColumnDefinition Width="50"/>
-                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="80"/>
                                         </Grid.ColumnDefinitions>
 
                                         <Border MinHeight="25" Background="WhiteSmoke" 
@@ -209,8 +234,18 @@
                                                   Grid.Column="1"/>
                                         <TextBox Text="{Binding Path=ModelObject.TemplateValue,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                                  Grid.Column="2"/>
-                                        
-                                        <fa:ImageAwesome Grid.Column="3" Height="15"  Icon="Remove" Foreground="DarkRed"/>
+
+                                        <Border Background="Red" Opacity="0.3" CornerRadius="5" Margin="2" 
+                                                BorderThickness="1" BorderBrush="Silver" Grid.Column="3" Height="25"/>
+                                        <StackPanel Orientation="Horizontal" Grid.Column="3">
+                                            <TextBlock Text="Remove" 
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Margin="10,3,3,3"
+                                                       Foreground="DarkRed"/>
+                                            <fa:ImageAwesome  Height="12"  Icon="Remove" Foreground="DarkRed" Margin="0,0,5,0"/>
+                                        </StackPanel>
+
                                         <Border Style="{StaticResource AM_MouseBorder}" ToolTip="Remove segment" Grid.Column="3">
                                             <Border.InputBindings>
                                                 <MouseBinding MouseAction="LeftClick" Command="{Binding Path=DataContext.RemoveHeatTreatmentSegment,RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}"/>

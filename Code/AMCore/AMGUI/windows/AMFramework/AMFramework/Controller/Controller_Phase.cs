@@ -33,6 +33,22 @@ namespace AMFramework.Controller
 
         #region Properties
 
+        #region Flags
+        private bool _isLoading = new();
+        /// <summary>
+        /// flag used when loading data
+        /// </summary>
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+            }
+        }
+        #endregion
+
         #region SearchText
         private string _searchText = "";
         /// <summary>
@@ -133,6 +149,34 @@ namespace AMFramework.Controller
             PhaseList = ControllerM_Phase.UniquePhasesByIDCase(_comm, IDCase);
         }
 
+        /// <summary>
+        /// Sets a flag when the phase should be marked as an active phase
+        /// </summary>
+        /// <param name="cActive"></param>
+        public void Set_ActivePhasesFlag(Controller_ActivePhases cActive)
+        {
+            // If no active phases are available, stop
+            if (cActive.ActivePhases.Count == 0) return;
+
+            foreach (var item in PhaseList)
+            {
+                // Find the corresponding ID
+                ModelController<Model_ActivePhases>? tempRef = cActive.ActivePhases.Find(e => e.ModelObject?.IDPhase == item.MCObject?.ModelObject?.ID);
+                
+                // Check for result, if none then it is not an active phase
+                if (tempRef is null)
+                {
+                    if (item.MCObject?.ModelObject?.IsActive != null)
+                        item.MCObject.ModelObject.IsActive = false;
+                    continue;
+                }
+                else
+                {
+                    if (item.MCObject?.ModelObject?.IsActive != null)
+                        item.MCObject.ModelObject.IsActive = true;
+                }
+            }
+        }
 
 
         #endregion
@@ -142,8 +186,31 @@ namespace AMFramework.Controller
 
         #endregion
 
-        #region commands
-
+        #region Methods
+        /// <summary>
+        /// Set selected phases and add missing phases that were not loaded from the CALPHAD database.
+        /// Missing phases arise only when user selected another database. TODO: We should notify the user about this
+        /// before he makes any changes, so maybe just a color indicator or similar.
+        /// </summary>
+        /// <param name="caseModelController"></param>
+        public void SetSelected(ModelController<Model_Case> caseModelController) 
+        {
+            foreach (var item in caseModelController.ModelObject.SelectedPhases)
+            {
+                ControllerM_Phase? pObject = PhaseList.Find(e => e.MCObject.ModelObject.Name.Equals(item.ModelObject.PhaseName, StringComparison.InvariantCultureIgnoreCase));
+                
+                if (pObject != null)
+                {
+                    pObject.MCObject.ModelObject.IsSelected = true;
+                }
+                else 
+                {
+                    ModelController<Model_Phase> mPhase = ControllerM_Phase.Get_PhaseByName(_comm, item.ModelObject.PhaseName);
+                    mPhase.ModelObject.IsSelected = true;
+                    PhaseList.Add(new ControllerM_Phase(_comm, mPhase));
+                }
+            }
+        }
         #endregion
 
         #region Obsolete

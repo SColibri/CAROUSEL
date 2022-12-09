@@ -11,12 +11,12 @@ namespace AMFramework.Components.Charting
     {
 
         #region Interface
-        public bool save()
+        public bool Save()
         {
             return true;
         }
 
-        public bool close()
+        public bool Close()
         {
             return true;
         }
