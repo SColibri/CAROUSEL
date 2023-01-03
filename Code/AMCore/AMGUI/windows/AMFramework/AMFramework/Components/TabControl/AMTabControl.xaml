@@ -22,7 +22,7 @@
                             <ControlTemplate TargetType="TabItem">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="20"/>
                                     </Grid.ColumnDefinitions>
                                     

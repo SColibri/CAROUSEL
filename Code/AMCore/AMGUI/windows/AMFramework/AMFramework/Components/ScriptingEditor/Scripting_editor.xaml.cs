@@ -2,33 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using AMFramework.Controller;
-using Microsoft.VisualBasic;
 using ScintillaNET;
 using AMFramework_Lib.AMSystem;
 using AMFramework_Lib.Controller;
-using AMFramework_Lib.Interfaces;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+using System.Windows.Controls;
 
-namespace AMFramework.Components.Scripting
+namespace AMFramework.Components.ScriptingEditor
 {
     /// <summary>
     /// Interaction logic for Scripting_editor.xaml
     /// Use Scripting_ViewModel as datacontext or call the get_text_editor() method from the viewmodel.
     /// </summary>
-    public partial class Scripting_editor : System.Windows.Controls.UserControl
+    public partial class Scripting_editor : UserControl
     {
         private LUA_FileParser AMParser = new();
         public Scripting_editor()
@@ -315,26 +301,29 @@ namespace AMFramework.Components.Scripting
             if (sender == null) return;
 
             //Folding_Styles(sender);
-            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) 
+            if (e.Modifiers == System.Windows.Forms.Keys.Control && 
+                e.KeyCode == System.Windows.Forms.Keys.Space) 
             {
                 var pos = ((Scintilla)sender).CurrentPosition;
                 var word = ((Scintilla)sender).GetWordFromPosition(pos);
                 Show_autocomplete(word, (Scintilla)sender);
                 e.SuppressKeyPress = true; e.Handled = true; 
             }
-            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.S)
+            else if (e.Modifiers == System.Windows.Forms.Keys.Control && 
+                e.KeyCode == System.Windows.Forms.Keys.S)
             {
                 e.SuppressKeyPress = true;
                 e.Handled = true;
-                ((Components.Scripting.Scripting_ViewModel)DataContext).Save();
+                ((Components.ScriptingEditor.Scripting_ViewModel)DataContext).Save();
             }
-            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.O)
+            else if (e.Modifiers == System.Windows.Forms.Keys.Control && 
+                     e.KeyCode == System.Windows.Forms.Keys.O)
             {
                 e.SuppressKeyPress = true;
                 e.Handled = true;
                 Scripting.FoldAll(FoldAction.Toggle);
             }
-            else if (e.KeyCode == Keys.Back) 
+            else if (e.KeyCode == System.Windows.Forms.Keys.Back) 
             {
                 string CurrentLineT = ((Scintilla)sender).Lines[((Scintilla)sender).CurrentLine].Text;
 
@@ -367,15 +356,15 @@ namespace AMFramework.Components.Scripting
                     Anchor_StringBuild.Clear();
                 }
             }
-            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) 
+            else if (e.Modifiers == System.Windows.Forms.Keys.Control && e.KeyCode == System.Windows.Forms.Keys.Space) 
             {
                 var pos = ((Scintilla)sender).CurrentPosition;
                 var word = ((Scintilla)sender).GetWordFromPosition(pos);
                 Show_autocomplete(word, (Scintilla)sender);
                 e.Handled = true;
             }
-            else if (e.KeyCode == Keys.Space) { return; }
-            else if (e.KeyCode == Keys.Enter)
+            else if (e.KeyCode == System.Windows.Forms.Keys.Space) { return; }
+            else if (e.KeyCode == System.Windows.Forms.Keys.Enter)
             {
                 Update_Highlight(sender);
                 return;

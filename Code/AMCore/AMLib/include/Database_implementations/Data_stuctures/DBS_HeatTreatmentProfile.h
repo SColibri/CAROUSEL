@@ -6,8 +6,11 @@ class DBS_HeatTreatmentProfile : public IAM_DBS
 {
 public:
 	//General
+	// [DBS_Parameter]
 	int IDHeatTreatment{ -1 };
+	// [DBS_Parameter]
 	double Time{ 0.0 };
+	// [DBS_Parameter]
 	double Temperature{ 0.0 };
 
 	DBS_HeatTreatmentProfile(IAM_Database* database, int id) :

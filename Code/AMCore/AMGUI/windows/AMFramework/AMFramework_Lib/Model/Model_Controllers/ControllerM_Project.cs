@@ -1,6 +1,7 @@
 ﻿using AMFramework_Lib.Core;
 using AMFramework_Lib.Interfaces;
 using AMFramework_Lib.Model.Controllers;
+using AMFramework_Lib.Model.ModelCoreExecutors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,16 @@ namespace AMFramework_Lib.Model.Model_Controllers
         public void Load_cases() 
         {
             MCObject.ModelObject.Cases = ControllerM_Case.Get_CasesByIDProject(_comm, MCObject.ModelObject.ID);
+        }
+
+        /// <summary>
+        /// Clear all dependent data
+        /// </summary>
+        /// <param name="comm"></param>
+        /// <param name="IDProject"></param>
+        public static void Clear_SimulationData(IAMCore_Comm comm, int IDProject ) 
+        {
+            var outy = comm.run_lua_command("project_remove_dependentData", IDProject.ToString());
         }
         
         #endregion

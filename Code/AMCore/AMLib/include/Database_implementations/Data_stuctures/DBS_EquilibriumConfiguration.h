@@ -7,12 +7,19 @@
 class DBS_EquilibriumConfiguration : public IAM_DBS
 {
 public:
+	// [DBS_Parameter]
 	int IDCase{ -1 };
+	// [DBS_Parameter]
 	double Temperature{ 700 };
+	// [DBS_Parameter]
 	double StartTemperature{ 700 };
+	// [DBS_Parameter]
 	double EndTemperature{ 25 };
+	// [DBS_Parameter]
 	std::string TemperatureType{ "C" };
+	// [DBS_Parameter]
 	double StepSize{ 1 };
+	// [DBS_Parameter]
 	double Pressure{ 101325 };
 
 	DBS_EquilibriumConfiguration(IAM_Database* database, int id) :

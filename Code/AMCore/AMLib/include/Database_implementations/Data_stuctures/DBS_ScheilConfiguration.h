@@ -7,11 +7,17 @@
 class DBS_ScheilConfiguration : public IAM_DBS
 {
 public:
+	// [DBS_Parameter]
 	int IDCase{ -1 };
+	// [DBS_Parameter]
 	double StartTemperature{ 700 };
+	// [DBS_Parameter]
 	double EndTemperature{ 25 };
+	// [DBS_Parameter]
 	double StepSize{ 1 };
+	// [DBS_Parameter]
 	int DependentPhase{ -1 };
+	// [DBS_Parameter]
 	double minimumLiquidFraction{ 0.01 };
 
 	DBS_ScheilConfiguration(IAM_Database* database, int id) :

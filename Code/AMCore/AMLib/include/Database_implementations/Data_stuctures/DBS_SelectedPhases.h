@@ -4,7 +4,9 @@
 class DBS_SelectedPhases : public IAM_DBS 
 {
 public:
+	// [DBS_Parameter]
 	int IDCase{ -1 };
+	// [DBS_Parameter]
 	int IDPhase{ -1 };
 
 	DBS_SelectedPhases(IAM_Database* database, int id) :

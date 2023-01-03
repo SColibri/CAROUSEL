@@ -30,7 +30,7 @@ namespace AMFramework.Views.Projects.Other
 
             PhaseListPage = new Phase.PhaseList_View(comm);
             HeatTreatmentPage = new HeatTreatments.HeatTreatment_View(new Controller_HeatTreatmentView(comm, this.CaseTemplate.MCObject.ModelObject));
-            ScriptSectionPrecipitation = new Components.Scripting.Scripting_editor() { DataContext = new Components.Scripting.Scripting_ViewModel()};
+            ScriptSectionPrecipitation = new Components.ScriptingEditor.Scripting_editor() { DataContext = new Components.ScriptingEditor.Scripting_ViewModel()};
             ScriptPrecipitationText = "require\"AMFramework.lua\"\n\r";
 
             CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.StartTemperature = StartTemperature;
@@ -200,7 +200,7 @@ namespace AMFramework.Views.Projects.Other
             {
                 _scriptPrecipitationText = value;
 
-                ((Components.Scripting.Scripting_editor)ScriptSectionPrecipitation).Scripting.Text = value;
+                ((Components.ScriptingEditor.Scripting_editor)ScriptSectionPrecipitation).Scripting.Text = value;
                 OnPropertyChanged(nameof(ScriptPrecipitationText));
             }
         }
@@ -368,7 +368,7 @@ namespace AMFramework.Views.Projects.Other
             ScriptPrecipitationText = precipitatePhasesSection;
 
             Window nWind = new();
-            Components.Scripting.Scripting_editor sEdit = new() { DataContext= new Components.Scripting.Scripting_ViewModel() };
+            Components.ScriptingEditor.Scripting_editor sEdit = new() { DataContext= new Components.ScriptingEditor.Scripting_ViewModel() };
             sEdit.Scripting.Text = pcc.Create_Object();
             nWind.Content = sEdit;
             nWind.Show();

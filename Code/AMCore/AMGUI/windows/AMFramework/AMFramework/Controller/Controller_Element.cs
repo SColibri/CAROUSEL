@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using AMFramework_Lib.Interfaces;
+﻿using System.Collections.Generic;
 using AMFramework_Lib.Model;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Controller;

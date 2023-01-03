@@ -19,7 +19,7 @@ using AMFramework.Views.Case;
 using AMFramework.Views.Precipitation_Kinetics;
 using AMFramework.Components.Windows;
 using AMControls.Custom.ProjectTreeView;
-using AMFramework.Components.Scripting;
+using AMFramework.Components.ScriptingEditor;
 using System.IO;
 using System.Linq;
 
@@ -102,7 +102,7 @@ namespace AMFramework.Controller
 
         public void Show_Project_EditView(Model_Projects modelObject)
         {
-            _projectController.Load_project(modelObject.ID);
+            // _projectController.Load_project(modelObject.ID);
             DataContext_Tabs.Create_Tab(new Views.Projects.ProjectView_Data(_projectController), new Project_ViewModel(), "Project");
         }
 

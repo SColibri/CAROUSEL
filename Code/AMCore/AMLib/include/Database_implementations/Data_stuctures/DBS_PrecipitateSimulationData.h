@@ -13,11 +13,17 @@ private:
 	std::string _loadString{ "" };
 
 public:
+	// [DBS_Parameter]
 	int IDPrecipitationPhase{ -1 };
+	// [DBS_Parameter]
 	int IDHeatTreatment{ -1 };
+	// [DBS_Parameter]
 	double Time{ 0 };
+	// [DBS_Parameter]
 	double PhaseFraction{ 0 };
+	// [DBS_Parameter]
 	double NumberDensity{ 0 };
+	// [DBS_Parameter]
 	double MeanRadius{ 0 };
 
 	DBS_PrecipitateSimulationData(IAM_Database* database, int id) :

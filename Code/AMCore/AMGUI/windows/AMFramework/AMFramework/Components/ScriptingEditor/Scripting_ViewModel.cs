@@ -15,7 +15,7 @@ using Microsoft.Maps.MapControl.WPF;
 using AMFramework_Lib.Controller;
 using System.Windows;
 
-namespace AMFramework.Components.Scripting
+namespace AMFramework.Components.ScriptingEditor
 {
     /// <summary>
     /// Scripting viewmodel
@@ -189,6 +189,7 @@ namespace AMFramework.Components.Scripting
                 if (File.Exists(filename))
                 {
                     ScriptingEditor.Scripting.Text = File.ReadAllText(filename);
+                    Filename =  filename;
                 }
                 else
                 {
@@ -279,6 +280,7 @@ namespace AMFramework.Components.Scripting
 
             // Notify user working on command
             Controller_Global.MainControl?.Show_loading(true);
+            Controller_Global.MainControl?.Set_Core_Output("Running script");
 
             // create thread and execute in background
             System.Threading.Thread TH01 = new(Run_script_async);
@@ -298,7 +300,7 @@ namespace AMFramework.Components.Scripting
         /// </summary>
         private void Run_script_async()
         {
-            Controller_Global.ApiHandle.run_lua_command("run_lua_script " , Filename);
+            Controller_Global.MainControl?.Set_Core_Output(Controller_Global.ApiHandle.run_lua_command("run_lua_script " , Filename));
             Controller_Global.MainControl?.Show_loading(false);
         }
         #endregion

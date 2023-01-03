@@ -5,8 +5,11 @@
 class DBS_ActivePhases_ElementComposition : public IAM_DBS
 {
 public:
+	// [DBS_Parameter]
 	int IDProject{ -1 };
+	// [DBS_Parameter]
 	int IDElement{ -1 };
+	// [DBS_Parameter]
 	double Value{ 0 };
 
 	DBS_ActivePhases_ElementComposition(IAM_Database* database, int id) :

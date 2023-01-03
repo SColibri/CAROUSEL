@@ -5,11 +5,17 @@ class DBS_PrecipitationPhase : public IAM_DBS
 {
 public:
 	//General
+	// [DBS_Parameter]
 	int IDCase{ -1 }; // ID case
+	// [DBS_Parameter]
 	int IDPhase{ -1 }; // ID phase
+	// [DBS_Parameter]
 	int NumberSizeClasses = 25; // number of size classes  or precipitation classes
+	// [DBS_Parameter]
 	std::string Name{ "" }; // precipitation name (usually phaseName_p0)
+	// [DBS_Parameter]
 	std::string NucleationSites{ "none" };
+	// [DBS_Parameter]
 	int IDPrecipitationDomain{ -1 }; // precipitation domain
 
 	//calculation parameters

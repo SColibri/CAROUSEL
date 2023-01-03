@@ -1,4 +1,4 @@
-﻿using AMFramework.Components.Scripting;
+﻿using AMFramework.Components.ScriptingEditor;
 using AMFramework.Views.Case;
 using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;

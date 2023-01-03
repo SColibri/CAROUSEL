@@ -4,8 +4,11 @@
 class DBS_SelectedElements : public IAM_DBS
 {
 public:
+	// [DBS_Parameter]
 	int IDProject{ -1 };
+	// [DBS_Parameter]
 	int IDElement{ -1 };
+	// [DBS_Parameter]
 	int isReferenceElement{ 0 }; // 0 - false || 1 - True
 
 	DBS_SelectedElements(IAM_Database* database, int id) :

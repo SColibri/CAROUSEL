@@ -18,7 +18,7 @@ function HeatTreatment:new (o,ID,IDCase,Name,MaxTemperatureStep,IDPrecipitationD
    o.TemperatureProfile = TemperatureProfile or {}
    o.SimulationData = SimulationData or {}
    o.Segments = Segments or {}
-   o.PrecipitationDomain = PrecipitationDomain or PrecipitationDomain:new{}
+   o.PrecipitationDomain = PrecipitationDomain or {}
    
    if o.ID > -1 or string.len(o.Name) > 1 then
     o:load()

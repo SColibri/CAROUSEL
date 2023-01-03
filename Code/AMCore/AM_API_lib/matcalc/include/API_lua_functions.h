@@ -395,11 +395,13 @@ private:
 		AM_Project ProjectData(_dbFramework->get_database(), _configuration, idProject);
 		ProjectData.refresh_data();
 
+		// DBS_ActivePhases::remove_project_data();
+
 		// run calulations
 		std::string outCommand_1 = runVectorCommands(API_Scripting::Script_run_stepScheilEquilibrium(_configuration,
 			700,
 			25,
-			25,
+			0.01,
 			ProjectData.get_selected_elements_ByName(),
 			ProjectData.get_activePhases_ElementComposition(),
 			listPhases), mcc_comms);

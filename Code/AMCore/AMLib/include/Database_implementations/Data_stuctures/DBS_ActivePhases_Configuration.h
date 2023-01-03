@@ -5,10 +5,14 @@
 class DBS_ActivePhases_Configuration : public IAM_DBS
 {
 public:
+	// [DBS_Parameter] project ID
 	int IDProject{ -1 };
+	// [DBS_Parameter] Start temperature
 	int StartTemp{ 700 };
+	// [DBS_Parameter] End Temperature
 	int EndTemp{ 20 };
-	int StepSize{ 25 };
+	// [DBS_Parameter] Step size
+	double StepSize{ 0.1 };
 
 	DBS_ActivePhases_Configuration(IAM_Database* database, int id) :
 		IAM_DBS(database)
@@ -64,7 +68,7 @@ public:
 		IDProject = std::stoi(rawData[1]);
 		StartTemp = std::stoi(rawData[2]);
 		EndTemp = std::stoi(rawData[3]);
-		StepSize = std::stoi(rawData[4]);
+		StepSize = std::stod(rawData[4]);
 		return 0;
 	}
 #pragma endregion

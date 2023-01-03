@@ -268,7 +268,7 @@ function Case:set_composition(In) --@Description Set composition for all element
         self:clear_elementComposition()
 
         if #self.elementComposition == 0 then 
-            error("Case:set_composition -> project has no elements or has not been saved!")
+            error("Case:set_composition -> element input is of different size to element selection in the project level.")
         end
     end
 

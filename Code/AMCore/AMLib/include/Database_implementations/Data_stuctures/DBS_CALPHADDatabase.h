@@ -7,9 +7,13 @@
 class DBS_CALPHADDatabase : public IAM_DBS
 {
 public:
+	// [DBS_Parameter]
 	int IDProject{ -1 };
+	// [DBS_Parameter]
 	std::string Thermodynamic{ "" };
+	// [DBS_Parameter]
 	std::string Physical{ "" };
+	// [DBS_Parameter]
 	std::string Mobility{ "" };
 
 	DBS_CALPHADDatabase(IAM_Database* database, int id) :
