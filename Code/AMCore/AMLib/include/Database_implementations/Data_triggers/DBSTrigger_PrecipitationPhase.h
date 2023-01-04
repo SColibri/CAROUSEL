@@ -22,7 +22,51 @@ namespace TRIGGERS
 		/// Static class
 		/// <summary>
 		DBSTriggers_PrecipitationPhase() {};
+
+		/// <summary>
+		/// Removes a case row entry
+		/// </summary>
+		/// <returns></returns>
+		static int remove_ht_object(IAM_Database* database, int caseID)
+		{
+			std::string query = AMLIB::TN_PrecipitationPhase().columnNames[1] +
+				" = " + std::to_string(projectID);
+
+			return database->remove_row(&AMLIB::TN_PrecipitationPhase(), query);
+		}
+
 	public:
-		// Add your static data-triggers here.
+		/// <summary>
+		/// Removes a case row entry
+		/// </summary>
+		/// <returns></returns>
+		static int remove_case_data(IAM_Database* database, int caseID)
+		{
+			// Load all cases and delete related data
+			std::string queryCase = AMLIB::TN_PrecipitationPhase().columnNames[1] +
+				" = " + std::to_string(projectID);
+
+			AM_Database_Datatable dataList(database, &AMLIB::TN_PrecipitationPhase());
+			dataList.load_data(queryCase);
+
+			for (int n1 = 0; n1 < dataList.row_count(); n1++)
+			{
+				remove_precipitationPhase_data(database, std::stoi(dataList(0, n1)));
+			}
+
+			return remove_ht_object(database, caseID);
+		}
+
+		/// <summary>
+		/// Removes the precipitation phase defined by its id
+		/// </summary>
+		/// <param name="database"></param>
+		/// <param name="caseID"></param>
+		/// <returns></returns>
+		static int remove_precipitationPhase_data(IAM_Database* database, int pPhaseID)
+		{
+			TRIGGERS::DBSTriggers_PrecipitateSimulationData::remove_precipitatePhase_data(database, pPhaseID);
+		}
+
 	};
 }

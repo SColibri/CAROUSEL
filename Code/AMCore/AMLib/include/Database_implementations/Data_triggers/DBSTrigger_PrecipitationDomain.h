@@ -23,6 +23,16 @@ namespace TRIGGERS
 		/// <summary>
 		DBSTriggers_PrecipitationDomain() {};
 	public:
-		// Add your static data-triggers here.
+		/// <summary>
+		/// Data trigger that removes data based on the case ID
+		/// </summary>
+		/// <returns></returns>
+		static int remove_case_data(IAM_Database* database, int caseID)
+		{
+			std::string query = AMLIB::TN_PrecipitationDomain().columnNames[1] +
+				" = " + std::to_string(caseID);
+
+			return database->remove_row(&AMLIB::TN_PrecipitationDomain(), query);
+		}
 	};
 }

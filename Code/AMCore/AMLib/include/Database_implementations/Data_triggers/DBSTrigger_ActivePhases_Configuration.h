@@ -23,6 +23,18 @@ namespace TRIGGERS
 		/// <summary>
 		DBSTriggers_ActivePhases_Configuration() {};
 	public:
-		// Add your static data-triggers here.
+		/// <summary>
+		/// Data trigger that removes data based on the project ID
+		/// </summary>
+		/// <param name="database">Database pointer</param>
+		/// <param name="projectID">Project ID</param>
+		/// <returns></returns>
+		static int remove_project_data(IAM_Database* database, int projectID)
+		{
+			std::string query = AMLIB::TN_ActivePhases_Configuration().columnNames[1] +
+				" = " + std::to_string(projectID);
+
+			return database->remove_row(&AMLIB::TN_ActivePhases_Configuration(), query);
+		}
 	};
 }

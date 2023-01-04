@@ -23,6 +23,18 @@ namespace TRIGGERS
 		/// <summary>
 		DBSTriggers_PrecipitateSimulationData() {};
 	public:
-		// Add your static data-triggers here.
+		/// <summary>
+		/// Data trigger that removes data based on the heat treatment ID
+		/// </summary>
+		/// <param name="database"></param>
+		/// <param name="htID"></param>
+		/// <returns></returns>
+		static int remove_precipitatePhase_data(IAM_Database* database, int pPhaseID)
+		{
+			std::string query = AMLIB::TN_PrecipitateSimulationData().columnNames[1] +
+				" = " + std::to_string(pPhaseID);
+
+			return database->remove_row(&AMLIB::TN_PrecipitateSimulationData(), query);
+		}
 	};
 }

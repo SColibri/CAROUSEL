@@ -23,6 +23,16 @@ namespace TRIGGERS
 		/// <summary>
 		DBSTriggers_ScheilPhaseFraction() {};
 	public:
-		// Add your static data-triggers here.
+		/// <summary>
+		/// Removes a case row entry
+		/// </summary>
+		/// <returns></returns>
+		static int remove_case_data(IAM_Database* database, int caseID)
+		{
+			std::string query = AMLIB::TN_ScheilPhaseFraction().columnNames[1] +
+				" = " + std::to_string(projectID);
+
+			return database->remove_row(&AMLIB::TN_ScheilPhaseFraction(), query);
+		}
 	};
 }

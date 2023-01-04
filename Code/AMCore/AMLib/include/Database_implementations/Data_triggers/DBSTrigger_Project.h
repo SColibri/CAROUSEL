@@ -1,7 +1,5 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
-#include "DBSTrigger_ActivePhases_ElementComposition.h"
-#include "DBSTrigger_SelectedElements.h"
 
 namespace TRIGGERS
 {
@@ -14,29 +12,29 @@ namespace TRIGGERS
 		DBSTrigger_Project() {}
 
 	public:
-
+		/// <summary>
+		/// Removes all project data
+		/// </summary>
+		/// <param name="database">database pointer</param>
+		/// <param name="projectID">project ID</param>
+		/// <returns>returns 0 when completed</returns>
 		static int remove_project_data(IAM_Database* database, int projectID)
 		{
 			// Remove active phases
+			TRIGGERS::DBSTriggers_ActivePhases::remove_project_data(database, projectID);
 			TRIGGERS::DBSTrigger_ActivePhases_ElementComposition::remove_project_data(database, projectID);
-			TRIGGERS::DBSTrigger_Project::remove_project_data(database, projectID);
+			TRIGGERS::DBSTriggers_ActivePhases_Configuration::remove_project_data(database, projectID);
 
-			// get selected Elements from project
-			TRIGGERS::DBSTrigger_SelectedElements::remove_project_data(database, projectID);
+			// Remove selected Elements from project
+			TRIGGERS::DBSTriggers_SelectedElements::remove_project_data(database, projectID);
+			
+			// Remove CALPHAD information
+			TRIGGERS::DBSTriggers_CALPHADDatabase::remove_project_data(database, projectID);
 
-			// Load all cases and delete related data
-			std::string queryCase = AMLIB::TN_Case().columnNames[1] +
-				" = " + std::to_string(projectID);
-			AM_Database_Datatable caseList(database, &AMLIB::TN_Case());
-			caseList.load_data(queryCase);
-
-			for (int n1 = 0; n1 < caseList.row_count(); n1++)
-			{
-				DBS_Case::remove_case_data(database, std::stoi(caseList(0, n1)));
-			}
-
-			// Remove selected elements
-			return 1;
+			// Remove all cases
+			TRIGGERS::DBSTrigger_Case::remove_project_data(database, projectID);
+			
+			return 0;
 		}
 
 	};

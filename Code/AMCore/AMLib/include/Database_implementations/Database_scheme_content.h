@@ -238,7 +238,7 @@ namespace AMLIB
 	{
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
-		out.add_new("IDHeatTreatment", "REAL");
+		out.add_new("IDHeatTreatment", "INTEGER");
 		out.add_new("Time", "REAL"); // 
 		out.add_new("Temperature", "REAL"); // 
 		out.tableName = "HeatTreatmentProfile";

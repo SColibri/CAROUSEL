@@ -20,7 +20,13 @@
 	- or use sql triggers
 ]]
 
+#[[
+	This method creates a single trigger template.
 
+	Input:
+	- workingDir : Directiry where the file should be created
+	- className : Class name to which it should relate
+]]
 function(create_triggers workingDir className)
 	# Required input
 	cmake_parse_arguments(REQUIRED "${workingDir}" "${className}" "${ARGN}")
@@ -68,14 +74,28 @@ function(create_triggers workingDir className)
 	endif()
 endfunction()
 
+#[[
+	Creates a all header file that includes all triggers.
+
+	Input:
+	- workingDir : Directory where trigger files are found
+]]
 function(create_triggers_allfile workingDir)
 
 	file(GLOB TRIGGER_FILES ${workingDir}/*.h)
 	set(TRIGGER_FILENAME "${workingDir}/DBSTrigger_ALL.h")
-	write_file(${TRIGGER_FILES} "#pragma once")
+	write_file(${TRIGGER_FILENAME} "#pragma once")
 	
 	foreach(fname IN LISTS TRIGGER_FILES)
-		write_file(${TRIGGER_FILES} "#include \"${fname}\"" APPEND)	
+		#Ignore All.h
+		string(FIND "${fname}" "DBSTrigger_ALL" ALLINDEX)
+
+		if(${ALLINDEX} GREATER -1)
+			continue()
+		endif()
+
+		get_filename_component(fobject ${fname} NAME)
+		write_file(${TRIGGER_FILENAME} "#include \"${fobject}\"" APPEND)	
 	endforeach()
 
 endfunction()

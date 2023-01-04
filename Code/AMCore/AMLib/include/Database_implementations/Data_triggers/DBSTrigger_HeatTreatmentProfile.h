@@ -23,6 +23,19 @@ namespace TRIGGERS
 		/// <summary>
 		DBSTriggers_HeatTreatmentProfile() {};
 	public:
-		// Add your static data-triggers here.
+
+		/// <summary>
+		/// Data trigger that removes data based on the heat treatment ID
+		/// </summary>
+		/// <param name="database"></param>
+		/// <param name="htID"></param>
+		/// <returns></returns>
+		static int remove_ht_data(IAM_Database* database, int htID)
+		{
+			std::string query = AMLIB::TN_HeatTreatmentProfile().columnNames[1] +
+				" = " + std::to_string(htID);
+
+			return database->remove_row(&AMLIB::TN_HeatTreatmentProfile(), query);
+		}
 	};
 }

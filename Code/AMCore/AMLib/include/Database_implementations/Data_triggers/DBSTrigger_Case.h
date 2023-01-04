@@ -1,5 +1,13 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
+#include "DBSTrigger_EquilibriumConfiguration.h"
+#include "DBSTrigger_EquilibriumPhaseFraction.h"
+#include "DBSTrigger_ScheilConfiguration.h"
+#include "DBSTrigger_ScheilPhaseFraction.h"
+#include "DBSTrigger_ElementComposition.h"
+#include "DBSTrigger_HeatTreatment.h"
+#include "DBSTrigger_PrecipitationPhase.h"
+#include "DBSTrigger_SelectedPhases.h"
 
 namespace TRIGGERS
 {
@@ -35,6 +43,7 @@ namespace TRIGGERS
 			// Load all cases and delete related data
 			std::string queryCase = AMLIB::TN_Case().columnNames[1] +
 				" = " + std::to_string(projectID);
+			
 			AM_Database_Datatable caseList(database, &AMLIB::TN_Case());
 			caseList.load_data(queryCase);
 
@@ -43,7 +52,9 @@ namespace TRIGGERS
 				remove_case_data(database, std::stoi(caseList(0, n1)));
 			}
 
+			// Remove case objects
 			remove_case_object(database, projectID);
+			return 0;
 		}
 
 		/// <summary>
@@ -54,7 +65,20 @@ namespace TRIGGERS
 		/// <returns></returns>
 		static int remove_case_data(IAM_Database* database, int caseID)
 		{
-		
+			// Case configurations
+			DBSTrigger_EquilibriumConfiguration::remove_case_data(database, caseID);
+			DBSTriggers_EquilibriumPhaseFraction::remove_case_data(database, caseID);
+			DBSTriggers_ElementComposition::remove_case_data(database, caseID);
+			DBSTriggers_SelectedPhases::remove_case_data(database, caseID);
+			DBSTriggers_PrecipitationDomain::remove_case_data(database, caseID);
+
+			// Solidification simulations
+			DBSTriggers_ScheilConfiguration::remove_case_data(database, caseID);
+			DBSTriggers_ScheilPhaseFraction::remove_case_data(database, caseID);
+
+			// Heat treatment and precipitation simulations
+			DBSTriggers_HeatTreatment::remove_case_data(database, caseID);
+			DBSTriggers_PrecipitationPhase::remove_case_data(database, caseID);
 		}
 
 	};
