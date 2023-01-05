@@ -14,10 +14,10 @@ namespace matcalc
 
 		CALCULATION_scheilActivePhases(IAM_Database* db, IPC_winapi* mccComm, AM_Config* configuration, DBS_ActivePhases_Configuration* scheilConfig, AM_Project* project, AM_pixel_parameters* pixel_parameters)
 		{
-			// get dependent phase
-			DBS_Phase dependentPhase(db, scheilConfig->DependentPhase);
-			dependentPhase.load();
 
+			// get dependent phase TODO: Active phases does not have a dependent phase option, for now we use LIQUID hard coded, which is not correct
+			DBS_Phase dependentPhase(db, -1);
+			dependentPhase.load_by_name("LIQUID");
 
 			std::vector<std::string> selectedPhase = pixel_parameters->get_selected_phases_ByName();
 			std::vector<std::string> selectedElements = project->get_selected_elements_ByName();
@@ -52,13 +52,13 @@ namespace matcalc
 			_commandList.push_back(new COMMAND_set_reference_element(mccComm, configuration, "Al")); // set reference element
 			_commandList.push_back(new COMMAND_set_composition(mccComm, configuration, selectedElements, pixel_parameters->get_composition_double()));
 			_commandList.push_back(new COMMAND_set_start_values(mccComm, configuration));
-			_commandList.push_back(new COMMAND_calculate_equilibrium(mccComm, configuration, scheilConfig->StartTemperature)); // add user defined temperature!
-			_commandList.push_back(new COMMAND_scheil_configuration(mccComm, configuration, scheilConfig, dependentPhase.Name));
+			_commandList.push_back(new COMMAND_calculate_equilibrium(mccComm, configuration, scheilConfig->StartTemp)); // add user defined temperature!
+			// _commandList.push_back(new COMMAND_scheil_configuration(mccComm, configuration, scheilConfig, dependentPhase.Name)); TODO: Convert active phases config to scheil config
 			_commandList.push_back(new COMMAND_run_step_equilibrium(mccComm, configuration));
 			_commandList.push_back(new COMMAND_export_variables(mccComm, configuration, _filename, variableType, variableNames, ""));
 
 		}
-		~CALCULATION_scheil()
+		~CALCULATION_scheilActivePhases()
 		{
 			// Remove text file if created
 			if (std::filesystem::exists(_filename)) std::remove(_filename.c_str());
@@ -130,5 +130,5 @@ namespace matcalc
 
 	private:
 		std::string _filename{ "" };
-	}
+	};
 }

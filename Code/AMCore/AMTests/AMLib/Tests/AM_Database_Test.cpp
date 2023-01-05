@@ -13,7 +13,7 @@ TEST_CASE("Database", "[classic]")
 		AM_Config config01;
 		Database_Sqlite3 db(&config01);
 		int Response = db.connect();
-
+		
 		REQUIRE(Response == 0);
 	}
 

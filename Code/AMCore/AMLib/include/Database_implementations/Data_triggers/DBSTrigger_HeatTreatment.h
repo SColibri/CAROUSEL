@@ -1,5 +1,7 @@
 #pragma once
 #include "../../../interfaces/IAM_DBS.h"
+#include "DBSTrigger_HeatTreatmentProfile.h"
+#include "DBSTrigger_HeatTreatmentSegment.h"
 
 
 
@@ -32,7 +34,7 @@ namespace TRIGGERS
 		static int remove_ht_object(IAM_Database* database, int caseID)
 		{	
 			std::string query = AMLIB::TN_HeatTreatment().columnNames[1] +
-				" = " + std::to_string(projectID);
+				" = " + std::to_string(caseID);
 
 			return database->remove_row(&AMLIB::TN_HeatTreatment(), query);
 		}
@@ -46,7 +48,7 @@ namespace TRIGGERS
 		{
 			// Load all cases and delete related data
 			std::string queryCase = AMLIB::TN_HeatTreatment().columnNames[1] +
-				" = " + std::to_string(projectID);
+				" = " + std::to_string(caseID);
 
 			AM_Database_Datatable dataList(database, &AMLIB::TN_HeatTreatment());
 			dataList.load_data(queryCase);
@@ -70,8 +72,8 @@ namespace TRIGGERS
 		/// <returns></returns>
 		static int remove_ht_data(IAM_Database* database, int htID) 
 		{
-			TRIGGERS::DBSTriggers_HeatTreatmentProfile::remove_ht_data(database, htID);
-			TRIGGERS::DBSTriggers_HeatTreatmentSegment::remove_ht_data(database, htID);
+			DBSTriggers_HeatTreatmentProfile::remove_ht_data(database, htID);
+			DBSTriggers_HeatTreatmentSegment::remove_ht_data(database, htID);
 			return 0;
 		}
 	};

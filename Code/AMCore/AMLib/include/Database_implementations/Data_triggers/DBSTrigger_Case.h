@@ -8,6 +8,7 @@
 #include "DBSTrigger_HeatTreatment.h"
 #include "DBSTrigger_PrecipitationPhase.h"
 #include "DBSTrigger_SelectedPhases.h"
+#include "DBSTrigger_PrecipitationDomain.h"
 
 namespace TRIGGERS
 {
@@ -79,6 +80,7 @@ namespace TRIGGERS
 			// Heat treatment and precipitation simulations
 			DBSTriggers_HeatTreatment::remove_case_data(database, caseID);
 			DBSTriggers_PrecipitationPhase::remove_case_data(database, caseID);
+			return 0;
 		}
 
 	};

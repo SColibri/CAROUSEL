@@ -43,7 +43,7 @@ namespace main_setup
 	static void init()
 	{
 		configuration.set_working_directory("");
-		Database_Factory::set_schema("projectDB");
+		Database_Factory::set_schema("luaTesting");
 
 		//Create a new database file
 		std::string filename = configuration.get_directory_path(AM_FileManagement::FILEPATH::DATABASE) + "\\" +

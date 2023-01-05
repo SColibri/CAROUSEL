@@ -30,7 +30,7 @@ namespace TRIGGERS
 		static int remove_case_data(IAM_Database* database, int caseID)
 		{
 			std::string query = AMLIB::TN_ElementComposition().columnNames[1] +
-				" = " + std::to_string(projectID);
+				" = " + std::to_string(caseID);
 
 			return database->remove_row(&AMLIB::TN_ElementComposition(), query);
 		}
