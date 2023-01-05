@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AMFramework.Components.Scripting;
+using AMFramework.Components.ScriptingEditor;
 using System.Windows.Input;
 using System.IO;
 
@@ -80,7 +80,7 @@ namespace AMFramework.Controller
                     scriptViewModel.Load(ofd.FileName);
 
                     // create tab and add scripting view
-                    tabController.Create_Tab(scriptViewModel.ScriptingEditor, scriptViewModel, scriptViewModel.ScriptingEditor.Name);
+                    tabController.Create_Tab(scriptViewModel.ScriptingEditor, scriptViewModel, Path.GetFileName(scriptViewModel.Filename));
                 }
                 else
                 {

@@ -10,7 +10,7 @@ set(BUILD_TESTING true)
 # TODO: FUTURE, to avoid adding models into the database scheme manually, cmake can manage this for
 # us, this can be done by running this script, more details in the file, for now, we leave it deactivated
 # because I should now focus on other details. ()
-if(1 MATCHES 2)
+if(1 MATCHES 1)
 	include("AMLib/include/Database_implementations/CMake_Database_scheme_builder.cmake")
 endif()
 

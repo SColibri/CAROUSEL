@@ -5,7 +5,9 @@
 class DBS_ActivePhases : public IAM_DBS
 {
 public:
+	// [DBS_Parameter]
 	long int IDProject{ -1 };
+	// [DBS_Parameter]
 	long int IDPhase{ -1 };
 
 	DBS_ActivePhases(IAM_Database* database, long int id) :

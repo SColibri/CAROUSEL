@@ -12,11 +12,17 @@ private:
 	std::string _loadString{ "" };
 
 public:
+	// [DBS_Parameter]
 	int stepIndex{ -1 };
+	// [DBS_Parameter]
 	long int IDHeatTreatment{ -1 };
+	// [DBS_Parameter]
 	long int IDPrecipitationDomain{ -1 };
+	// [DBS_Parameter]
 	double EndTemperature{ 25 };
+	// [DBS_Parameter]
 	long double TemperatureGradient{ 0 };
+	// [DBS_Parameter]
 	double Duration{ 0.0 };
 
 	DBS_HeatTreatmentSegment(IAM_Database* database, int id) :

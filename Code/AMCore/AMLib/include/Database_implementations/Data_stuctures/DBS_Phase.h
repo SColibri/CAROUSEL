@@ -10,6 +10,7 @@ private:
 	std::string _loadString{ "" };
 
 public:
+	// [DBS_Parameter]
 	std::string Name{ "" };
 
 	DBS_Phase(IAM_Database* database, int id) :

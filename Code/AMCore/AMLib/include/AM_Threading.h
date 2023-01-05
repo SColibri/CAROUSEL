@@ -5,7 +5,7 @@ namespace AMThreading
 {
 	/// <summary>
 	/// Returns a vector with the amount of threads to be used and their workload distribution, 
-	/// there migght be uneven distributions
+	/// there might be uneven distributions
 	/// </summary>
 	/// <param name="MaxThreads"></param>
 	/// <param name="NoIterations"></param>

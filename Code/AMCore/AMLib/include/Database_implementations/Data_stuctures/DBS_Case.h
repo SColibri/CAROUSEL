@@ -13,15 +13,28 @@
 class DBS_Case : public IAM_DBS
 {
 public:
+	// [DBS_Parameter] project ID
 	int IDProject{ -1 };
+	// [DBS_Parameter] Case group ID
 	int IDGroup{ 0 };
+	// [DBS_Parameter] Case name
 	std::string Name{ "" };
+	// [DBS_Parameter] Case script (used for generating this case)
 	std::string Script{ "" };
+	// [DBS_Parameter] Case created date
 	std::string Date{ "" };
+	// [DBS_Parameter] Case position X
 	double PosX{ 0 };
+	// [DBS_Parameter] Case position y
 	double PosY{ 0 };
+	// [DBS_Parameter] Case position z
 	double PosZ{ 0 };
 
+	/// <summary>
+	/// Constructor
+	/// </summary>
+	/// <param name="database">database object pointer</param>
+	/// <param name="id">Case id</param>
 	DBS_Case(IAM_Database* database, int id) :
 		IAM_DBS(database)
 	{
@@ -29,6 +42,10 @@ public:
 		_tableStructure = AMLIB::TN_Case();
 	}
 
+	/// <summary>
+	/// Copy constructor
+	/// </summary>
+	/// <param name="toCopy"></param>
 	DBS_Case(const DBS_Case& toCopy):
 		IAM_DBS(toCopy._db)
 	{
@@ -130,7 +147,6 @@ public:
 	}
 
 #pragma region implementation
-
 	virtual std::vector<std::string> get_input_vector() override
 	{
 		std::vector<std::string> input{ std::to_string(_id),

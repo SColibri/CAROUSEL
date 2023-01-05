@@ -6,10 +6,15 @@ class DBS_PrecipitationDomain : public IAM_DBS
 {
 public:
 	//General
+	// [DBS_Parameter]
 	int IDCase{ -1 }; // ID case
+	// [DBS_Parameter]
 	std::string Name{ "" }; // domain name
+	// [DBS_Parameter]
 	int IDPhase {-1}; // Thermodynamic matrix phase
+	// [DBS_Parameter]
 	double InitialGrainDiameter{ 100.0e-6 }; // Initial grain diameter
+	// [DBS_Parameter]
 	double EquilibriumDiDe{ 100000000000 }; // Equilibrium dislocation density
 
 	// Vacancies

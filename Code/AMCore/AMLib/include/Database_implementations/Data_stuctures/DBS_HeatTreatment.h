@@ -12,10 +12,15 @@ private:
 	std::string _loadString{ "" };
 
 public:
+	// [DBS_Parameter]
 	long int IDCase{ -1 };
+	// [DBS_Parameter]
 	std::string Name{ "" };
+	// [DBS_Parameter]
 	int MaxTemperatureStep{ 10 };
+	// [DBS_Parameter]
 	long int IDPrecipitationDomain{ -1 };
+	// [DBS_Parameter]
 	double StartTemperature{ -1 };
 
 	DBS_HeatTreatment(IAM_Database* database, int id) :

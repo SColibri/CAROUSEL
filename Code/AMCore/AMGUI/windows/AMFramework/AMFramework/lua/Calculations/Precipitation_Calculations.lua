@@ -39,7 +39,7 @@ function Precipitation_Calculations:create_objects()
     for i = 1,intervals do
         
         local composition = {}
-        local case = Case:new{Name = element.Name..}
+        local case = Case:new{Name = element.Name..""}
     end
 
 end

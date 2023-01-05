@@ -1,12 +1,12 @@
-# Tests
+## Tests
 
 Using Catch2 framework for our testing needs.
 
-## How to use
+### How to use
 
 Don't forget to point the path environment to src/catch2 inside the lib folder (in case you don't have it already).
 
-### Adding tests
+#### Adding tests
 
 Add the test subdirectory to the CMakeLists.txt file (current directory) and inside the subdirectory you can implement a similar CMakeLists.txt file:
 

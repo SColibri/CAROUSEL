@@ -6,15 +6,12 @@ using AMFramework_Lib.Controller;
 using AMFramework.Views.ActivePhases;
 using AMFramework.Views.Elements;
 using AMFramework.Views.Projects.Other;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
-using AMControls.Interfaces;
+using AMFramework.Components.Button;
+using System;
 
 namespace AMFramework.Controller
 {
@@ -47,8 +44,6 @@ namespace AMFramework.Controller
                 // Check for null value
                 if (_selectedProject == null) return;
                 
-                // Add cases to case controller
-                CaseController.Cases = _selectedProject.MCObject.ModelObject.Cases;
                 // Get list of all used phases
                 Get_UsedPhases();
                 
@@ -247,8 +242,18 @@ namespace AMFramework.Controller
             SelectedProject.Load_ActivePhases();
             SelectedProject.Load_cases();
 
-            Application.Current.Dispatcher.BeginInvoke(() => { _controller_xDataTreeView.Refresh_DTV(this.SelectedProject); });
-            
+            // Add cases to case controller
+            CaseController.Cases = SelectedProject.MCObject.ModelObject.Cases;
+
+            Application.Current.Dispatcher.BeginInvoke(() => 
+            { 
+                _controller_xDataTreeView.Refresh_DTV(this.SelectedProject);
+
+                Controller_ActivePhasesConfiguration refController = new(ref _comm, SelectedProject.MCObject.ModelObject.ActivePhasesConfiguration);
+                ActivePhasesView_Configuration winRef = new() { DataContext = refController };
+                ActivePhasesConfigurationPage = winRef;
+            });
+
             // set loading data to false for visual
             LoadingData = false;
         }
@@ -420,17 +425,75 @@ namespace AMFramework.Controller
 
         private void ShowElementList_Action()
         {
-            // TODO: notify the user, he will be confused if nothing happens
             if (SelectedProject == null) return;
 
             ElementView_List eList = new() { DataContext = this };
             AM_popupWindow popWin = new();
             popWin.ContentPage.Children.Add(eList);
 
+            // Save button
+            AM_button SaveButton = new();
+            SaveButton.IconName = FontAwesome.WPF.FontAwesomeIcon.Save.ToString();
+            SaveButton.Command = AcceptElementList;
+
+            popWin.add_button(SaveButton);
+
             Controller_Global.MainControl?.Show_Popup(popWin);
         }
 
         private bool ShowElementList_Check()
+        {
+            return true;
+        }
+        #endregion
+        #region Accept_elementSelection
+
+        private ICommand _acceptElementList;
+        public ICommand AcceptElementList
+        {
+            get
+            {
+                if (_acceptElementList == null)
+                {
+                    _acceptElementList = new RelayCommand(
+                        param => this.AcceptElementList_Action(),
+                        param => this.AcceptElementList_Check()
+                    );
+                }
+                return _acceptElementList;
+            }
+        }
+
+        private void AcceptElementList_Action()
+        {
+            if (SelectedProject == null) return;
+
+            // remove ALL dependent data from project level
+            ControllerM_Project.Clear_SimulationData(_comm, SelectedProject.MCObject.ModelObject.ID);
+            SelectedProject.MCObject.ModelObject.SelectedElements.Clear();
+
+            // TODO: remove project previous simulation data
+
+            // create new selected items list
+            var selectedElements = ElementList.FindAll(e => e.ModelObject.IsSelected == true);
+            List<ModelController<Model_SelectedElements>> tempList = new();
+            foreach (var element in selectedElements)
+            {
+                ModelController<Model_SelectedElements> selModel = new(ref _comm);
+                selModel.ModelObject.IDProject = SelectedProject.MCObject.ModelObject.ID;
+                selModel.ModelObject.IDElement = element.ModelObject.ID;
+                selModel.ModelObject.ElementName = element.ModelObject.Name;
+                selModel.ModelObject.ISReferenceElementBool = element.ModelObject.IsReferenceElement;
+                selModel.ModelObject.ISReferenceElement = Convert.ToInt16(element.ModelObject.IsReferenceElement);
+                selModel.SaveAction?.DoAction();
+
+                tempList.Add(selModel);
+            }
+
+            SelectedProject.MCObject.ModelObject.SelectedElements = tempList;
+        }
+
+        private bool AcceptElementList_Check()
         {
             if (MessageBox.Show("This action will remove all simulation data, do you want to proceed?", "Project reset", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 return true;
@@ -504,8 +567,11 @@ namespace AMFramework.Controller
 
         private void FindActivePhases_Action()
         {
-            // TODO: notify the user, he will be confused if nothing happens
             if (SelectedProject == null) return;
+
+            // Save all compositions
+            SelectedProject.MCObject.ModelObject.ActivePhasesElementComposition.ForEach(e => e.SaveAction?.DoAction());
+            SelectedProject.MCObject.ModelObject.ActivePhasesConfiguration?.SaveAction?.DoAction();
 
             var refAP = SelectedProject.MCObject.ModelObject.ActivePhasesConfiguration;
             Controller_ActivePhasesConfiguration conAP = new(ref _comm, refAP);

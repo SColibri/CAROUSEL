@@ -106,7 +106,7 @@ namespace AMLIB
 		out.add_new("IDProject", "INTEGER"); // Project ID reference
 		out.add_new("StartTemp", "INTEGER"); // step-equilibrium start temperature
 		out.add_new("EndTemp", "INTEGER"); // set-equilibrium end temperature
-		out.add_new("StepSize", "INTEGER"); // step size for step-equilibrium
+		out.add_new("StepSize", "REAL"); // step size for step-equilibrium
 		out.tableName = "ActivePhases_Configuration";
 
 		return out;
@@ -238,7 +238,7 @@ namespace AMLIB
 	{
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY"); // Autoincrement ID
-		out.add_new("IDHeatTreatment", "REAL");
+		out.add_new("IDHeatTreatment", "INTEGER");
 		out.add_new("Time", "REAL"); // 
 		out.add_new("Temperature", "REAL"); // 
 		out.tableName = "HeatTreatmentProfile";

@@ -18,8 +18,8 @@ namespace AMFramework
     [Obsolete("Use the Controller_MainWindow instead")]
     public class MainWindow_ViewModel:ViewModel_Interface
     {
-        private List<Components.Scripting.Scripting_ViewModel> _openScripts = new();
-        public List<Components.Scripting.Scripting_ViewModel> OpenScripts { get { return _openScripts; } }
+        private List<Components.ScriptingEditor.Scripting_ViewModel> _openScripts = new();
+        public List<Components.ScriptingEditor.Scripting_ViewModel> OpenScripts { get { return _openScripts; } }
 
         private Views.Projects.Project_ViewModel _projects = new();
         public Views.Projects.Project_ViewModel Projects { get { return _projects; } }
@@ -55,12 +55,12 @@ namespace AMFramework
                 result.Header = get_TabHeader(headerTitle, ImageUri);
             }
 
-            _openScripts.Add(new Components.Scripting.Scripting_ViewModel() { Filename=filename });
+            _openScripts.Add(new Components.ScriptingEditor.Scripting_ViewModel() { Filename=filename });
             
             result.Content = _openScripts[^1].ScriptingEditor;
             result.Tag = _openScripts[^1];
 
-            if (System.IO.File.Exists(filename)) ((Components.Scripting.Scripting_editor)result.Content).loadFile(filename);
+            if (System.IO.File.Exists(filename)) ((Components.ScriptingEditor.Scripting_editor)result.Content).loadFile(filename);
 
             return result;
         }

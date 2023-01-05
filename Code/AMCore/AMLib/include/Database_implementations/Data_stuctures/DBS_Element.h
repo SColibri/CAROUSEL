@@ -12,6 +12,7 @@ private:
 	std::string _loadString{ "" };
 
 public:
+	// [DBS_Parameter]
 	std::string Name{ "" };
 
 	DBS_Element(IAM_Database* database, int id) :

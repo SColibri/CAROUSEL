@@ -37,9 +37,14 @@
 # Directory that contains the models
 set(DATA_STRUCTURE_DIRECTORY ${PROJECT_SOURCE_DIR}/AMLib/include/Database_implementations/Data_stuctures)
 
+# Directory that contains the data triggers
+set(DATA_TRIGGER_DIRECTORY ${PROJECT_SOURCE_DIR}/AMLib/include/Database_implementations/Data_triggers)
+
 # Scheme filename
 set(SCHEME ${PROJECT_SOURCE_DIR}/AMLib/include/Database_implementations/Database_scheme_content_V01.h)
 
+# Other modules
+include(${PROJECT_SOURCE_DIR}/AMLib/include/Database_implementations/CMake_DataTriggers_Builder.cmake)
 
 #--------------------------------------------------
 #                     SCRIPT
@@ -52,6 +57,20 @@ file(GLOB MODEL_FILES ${DATA_STRUCTURE_DIRECTORY}/*.h)
 write_file(${SCHEME} "#pragma once")
 write_file(${SCHEME} "#include \"../AM_Database_TableStruct.h\"" APPEND)
 write_file(${SCHEME} "#include <vector>" APPEND)
+
+write_file(${SCHEME} "\n" APPEND)
+write_file(${SCHEME} "/* ------------------------------------------------------" APPEND)
+write_file(${SCHEME} "DO NOT EDIT, this file is generated using a cmake script. \n" APPEND)
+write_file(${SCHEME} "Database scheme that holds all table data structures, this" APPEND)
+write_file(${SCHEME} "file is used for mapping the data structure into the sql" APPEND)
+write_file(${SCHEME} "database.\n" APPEND)
+write_file(${SCHEME} "HOW TO USE:" APPEND)
+write_file(${SCHEME} "- Add \'[DBS_Parameter]\' as a tag for each property that" APPEND)
+write_file(${SCHEME} "	should be added to the database." APPEND)
+write_file(${SCHEME} "- For more information refer to the cmake scheme builder " APPEND)
+write_file(${SCHEME} "*/// ----------------------------------------------------\n" APPEND)
+
+
 write_file(${SCHEME} "namespace AMLIB" APPEND)
 write_file(${SCHEME} "{ \n" APPEND)
 
@@ -94,7 +113,7 @@ foreach(fname IN LISTS MODEL_FILES)
 		foreach(CSeg IN LISTS TEMP_DATA)
 			
 			# Create a new list based on the '\n' char (line by line)
-			string(REPLACE "\n" ";" TEMP_LIST ${CSeg})
+			string(REPLACE "\n" ";" TEMP_LIST "${CSeg}")
 			
 			# Check if this segment has a marked parameter, we use the index inside the for loop
 			# for looking into the next line where we expect to find the declaration of the
@@ -107,8 +126,8 @@ foreach(fname IN LISTS MODEL_FILES)
 				math(EXPR LIndex "${LIndex} + 1")
 
 				# Check if marked as parameter
-				string(FIND ${LineS} "DBS_Parameter" VARFOUND)
-				message(${LineS})
+				string(FIND "${LineS}" "DBS_Parameter" VARFOUND)
+				message("${LineS}")
 
 				# Determine variable type and create entry
 				if(${VARFOUND} GREATER -1)
@@ -146,7 +165,7 @@ foreach(fname IN LISTS MODEL_FILES)
 						string(APPEND FOUND_TYPE "\"TEXT\"")
 					endif()
 					if(${TYPE_INT} GREATER -1)
-						math(EXPR VAR_STARTINDEX "${TYPE_STRING} + 4")
+						math(EXPR VAR_STARTINDEX "${TYPE_INT} + 4")
 						string(APPEND FOUND_TYPE "\"INTEGER\"")
 					endif()
 					if(${TYPE_DOUBLE} GREATER -1)
@@ -175,6 +194,10 @@ foreach(fname IN LISTS MODEL_FILES)
 		write_file(${SCHEME} "	return out;" APPEND)
 		write_file(${SCHEME} "} \n" APPEND)
 
+		# Create data triggers if they do not exist
+		message("\nTRIGGERS:")
+		CREATE_TRIGGERS(${DATA_TRIGGER_DIRECTORY} ${CLASS_NAME})
+
 	endif()	
 endforeach()
 
@@ -190,3 +213,6 @@ write_file(${SCHEME} "} \n" APPEND)
 
 # Close namespace
 write_file(${SCHEME} "}" APPEND)
+
+# Create a header only file for all triggers
+CREATE_TRIGGERS_ALLFILE("${DATA_TRIGGER_DIRECTORY}")

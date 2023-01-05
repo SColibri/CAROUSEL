@@ -7,9 +7,13 @@
 class DBS_EquilibriumPhaseFraction : public IAM_DBS
 {
 public:
+	// [DBS_Parameter]
 	int IDCase{ -1 };
+	// [DBS_Parameter]
 	int IDPhase{ -1 };
+	// [DBS_Parameter]
 	double Temperature{ 0.0 };
+	// [DBS_Parameter]
 	double Value{ -1.0 };
 
 	DBS_EquilibriumPhaseFraction(IAM_Database* database, int id) :

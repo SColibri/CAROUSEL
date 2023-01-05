@@ -7956,22 +7956,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Components\Scripting\Templates\for.scriptTemplate">
+    <None Update="Components\ScriptingEditor\Templates\for.scriptTemplate">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Components\Scripting\Templates\NewScript.AMFramework">
+    <None Update="Components\ScriptingEditor\Templates\NewScript.AMFramework">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Components\Scripting\Templates\repeat_until.scriptTemplate">
+    <None Update="Components\ScriptingEditor\Templates\repeat_until.scriptTemplate">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Components\Scripting\Templates\while.scriptTemplate">
+    <None Update="Components\ScriptingEditor\Templates\while.scriptTemplate">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Components\Scripting\Templates\_Framework.autocomplete">
+    <None Update="Components\ScriptingEditor\Templates\_Framework.autocomplete">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Components\Scripting\Templates\_LUA.autocomplete">
+    <None Update="Components\ScriptingEditor\Templates\_LUA.autocomplete">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="lua\AMFramework.lua">
