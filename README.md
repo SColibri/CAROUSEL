@@ -28,7 +28,7 @@ The framework is currently only available for the Windows desktop, however, it i
 We offer more than just plotting visualization tools. You can interact with the data, create custom queries, and access many other useful features.
 
 <div style="width:70%; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-    <img src="design/img/vis_mapChart.png" alt="AL" title="Example AL alloy" style="border-radius: 1%;"/> 
+    <img src="Design/img/vis_mapChart.png" alt="AL" title="Example AL alloy" style="border-radius: 1%;"/> 
 </div>
 
 
