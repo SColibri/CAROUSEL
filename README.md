@@ -5,58 +5,45 @@ The AMCF framework enables mapping of material properties by considering various
 AMCORE is a command-line interface that facilitates automation of tasks. It provides all backend functionalities without any graphical representation options.
 
 ## GUI
-The graphical user interface offers all visualization tools needed for an efficient workflow. The GUI is built using c# and WPF .Net framework on visual studio.
+The graphical user interface offers a full set of visualization tools to enhance the material design process. It is built using C# and WPF .Net framework on Visual Studio.
 
-# Installation
-The framework is currently a windows desktop-only application.
+# Windows
+The framework is currently only available for the Windows desktop, however, it is planned to expand its availability to other platforms in the future.
 
 ## Requirements
-This framework does not include or endorse any CALPHAD software, it also does not provide a valid license for any CALPHAD-based software. For now, only the MatCalc API has been implemented and in the future, there will be further options available.
 
-### Microsoft:
-[Visual C++ Redist](https://www.microsoft.com/de-de/download/details.aspx?id=48145)
-[.Net](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+- CALPHAD software: The AMCF framework does not include or promote any CALPHAD based software, and does not provide a license. Currently, only the [MatCalc](https://www.matcalc.at/) API is supported, but more options will be added in the future.
 
-### Matcalc
-Matcalc offers a free trial, and for further information please refer to their [wepage](https://www.matcalc.at/) 
+## Install
 
-## Download the binaries
-
-- [Matcalc API]() - (required)
-- [Terminal application]()
-- [WPF desktop application]()
-
-## Setting up the terminal application
-After downloading the binaries for ```MatCalc API``` and ```Terminal application``` run AMCore.exe to start the application.
-
-You can also run AMCore from the terminal and the following flags are available:
-|Flag|Option|usage|
-|--|--|--|
-|-h|Shows the help menu| -h |
-|-t|Loads terminal (by default)| -t |
-|-s|Open socket at port no.| -s "port number" |
-|-l|Run LUA script| -l "filename"|
-
-For more information please refer to the [wiki](https://github.com/SColibri/AMFramework/wiki)
-
-## Setting up the WPF desktop application
-After downloading the binaries for ```MatCalc API``` and ```WPF desktop application``` run AMFramework.exe to start the application.
-
-### Initial setup
-- In menu > configuration, add the path to the MatCalc API and the databases you plan to use.
-- Make sure that the working directory is the one you want to use.
-
-For more information on how to use, please refer to our [wiki page](https://github.com/SColibri/AMFramework/wiki)
+- Download the [MatCalc interpreter API]()
+- Download the [WPF desktop application]()
+- Extract all files and place them in your desired directory.
+- The application is now ready for use and you just need to follow the [configuration guide](https://github.com/SColibri/AMFramework/wiki) to get started.
 
 # Features
 
-- Visualization
+## Visualization
 
-- Data management
+We offer more than just plotting visualization tools. You can interact with the data, create custom queries, and access many other useful features.
 
-- Scripting
+<div style="width:70%; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+    <img src="design/img/vis_mapChart.png" alt="AL" title="Example AL alloy" style="border-radius: 1%;"/> 
+</div>
 
-- Parallelism
+
+## Data management
+
+Data is saved in a SQL database, providing fast access and storage of all calculations. This enables users to quickly retrieve information and enjoy several other benefits.
+
+## Scripting
+
+The framework provides scripting capabilities using LUA as the base language, which offers access to various mapping options and the ability to create complex simulation parameters that would be difficult to automate otherwise. This makes automation more efficient and straightforward.
+
+## Parallelism
+
+Our thread manager utilizes all available resources to ensure you receive results as quickly as possible.
+
 
 # Documentation
 More on how to build or contribute, please refer to the documentation [here](https://codedocs.xyz/SColibri/AMFramework)
