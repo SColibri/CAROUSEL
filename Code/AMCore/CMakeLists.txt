@@ -12,6 +12,7 @@ set(BUILD_TESTING true)
 # because I should now focus on other details. ()
 if(1 MATCHES 1)
 	include("AMLib/include/Database_implementations/CMake_Database_scheme_builder.cmake")
+	include("AMTests/AMLib/CMake_SQLite_Tests_Generator.cmake")
 endif()
 
 if(BUILD_TESTING)

@@ -5,28 +5,28 @@
 set(CMAKE_CXX_STANDARD 17)
 enable_testing()
 
-set(TEST_SET 
-	AM_Config_Test
-    AM_Database_Test
-    AM_Database_TableStruct_Test
-    DataController_Test
-    AM_project_Test
-    AM_pixel_parameters_Test
-    AM_lua_Test
-    AM_Threading_Test
-    AM_lua_script_Test
-    AM_Modeling_Test
-    AM_DatabaseTriggers_Test
-)
+# Directory that contains the tests
+set(AMLib_TEST_DIRECTORY ${PROJECT_SOURCE_DIR}/AMTests/AMLib/Tests)
 
-foreach(target ${TEST_SET})
-    add_executable(${target} "Tests/${target}.cpp" "Tests/AM_lua_script_Test.cpp")
-	set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-    target_compile_features(${target} PUBLIC cxx_std_17)
-    target_compile_options(${target} PRIVATE ${DEFAULT_COMPILER_OPTIONS_AND_WARNINGS})
-    target_link_libraries(${target} PRIVATE AMLib Catch2::Catch2WithMain sqlite3)
+# Get list of all files
+file(GLOB AMLib_TESTS ${AMLib_TEST_DIRECTORY}/*.cpp)
 
-    add_test(NAME ${target} COMMAND ${target})
+# Create all tests
+foreach(target IN LISTS AMLib_TESTS)
+    
+    # Get test name
+    get_filename_component(fname ${target} NAME)
+    string(REGEX REPLACE ".cpp" "" fname ${fname})
+
+    # create tests
+    message("Looking into filename: ${fname}")
+    add_executable(${fname} "${target}")
+	set_target_properties(${fname} PROPERTIES CXX_EXTENSIONS OFF)
+    target_compile_features(${fname} PUBLIC cxx_std_17)
+    target_compile_options(${fname} PRIVATE ${DEFAULT_COMPILER_OPTIONS_AND_WARNINGS})
+    target_link_libraries(${fname} PRIVATE AMLib Catch2::Catch2WithMain sqlite3)
+
+    add_test(NAME ${fname} COMMAND ${fname})
 endforeach()
 
 

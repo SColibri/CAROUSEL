@@ -1,10 +1,8 @@
 # AMFramework
-AMCF is a framework used for simulating and mapping material properties when subjected to heat treatments and/or change in element composition. Additionally, the framework offers various tools for analyzing all generated data nodes.
-
-Calculations are made using external CALPHAD software (e.g. Matcalc), and it is important to keep in mind that this framework does not provide any license.
+The AMCF framework enables mapping of material properties by considering various parameters like composition, heat treatments, and others. It integrates with external CALPHAD software and databases using a unified scripting language, so that a single script can be utilized by any CALPHAD software. The framework offers rich visualization tools for convenient material design analysis.
 
 ## AMCore
-AMCORE is a terminal-based user interface that allows automating commands. You get all backend features with no visualization options.
+AMCORE is a command-line interface that facilitates automation of tasks. It provides all backend functionalities without any graphical representation options.
 
 ## GUI
 The graphical user interface offers all visualization tools needed for an efficient workflow. The GUI is built using c# and WPF .Net framework on visual studio.
