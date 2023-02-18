@@ -24,7 +24,7 @@ namespace matcalc
 
 			// string format
 			std::string variableNames{ "t$c " }; // by default we leave temperature
-			std::string variableType{ "%12.2f" };
+			std::string variableType{ "%12.10f" };
 			for (auto& phase : selectedPhase)
 			{
 				if (string_manipulators::trim_whiteSpace(phase).compare("LIQUID") != 0)
@@ -36,7 +36,7 @@ namespace matcalc
 					variableNames += "F$" + string_manipulators::trim_whiteSpace(phase) + " ";
 				}
 
-				variableType += " %12.2g";
+				variableType += " %.6f";
 			}
 			variableType += "";
 

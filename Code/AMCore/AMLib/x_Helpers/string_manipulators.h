@@ -1,9 +1,11 @@
 #pragma once
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <fstream>
+#include <filesystem>
 
 namespace string_manipulators
 {
@@ -185,7 +187,7 @@ namespace string_manipulators
 
 #pragma region File
     /// <summary>
-    /// Read file to end andd return a vector of strings by line
+    /// Read file to end and return a vector of strings by line
     /// </summary>
     /// <param name="fileName">path to file</param>
     /// <returns></returns>

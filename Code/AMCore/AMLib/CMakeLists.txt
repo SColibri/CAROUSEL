@@ -15,10 +15,11 @@ file(GLOB AMLIB_HELP "x_Helpers/*.h")
 file(GLOB AMLIB_MODELING "include/Modeling/*.h")
 file(GLOB AMLIB_STL "include/Modeling/STL/*.h")
 file(GLOB AMLIB_DS "include/Database_implementations/Data_stuctures/*.h")
+file(GLOB AMLIB_EXCEPTIONS "exceptions/*.h")
 
 
 add_subdirectory ("external")
-add_library(AMLib STATIC ${AMLIB_SRC} ${AMLIB_H} ${AMLIB_I} ${AMLIB_DBSRC} ${AMLIB_DBH} ${AMLIB_HELP} ${AMLIB_MODELING} ${AMLIB_STL} ${AMLIB_DS})
+add_library(AMLib STATIC ${AMLIB_SRC} ${AMLIB_H} ${AMLIB_I} ${AMLIB_DBSRC} ${AMLIB_DBH} ${AMLIB_HELP} ${AMLIB_MODELING} ${AMLIB_STL} ${AMLIB_DS} ${AMLIB_EXCEPTIONS})
 target_link_libraries(AMLib ${CMAKE_CURRENT_SOURCE_DIR}/external/lua542/lua54.lib)
 target_link_libraries(AMLib sqlite3) 
 target_link_libraries(AMLib ftxui::component)

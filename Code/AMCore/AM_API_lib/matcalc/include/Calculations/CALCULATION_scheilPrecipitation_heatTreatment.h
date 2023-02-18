@@ -189,7 +189,7 @@ namespace matcalc
 			phasesTable.load_data("IDCase = " + std::to_string(_pixel_parameters->get_caseID()));
 
 			if (phasesTable.row_count() == 0) throw new exception("No phases selected for id case: ");
-			std::string stringFormat = "%12.2g %12.2f ";
+			std::string stringFormat = "%12.2g %.6f ";
 			std::string variableName = "StepValue t$c ";
 
 			for (int n1 = 0; n1 < phasesTable.row_count(); n1++)
@@ -197,7 +197,7 @@ namespace matcalc
 				_phaseList.push_back(DBS_PrecipitationPhase(_db, -1));
 				_phaseList.back().load(phasesTable.get_row_data(n1));
 
-				stringFormat += "%12.2g %12.2g %12.2g ";
+				stringFormat += "%.6f %.6f %.6f ";
 				variableName += "NUM_PREC$" + _phaseList.back().Name + " ";
 				variableName += "F_PREC$" + _phaseList.back().Name + " ";
 				variableName += "R_MEAN$" + _phaseList.back().Name + " ";
