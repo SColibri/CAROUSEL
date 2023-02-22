@@ -104,6 +104,9 @@ extern "C"
 	__declspec(dllexport) void RemoveOld() 
 	{
 		RegisterMessageCallback(nullptr);
+		RegisterErrorCallback(nullptr);
+		RegisterProgressUpdateCallback(nullptr);
+		RegisterScriptFinishedCallback(nullptr);
 	}
 
 	
