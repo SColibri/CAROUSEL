@@ -1,3 +1,4 @@
+#pragma once
 #include "../include/MenuOption_Main.h"
 
 void MenuOption_Main::init() {

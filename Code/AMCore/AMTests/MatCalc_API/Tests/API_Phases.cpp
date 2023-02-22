@@ -6,7 +6,6 @@
 #include "../../../AMLib/interfaces/IAM_API.h"
 #include "../../../AMLib/interfaces/IAM_lua_functions.h"	
 #include "../../../AMLib/include/Database_implementations/Database_Factory.h"
-#include "../../../AMLib/x_Helpers/IPC_pipe.h"
 #include "../../../AMLib/x_Helpers/IPC_winapi.h"
 
 namespace main_setup

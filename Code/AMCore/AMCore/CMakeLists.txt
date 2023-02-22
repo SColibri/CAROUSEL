@@ -5,8 +5,8 @@ cmake_minimum_required (VERSION 3.8)
 
 # Add source to this project's executable.
 file(GLOB AMCORE_SRC "src/*.cpp")
-file(GLOB AMCORE_H "include/*.hpp")
-file(GLOB AMLIBRARY "../AMLib/include/*.hpp")
+file(GLOB_RECURSE AMCORE_H "include/*.hpp")
+file(GLOB_RECURSE AMLIBRARY "../AMLib/include/*.hpp")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/include/Options.txt
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
 

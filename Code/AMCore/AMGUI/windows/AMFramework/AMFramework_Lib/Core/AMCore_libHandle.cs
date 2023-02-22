@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Windows;
+using Microsoft.VisualBasic;
 
 namespace AMFramework_Lib.Core
 {
@@ -43,11 +44,10 @@ namespace AMFramework_Lib.Core
         private void Load_library(string pathToLibrary) 
         {
             _library = LoadLibrary(pathToLibrary);
-
             // Uff user32 on windows 7 causes module load error 126 win32
             //if (Marshal.GetLastWin32Error() != 0) 
             //{
-                
+
             //    Win32Exception ex = new Win32Exception();
             //    string report = "Linking to the library was not possible: \n" + 
             //                    "Module Name: " + ex.TargetSite?.Module.Name + "\n" +
@@ -66,7 +66,7 @@ namespace AMFramework_Lib.Core
 
                 get_API_controll_default apiObject = (get_API_controll_default)Marshal.GetDelegateForFunctionPointer(AddressPointer_api_object, typeof(get_API_controll_default));
                 _api = apiObject();
-
+                
                 // User32.dll causes loading error
                 //if (Marshal.GetLastWin32Error() == 0)
                 //{
@@ -129,6 +129,23 @@ namespace AMFramework_Lib.Core
             return outCommand.ToString();
         }
 
+        public delegate void StringCallback(string eventData);
+
+        private static void MyCallback(StringBuilder eventData)
+        {
+            bool stopHere = true ; 
+
+            // Handle the event data here.
+        }
+        private void LinkToCallbacks() 
+        {
+            if (!_api_available) return;
+            IntPtr messageCallback = GetProcAddress(_library, "RegisterMessageCallback");
+            
+            var trt = Marshal.GetDelegateForFunctionPointer<RegisterMessageCallback>(messageCallback);
+            trt(MyCallback);
+            uint var = GetLastError();
+        }
 
         public void update_path(string apiPath)
         {
@@ -149,6 +166,7 @@ namespace AMFramework_Lib.Core
                 Load_api_controll();
                 Load_run_lua_command_address_space();
                 _api_available = true;
+                LinkToCallbacks();
             }
             catch (Exception e)
             {
@@ -182,6 +200,10 @@ namespace AMFramework_Lib.Core
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         private delegate IntPtr API_run_lua_command(IntPtr API_pointer, StringBuilder command, StringBuilder parameters);
+
+        private delegate void Callback(StringBuilder command);
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        private delegate void RegisterMessageCallback(Callback message);
         #endregion
         #endregion
     }

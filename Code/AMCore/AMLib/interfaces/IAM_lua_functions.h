@@ -9,6 +9,7 @@
 #include "../include/AM_Project.h"
 #include "../x_Helpers/string_manipulators.h"
 #include "../x_Helpers/IPC_winapi.h"
+#include "../include/lua/LuaDatabaseModule.h"
 
 extern "C" {
 #include "../external/lua542/include/lua.h"

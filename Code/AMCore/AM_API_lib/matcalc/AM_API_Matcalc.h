@@ -1,9 +1,14 @@
 #pragma once
 #include <filesystem>
+#include <functional>
+#include <string>
 
 #include "../../AMLib/interfaces/IAM_API.h"
 #include "../../AMLib/interfaces/IAM_lua_functions.h"
 #include "../../AMLib/include/AM_lua_interpreter.h"
+#include "../../AMLib/include/callbackFunctions/Callbacks.h"
+#include "../../AMLib/include/callbackFunctions/MessageCallBack.h"
+#include "../../AMLib/include/callbackFunctions/CallbackDefinitions.h"
 #include "include/API_lua_functions.h"
 /** \defgroup AM_API_lib
  *  @{
@@ -32,11 +37,11 @@ public:
 	virtual std::string helloApi() override;
 	virtual void dispose() override;
 #pragma endregion
+
 };
 
 extern "C" 
 {
-
 	static std::string _commandOut;
 
 	/// <summary>
@@ -55,7 +60,7 @@ extern "C"
 	__declspec(dllexport) AM_API_Matcalc* get_API_controll_default() {
 		AM_Config* configuration = new AM_Config;
 		configuration->load();
-
+		
 		AM_API_Matcalc* ApiControll = new AM_API_Matcalc(configuration);
 		return ApiControll;
 	}
@@ -91,6 +96,17 @@ extern "C"
 		const char* out = _commandOut.c_str();
 		return out;
 	}
+
+	
+	void thisThingy(char*) {}
+
+	__declspec(dllimport) void RegisterMessageCallback(AMFramework::Callback::MessageCallbackF callF);
+	__declspec(dllexport) void RemoveOld() 
+	{
+		RegisterMessageCallback(nullptr);
+	}
+
+	
 
 }
 
