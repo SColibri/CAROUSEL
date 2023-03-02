@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace AMFramework_Lib.Model
 {
@@ -36,7 +31,7 @@ namespace AMFramework_Lib.Model
         }
 
         [Obsolete("Use GetType", true)]
-        public Interfaces.Model_Interface? Get_model_byName(string modelName) 
+        public Interfaces.Model_Interface? Get_model_byName(string modelName)
         {
             Interfaces.Model_Interface? result = null;
 
@@ -120,7 +115,7 @@ namespace AMFramework_Lib.Model
         /// <returns></returns>
         public static Type? Get_Type(string ContainingString)
         {
-            var listTypes = Assembly.GetExecutingAssembly().GetTypes().Where(e => e.Name.Contains(ContainingString, StringComparison.CurrentCultureIgnoreCase) && 
+            var listTypes = Assembly.GetExecutingAssembly().GetTypes().Where(e => e.Name.Contains(ContainingString, StringComparison.CurrentCultureIgnoreCase) &&
                                                                                   e.Name.Contains("Model_", StringComparison.CurrentCultureIgnoreCase)).ToList();
             if (listTypes.Count == 0) return null;
 

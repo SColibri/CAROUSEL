@@ -10,6 +10,7 @@
     <Folder Include="Charts\Spyder\" />
     <Folder Include="Custom\TabControl\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Styles\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +18,7 @@
     <PackageReference Include="HelixToolkit.SharpDX.Assimp" Version="2.22.0" />
     <PackageReference Include="HelixToolkit.Wpf" Version="2.22.0" />
     <PackageReference Include="HelixToolkit.Wpf.SharpDX" Version="2.22.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
   </ItemGroup>
 
   <ItemGroup>

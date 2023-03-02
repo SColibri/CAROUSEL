@@ -1,20 +1,13 @@
-﻿using AMFramework_Lib.Core;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.Model.Model_Controllers;
-using System;
-using System.Collections.Generic;
+﻿using AMFramework_Lib.Interfaces;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMFramework_Lib.Model.Controllers
 {
-    public abstract class Controller_Abstract_Models<T>: IModelController where T : Model_Interface
+    public abstract class Controller_Abstract_Models<T> : IModelController where T : Model_Interface
     {
         protected Core.IAMCore_Comm _comm;
-        public Controller_Abstract_Models(Core.IAMCore_Comm comm) 
-        { 
+        public Controller_Abstract_Models(Core.IAMCore_Comm comm)
+        {
             _comm = comm;
             _mCObject = new(ref comm);
         }
@@ -41,7 +34,7 @@ namespace AMFramework_Lib.Model.Controllers
 
         #region Static methods
 
-        
+
         #endregion
 
         #region INotifyPropertyChanged

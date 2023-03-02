@@ -1,11 +1,5 @@
 ﻿using AMFramework_Lib.Core;
 using AMFramework_Lib.Model.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Security;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMFramework_Lib.Model.Model_Controllers
 {
@@ -44,7 +38,7 @@ namespace AMFramework_Lib.Model.Model_Controllers
         /// <param name="fromIDCase">Start ID case -> smaller or equal to toIDCase </param>
         /// <param name="toIDCase">End ID Case -> Bigger or equal to toIDCase </param>
         /// <returns></returns>
-        public static bool Run_EquilibriumSimulation(IAMCore_Comm comm, int IDProject, int fromIDCase, int toIDCase) 
+        public static bool Run_EquilibriumSimulation(IAMCore_Comm comm, int IDProject, int fromIDCase, int toIDCase)
         {
             // Create query and execute
             string Query = IDProject + "||" + fromIDCase + "-" + toIDCase;

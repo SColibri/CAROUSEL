@@ -10,12 +10,18 @@
 #include "../x_Helpers/string_manipulators.h"
 #include "../x_Helpers/IPC_winapi.h"
 #include "../include/lua/LuaDatabaseModule.h"
+#include "../include/callbackFunctions/CallbackDefinitions.h"
+#include "../include/callbackFunctions/MessageCallBack.h"
+#include "../include/callbackFunctions/Callbacks.h"
 
-extern "C" {
+
+
 #include "../external/lua542/include/lua.h"
 #include "../external/lua542/include/lua.hpp"
 #include "../external/lua542/include/lualib.h"
 #include "../external/lua542/include/luaconf.h"
+extern "C" {
+
 }
 
 /// <summary>
@@ -373,6 +379,8 @@ protected:
 		//-------- SYSTEM
 		add_new_function(state, "core_cancel_operation", "void", "core_cancel_operation", Bind_CancelCalculations, "CoreMethods||CancelOperation");
 		add_new_function(state, "core_buffer", "string", "core_buffer", Bind_GetBUFFER, "CoreMethods||GetBuffer");
+
+		
 	}
 
 protected:
@@ -1215,6 +1223,7 @@ protected:
 		}
 		
 		lua_pushstring(state, std::to_string(_openProject->get_project_ID()).c_str());
+
 		return 1;
 	}
 
@@ -2586,6 +2595,7 @@ protected:
 	template<typename DBS>
 	static int Bind_Templated_loadID(lua_State* state)
 	{
+		AMFramework::Callback::MessageCallBack::TriggerCallback("Loading by ID");
 		// check input
 		std::vector<std::string> parameters, csvF;
 		if (check_input_csv(state, parameters, csvF) == 1) return 1;

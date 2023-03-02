@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMFramework_Lib.Model.ModelCoreExecutors
+﻿namespace AMFramework_Lib.Model.ModelCoreExecutors
 {
     public class MCE_LoadByIDCase : Model.ModelCoreCommunicationExecutor
     {

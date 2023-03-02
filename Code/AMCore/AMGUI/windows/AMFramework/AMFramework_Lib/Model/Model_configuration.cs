@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.AMSystem.Attributes;
+﻿using AMFramework_Lib.AMSystem.Attributes;
 
 namespace AMFramework_Lib.Model
 {
@@ -20,11 +13,11 @@ namespace AMFramework_Lib.Model
             {
                 _API_path = value;
 
-                if (_is_loaded) 
+                if (_is_loaded)
                 {
                     Controller.Controller_Global.ApiHandle?.update_path(_API_path);
                 }
-                
+
                 OnPropertyChanged(nameof(API_path));
             }
         }
@@ -94,7 +87,7 @@ namespace AMFramework_Lib.Model
         public bool IsLoaded
         {
             get { return _is_loaded; }
-            set 
+            set
             {
                 _is_loaded = value;
                 OnPropertyChanged(nameof(IsLoaded));

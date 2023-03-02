@@ -1,10 +1,4 @@
-﻿using AMFramework_Lib.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace AMFramework_Lib.Model
 {
@@ -20,12 +14,12 @@ namespace AMFramework_Lib.Model
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameters<T>() 
+        public static IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameters<T>()
         {
-            IOrderedEnumerable<System.Reflection.PropertyInfo> properties = from property in typeof(T).GetProperties() 
-                             where Attribute.IsDefined(property, typeof(AMSystem.Attributes.OrderAttribute))
-                             orderby ((AMSystem.Attributes.OrderAttribute)property.GetCustomAttributes(typeof(AMSystem.Attributes.OrderAttribute), false).Single()).Order 
-                             select property;
+            IOrderedEnumerable<System.Reflection.PropertyInfo> properties = from property in typeof(T).GetProperties()
+                                                                            where Attribute.IsDefined(property, typeof(AMSystem.Attributes.OrderAttribute))
+                                                                            orderby ((AMSystem.Attributes.OrderAttribute)property.GetCustomAttributes(typeof(AMSystem.Attributes.OrderAttribute), false).Single()).Order
+                                                                            select property;
 
             return properties;
         }
@@ -41,7 +35,7 @@ namespace AMFramework_Lib.Model
         #endregion
 
         #region implementation_model_interface
-        public string Get_csv(IOrderedEnumerable<System.Reflection.PropertyInfo> ParamInput) 
+        public string Get_csv(IOrderedEnumerable<System.Reflection.PropertyInfo> ParamInput)
         {
             string csv_out = "";
             int Index = 0;
@@ -50,7 +44,7 @@ namespace AMFramework_Lib.Model
 
                 if (Index > 0) csv_out += ",";
                 csv_out += item.GetValue(this)?.ToString()?.Replace(" ", "#");
-                
+
                 Index++;
             }
 
@@ -64,7 +58,7 @@ namespace AMFramework_Lib.Model
         /// Returns csv data string oof the model with marked parameters
         /// </summary>
         /// <returns></returns>
-        public virtual string Get_csv() 
+        public virtual string Get_csv()
         {
             return Get_csv(Get_parameter_list());
         }
@@ -74,7 +68,7 @@ namespace AMFramework_Lib.Model
         /// </summary>
         /// <param name="DataRaw"></param>
         /// <returns></returns>
-        public virtual int Load_csv(List<string> DataRaw) 
+        public virtual int Load_csv(List<string> DataRaw)
         {
             var parameterList = Get_parameter_list();
 
@@ -97,8 +91,8 @@ namespace AMFramework_Lib.Model
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public virtual IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list() 
-        { 
+        public virtual IOrderedEnumerable<System.Reflection.PropertyInfo> Get_parameter_list()
+        {
             throw new NotImplementedException();
         }
 
@@ -120,11 +114,11 @@ namespace AMFramework_Lib.Model
         /// <param name="ParamInput"></param>
         /// <param name="rawData"></param>
         /// <exception cref="Exceptions.DatabaseDataConversion_Exception"></exception>
-        protected void Abstract_load(IOrderedEnumerable<System.Reflection.PropertyInfo> ParamInput, 
-                                     List<string> rawData) 
+        protected void Abstract_load(IOrderedEnumerable<System.Reflection.PropertyInfo> ParamInput,
+                                     List<string> rawData)
         {
 
-            if (rawData.Count >= ParamInput.Count()) 
+            if (rawData.Count >= ParamInput.Count())
             {
                 int Index = 0;
                 foreach (var item in ParamInput)
@@ -133,7 +127,7 @@ namespace AMFramework_Lib.Model
                     if (item.PropertyType.Equals(typeof(int)))
                     {
                         int tempValue = 0;
-                        if (!int.TryParse(rawData[Index],out tempValue)) 
+                        if (!int.TryParse(rawData[Index], out tempValue))
                         { throw new Exceptions.DatabaseDataConversion_Exception(item.Name + ", input from database: " + rawData[Index] + " is not convertible to int! "); }
 
                         item.SetValue(this, tempValue);
@@ -141,7 +135,7 @@ namespace AMFramework_Lib.Model
                     else if (item.PropertyType.Equals(typeof(double)))
                     {
                         double tempValue = 0;
-                        if (!double.TryParse(rawData[Index], out tempValue)) 
+                        if (!double.TryParse(rawData[Index], out tempValue))
                         { throw new Exceptions.DatabaseDataConversion_Exception(item.Name + ", input from database: " + rawData[Index] + " is not convertible to double! "); }
 
                         item.SetValue(this, tempValue);
@@ -149,12 +143,12 @@ namespace AMFramework_Lib.Model
                     else if (item.PropertyType.Equals(typeof(bool)))
                     {
                         bool tempValue = false;
-                        if (!bool.TryParse(rawData[Index],out tempValue)) 
+                        if (!bool.TryParse(rawData[Index], out tempValue))
                         { throw new Exceptions.DatabaseDataConversion_Exception(item.Name + ", input from database: " + rawData[Index] + " is not convertible to bool! "); }
 
                         item.SetValue(this, tempValue);
                     }
-                    else if (item.PropertyType.Equals(typeof(string))) 
+                    else if (item.PropertyType.Equals(typeof(string)))
                     {
                         item.SetValue(this, rawData[Index]);
                     }
@@ -214,10 +208,10 @@ namespace AMFramework_Lib.Model
         /// <summary>
         /// Returns true if content in the model has changed
         /// </summary>
-        public bool HasChanged 
-        { 
+        public bool HasChanged
+        {
             get { return _hasChanged; }
-            set 
+            set
             {
                 _hasChanged = value;
                 OnPropertyChanged(nameof(HasChanged));
@@ -226,7 +220,7 @@ namespace AMFramework_Lib.Model
         #endregion
 
         #region Commands
-        
+
         private static List<Interfaces.CoreCommand_Interface> _commandList = new();
         /// <summary>
         /// List of avavilable commands that this model handles. Uses implementations of the
@@ -237,7 +231,7 @@ namespace AMFramework_Lib.Model
         /// Add a new command for the current model.
         /// </summary>
         /// <param name="NewCommand"></param>
-        public static void Add_command(Interfaces.CoreCommand_Interface NewCommand) 
+        public static void Add_command(Interfaces.CoreCommand_Interface NewCommand)
         {
             var item = _commandList.Find(e => e.Command_instruction.Equals(NewCommand.Command_instruction) == true);
             if (item != null) return;
@@ -250,7 +244,7 @@ namespace AMFramework_Lib.Model
         /// <param name="ModelObject"></param>
         /// <param name="commands"></param>
         /// <returns></returns>
-        public static Interfaces.CoreCommand_Interface? Get_command<T>(object ModelObject) 
+        public static Interfaces.CoreCommand_Interface? Get_command<T>(object ModelObject)
         {
             var item = _commandList.Find(e => e.ObjectType.Equals(ModelObject.GetType()) & e.Executor_Type.Equals(typeof(T)));
             return item;
@@ -260,7 +254,7 @@ namespace AMFramework_Lib.Model
         /// returns all avavilable commands for this class
         /// </summary>
         /// <returns></returns>
-        public List<Interfaces.CoreCommand_Interface> Get_commands() 
+        public List<Interfaces.CoreCommand_Interface> Get_commands()
         {
             return _commandList.FindAll(e => e.ObjectType.Equals(this.GetType()));
         }

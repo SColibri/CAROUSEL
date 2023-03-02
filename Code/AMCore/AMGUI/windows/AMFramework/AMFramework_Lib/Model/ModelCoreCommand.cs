@@ -1,12 +1,4 @@
-﻿using AMFramework_Lib.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
-namespace AMFramework_Lib.Model
+﻿namespace AMFramework_Lib.Model
 {
     /// <summary>
     /// Abstract class that implements the CoreCommands interface. Used for
@@ -14,7 +6,7 @@ namespace AMFramework_Lib.Model
     /// others -- se enum for possible options.
     /// Note: not all options apply for every data model.
     /// </summary>
-    public class ModelCoreCommand:Interfaces.CoreCommand_Interface
+    public class ModelCoreCommand : Interfaces.CoreCommand_Interface
     {
         #region Constructor
         /// <summary>

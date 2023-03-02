@@ -1,12 +1,4 @@
-﻿using AMFramework_Lib.Structures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.XPath;
-
-namespace AMFramework_Lib.Scripting.LUA
+﻿namespace AMFramework_Lib.Scripting.LUA
 {
     internal class Scripting_LUA_AMRange : Scripting_LUA_Abstract
     {

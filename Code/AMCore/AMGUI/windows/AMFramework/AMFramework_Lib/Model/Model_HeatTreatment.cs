@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.AMSystem.Attributes;
+﻿using AMFramework_Lib.AMSystem.Attributes;
 
 namespace AMFramework_Lib.Model
 {
@@ -77,7 +70,7 @@ namespace AMFramework_Lib.Model
         {
             get { return _startTemperature; }
             set
-            {               
+            {
                 _startTemperature = value;
                 OnPropertyChanged(nameof(StartTemperature));
             }
@@ -85,10 +78,10 @@ namespace AMFramework_Lib.Model
 
         #region Other
         private string _templatedStartTemperature = "";
-        public string TemplatedStartTemperature 
+        public string TemplatedStartTemperature
         {
             get { return _templatedStartTemperature; }
-            set 
+            set
             {
                 _templatedStartTemperature = value;
                 OnPropertyChanged(nameof(TemplatedStartTemperature));

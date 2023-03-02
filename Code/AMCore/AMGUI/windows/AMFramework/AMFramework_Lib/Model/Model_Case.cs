@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.AMSystem.Attributes;
+﻿using AMFramework_Lib.AMSystem.Attributes;
 
 namespace AMFramework_Lib.Model
 {
@@ -138,7 +131,7 @@ namespace AMFramework_Lib.Model
                 Steps = 0;
             }
 
-            public CaseTemplateStructure(Model.Model_Element ElementN, double startRange, double endRange, int stepsTemplate )
+            public CaseTemplateStructure(Model.Model_Element ElementN, double startRange, double endRange, int stepsTemplate)
             {
                 ElementName = ElementN;
                 RangeStart = startRange;
@@ -149,11 +142,11 @@ namespace AMFramework_Lib.Model
 
         private List<CaseTemplateStructure> _caseTemplates = new();
         [Obsolete("Templates are now used on the templated parameters in combination with ControllerM -> Save_Templated_Object")]
-        public List<CaseTemplateStructure> CaseTemplates 
-        { 
+        public List<CaseTemplateStructure> CaseTemplates
+        {
             get { return _caseTemplates; }
-            set 
-            { 
+            set
+            {
                 _caseTemplates = value;
                 OnPropertyChanged("CaseTemplate");
             }
@@ -171,7 +164,7 @@ namespace AMFramework_Lib.Model
             }
         }
         [Obsolete("Templates are now used on the templated parameters in combination with ControllerM -> Save_Templated_Object")]
-        public void Add_template(Model.Model_Element ElementN, double startRange, double endRange, int stepsTemplate) 
+        public void Add_template(Model.Model_Element ElementN, double startRange, double endRange, int stepsTemplate)
         {
             CaseTemplateStructure newTemplate = new(ElementN, startRange, endRange, stepsTemplate);
             CaseTemplates.Add(newTemplate);
@@ -181,10 +174,10 @@ namespace AMFramework_Lib.Model
         #region Extended_Parameters
 
         private List<ModelController<Model_SelectedPhases>> _selectedPhases = new();
-        public List<ModelController<Model_SelectedPhases>> SelectedPhases 
+        public List<ModelController<Model_SelectedPhases>> SelectedPhases
         {
             get { return _selectedPhases; }
-            set 
+            set
             {
                 _selectedPhases = value;
                 OnPropertyChanged(nameof(SelectedPhases));
@@ -293,13 +286,13 @@ namespace AMFramework_Lib.Model
             }
         }
 
-        public void Add_selectedPhasesOLD(Model.Model_SelectedPhases model) 
+        public void Add_selectedPhasesOLD(Model.Model_SelectedPhases model)
         {
             _SelectedPhasesOLD.Add(model);
             OnPropertyChanged(nameof(SelectedPhasesOLD));
         }
 
-        public void Clear_selectedPhasesOLD() 
+        public void Clear_selectedPhasesOLD()
         {
             _SelectedPhasesOLD.Clear();
             OnPropertyChanged(nameof(SelectedPhasesOLD));
@@ -364,8 +357,8 @@ namespace AMFramework_Lib.Model
         public List<Model.Model_PrecipitationPhase> PrecipitationPhasesOLD
         {
             get { return _precipitationPhasesOLD; }
-            set 
-            { 
+            set
+            {
                 _precipitationPhasesOLD = value;
                 OnPropertyChanged(nameof(PrecipitationPhases));
             }

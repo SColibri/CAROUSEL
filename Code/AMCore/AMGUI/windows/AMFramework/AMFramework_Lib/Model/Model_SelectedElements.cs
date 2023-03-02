@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.AMSystem.Attributes;
+﻿using AMFramework_Lib.AMSystem.Attributes;
 
 namespace AMFramework_Lib.Model
 {
@@ -13,14 +6,14 @@ namespace AMFramework_Lib.Model
     {
         private int _ID = -1;
         [Order]
-        public int ID 
-        { 
+        public int ID
+        {
             get { return _ID; }
             set
             {
                 _ID = value;
                 OnPropertyChanged(nameof(ID));
-            } 
+            }
         }
 
         private int _IDProject = -1;
@@ -76,7 +69,7 @@ namespace AMFramework_Lib.Model
 
 
 
-        
+
 
         #region Other_properties
 

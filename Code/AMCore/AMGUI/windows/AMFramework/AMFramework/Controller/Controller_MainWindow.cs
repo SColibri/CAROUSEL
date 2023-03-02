@@ -493,6 +493,10 @@ namespace AMFramework.Controller
         public Controller_Scripting DataContext_Scripting => _dataContextScripting;
         private readonly Controller_Scripting _dataContextScripting;
 
+        /// <summary>
+        /// Handles callback actions
+        /// </summary>
+        public ControllerCallbacks DataContext_Callbacks => _configurationController.Callbacks;
         #endregion
 
         #region Commands

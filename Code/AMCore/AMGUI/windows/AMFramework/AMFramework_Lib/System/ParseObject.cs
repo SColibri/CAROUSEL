@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMFramework_Lib.AMSystem
+﻿namespace AMFramework_Lib.AMSystem
 {
     public class ParseObject
     {
-        public enum PTYPE 
-        { 
+        public enum PTYPE
+        {
             NONE,
             CLASS,
             FUNCTION,

@@ -97,11 +97,7 @@ extern "C"
 		return out;
 	}
 
-	
-	void thisThingy(char*) {}
-
-	__declspec(dllimport) void RegisterMessageCallback(AMFramework::Callback::MessageCallbackF callF);
-	__declspec(dllexport) void RemoveOld() 
+	__declspec(dllexport) void RegisterAllCallbacks() 
 	{
 		RegisterMessageCallback(nullptr);
 		RegisterErrorCallback(nullptr);

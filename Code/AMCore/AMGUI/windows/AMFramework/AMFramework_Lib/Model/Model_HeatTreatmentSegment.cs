@@ -1,10 +1,5 @@
 ﻿using AMFramework_Lib.AMSystem.Attributes;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMFramework_Lib.Model
 {
@@ -91,7 +86,7 @@ namespace AMFramework_Lib.Model
             set
             {
                 _duration = value;
-                if(value >= 0) SelectedModeType = ModeType.TIME_INTERVAL;
+                if (value >= 0) SelectedModeType = ModeType.TIME_INTERVAL;
                 OnPropertyChanged(nameof(Duration));
             }
         }
@@ -111,7 +106,7 @@ namespace AMFramework_Lib.Model
         public ModeType SelectedModeType
         {
             get { return _selectedModeType; }
-            set 
+            set
             {
                 _selectedModeType = value;
                 OnPropertyChanged(nameof(SelectedModeType));

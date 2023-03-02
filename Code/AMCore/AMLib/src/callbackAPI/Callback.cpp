@@ -2,6 +2,7 @@
 
 #include <string>
 #include "../../include/callbackFunctions/Callbacks.h"
+#include "../../interfaces/IAM_lua_functions.h"
 
 extern "C"
 {

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-
-namespace AMFramework_Lib.Interfaces
+﻿namespace AMFramework_Lib.Interfaces
 {
     /// <summary>
     /// This interface enables listing all available commands and execute them using an implementation of the 

@@ -10,7 +10,11 @@ namespace AMFramework
 		/// </summary>
 		class MessageCallBack
 		{
+		private:
+			MessageCallBack() {}
 		public:
+			static inline char MessageBuffer[512] = "hello world";
+
 			/// <summary>
 			/// Callback
 			/// </summary>
@@ -20,7 +24,7 @@ namespace AMFramework
 			/// Trigger
 			/// </summary>
 			/// <param name="callbackData"></param>
-			static inline void TriggerCallback(char* callbackData)
+			static void TriggerCallback(char* callbackData)
 			{
 				// Check if callback has been set
 				if (CallFunction != nullptr)

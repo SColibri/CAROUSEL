@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMFramework_Lib.Model.ModelCoreExecutors
+﻿namespace AMFramework_Lib.Model.ModelCoreExecutors
 {
-    public class MCE_Delete:Model.ModelCoreCommunicationExecutor
+    public class MCE_Delete : Model.ModelCoreCommunicationExecutor
     {
         public MCE_Delete(ref Core.IAMCore_Comm comm,
                         ref Interfaces.Model_Interface ModelObject) : base(ref comm, ref ModelObject)

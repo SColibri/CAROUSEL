@@ -5,11 +5,8 @@
 #include "../include/API_matcalc_lib.h"
 #include "../../../AMLib/include/Database_implementations/Database_Factory.h"
 
-
-
 API_lua_functions::API_lua_functions(lua_State* state) : IAM_lua_functions(state)
 {
-	//AMBaseFunctions::add_base_functions(state, this);bind_matcalc_initializeCore
 	add_base_functions(state);
 	add_functions_to_lua(state);
 }
@@ -95,6 +92,7 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 	add_new_function(state, "pixelcase_stepScheil", "std::string out", "<int IDCase>", Bind_SPC_StepScheil);
 	add_new_function(state, "pixelcase_run_cases", "std::string out", "pixelcase_run_cases", Bind_SPC_run_cases);
 
+	
 }
 
 #pragma region lua_functions

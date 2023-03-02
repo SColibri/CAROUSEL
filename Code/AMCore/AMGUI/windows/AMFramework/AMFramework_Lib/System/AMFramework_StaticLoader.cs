@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMFramework_Lib.AMSystem
+﻿namespace AMFramework_Lib.AMSystem
 {
     /// <summary>
     /// Static loader, loads all static data needed for running the program. e.g. Models require the list of available commands 
@@ -22,8 +16,8 @@ namespace AMFramework_Lib.AMSystem
         /// NOTE: If this is not loaded at startup of the application, commands will return as null, so just don't forget to run this static function
         /// </summary>
         /// <param name="comm"></param>
-        public static void Load_Model_Commands(ref Core.IAMCore_Comm comm) 
-        { 
+        public static void Load_Model_Commands(ref Core.IAMCore_Comm comm)
+        {
             // clear all commands
             Model.ModelAbstract.CommandList.Clear();
 
@@ -34,7 +28,7 @@ namespace AMFramework_Lib.AMSystem
             System.IO.StreamReader sR = new("lua_functions.txt");
             string? lineRead = null;
 
-            while((lineRead = sR.ReadLine()) != null) 
+            while ((lineRead = sR.ReadLine()) != null)
             {
                 // Load line with descriptions 
                 List<string> LineCommand = lineRead.Split(",").ToList();
@@ -49,9 +43,12 @@ namespace AMFramework_Lib.AMSystem
                 Type? ModelT = Model.ModelFactory.Get_Type(CommandSpecs[0]);
                 if (ExecutorT == null || ModelT == null) continue;
 
-                Model.ModelCoreCommand tempCommand = new() { Command_instruction = LineCommand[0],
-                                                                     ObjectType = ModelT,
-                                                                     Executor_Type = ExecutorT};
+                Model.ModelCoreCommand tempCommand = new()
+                {
+                    Command_instruction = LineCommand[0],
+                    ObjectType = ModelT,
+                    Executor_Type = ExecutorT
+                };
 
                 // Add command to static list
                 Model.ModelAbstract.CommandList.Add(tempCommand);
