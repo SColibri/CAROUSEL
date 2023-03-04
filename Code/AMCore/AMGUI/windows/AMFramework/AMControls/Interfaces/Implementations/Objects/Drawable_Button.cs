@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -13,32 +9,32 @@ namespace AMControls.Interfaces.Implementations.Objects
     {
         public BitmapImage ImageIcon { get; set; }
 
-        public Drawable_Button() 
+        public Drawable_Button()
         {
             ImageIcon = new BitmapImage();
         }
 
         public override void Draw(DrawingContext dc, Canvas canvas)
         {
-            SolidColorBrush SBack = new SolidColorBrush(Colors.Cyan) { Opacity = 0.2};
+            SolidColorBrush SBack = new SolidColorBrush(Colors.Cyan) { Opacity = 0.2 };
             dc.DrawRoundedRectangle(SBack,
                                     new Pen(new SolidColorBrush(Colors.Silver), 0.4),
                                     Bounds, 3, 3);
 
-            if (IsMouseHover || IsLButton) 
+            if (IsMouseHover || IsLButton)
             {
                 SolidColorBrush SBackHover = new SolidColorBrush(Colors.DarkRed) { Opacity = 0.2 };
                 dc.DrawRoundedRectangle(SBackHover,
                                         new Pen(new SolidColorBrush(Colors.Silver), 1),
                                         Bounds, 3, 3);
             }
-            else if (IsLButton) 
-            { 
-            
+            else if (IsLButton)
+            {
+
             }
-            else 
-            { 
-            
+            else
+            {
+
             }
 
             dc.DrawImage(ImageIcon, Bounds);

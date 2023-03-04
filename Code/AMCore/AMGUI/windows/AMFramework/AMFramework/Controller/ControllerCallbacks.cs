@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
-using AMControls.Custom;
+﻿using AMControls.Custom;
 using AMControls.ExtensionMethods;
 using AMControls.Interfaces;
 using AMFramework_Lib.Core;
+using AMFramework_Lib.Logging;
 using Catel.Collections;
 using Catel.Data;
-using Catel.IO;
 using Catel.MVVM;
-using Catel.Windows.Threading;
-using SharpDX;
-using AMFramework_Lib.Logging;
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Windows;
 
 namespace AMFramework.Controller
 {
@@ -30,7 +21,7 @@ namespace AMFramework.Controller
     public class ControllerCallbacks : ViewModelBase, IDisposable
     {
         #region Fields
-        
+
         /// <summary>
         /// Text that be searcched in objects
         /// </summary>
@@ -40,7 +31,7 @@ namespace AMFramework.Controller
         /// Max number of messages to be stored in memory
         /// </summary>
         private int _maxMessages = 500;
-        
+
         /// <summary>
         /// Amount of logs to be saved and discarded from memory
         /// each time it reaches the maxMessage limit
@@ -50,8 +41,8 @@ namespace AMFramework.Controller
         /// <summary>
         /// Callback message type
         /// </summary>
-        public enum MessageTypeEnum 
-        { 
+        public enum MessageTypeEnum
+        {
             None,
             Message,
             Error,
@@ -64,7 +55,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Default constructor
         /// </summary>
-        public ControllerCallbacks() 
+        public ControllerCallbacks()
         {
             MessageLog = new();
             SearchMessages = new Command<string>(SearchMessagesAction);
@@ -74,7 +65,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Default destructor
         /// </summary>
-        ~ ControllerCallbacks()
+        ~ControllerCallbacks()
         {
             Dispose(false);
         }
@@ -85,10 +76,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// Text to be searched in the message logs
         /// </summary>
-        public string SearchText 
+        public string SearchText
         {
             get => _searchText;
-            set 
+            set
             {
                 _searchText = value;
                 SearchMessages.Execute(value);
@@ -143,7 +134,7 @@ namespace AMFramework.Controller
         public ObservableCollection<SelectableRow> MessageLog
         {
             get => GetValue<ObservableCollection<SelectableRow>>(MessageLogProperty);
-            set 
+            set
             {
                 SetValue(MessageLogProperty, value);
 
@@ -171,7 +162,7 @@ namespace AMFramework.Controller
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
         {
-            if (!_disposed) 
+            if (!_disposed)
             {
                 if (disposing)
                 {
@@ -196,7 +187,7 @@ namespace AMFramework.Controller
         /// Search in messages action
         /// </summary>
         /// <param name="parameter"></param>
-        private void SearchMessagesAction(string parameter) 
+        private void SearchMessagesAction(string parameter)
         {
             MessageLog.ForEach(e => e.IsVisible = true);
             MessageLog.Where(e => !e.Search(parameter)).ForEach(e => e.IsVisible = false);
@@ -212,7 +203,7 @@ namespace AMFramework.Controller
         {
             // ContextMenu access, make sure that IsSelected flag is set
             if (parameter != null) parameter.IsSelected = true;
-            
+
             // Get all selected items and remove
             SelectableRow[] vary = MessageLog.Where(e => e.IsSelected).ToArray();
 
@@ -227,7 +218,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Register to API callbacks, implemented only for AMCore_libHandle
         /// </summary>
-        public void RegisterCallbacks() 
+        public void RegisterCallbacks()
         {
             // Remove callbacks is any to previous object
             UnregisterCallBacks();
@@ -243,7 +234,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Unregister to callbacks
         /// </summary>
-        private void UnregisterCallBacks() 
+        private void UnregisterCallBacks()
         {
             CallbackManager.MessageCallbackEvent -= MessageHandle;
             CallbackManager.ErrorCallbackEvent -= ErrorHandle;
@@ -254,7 +245,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Save the log file
         /// </summary>
-        private void SaveLog(bool saveAll = false) 
+        private void SaveLog(bool saveAll = false)
         {
             // Check if directory exists
             if (!Directory.Exists("MessageLogs"))
@@ -285,7 +276,7 @@ namespace AMFramework.Controller
                 // Do nothing for now
                 throw;
             }
-            
+
         }
 
         #endregion

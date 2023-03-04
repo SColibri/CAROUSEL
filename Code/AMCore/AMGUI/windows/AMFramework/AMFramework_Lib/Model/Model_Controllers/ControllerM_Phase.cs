@@ -167,7 +167,7 @@ namespace AMFramework_Lib.Model.Model_Controllers
         public static ModelController<Model_Phase> Get_PhaseByID(IAMCore_Comm comm, int IDPhase)
         {
             ModelController<Model_Phase> pName = new(ref comm);
-            pName.ModelObject.ID = (int)IDPhase;
+            pName.ModelObject.ID = IDPhase;
             pName.LoadByIDAction?.DoAction();
 
             return pName;

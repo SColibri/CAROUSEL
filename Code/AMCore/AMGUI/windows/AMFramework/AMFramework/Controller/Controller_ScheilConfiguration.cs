@@ -1,13 +1,9 @@
-﻿using System;
+﻿using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Windows.Input;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Core;
-using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
@@ -25,8 +21,8 @@ namespace AMFramework.Controller
 
         #region Data
         Model_ScheilConfiguration _model = new();
-        public Model_ScheilConfiguration Model 
-        { 
+        public Model_ScheilConfiguration Model
+        {
             get { return _model; }
             set
             {
@@ -43,22 +39,22 @@ namespace AMFramework.Controller
                 MainWindow.notify.ShowBalloonTip(5000, "Error: Case was not saved", outComm, System.Windows.Forms.ToolTipIcon.Error);
             }
         }
-        public Model_ScheilConfiguration get_scheil_configuration_case(int IDCase) 
+        public Model_ScheilConfiguration get_scheil_configuration_case(int IDCase)
         {
             Model_ScheilConfiguration model = new();
             string Query = "database_table_custom_query SELECT ScheilConfiguration.*, Phase.Name FROM ScheilConfiguration INNER JOIN Phase ON Phase.ID=ScheilConfiguration.DependentPhase WHERE IDCase = " + IDCase;
-            string outCommand = _AMCore_Socket.run_lua_command(Query,"");
+            string outCommand = _AMCore_Socket.run_lua_command(Query, "");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             if (rowItems.Count == 0) return model;
             List<string> columnItems = rowItems[0].Split(",").ToList();
-            if (columnItems.Count < 7) 
+            if (columnItems.Count < 7)
             {
                 //model
                 return model;
             }
             model = fillModel(columnItems);
-            
+
             return model;
         }
 
@@ -82,9 +78,9 @@ namespace AMFramework.Controller
         #endregion
 
         #region Getters
-        public Controller.Controller_Cases CaseController 
+        public Controller.Controller_Cases CaseController
         {
-            get { return _caseController; } 
+            get { return _caseController; }
         }
         #endregion
     }

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AMControls.Charts.Interfaces;
+using AMControls.Interfaces.Implementations;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Controls;
 using System.Windows.Media;
-using AMControls.Charts.Interfaces;
-using AMControls.Interfaces.Implementations;
 
 namespace AMControls.Charts.Implementations
 {
@@ -82,14 +82,14 @@ namespace AMControls.Charts.Implementations
         }
 
         public IAxes.Orientation AxisOrientation { get; set; }
-        public int Ticks 
-        { 
-            get { return _ticks; } 
-            set 
-            { 
+        public int Ticks
+        {
+            get { return _ticks; }
+            set
+            {
                 _ticks = value;
                 Check_minmax_values();
-            } 
+            }
         }
 
         public double DrawInterval { get; set; }

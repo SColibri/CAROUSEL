@@ -1,17 +1,11 @@
-﻿using System;
+﻿using AMControls.Charts.DataPointContextMenu;
+using AMControls.Charts.Implementations.DataPointContextMenu;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using AMControls.Charts.DataPointContextMenu;
-using AMControls.Charts.Implementations.DataPointContextMenu;
-using AMControls.Charts.Interfaces;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.Model;
 
 namespace AMFramework.Components.Charting.ContextMenu
 {
@@ -35,11 +29,11 @@ namespace AMFramework.Components.Charting.ContextMenu
         private System.Windows.FontStretch _contentFontStretch = System.Windows.FontStretches.Normal;
         private Color _contentFontColor = Colors.Black;
 
-        public DataPoint_ProjectViewContextMenu(List<string> contentCells, string Title) 
+        public DataPoint_ProjectViewContextMenu(List<string> contentCells, string Title)
         {
             _content = contentCells;
             DataPoint_ContextMenu = new DataPoint_ContextMenu_Text() { Title = Title };
-            SizeObject = new Size(180,230);
+            SizeObject = new Size(180, 230);
         }
 
         public override void Draw(DrawingContext dc, Canvas canvas)
@@ -55,9 +49,9 @@ namespace AMFramework.Components.Charting.ContextMenu
             SolidColorBrush RedID = new(Colors.Red);
             SolidColorBrush contentBrush = new(Colors.Black);
 
-            if (DoAnimation) 
+            if (DoAnimation)
             {
-                DoubleAnimation tileTextAnimation = new(1, new Duration(TimeSpan.FromMilliseconds(800))){ From = 0, To = 1 };
+                DoubleAnimation tileTextAnimation = new(1, new Duration(TimeSpan.FromMilliseconds(800))) { From = 0, To = 1 };
 
                 subTitleBrush.ApplyAnimationClock(SolidColorBrush.OpacityProperty, tileTextAnimation.CreateClock());
                 RedID.ApplyAnimationClock(SolidColorBrush.OpacityProperty, tileTextAnimation.CreateClock());
@@ -69,7 +63,7 @@ namespace AMFramework.Components.Charting.ContextMenu
                                                   new Typeface(_subTitleFontFamily, _subTitleFontStyle, _subTitleFontWeight, _subTitleFontStretch),
                                                   _subTitleFontSize, subTitleBrush, VisualTreeHelper.GetDpi(canvas).PixelsPerDip);
 
-            
+
             FormattedText IDProject = new(_content[7], System.Globalization.CultureInfo.CurrentCulture,
                                                   System.Windows.FlowDirection.LeftToRight,
                                                   new Typeface(_contentFontFamily, _contentFontStyle, _contentFontWeight, _contentFontStretch),
@@ -191,7 +185,7 @@ namespace AMFramework.Components.Charting.ContextMenu
             throw new NotImplementedException();
         }
 
-        private void Do_line(DrawingContext dc, Point lsPoint, Point lePoint) 
+        private void Do_line(DrawingContext dc, Point lsPoint, Point lePoint)
         {
             if (DoAnimation)
             {

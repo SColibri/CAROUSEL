@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace AMControls.Custom
 {
-    public class TreeViewItem_custom_AM :  TreeViewItem
+    public class TreeViewItem_custom_AM : TreeViewItem
     {
         public static readonly DependencyProperty IDProperty =
         DependencyProperty.Register("ID",

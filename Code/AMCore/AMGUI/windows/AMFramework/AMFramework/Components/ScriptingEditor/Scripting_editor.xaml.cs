@@ -1,11 +1,11 @@
-﻿using System;
+﻿using AMFramework_Lib.AMSystem;
+using AMFramework_Lib.Controller;
+using ScintillaNET;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using ScintillaNET;
-using AMFramework_Lib.AMSystem;
-using AMFramework_Lib.Controller;
 using System.Windows.Controls;
 
 namespace AMFramework.Components.ScriptingEditor
@@ -20,7 +20,7 @@ namespace AMFramework.Components.ScriptingEditor
         public Scripting_editor()
         {
             InitializeComponent();
-            
+
             string filename = "Components/Scripting/Templates/NewScript.AMFramework";
             if (!System.IO.File.Exists(filename)) return;
             Scripting.Text = System.IO.File.ReadAllText(filename);
@@ -31,13 +31,13 @@ namespace AMFramework.Components.ScriptingEditor
             setupMain(Scripting);
         }
 
-        public void loadFile(string filename) 
+        public void loadFile(string filename)
         {
-            if (File.Exists(filename)) 
+            if (File.Exists(filename))
             {
-                ((Scripting_ViewModel)DataContext).load(Scripting as Scintilla, filename);
+                ((Scripting_ViewModel)DataContext).load(Scripting, filename);
                 Scripting.FoldAll(FoldAction.Contract);
-                Update_Highlight(Scripting as Scintilla);
+                Update_Highlight(Scripting);
             }
         }
         #region Initialization
@@ -104,7 +104,7 @@ namespace AMFramework.Components.ScriptingEditor
             scintilla.SetFoldMarginHighlightColor(true, IntToColor(0x212121));
             scintilla.SetSelectionForeColor(true, System.Drawing.Color.White);
             scintilla.SetSelectionBackColor(true, System.Drawing.Color.DimGray);
-            
+
             // Keywords
             scintilla.SetKeywords(0, "and break do else elseif end for function if in local nil not or repeat return then until while" + " false true" + " goto");
             // Basic Functions
@@ -210,7 +210,7 @@ namespace AMFramework.Components.ScriptingEditor
                     string path = a.GetValue(0).ToString();
 
                     if (path == null) return;
-                    ((Scripting_ViewModel)DataContext).load(Scripting as Scintilla, path);
+                    ((Scripting_ViewModel)DataContext).load(Scripting, path);
                 }
             }
         }
@@ -240,7 +240,7 @@ namespace AMFramework.Components.ScriptingEditor
                 //startList[i].FoldLine(FoldAction.Contract);
             }
         }
-        private void FoldGroups_loadedText(Scintilla sender) 
+        private void FoldGroups_loadedText(Scintilla sender)
         {
             foreach (var item in sender.Lines)
             {
@@ -301,37 +301,37 @@ namespace AMFramework.Components.ScriptingEditor
             if (sender == null) return;
 
             //Folding_Styles(sender);
-            if (e.Modifiers == System.Windows.Forms.Keys.Control && 
-                e.KeyCode == System.Windows.Forms.Keys.Space) 
+            if (e.Modifiers == System.Windows.Forms.Keys.Control &&
+                e.KeyCode == System.Windows.Forms.Keys.Space)
             {
                 var pos = ((Scintilla)sender).CurrentPosition;
                 var word = ((Scintilla)sender).GetWordFromPosition(pos);
                 Show_autocomplete(word, (Scintilla)sender);
-                e.SuppressKeyPress = true; e.Handled = true; 
+                e.SuppressKeyPress = true; e.Handled = true;
             }
-            else if (e.Modifiers == System.Windows.Forms.Keys.Control && 
+            else if (e.Modifiers == System.Windows.Forms.Keys.Control &&
                 e.KeyCode == System.Windows.Forms.Keys.S)
             {
                 e.SuppressKeyPress = true;
                 e.Handled = true;
                 ((Components.ScriptingEditor.Scripting_ViewModel)DataContext).Save();
             }
-            else if (e.Modifiers == System.Windows.Forms.Keys.Control && 
+            else if (e.Modifiers == System.Windows.Forms.Keys.Control &&
                      e.KeyCode == System.Windows.Forms.Keys.O)
             {
                 e.SuppressKeyPress = true;
                 e.Handled = true;
                 Scripting.FoldAll(FoldAction.Toggle);
             }
-            else if (e.KeyCode == System.Windows.Forms.Keys.Back) 
+            else if (e.KeyCode == System.Windows.Forms.Keys.Back)
             {
                 string CurrentLineT = ((Scintilla)sender).Lines[((Scintilla)sender).CurrentLine].Text;
 
                 if (CurrentLineT.Length == 0) return;
-                if (CurrentLineT[CurrentLineT.Length - 1] == '.' || 
-                    CurrentLineT[CurrentLineT.Length - 1] == ':') 
-                { 
-                    if (Anchor_StringBuild.Count > 0) 
+                if (CurrentLineT[CurrentLineT.Length - 1] == '.' ||
+                    CurrentLineT[CurrentLineT.Length - 1] == ':')
+                {
+                    if (Anchor_StringBuild.Count > 0)
                     {
                         Anchor_StringBuild.RemoveAt(Anchor_StringBuild.Count - 1);
                     }
@@ -342,21 +342,21 @@ namespace AMFramework.Components.ScriptingEditor
                         AutoCompleteList.AddRange(VariablesNames.Split(" ").ToList());
                         Anchor_Parameters = true;
                     }
-                    else 
+                    else
                     {
                         string FunctionNames = AMParser.Get_Global_variable_functions(Anchor_StringBuild);
                         AutoCompleteList.AddRange(FunctionNames.Split(" ").ToList());
                         Anchor_Functions = true;
                     }
                 }
-                else if(CurrentLineT.Contains('.') == false && CurrentLineT.Contains(':') == false) 
+                else if (CurrentLineT.Contains('.') == false && CurrentLineT.Contains(':') == false)
                 {
                     Anchor_Functions = false;
                     Anchor_Parameters = false;
                     Anchor_StringBuild.Clear();
                 }
             }
-            else if (e.Modifiers == System.Windows.Forms.Keys.Control && e.KeyCode == System.Windows.Forms.Keys.Space) 
+            else if (e.Modifiers == System.Windows.Forms.Keys.Control && e.KeyCode == System.Windows.Forms.Keys.Space)
             {
                 var pos = ((Scintilla)sender).CurrentPosition;
                 var word = ((Scintilla)sender).GetWordFromPosition(pos);
@@ -369,11 +369,11 @@ namespace AMFramework.Components.ScriptingEditor
                 Update_Highlight(sender);
                 return;
             }
-            
+
             ((Scripting_ViewModel)DataContext).ChangesMade = true;
         }
 
-        private void Update_Highlight(object sender) 
+        private void Update_Highlight(object sender)
         {
             LUA_FileParser.Remove_module("Local", AMParser);
             LUA_FileParser.File_parse(((Scintilla)sender).Text, AMParser, "Local");
@@ -409,7 +409,7 @@ namespace AMFramework.Components.ScriptingEditor
             // Check if there is something to complete or not
             if (word.Length == 0 && (e.Char != 46 && e.Char != 58)) return;
 
-            if (Anchor_line != scintilla.CurrentLine) 
+            if (Anchor_line != scintilla.CurrentLine)
             {
                 Anchor_Parameters = false;
                 Anchor_Functions = false;
@@ -417,7 +417,7 @@ namespace AMFramework.Components.ScriptingEditor
                 Anchor_line = scintilla.CurrentLine;
             }
 
-            if (e.Char == '.') 
+            if (e.Char == '.')
             {
                 AutoCompleteList.Clear();
                 word = scintilla.GetWordFromPosition(pos-1);
@@ -437,16 +437,16 @@ namespace AMFramework.Components.ScriptingEditor
                 AutoCompleteList.AddRange(FunctionNames.Split(" ").ToList());
                 Anchor_Functions = true;
             }
-            else if (Anchor_Functions == true || Anchor_Parameters == true) 
-            { 
-            
+            else if (Anchor_Functions == true || Anchor_Parameters == true)
+            {
+
             }
             else
             {
                 AutoCompleteList.Clear();
                 foreach (var item in AMParser.Get_Classes_keywords().Split(" ").ToList())
                 {
-                    if(AutoCompleteList.Contains(item) == false) AutoCompleteList.Add(item);
+                    if (AutoCompleteList.Contains(item) == false) AutoCompleteList.Add(item);
                 }
 
                 foreach (var item in AMParser.Get_Functions_keywords().Split(" ").ToList())
@@ -463,11 +463,11 @@ namespace AMFramework.Components.ScriptingEditor
             Show_autocomplete(word, scintilla);
         }
 
-        public void MouseMove_Scintilla(object? sender, System.Windows.Forms.MouseEventArgs e) 
+        public void MouseMove_Scintilla(object? sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (sender == null) return;
-            System.Drawing.Point point = System.Windows.Forms.Control.MousePosition; 
-            var cor = ((Scintilla)sender).PointToClient(point); 
+            System.Drawing.Point point = System.Windows.Forms.Control.MousePosition;
+            var cor = ((Scintilla)sender).PointToClient(point);
             int pos = ((Scintilla)sender).CharPositionFromPoint(cor.X, cor.Y);
 
             if (pos == -1) return;
@@ -479,13 +479,13 @@ namespace AMFramework.Components.ScriptingEditor
             string titleData = "";
             string infoData = "";
             ParseObject? referenceP = AMParser.AMParser.Find(e => e.Name.CompareTo(word) == 0);
-            if (referenceP == null) 
+            if (referenceP == null)
             {
                 int posIterate = pos - 2;
                 ParseObject? mainClass = null;
-                while (((Scintilla)sender).LineFromPosition(posIterate) == cLine && 
+                while (((Scintilla)sender).LineFromPosition(posIterate) == cLine &&
                                                                  posIterate >= 0 &&
-                                                                 mainClass == null) 
+                                                                 mainClass == null)
                 {
                     var tWord = ((Scintilla)sender).GetWordFromPosition(posIterate);
                     mainClass = AMParser.AMParser.Find(e => e.Name.CompareTo(tWord) == 0);
@@ -499,16 +499,16 @@ namespace AMFramework.Components.ScriptingEditor
                 referenceP = mainClass;
             }
 
-            if (referenceP.ObjectType == ParseObject.PTYPE.CLASS || 
+            if (referenceP.ObjectType == ParseObject.PTYPE.CLASS ||
                 referenceP.ObjectType == ParseObject.PTYPE.GLOBAL_VARIABLE ||
                 referenceP.ObjectType == ParseObject.PTYPE.LOCAL_VARIABLE)
             {
                 infoData = referenceP.Description;
                 titleData = referenceP.ObjectType.ToString() + " " + referenceP.Name;
             }
-            else if (referenceP.ObjectType == ParseObject.PTYPE.FUNCTION) 
+            else if (referenceP.ObjectType == ParseObject.PTYPE.FUNCTION)
             {
-                ParseObject? mainClass = AMParser.AMParser.Find(e => e.functions.FindAll(e  => e.Name.CompareTo(referenceP.ParametersType) == 0).Count > 0 );
+                ParseObject? mainClass = AMParser.AMParser.Find(e => e.functions.FindAll(e => e.Name.CompareTo(referenceP.ParametersType) == 0).Count > 0);
 
                 if (mainClass == null) return;
             }
@@ -516,7 +516,7 @@ namespace AMFramework.Components.ScriptingEditor
 
             if (infoData.Length == 0) return;
 
-            if(Controller_Global.MainControl != null) 
+            if (Controller_Global.MainControl != null)
             {
                 Controller_Global.MainControl.TitleAdditionalInformation = titleData;
                 Controller_Global.MainControl.ContentAdditionalInformation = infoData;
@@ -528,10 +528,10 @@ namespace AMFramework.Components.ScriptingEditor
         }
 
         private int maxLineNumberCharLength;
-        
+
         private void scintilla_TextChanged(object sender, EventArgs e)
         {
-            
+
 
             // Did the number of characters in the line number display change?
             // i.e. nnn VS nn, or nnnn VS nn, etc...
@@ -582,7 +582,7 @@ namespace AMFramework.Components.ScriptingEditor
         #endregion
 
         #region Methods
-        private void Show_autocomplete(string word, Scintilla scintilla) 
+        private void Show_autocomplete(string word, Scintilla scintilla)
         {
             AutoCompleteList.Sort();
 
@@ -608,7 +608,7 @@ namespace AMFramework.Components.ScriptingEditor
             }
         }
 
-        private string Get_previousWord(int position, Scintilla sender) 
+        private string Get_previousWord(int position, Scintilla sender)
         {
             int startPosition = sender.WordStartPosition(position - 1, true);
             int endPosition = sender.WordEndPosition(position - 1, true);

@@ -1,11 +1,5 @@
-﻿using Assimp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace AMControls.ExtensionMethods
@@ -15,7 +9,7 @@ namespace AMControls.ExtensionMethods
         /// <summary>
         /// Find parent element
         /// </summary>
-        public static T? TryFindParent<T>(this DependencyObject dependecyObject) where T: DependencyObject
+        public static T? TryFindParent<T>(this DependencyObject dependecyObject) where T : DependencyObject
         {
             // output
             T? result;
@@ -24,7 +18,7 @@ namespace AMControls.ExtensionMethods
             DependencyObject parent = VisualTreeHelper.GetParent(dependecyObject);
 
             // Try find, returns null if not found
-            while(parent != null && parent is not T) 
+            while (parent != null && parent is not T)
             {
                 parent = VisualTreeHelper.GetParent(parent);
             }

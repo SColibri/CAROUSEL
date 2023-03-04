@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AMControls.Charts.Implementations.DataPointContextMenu;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using AMControls.Charts.Implementations.DataPointContextMenu;
-using AMControls.Charts.Interfaces;
-using AMControls.Interfaces;
-using AMControls.Interfaces.Implementations;
 
 namespace AMControls.Charts.DataPointContextMenu
 {
@@ -19,8 +12,8 @@ namespace AMControls.Charts.DataPointContextMenu
         private double _cornerRadius = 5.0;
         private double _animationRadius = 1000;
         private double _animationBox = 500;
-        public DataPoint_BaseContextMenu() 
-        { 
+        public DataPoint_BaseContextMenu()
+        {
             Location = new Point();
             SizeObject = new();
             Bounds = new();
@@ -77,7 +70,7 @@ namespace AMControls.Charts.DataPointContextMenu
                                         menuBox, _cornerRadius, _cornerRadius);
             }
 
-            
+
         }
 
         #endregion

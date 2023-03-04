@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FontAwesome.WPF;
+using System;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
-using FontAwesome.WPF;
 
 namespace AMControls.Converters
 {
@@ -33,10 +29,10 @@ namespace AMControls.Converters
                 {
                     case "Message":
                         return new ImageAwesome() { Icon = FontAwesomeIcon.FileText, Foreground = Brushes.SlateGray };
-                    
+
                     case "Error":
                         return new ImageAwesome() { Icon = FontAwesomeIcon.ExclamationTriangle, Foreground = Brushes.DarkRed };
-                    
+
                     default:
                         return new ImageAwesome() { Icon = FontAwesomeIcon.BatteryEmpty, Foreground = Brushes.DarkOrange };
                 }

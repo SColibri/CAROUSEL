@@ -1,20 +1,10 @@
 ﻿using AMControls.Charts.DataPointContextMenu;
-using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Implementations;
+using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace AMControls_Test.Charts
 {
@@ -28,10 +18,10 @@ namespace AMControls_Test.Charts
             InitializeComponent();
 
             AMControls.Charts.Parallax.ParallaxPlot pChart = new();
-            
+
             Random random = new Random();
 
-            if(1 == 1) 
+            if (1 == 1)
             {
                 IDataSeries dataSeries1 = new ParallaxLineSeries();
                 dataSeries1.Add_DataPoint(new DataPoint() { X = 0.000002, Y = 0.02, Label = "AL3TI_L_P0", ContextMenu = new DataPoint_ContextMenu_Text() { Title = "AL3TI_L_P0" } });

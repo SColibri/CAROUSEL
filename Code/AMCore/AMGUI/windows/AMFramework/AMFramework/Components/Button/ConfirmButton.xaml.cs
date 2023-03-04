@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace AMFramework.Components.Button
 {
@@ -71,11 +60,11 @@ namespace AMFramework.Components.Button
         }
 
         private string _cornerRadius = "15";
-        public string CornerRadius 
-        { 
-            get { return _cornerRadius; } 
-            set 
-            { 
+        public string CornerRadius
+        {
+            get { return _cornerRadius; }
+            set
+            {
                 _cornerRadius = value;
                 OnPropertyChanged(nameof(CornerRadius));
             }
@@ -168,10 +157,10 @@ namespace AMFramework.Components.Button
             MouseUpTime = DateTime.UtcNow;
 
             TimeSpan timeDiff = MouseUpTime - MouseDownTime;
-            if (Convert.ToInt32(timeDiff.TotalSeconds) > 2.5) 
+            if (Convert.ToInt32(timeDiff.TotalSeconds) > 2.5)
             {
                 ClickButton?.Invoke(this, new EventArgs());
-                if(Command != null) Command.Execute(null);
+                if (Command != null) Command.Execute(null);
             }
 
             Background2_isVisible = false;
@@ -201,7 +190,7 @@ namespace AMFramework.Components.Button
             {
                 return _command;
             }
-            set 
+            set
             {
                 _command = value;
             }

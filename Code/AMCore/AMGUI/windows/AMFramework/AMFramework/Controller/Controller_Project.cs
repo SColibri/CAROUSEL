@@ -1,17 +1,17 @@
-﻿using AMFramework.Components.Windows;
-using AMFramework_Lib.Core;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Model.Model_Controllers;
-using AMFramework_Lib.Controller;
+﻿using AMFramework.Components.Button;
+using AMFramework.Components.Windows;
 using AMFramework.Views.ActivePhases;
 using AMFramework.Views.Elements;
 using AMFramework.Views.Projects.Other;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Model.Model_Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using AMFramework.Components.Button;
-using System;
 
 namespace AMFramework.Controller
 {
@@ -22,7 +22,7 @@ namespace AMFramework.Controller
     /// </summary>
     public class Controller_Project : ControllerAbstract
     {
-        public Controller_Project(IAMCore_Comm comm) : base(comm) 
+        public Controller_Project(IAMCore_Comm comm) : base(comm)
         {
             ElementList = ModelController<Model_Element>.LoadAll(ref _comm);
             CaseController = new(ref comm, this);
@@ -43,10 +43,10 @@ namespace AMFramework.Controller
 
                 // Check for null value
                 if (_selectedProject == null) return;
-                
+
                 // Get list of all used phases
                 Get_UsedPhases();
-                
+
                 // Update Element list (TODO: we should move this logic somewhere else)
                 foreach (var item in ElementList)
                 {
@@ -86,7 +86,7 @@ namespace AMFramework.Controller
         public List<ModelController<Model_Phase>> UsedPhases
         {
             get => _usedPhases;
-            set 
+            set
             {
                 _usedPhases = value;
                 OnPropertyChanged(nameof(UsedPhases));
@@ -153,11 +153,11 @@ namespace AMFramework.Controller
 
         #region Controllers
         private Controller_Cases _caseController;
-        public Controller_Cases CaseController 
-        { 
+        public Controller_Cases CaseController
+        {
             get { return _caseController; }
-            set 
-            { 
+            set
+            {
                 _caseController = value;
                 OnPropertyChanged(nameof(_caseController));
             }
@@ -176,7 +176,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Fills used phases list with all phases used in all cases
         /// </summary>
-        private void Get_UsedPhases() 
+        private void Get_UsedPhases()
         {
             if (SelectedProject == null) return;
 
@@ -219,7 +219,7 @@ namespace AMFramework.Controller
                 Priority = System.Threading.ThreadPriority.Highest
             };
             TH01.Start(ID);
-            
+
         }
         private void Load_project_async(object? ID)
         {
@@ -245,8 +245,8 @@ namespace AMFramework.Controller
             // Add cases to case controller
             CaseController.Cases = SelectedProject.MCObject.ModelObject.Cases;
 
-            Application.Current.Dispatcher.BeginInvoke(() => 
-            { 
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
                 _controller_xDataTreeView.Refresh_DTV(this.SelectedProject);
 
                 Controller_ActivePhasesConfiguration refController = new(ref _comm, SelectedProject.MCObject.ModelObject.ActivePhasesConfiguration);

@@ -1,15 +1,9 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.IO;
-using AMFramework_Lib.Controller;
+﻿using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
+using Microsoft.Win32;
+using System;
+using System.Windows.Input;
 
 namespace AMFramework.Controller
 {

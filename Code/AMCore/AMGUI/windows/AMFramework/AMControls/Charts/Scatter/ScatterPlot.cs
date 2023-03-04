@@ -1,25 +1,20 @@
-﻿using System;
+﻿using AMControls.Charts.Implementations;
+using AMControls.Charts.Interfaces;
+using AMControls.Interfaces.Implementations;
+using AMControls.Interfaces.Implementations.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using AMControls.Charts.Implementations;
-using AMControls.Charts.Interfaces;
-using AMControls.Interfaces;
-using AMControls.Interfaces.Implementations;
-using AMControls.Interfaces.Implementations.Objects;
 
 namespace AMControls.Charts.Scatter
 {
-    public class ScatterPlot:Canvas, IChart
+    public class ScatterPlot : Canvas, IChart
     {
         private IAxes _xAxis;
         private IAxes _yAxis;
@@ -58,7 +53,7 @@ namespace AMControls.Charts.Scatter
         private double _yAxisStepSize = 0;
         private double _yAxisSpacing = 0;
         private double _yAxis_yLocation = 0;
-        
+
 
 
 
@@ -74,13 +69,13 @@ namespace AMControls.Charts.Scatter
         // Animations
         private double _axisAnimationTime = 350;
         private double _gridAnimationTime = 500;
-        private bool[] _firstAnimation = {true, true, true, true};
+        private bool[] _firstAnimation = { true, true, true, true };
 
         // Controls
         private ContextMenu dt = new();
         private List<DrawObject_Abstract> _controls = new(); // TODO use interface instead
 
-        public ScatterPlot() 
+        public ScatterPlot()
         {
             Background = new SolidColorBrush(Colors.Transparent);
             this.Cursor = Cursors.Cross;
@@ -112,24 +107,24 @@ namespace AMControls.Charts.Scatter
         }
 
         #region Setters
-        public void Set_xAxis(IAxes value) 
-        { 
+        public void Set_xAxis(IAxes value)
+        {
             _xAxis = value;
             _xAxis.AxisOrientation = IAxes.Orientation.VERTICAL;
         }
-        public void Set_yAxis(IAxes value) 
-        { 
+        public void Set_yAxis(IAxes value)
+        {
             _yAxis = value;
             _xAxis.AxisOrientation = IAxes.Orientation.HORIZONTAL;
         }
 
-        public void Add_series(IDataSeries value) 
+        public void Add_series(IDataSeries value)
         {
             _series.Add(value);
             _series = _series.OrderBy(e => e.Index).ToList();
             InvalidateVisual();
         }
-        
+
         #endregion
 
         protected override void OnRender(DrawingContext dc)
@@ -145,7 +140,7 @@ namespace AMControls.Charts.Scatter
 
             _xAxisStepSize = _xAxisSpacing / _xAxis.Interval;
             _yAxisStepSize = _yAxisSpacing / _yAxis.Interval;
-            for (int i = 0; i < _series.Count; i++) 
+            for (int i = 0; i < _series.Count; i++)
             {
                 _series[i].Draw(dc, this, _chartArea, _xAxisStepSize, _yAxisStepSize, _xAxis.MinValue, _yAxis.MinValue);
             }
@@ -158,7 +153,7 @@ namespace AMControls.Charts.Scatter
             }
 
             RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.Fant);
-            if (_mouseCaptured == true && MouseDown == false) 
+            if (_mouseCaptured == true && MouseDown == false)
             {
                 Draw_ToolTip(dc);
             }
@@ -170,7 +165,7 @@ namespace AMControls.Charts.Scatter
                 item.Draw(dc, this);
             }
 
-            Draw_PointContextMenu(dc, contextMenus);           
+            Draw_PointContextMenu(dc, contextMenus);
         }
 
 
@@ -229,7 +224,7 @@ namespace AMControls.Charts.Scatter
                     System.Windows.Point TextStart = new(sPoint.X - txtFormat.Width / 2, ePoint.Y);
                     dc.DrawText(txtFormat, TextStart);
 
-                    if (_showGrid) 
+                    if (_showGrid)
                     {
                         System.Windows.Point sGPoint = new(sPoint.X, sPoint.Y);
                         System.Windows.Point eGPoint = new(sPoint.X, _yMargin);
@@ -239,8 +234,8 @@ namespace AMControls.Charts.Scatter
                 }
                 if (_firstAnimation[2]) _firstAnimation[2] = !_firstAnimation[2];
 
-                _controls[0].Bounds = new Rect(axisObject.Bounds.X + axisObject.Bounds.Width - 15, 
-                                               axisObject.Bounds.Y + axisObject.Bounds.Height + 5, 
+                _controls[0].Bounds = new Rect(axisObject.Bounds.X + axisObject.Bounds.Width - 15,
+                                               axisObject.Bounds.Y + axisObject.Bounds.Height + 5,
                                                12, 12);
 
                 _controls[1].Bounds = new Rect(axisObject.Bounds.X + axisObject.Bounds.Width - 15,
@@ -293,7 +288,7 @@ namespace AMControls.Charts.Scatter
                 {
                     bool _doAnimation = _firstAnimation[3];
                     System.Windows.Point sPoint = new(StartPoint.X - MajorTickSize/2, axisObject.Bounds.Y + _yAxisSpacing * (Sections - n1));
-                    System.Windows.Point ePoint = new(StartPoint.X + MajorTickSize, axisObject.Bounds.Y + _yAxisSpacing * (Sections - n1)) ;
+                    System.Windows.Point ePoint = new(StartPoint.X + MajorTickSize, axisObject.Bounds.Y + _yAxisSpacing * (Sections - n1));
 
                     dc.DrawLine(Axe_pen, sPoint, ePoint);
 
@@ -311,7 +306,7 @@ namespace AMControls.Charts.Scatter
                         System.Windows.Point sGPoint = new(sPoint.X, sPoint.Y);
                         System.Windows.Point eGPoint = new(this.ActualWidth - _xMargin, sPoint.Y);
 
-                        Draw_GridAnimation(dc,ref _doAnimation, sGPoint, eGPoint);
+                        Draw_GridAnimation(dc, ref _doAnimation, sGPoint, eGPoint);
                     }
                 }
                 if (_firstAnimation[3]) _firstAnimation[3] = !_firstAnimation[3];
@@ -326,9 +321,9 @@ namespace AMControls.Charts.Scatter
             }
         }
 
-        private void Draw_PointContextMenu(DrawingContext dc, List<IDataPoint> dPL) 
-        { 
-            if(dPL.Count == 1) 
+        private void Draw_PointContextMenu(DrawingContext dc, List<IDataPoint> dPL)
+        {
+            if (dPL.Count == 1)
             {
                 Draw_DataPoint_ContextMenu(dc, this, dPL[0]);
             }
@@ -410,23 +405,23 @@ namespace AMControls.Charts.Scatter
 
                 currLoc.X = currLoc.X + conWin.Width + 10;
 
-                if (currLoc.X > windowAllowed.Width - windowAllowed.X - 10) 
+                if (currLoc.X > windowAllowed.Width - windowAllowed.X - 10)
                 {
                     currLoc.X = windowAllowed.X;
                     currLoc.Y += conWin.Height + 10;
                 }
 
-                if(currLoc.Y + conWin.Height + 10 > windowAllowed.Height - windowAllowed.Y - 10) 
-                { 
-                    break; 
+                if (currLoc.Y + conWin.Height + 10 > windowAllowed.Height - windowAllowed.Y - 10)
+                {
+                    break;
                 }
             }
 
         }
 
         #region Animations
-        private void Draw_AxisAnimation(DrawingContext dc , ref bool doAnimation,
-                                        System.Windows.Point sPoint, System.Windows.Point ePoint) 
+        private void Draw_AxisAnimation(DrawingContext dc, ref bool doAnimation,
+                                        System.Windows.Point sPoint, System.Windows.Point ePoint)
         {
 
             Pen Axe_pen = new(new SolidColorBrush(AxisColor), AxisThickness);
@@ -434,8 +429,8 @@ namespace AMControls.Charts.Scatter
 
             if (doAnimation)
             {
-                PointAnimationBase pab = (PointAnimationBase)new PointAnimation(sPoint, new Duration(TimeSpan.FromMilliseconds(_axisAnimationTime)));
-                PointAnimationBase pas = (PointAnimationBase)new PointAnimation(ePoint, new Duration(TimeSpan.FromMilliseconds(_axisAnimationTime)));
+                PointAnimationBase pab = new PointAnimation(sPoint, new Duration(TimeSpan.FromMilliseconds(_axisAnimationTime)));
+                PointAnimationBase pas = new PointAnimation(ePoint, new Duration(TimeSpan.FromMilliseconds(_axisAnimationTime)));
                 System.Windows.Media.Animation.AnimationClock p1Animation = pab.CreateClock();
                 System.Windows.Media.Animation.AnimationClock p2Animation = pas.CreateClock();
 
@@ -443,11 +438,11 @@ namespace AMControls.Charts.Scatter
 
                 doAnimation = !doAnimation;
             }
-            else 
+            else
             {
                 dc.DrawLine(Axe_pen, sPoint, ePoint);
             }
-            
+
         }
 
         private void Draw_GridAnimation(DrawingContext dc, ref bool doAnimation,
@@ -459,8 +454,8 @@ namespace AMControls.Charts.Scatter
 
             if (doAnimation)
             {
-                PointAnimationBase pab = (PointAnimationBase)new PointAnimation(sPoint, new Duration(TimeSpan.FromMilliseconds(_gridAnimationTime)));
-                PointAnimationBase pas = (PointAnimationBase)new PointAnimation(ePoint, new Duration(TimeSpan.FromMilliseconds(_gridAnimationTime)));
+                PointAnimationBase pab = new PointAnimation(sPoint, new Duration(TimeSpan.FromMilliseconds(_gridAnimationTime)));
+                PointAnimationBase pas = new PointAnimation(ePoint, new Duration(TimeSpan.FromMilliseconds(_gridAnimationTime)));
                 System.Windows.Media.Animation.AnimationClock p1Animation = pab.CreateClock();
                 System.Windows.Media.Animation.AnimationClock p2Animation = pas.CreateClock();
 
@@ -475,27 +470,27 @@ namespace AMControls.Charts.Scatter
 
         }
 
-        private void Draw_DataPoint_HoverAnimation() 
+        private void Draw_DataPoint_HoverAnimation()
         {
-            
+
         }
 
         #endregion
         #endregion
 
         #region Tooltip
-        private void Draw_ToolTip(DrawingContext dc) 
+        private void Draw_ToolTip(DrawingContext dc)
         {
             if (_xAxis == null || _yAxis == null) return;
 
-            
+
 
             System.Windows.Rect Box = new(Tooltip_position.X, Tooltip_position.Y, 10, 10);
             dc.DrawRectangle(new SolidColorBrush(Colors.White), new Pen(new SolidColorBrush(Colors.Silver), 1), Box);
 
         }
 
-        private void UpdateAxePosition_Values() 
+        private void UpdateAxePosition_Values()
         {
             FormattedText labelFormat = new("Sample Text", System.Globalization.CultureInfo.CurrentCulture,
                                                   System.Windows.FlowDirection.LeftToRight,
@@ -517,7 +512,7 @@ namespace AMControls.Charts.Scatter
         /// the visual will not update automatically.
         /// </summary>
         /// <param name="interval"></param>
-        public void Change_Vertical_axisInterval( int interval ) 
+        public void Change_Vertical_axisInterval(int interval)
         {
             Change_Axis_Interval(_yAxis, _yAxis.Ticks + interval);
         }
@@ -526,14 +521,14 @@ namespace AMControls.Charts.Scatter
         /// the visual will not update automatically.
         /// </summary>
         /// <param name="interval"></param>
-        public void Change_Horizontal_axisInterval(int interval) 
-        { 
-            Change_Axis_Interval( _xAxis, _xAxis.Ticks + interval);
+        public void Change_Horizontal_axisInterval(int interval)
+        {
+            Change_Axis_Interval(_xAxis, _xAxis.Ticks + interval);
         }
         #endregion
 
         #region Methods
-        public void Save_Image(string filename) 
+        public void Save_Image(string filename)
         {
             RenderTargetBitmap rtb = new RenderTargetBitmap((int)this.RenderSize.Width,
                                      (int)this.RenderSize.Height, 96d, 96d, System.Windows.Media.PixelFormats.Default);
@@ -550,7 +545,7 @@ namespace AMControls.Charts.Scatter
             }
         }
 
-        public void Adjust_axes_to_data() 
+        public void Adjust_axes_to_data()
         {
             if (_series.Count == 0) return;
             if (_xAxis == null || _yAxis == null) return;
@@ -568,7 +563,7 @@ namespace AMControls.Charts.Scatter
             InvalidateVisual();
         }
 
-        private void Scale_Axis(IAxes axis, double amount, double prevMin, double prevMax) 
+        private void Scale_Axis(IAxes axis, double amount, double prevMin, double prevMax)
         {
             double scaleFactor = axis.Interval/50;
             axis.MinValue = prevMin -  scaleFactor * amount;
@@ -584,7 +579,7 @@ namespace AMControls.Charts.Scatter
             this.InvalidateVisual();
         }
 
-        public List<IDataPoint> Get_Selected_DataPoints() 
+        public List<IDataPoint> Get_Selected_DataPoints()
         {
             List<IDataPoint> Result = new();
 
@@ -607,7 +602,7 @@ namespace AMControls.Charts.Scatter
             {
                 ZoomIn(mouseLocation.X, mouseLocation.Y);
             }
-            else 
+            else
             {
                 ZoomOut(mouseLocation.X, mouseLocation.Y);
             }
@@ -632,21 +627,21 @@ namespace AMControls.Charts.Scatter
             _yMaxValue = _yAxis.MaxValue;
 
             Point mouseLocation = e.GetPosition(this);
-            if(_xAxis.Bounds.Contains(mouseLocation)) 
+            if (_xAxis.Bounds.Contains(mouseLocation))
             {
                 MouseDown_xAxis = true;
                 Translate_StartPosition = e.GetPosition(this);
                 _mouseCaptured = false;
 
             }
-            else if (_yAxis.Bounds.Contains(mouseLocation)) 
+            else if (_yAxis.Bounds.Contains(mouseLocation))
             {
                 MouseDown_yAxis = true;
                 Translate_StartPosition = e.GetPosition(this);
                 _mouseCaptured = false;
 
             }
-            else if (_xAxis != null && _yAxis != null) 
+            else if (_xAxis != null && _yAxis != null)
             {
                 Translate_StartPosition = e.GetPosition(this);
                 MouseDown = true;
@@ -661,12 +656,12 @@ namespace AMControls.Charts.Scatter
             base.OnMouseMove(e);
 
             Point mouseLocation = e.GetPosition(this);
-            
+
             if (MouseDown_xAxis)
             {
                 Scale_Axis(_xAxis, Translate_StartPosition.X - mouseLocation.X, _xMinValue, _xMaxValue);
             }
-            else if (MouseDown_yAxis) 
+            else if (MouseDown_yAxis)
             {
                 Scale_Axis(_yAxis, Translate_StartPosition.Y - mouseLocation.Y, _yMinValue, _yMaxValue);
             }
@@ -691,7 +686,7 @@ namespace AMControls.Charts.Scatter
                     ChartAreaMouseMove?.Invoke(this, e);
                 }
             }
-            else 
+            else
             {
                 bool doInvalidate = false;
 
@@ -731,19 +726,19 @@ namespace AMControls.Charts.Scatter
             MouseDown_yAxis = false;
             _mouseCaptured = true;
 
-            
-            Point mousePos = e.GetPosition(this);            
+
+            Point mousePos = e.GetPosition(this);
             double Distance = Point.Subtract(Translate_StartPosition, mousePos).Length;
             if (Distance > 20) return;
             if (Check_ContextMenuClick(mousePos)) return;
 
             bool toRemove = true;
-            while (toRemove) 
+            while (toRemove)
             {
                 toRemove = false;
                 foreach (MenuItem item in dt.Items)
                 {
-                    if(item.Header.ToString().Contains("HT") || item.Header.ToString().Contains("Show all series")) 
+                    if (item.Header.ToString().Contains("HT") || item.Header.ToString().Contains("Show all series"))
                     {
                         dt.Items.Remove(item);
                         toRemove = true;
@@ -756,7 +751,7 @@ namespace AMControls.Charts.Scatter
             bool updateSelection = false;
             foreach (var item in _series)
             {
-                if (!item.IsVisible) 
+                if (!item.IsVisible)
                 {
                     hiddenSeries = true;
                     continue;
@@ -764,9 +759,9 @@ namespace AMControls.Charts.Scatter
 
                 item.Mouse_LeftButton_Down(mousePos.X, mousePos.Y);
 
-                if (item.IsSelected) 
+                if (item.IsSelected)
                 {
-                    MenuItem Mitem = new() { Header = "HT_" + item.Label + ": Hide"};
+                    MenuItem Mitem = new() { Header = "HT_" + item.Label + ": Hide" };
                     Mitem.Tag = item;
                     Mitem.Click += Handle_HideSeries;
 
@@ -778,13 +773,13 @@ namespace AMControls.Charts.Scatter
             }
 
             // check if selection has changed
-            if(updateSelection) 
-            { 
+            if (updateSelection)
+            {
                 SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
-            
 
-            if (hiddenSeries) 
+
+            if (hiddenSeries)
             {
                 MenuItem Mitem = new() { Header = "Show all series" };
                 Mitem.Click += Handle_showAllSeries;
@@ -796,7 +791,7 @@ namespace AMControls.Charts.Scatter
             IDataSeries? dtTemp = _legend.Check_series_Hit(mousePos.X, mousePos.Y);
 
             // Zoom in series
-            if (dtTemp != null) 
+            if (dtTemp != null)
             {
                 _xAxis.MinValue = dtTemp.DataPoints.Min(e => e.X);
                 _xAxis.MaxValue = dtTemp.DataPoints.Max(e => e.X);
@@ -809,9 +804,9 @@ namespace AMControls.Charts.Scatter
 
             // Axis Scale (haha ok, this can be done way better and this should be done in the IAxes object)
             // but just look away for the moment
-            for(int n1 = 0; n1 < _controls.Count; n1++) 
+            for (int n1 = 0; n1 < _controls.Count; n1++)
             {
-                if (_controls[n1].Mouse_LeftButton_Down(mousePos.X, mousePos.Y)) 
+                if (_controls[n1].Mouse_LeftButton_Down(mousePos.X, mousePos.Y))
                 {
                     if (n1 == 0)
                     {
@@ -836,17 +831,17 @@ namespace AMControls.Charts.Scatter
             InvalidateVisual();
         }
 
-        private bool Check_ContextMenuClick(Point mousePos) 
+        private bool Check_ContextMenuClick(Point mousePos)
         {
             List<IDataSeries> CMenus = _series.FindAll(e => e.ContextMenus.Count > 0);
 
-            foreach (var item in CMenus) 
+            foreach (var item in CMenus)
             {
                 List<IDataPoint> ctMenu = item.ContextMenus;
 
                 foreach (var pointy in ctMenu)
                 {
-                    if(pointy.ContextMenu.Mouse_LeftButton_Down(mousePos.X, mousePos.Y)) 
+                    if (pointy.ContextMenu.Mouse_LeftButton_Down(mousePos.X, mousePos.Y))
                     {
                         ContextMenuClicked?.Invoke(pointy, EventArgs.Empty);
                         return true;
@@ -857,7 +852,7 @@ namespace AMControls.Charts.Scatter
             return false;
         }
 
-        private void Handle_HideSeries(object sender, RoutedEventArgs e) 
+        private void Handle_HideSeries(object sender, RoutedEventArgs e)
         {
             IDataSeries series = (IDataSeries)((MenuItem)sender).Tag;
 
@@ -865,7 +860,7 @@ namespace AMControls.Charts.Scatter
             InvalidateVisual();
         }
 
-        private void Handle_showAllSeries(object sender, RoutedEventArgs e) 
+        private void Handle_showAllSeries(object sender, RoutedEventArgs e)
         {
             foreach (var item in _series)
             {
@@ -875,23 +870,23 @@ namespace AMControls.Charts.Scatter
             InvalidateVisual();
         }
 
-        private void ZoomIn(double x, double y) 
+        private void ZoomIn(double x, double y)
         {
             if (_xAxis != null && _yAxis != null)
             {
                 double xInterval = (_xAxis.MaxValue - _xAxis.MinValue)*0.5;
                 double yInterval = (_yAxis.MaxValue - _yAxis.MinValue) * 0.5;
 
-                _xAxis.MinValue += (xInterval) / 2 ;
-                _xAxis.MaxValue -= (xInterval) / 2 ;
-                _yAxis.MinValue += (yInterval) / 2 ;
-                _yAxis.MaxValue -= (yInterval) / 2 ;
+                _xAxis.MinValue += (xInterval) / 2;
+                _xAxis.MaxValue -= (xInterval) / 2;
+                _yAxis.MinValue += (yInterval) / 2;
+                _yAxis.MaxValue -= (yInterval) / 2;
 
                 this.InvalidateVisual();
             }
         }
 
-        private void ZoomOut(double x, double y) 
+        private void ZoomOut(double x, double y)
         {
             if (_xAxis != null && _yAxis != null)
             {
@@ -907,9 +902,9 @@ namespace AMControls.Charts.Scatter
             }
         }
 
-        private void Translate(double x, double y) 
+        private void Translate(double x, double y)
         {
-            if(_xAxis != null && _yAxis != null) 
+            if (_xAxis != null && _yAxis != null)
             {
                 _xAxis.MinValue = _xMinValue + x * _translationFactor * _xAxis.Interval;
                 _xAxis.MaxValue = _xMaxValue + x * _translationFactor * _xAxis.Interval;
@@ -939,7 +934,7 @@ namespace AMControls.Charts.Scatter
             }
         }
 
-        private void Bring_series_to_front(IDataSeries seriesObject) 
+        private void Bring_series_to_front(IDataSeries seriesObject)
         {
             int index = 0;
             foreach (var item in _series)
@@ -950,11 +945,11 @@ namespace AMControls.Charts.Scatter
             seriesObject.Index = _series.Count + 1;
         }
 
-        private void New_window(object sender, RoutedEventArgs e) 
+        private void New_window(object sender, RoutedEventArgs e)
         {
             bool disconnected = false;
             var parentC = VisualTreeHelper.GetParent(this);
-            if (parentC is Grid) 
+            if (parentC is Grid)
             {
                 ((Grid)parentC).Children.Remove(this);
                 disconnected = true;
@@ -962,7 +957,7 @@ namespace AMControls.Charts.Scatter
 
             ScatterPlot sP;
             if (disconnected) sP = this;
-            else 
+            else
             {
                 sP = new();
                 sP.Set_xAxis(_xAxis);
@@ -994,7 +989,7 @@ namespace AMControls.Charts.Scatter
             Change_Horizontal_axisInterval(intervals);
         }
 
-        public List<IDataPoint> Search(string searchString) 
+        public List<IDataPoint> Search(string searchString)
         {
             List<IDataPoint> Result = new();
 
@@ -1022,20 +1017,20 @@ namespace AMControls.Charts.Scatter
             return Result;
         }
 
-        public IDataPoint Get_Position(double x_mouse, double y_mouse) 
+        public IDataPoint Get_Position(double x_mouse, double y_mouse)
         {
-            if (!_chartArea.Contains(x_mouse, y_mouse)) return new DataPoint() { X_draw = -1, Y_draw = -1};
+            if (!_chartArea.Contains(x_mouse, y_mouse)) return new DataPoint() { X_draw = -1, Y_draw = -1 };
             DataPoint dP = new();
             dP.X = _xAxis.MinValue + (x_mouse - _xAxis_xLocation)/ _xAxisStepSize;
-            dP.Y = _yAxis.MinValue - (- y_mouse + _yAxis.Bounds.Y) / _yAxisStepSize;
-            
+            dP.Y = _yAxis.MinValue - (-y_mouse + _yAxis.Bounds.Y) / _yAxisStepSize;
+
             dP.X_draw = x_mouse;
             dP.Y_draw = y_mouse;
 
             return dP;
         }
 
-        public void Clear_Series() 
+        public void Clear_Series()
         {
             _series.Clear();
         }

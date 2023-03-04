@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Dynamic;
 using System.Runtime.InteropServices;
+using System.Text;
 
 
 namespace AMFramework.AMsystem
@@ -44,7 +39,7 @@ namespace AMFramework.AMsystem
 
         private IntPtr _library;
         private IntPtr _api;
-        public AMFramework_library_APIHandle(string pathToLibrary) 
+        public AMFramework_library_APIHandle(string pathToLibrary)
         {
             try
             {
@@ -60,14 +55,14 @@ namespace AMFramework.AMsystem
                 global::System.Windows.Forms.MessageBox.Show("An error occured when loading the API: " + e.Message);
                 throw;
             }
-            
+
         }
 
-        public string run_lua_command(string command, string parameters) 
+        public string run_lua_command(string command, string parameters)
         {
             IntPtr AddressPointer_run_lua = GetProcAddress(_library, "API_run_lua_command");
             API_run_lua_command apiObject = (API_run_lua_command)Marshal.GetDelegateForFunctionPointer(AddressPointer_run_lua, typeof(API_run_lua_command));
-            
+
             string outCommand;
 
             try

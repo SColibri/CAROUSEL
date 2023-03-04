@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace AMControls.Custom
 {
-    public class TreeView_custom_AM:TreeView
+    public class TreeView_custom_AM : TreeView
     {
         public static readonly DependencyProperty IDProperty =
         DependencyProperty.Register("ID",
-                                    typeof(int), 
+                                    typeof(int),
                                     typeof(TreeView_custom_AM),
                                     new PropertyMetadata(default(int), OnIDPropertyChanged));
 
@@ -33,25 +29,25 @@ namespace AMControls.Custom
         }
 
         private int _id = -1;
-        public int ID 
+        public int ID
         {
-            get { return (int)GetValue(IDProperty); } 
-            set 
-            { 
+            get { return (int)GetValue(IDProperty); }
+            set
+            {
                 _id = value;
                 SetValue(IDProperty, value);
-            } 
+            }
         }
 
         private List<int> _selectionTree = new();
-        public List<int> SelectionTree 
-        { 
-            get 
-            { 
+        public List<int> SelectionTree
+        {
+            get
+            {
                 return (List<int>)GetValue(Selectionproperty);
-            } 
-            set 
-            { 
+            }
+            set
+            {
                 _selectionTree = value;
                 SetValue(Selectionproperty, value);
 
@@ -63,7 +59,7 @@ namespace AMControls.Custom
                 {
                     if (item is not TreeViewItem_custom_AM) continue;
                     TreeViewItem_custom_AM? treeTemp = item as TreeViewItem_custom_AM;
-                    if(treeTemp == null) continue;
+                    if (treeTemp == null) continue;
                     if (treeTemp.ID != _selectionTree[LevelIndex]) continue;
                     treeTemp.IsExpanded = true;
 
@@ -74,7 +70,7 @@ namespace AMControls.Custom
             }
         }
 
-        private void Reccursive_Find(int LevelIndex, int MaxLevel, TreeViewItem_custom_AM tree) 
+        private void Reccursive_Find(int LevelIndex, int MaxLevel, TreeViewItem_custom_AM tree)
         {
             if (MaxLevel == LevelIndex) return;
             foreach (var item in tree.Items)
@@ -90,6 +86,6 @@ namespace AMControls.Custom
             }
         }
 
-        
+
     }
 }

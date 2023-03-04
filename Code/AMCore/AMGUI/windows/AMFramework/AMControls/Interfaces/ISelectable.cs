@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMControls.Interfaces
+﻿namespace AMControls.Interfaces
 {
     /// <summary>
     /// Row that can be selected, implements the IsSelected property

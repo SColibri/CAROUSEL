@@ -1,23 +1,12 @@
 ﻿using AMControls.Charts.DataPointContextMenu;
-using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Implementations;
+using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using AMFramework.Controller;
 using AMFramework_Lib.Core;
+using System;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace AMFramework.Views.Case.plotViews
 {
@@ -59,7 +48,7 @@ namespace AMFramework.Views.Case.plotViews
             }
 
         }
-        public Case_SpyderChart(Controller_SpyderPlot control) 
+        public Case_SpyderChart(Controller_SpyderPlot control)
         {
             DataContext = control;
         }

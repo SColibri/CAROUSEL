@@ -1,24 +1,9 @@
-﻿using AMFramework_Lib.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using AMFramework.Controller;
-using AMFramework_Lib.Model.Model_Controllers;
-using System.Threading;
+﻿using AMFramework.Controller;
+using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
-using System.ComponentModel;
-using AMFramework_Lib.Interfaces;
+using System.Collections.Generic;
+using System.Threading;
+using System.Windows.Controls;
 
 namespace AMFramework.Views.Phase
 {
@@ -58,7 +43,7 @@ namespace AMFramework.Views.Phase
         /// Method included in this view or call the controller's function
         /// </summary>
         /// <param name="comm"></param>
-        private void Create_DataContext(IAMCore_Comm comm) 
+        private void Create_DataContext(IAMCore_Comm comm)
         {
             var dC = new Controller_Phase(comm);
             DataContext = dC;
@@ -71,14 +56,14 @@ namespace AMFramework.Views.Phase
         /// <summary>
         /// Loads phase list and selection.
         /// </summary>
-        private void LoadPhases_Async(object? param) 
+        private void LoadPhases_Async(object? param)
         {
             if (param == null) return;
 
             Controller_Phase tRef = (Controller_Phase)param;
             tRef.LoadFromDatabase();
 
-            if(_caseModelController != null)
+            if (_caseModelController != null)
                 tRef.SetSelected(_caseModelController);
 
             tRef.IsLoading = false;
@@ -88,7 +73,7 @@ namespace AMFramework.Views.Phase
         /// Returns all selected phases
         /// </summary>
         /// <returns></returns>
-        public List<ModelController<Model_Phase>> Get_Selection() 
+        public List<ModelController<Model_Phase>> Get_Selection()
         {
             var selectedList = ((Controller_Phase)DataContext).Get_Selected();
             List<ModelController<Model_Phase>> result = new();

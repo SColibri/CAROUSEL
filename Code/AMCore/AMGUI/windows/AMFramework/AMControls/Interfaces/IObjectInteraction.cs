@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMControls.Interfaces
+﻿namespace AMControls.Interfaces
 {
     public interface IObjectInteraction
     {
@@ -12,7 +6,7 @@ namespace AMControls.Interfaces
         /// Bounding box for the object dimension
         /// </summary>
         public System.Windows.Rect Bounds { get; set; }
-        
+
         /// <summary>
         /// indicates if mouse is hovering on top of object 
         /// </summary>

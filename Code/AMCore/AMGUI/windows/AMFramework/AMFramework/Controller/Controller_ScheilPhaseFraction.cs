@@ -1,13 +1,10 @@
-﻿using System;
+﻿using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Model.Model_Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Core;
-using AMFramework_Lib.Controller;
-using AMFramework_Lib.Model.Model_Controllers;
 
 namespace AMFramework.Controller
 {
@@ -21,7 +18,7 @@ namespace AMFramework.Controller
         {
             _CaseController = caseController;
 
-            if(caseController.SelectedCase != null)
+            if (caseController.SelectedCase != null)
                 PhaseFractions = ControllerM_ScheilConfiguration.Get_ScheilSolidificationSimulation_FromIDCase(comm, caseController.SelectedCase.ModelObject.ID);
         }
         #endregion
@@ -48,7 +45,7 @@ namespace AMFramework.Controller
         public List<ModelController<Model_ScheilPhaseFraction>> PhaseFractions
         {
             get => _phaseFractions;
-            set 
+            set
             {
                 _phaseFractions = value;
                 PhaseFraction_DataCount = _phaseFractions.Count;
@@ -56,13 +53,13 @@ namespace AMFramework.Controller
             }
         }
 
-        public int Phase_fraction_Data_Count_Load(int IDCase) 
+        public int Phase_fraction_Data_Count_Load(int IDCase)
         {
             string Query = "database_table_custom_query SELECT COUNT(*) FROM SelectedPhases WHERE IDCase = " + IDCase;
             string outCommand = _comm.run_lua_command(Query, "");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
-            if(!rowItems[0].All(char.IsNumber)) return 0;
+            if (!rowItems[0].All(char.IsNumber)) return 0;
 
             return Convert.ToInt32(rowItems[0]);
         }

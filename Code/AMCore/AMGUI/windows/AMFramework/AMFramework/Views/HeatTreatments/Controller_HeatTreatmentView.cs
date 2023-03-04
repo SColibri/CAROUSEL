@@ -1,21 +1,16 @@
-﻿using AMControls.Charts;
-using AMControls.Charts.Implementations;
+﻿using AMControls.Charts.Implementations;
 using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Interfaces;
 using AMControls.Charts.Scatter;
 using AMFramework.Controller;
+using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
 using AMFramework_Lib.Structures;
-using AMFramework_Lib.Controller;
-using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -23,7 +18,7 @@ namespace AMFramework.Views.HeatTreatments
 {
     public class Controller_HeatTreatmentView : ControllerAbstract
     {
-        public Controller_HeatTreatmentView(IAMCore_Comm comm, Model_Case caseModel) : base(comm) 
+        public Controller_HeatTreatmentView(IAMCore_Comm comm, Model_Case caseModel) : base(comm)
         {
             CaseModel = caseModel;
             HeatTreatmentPlot = new();
@@ -42,10 +37,10 @@ namespace AMFramework.Views.HeatTreatments
 
         #region Properties
         private Model_Case _caseModel;
-        public Model_Case CaseModel 
+        public Model_Case CaseModel
         {
             get { return _caseModel; }
-            set 
+            set
             {
                 _caseModel = value;
                 OnPropertyChanged(nameof(CaseModel));
@@ -56,7 +51,7 @@ namespace AMFramework.Views.HeatTreatments
         public ModelController<Model_HeatTreatment>? SelectedHeatTreatment
         {
             get { return _selectedHeatTreatment; }
-            set 
+            set
             {
                 _selectedHeatTreatment = value;
                 Update_Plot();
@@ -73,17 +68,17 @@ namespace AMFramework.Views.HeatTreatments
         /// <summary>
         /// This displays the heat treatment segments in a plot
         /// </summary>
-        public ScatterPlot HeatTreatmentPlot 
+        public ScatterPlot HeatTreatmentPlot
         {
             get { return _heatTreatmentPlot; }
-            set 
+            set
             {
                 _heatTreatmentPlot = value;
                 OnPropertyChanged(nameof(HeatTreatmentPlot));
             }
         }
 
-        private void Update_Plot() 
+        private void Update_Plot()
         {
             HeatTreatmentPlot.Clear_Series();
 
@@ -111,7 +106,7 @@ namespace AMFramework.Views.HeatTreatments
                     foreach (var segments in rangeObjects.Item1)
                     {
                         // The first index belongs to the start temperature in heat treatment
-                        if (index > -1) 
+                        if (index > -1)
                         {
                             if (item.ModelObject.HeatTreatmentSegment[index].ModelObject.SelectedModeType == Model_HeatTreatmentSegment.ModeType.TIME_INTERVAL)
                             {
@@ -130,17 +125,17 @@ namespace AMFramework.Views.HeatTreatments
 
                     HeatTreatmentPlot.Add_series(dataSeries);
                 }
-              
+
             }
 
-            
+
 
         }
 
-        private List<Struct_AMRange> Plot_Get_TemperatureUniform_Rages(ModelController<Model_HeatTreatment> ht) 
+        private List<Struct_AMRange> Plot_Get_TemperatureUniform_Rages(ModelController<Model_HeatTreatment> ht)
         {
             List<Struct_AMRange> result = new();
-            
+
             // Get all ranges for the first temperature
             Struct_AMRange startRangeObj = new();
             if (startRangeObj.Add(ht.ModelObject.TemplatedStartTemperature) == 1) return result;
@@ -148,7 +143,7 @@ namespace AMFramework.Views.HeatTreatments
 
             // Get all ranges from segments
             int MaxValue = startRangeObj.Values.Count;
-            foreach (var segment in ht.ModelObject.HeatTreatmentSegment) 
+            foreach (var segment in ht.ModelObject.HeatTreatmentSegment)
             {
                 Struct_AMRange rangeObj = new();
                 result.Add(rangeObj);
@@ -159,17 +154,17 @@ namespace AMFramework.Views.HeatTreatments
             }
 
             // Make uniform
-            Plot_SetUniformRanges(MaxValue ,result);
+            Plot_SetUniformRanges(MaxValue, result);
 
             return result;
         }
 
-        private Tuple<List<Struct_AMRange>, List<Struct_AMRange>> Plot_GetRangedObjects(ModelController<Model_HeatTreatment> ht) 
+        private Tuple<List<Struct_AMRange>, List<Struct_AMRange>> Plot_GetRangedObjects(ModelController<Model_HeatTreatment> ht)
         {
             List<Struct_AMRange> result_Temperatures = Plot_Get_TemperatureUniform_Rages(ht);
             List<Struct_AMRange> result_Rates = new();
 
-            if (result_Temperatures.Count == 0) return new(new(),new()); // oh la la, nice new new new functon xp really expressive
+            if (result_Temperatures.Count == 0) return new(new(), new()); // oh la la, nice new new new functon xp really expressive
             int MaxValue = result_Temperatures[0].Values.Count;
             foreach (var segment in ht.ModelObject.HeatTreatmentSegment)
             {
@@ -178,15 +173,15 @@ namespace AMFramework.Views.HeatTreatments
 
                 int actionResult = rangeObj.Add(segment.ModelObject.TemplateValue);
                 if (actionResult == 1) continue;
-                
-                if (MaxValue < rangeObj.Values.Count) MaxValue = rangeObj.Values.Count;                
+
+                if (MaxValue < rangeObj.Values.Count) MaxValue = rangeObj.Values.Count;
             }
             Plot_SetUniformRanges(MaxValue, result_Rates);
 
             return new(result_Temperatures, result_Rates);
         }
 
-        private void Plot_SetUniformRanges(int MaxValue, List<Struct_AMRange> doOnList) 
+        private void Plot_SetUniformRanges(int MaxValue, List<Struct_AMRange> doOnList)
         {
             foreach (var item in doOnList)
             {
@@ -349,7 +344,7 @@ namespace AMFramework.Views.HeatTreatments
 
         private void AddHeatTreatmentSegment_Action()
         {
-            if (SelectedHeatTreatment == null) 
+            if (SelectedHeatTreatment == null)
             {
                 Show_No_Project_Selected_Notification();
                 return;
@@ -372,7 +367,7 @@ namespace AMFramework.Views.HeatTreatments
             return true;
         }
 
-        private void HeatTreatmentSegments_PropertyChangedHandle(object? sender, PropertyChangedEventArgs e) 
+        private void HeatTreatmentSegments_PropertyChangedHandle(object? sender, PropertyChangedEventArgs e)
         {
             Update_Plot();
         }
@@ -399,7 +394,7 @@ namespace AMFramework.Views.HeatTreatments
 
         private void RemoveHeatTreatmentSegment_Action(object sender)
         {
-            if (SelectedHeatTreatment == null) 
+            if (SelectedHeatTreatment == null)
             {
                 Show_No_Project_Selected_Notification();
                 return;
@@ -413,7 +408,7 @@ namespace AMFramework.Views.HeatTreatments
             hts.ModelObject.PropertyChanged -= HeatTreatmentSegments_PropertyChangedHandle;
 
             List<ModelController<Model_HeatTreatmentSegment>> newList = new();
-            foreach (var item in SelectedHeatTreatment.ModelObject.HeatTreatmentSegment) 
+            foreach (var item in SelectedHeatTreatment.ModelObject.HeatTreatmentSegment)
             {
                 if (item == hts) continue;
                 newList.Add(item);
@@ -434,7 +429,7 @@ namespace AMFramework.Views.HeatTreatments
 
         #region Helper functions
 
-        private void Show_No_Project_Selected_Notification() 
+        private void Show_No_Project_Selected_Notification()
         {
             AMFramework_Lib.Structures.Struct_Color struct_Color = new();
             struct_Color.G = System.Windows.Media.Colors.Yellow.G;

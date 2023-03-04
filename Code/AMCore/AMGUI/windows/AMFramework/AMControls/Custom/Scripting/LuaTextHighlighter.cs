@@ -1,12 +1,9 @@
-﻿using System;
+﻿using ICSharpCode.AvalonEdit.Highlighting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ICSharpCode.AvalonEdit.Highlighting;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
-using SharpDX.Direct3D9;
 
 namespace AMControls.Custom.Scripting
 {
@@ -30,7 +27,7 @@ namespace AMControls.Custom.Scripting
 
             _mainRuleSet = new() { Name = "Lua" };
 
-            
+
 
             _mainRuleSet.Rules.Add(new HighlightingRule
             {

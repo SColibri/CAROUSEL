@@ -1,25 +1,20 @@
 ﻿using AMFramework.Controller;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Model.Model_Controllers;
 using AMFramework.Views.HeatTreatments;
 using AMFramework.Views.Phase;
-using AMFramework_Lib.Core;
 using AMFramework_Lib.Controller;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Model.Model_Controllers;
 using AMFramework_Lib.Scripting.LUA;
+using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Input;
 
 namespace AMFramework.Views.Projects.Other
 {
     public class Controller_ProjectCaseCreator : ControllerAbstract
     {
-        public Controller_ProjectCaseCreator(ref IAMCore_Comm comm, ControllerM_Project projectController):base(comm) 
+        public Controller_ProjectCaseCreator(ref IAMCore_Comm comm, ControllerM_Project projectController) : base(comm)
         {
             // Set project configuration on to new case template
             _projectController = projectController;
@@ -30,7 +25,7 @@ namespace AMFramework.Views.Projects.Other
 
             PhaseListPage = new Phase.PhaseList_View(comm);
             HeatTreatmentPage = new HeatTreatments.HeatTreatment_View(new Controller_HeatTreatmentView(comm, this.CaseTemplate.MCObject.ModelObject));
-            ScriptSectionPrecipitation = new Components.ScriptingEditor.Scripting_editor() { DataContext = new Components.ScriptingEditor.Scripting_ViewModel()};
+            ScriptSectionPrecipitation = new Components.ScriptingEditor.Scripting_editor() { DataContext = new Components.ScriptingEditor.Scripting_ViewModel() };
             ScriptPrecipitationText = "require\"AMFramework.lua\"\n\r";
 
             CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.StartTemperature = StartTemperature;
@@ -46,22 +41,22 @@ namespace AMFramework.Views.Projects.Other
         #region Models
         private ControllerM_Project _projectController;
         public ControllerM_Project ProjectController
-        { 
-            get { return _projectController; } 
-            set 
+        {
+            get { return _projectController; }
+            set
             {
                 _projectController = value;
                 OnPropertyChanged(nameof(ProjectController));
             }
         }
 
-        
+
         private ControllerM_Case _caseTemplate;
-        public ControllerM_Case CaseTemplate 
-        { 
+        public ControllerM_Case CaseTemplate
+        {
             get { return _caseTemplate; }
-            set 
-            { 
+            set
+            {
                 _caseTemplate = value;
                 OnPropertyChanged(nameof(CaseTemplate));
             }
@@ -71,10 +66,10 @@ namespace AMFramework.Views.Projects.Other
         #region Views
 
         private object? _phaseListPage;
-        public object? PhaseListPage 
+        public object? PhaseListPage
         {
             get { return _phaseListPage; }
-            set 
+            set
             {
                 _phaseListPage = value;
                 OnPropertyChanged(nameof(PhaseListPage));
@@ -93,10 +88,10 @@ namespace AMFramework.Views.Projects.Other
         }
 
         private object? _scriptSectionPrecipitation;
-        public object? ScriptSectionPrecipitation 
+        public object? ScriptSectionPrecipitation
         {
             get { return _scriptSectionPrecipitation; }
-            set 
+            set
             {
                 _scriptSectionPrecipitation = value;
                 OnPropertyChanged(nameof(ScriptSectionPrecipitation));
@@ -120,23 +115,23 @@ namespace AMFramework.Views.Projects.Other
                 {
                     CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.DependentPhase = -1;
                 }
-                else 
+                else
                 {
                     // TODO:Make safe
                     int ID = _selectedMinLiquidFractionPhase.MCObject.ModelObject.ID;
                     CaseTemplate.MCObject.ModelObject.ScheilConfiguration.ModelObject.DependentPhase = ID;
                 }
-                
+
             }
         }
 
 
         #region Solidification_configuration
         private double _startTemperature = 700;
-        public double StartTemperature 
-        { 
+        public double StartTemperature
+        {
             get { return _startTemperature; }
-            set 
+            set
             {
                 _startTemperature = value;
                 OnPropertyChanged(nameof(StartTemperature));
@@ -193,10 +188,10 @@ namespace AMFramework.Views.Projects.Other
         }
 
         private string _scriptPrecipitationText = "";
-        public string ScriptPrecipitationText 
+        public string ScriptPrecipitationText
         {
             get { return _scriptPrecipitationText; }
-            set 
+            set
             {
                 _scriptPrecipitationText = value;
 
@@ -381,7 +376,7 @@ namespace AMFramework.Views.Projects.Other
             return true;
         }
 
-        private void CreateCases_UpdatePhases() 
+        private void CreateCases_UpdatePhases()
         {
             if (PhaseListPage == null) return;
             _caseTemplate.MCObject.ModelObject.SelectedPhases.Clear();
@@ -399,9 +394,9 @@ namespace AMFramework.Views.Projects.Other
             }
         }
 
-        private void CreateCases_UpdateHeatTreatments() 
-        { 
-        
+        private void CreateCases_UpdateHeatTreatments()
+        {
+
         }
         #endregion
 
@@ -409,12 +404,12 @@ namespace AMFramework.Views.Projects.Other
 
         #region Methods
 
-        private void UpdateCaseTemplate_Elements() 
+        private void UpdateCaseTemplate_Elements()
         {
 
             var refElement = _projectController.MCObject.ModelObject.SelectedElements.Find(e => e.ModelObject.ISReferenceElementBool);
             var eObj = ModelController<Model_Element>.LoadAll(ref _comm);
-            List<ModelController<Model_ElementComposition >> compTable = new();
+            List<ModelController<Model_ElementComposition>> compTable = new();
             foreach (var item in _projectController.MCObject.ModelObject.SelectedElements)
             {
                 var refEObj = eObj.Find(e => e.ModelObject.ID == item.ModelObject.IDElement);

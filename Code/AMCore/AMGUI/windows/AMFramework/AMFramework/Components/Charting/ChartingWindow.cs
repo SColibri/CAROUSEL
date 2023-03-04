@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,7 +11,7 @@ using System.Windows.Shapes;
 namespace AMFramework.Components.Charting
 {
     [Obsolete("Use AMControls instead")]
-    public class ChartingWindow:Canvas
+    public class ChartingWindow : Canvas
     {
 
         private int _DataLength = 0;
@@ -31,7 +29,7 @@ namespace AMFramework.Components.Charting
             public List<string> AxeName;
             public object Tag;
             public Polygon polygonObj;
-            public SpyderSeriesData() 
+            public SpyderSeriesData()
             {
                 SeriesName = "Empty";
                 Data = new List<double>();
@@ -45,29 +43,30 @@ namespace AMFramework.Components.Charting
         public List<SpyderSeriesData> Series { get { return _series; } }
 
         private List<List<double>> _Data = new();
-        public List <List<double>> Data { 
-            get { return _Data; } 
-            set 
+        public List<List<double>> Data
+        {
+            get { return _Data; }
+            set
             {
                 bool dataPass = true;
 
-                if(AxesList.Count != value.Count)
+                if (AxesList.Count != value.Count)
                 {
                     dataPass = false;
                 }
 
                 int dataLength = 0;
-                for(int n1 = 0; n1 < value.Count; n1++)
+                for (int n1 = 0; n1 < value.Count; n1++)
                 {
-                   if(n1 == 0) { dataLength = value[0].Count; }
-                   if(dataLength != value[n1].Count) { dataPass = false; break; }
+                    if (n1 == 0) { dataLength = value[0].Count; }
+                    if (dataLength != value[n1].Count) { dataPass = false; break; }
                 }
 
-                if (dataPass) 
-                { 
+                if (dataPass)
+                {
                     _Data = value;
                     _DataLength = dataLength;
-                    UpdateImage(); 
+                    UpdateImage();
                 }
             }
         }
@@ -76,19 +75,21 @@ namespace AMFramework.Components.Charting
         public SolidColorBrush AxesColor { get { return _AxesColor; } set { _AxesColor = value; } }
 
         private Int16 _AxeThickness = 2;
-        public Int16 AxeThickness { 
-            get { return _AxeThickness; } 
-            set { 
-                if(value > 0)
+        public Int16 AxeThickness
+        {
+            get { return _AxeThickness; }
+            set
+            {
+                if (value > 0)
                 {
                     _AxeThickness = value;
                     UpdateImage();
-                } 
-            } 
+                }
+            }
         }
 
-        private List<SolidColorBrush> _PalleteData = new() 
-        { 
+        private List<SolidColorBrush> _PalleteData = new()
+        {
             Brushes.YellowGreen,
             Brushes.LightBlue,
             Brushes.LightGreen,
@@ -113,11 +114,11 @@ namespace AMFramework.Components.Charting
             this.SizeChanged += HandleTab;
             this.VisualEdgeMode = EdgeMode.Aliased;
             SnapsToDevicePixels = true;
-           
+
         }
 
         #region getters_setters
-        public void Add_series(SpyderSeriesData NewSeries) 
+        public void Add_series(SpyderSeriesData NewSeries)
         {
             _series.Add(NewSeries);
             Update_axes();
@@ -125,7 +126,7 @@ namespace AMFramework.Components.Charting
         #endregion
 
         #region Methods
-        private void Update_axes() 
+        private void Update_axes()
         {
             _AxesList.Clear();
             List<string> AxesNames = _series.SelectMany(e => e.AxeName).Select(fy => fy).Distinct().ToList();
@@ -139,7 +140,7 @@ namespace AMFramework.Components.Charting
                 {
                     int indexPhase = _series[n2].AxeName.FindIndex(e => e.CompareTo(AxesNames[n1]) == 0);
                     if (indexPhase == -1) continue;
-                    if(maxValues[n1] < _series[n2].Data[indexPhase]) 
+                    if (maxValues[n1] < _series[n2].Data[indexPhase])
                     {
                         maxValues[n1] = _series[n2].Data[indexPhase];
                     }
@@ -173,7 +174,7 @@ namespace AMFramework.Components.Charting
             _AxesList.Clear();
         }
 
-        public void ClearAll() 
+        public void ClearAll()
         {
             _AxesList.Clear();
             _Data.Clear();
@@ -185,7 +186,7 @@ namespace AMFramework.Components.Charting
             this.Children.Clear();
 
             //BuildBaseAxe();
-            
+
             //BuildDataPoints();
             BuildBaseAxe();
             BuidDataPoints_usingStructure();
@@ -203,7 +204,7 @@ namespace AMFramework.Components.Charting
         {
             List<Axes> VisList = _AxesList.FindAll(e => e.IsVisible == true);
             if (VisList.Count == 0) return;
-            
+
             double SplitBase = 360 / (VisList.Count);
             Int16 Index = 0;
             double CurrentAngle = 45;
@@ -227,7 +228,7 @@ namespace AMFramework.Components.Charting
 
             _AxesUnitVectors = new();
             _AxesStepSize = new();
-            foreach (Axes obj in VisList) 
+            foreach (Axes obj in VisList)
             {
                 if (!obj.IsVisible) continue;
 
@@ -251,7 +252,7 @@ namespace AMFramework.Components.Charting
                 BaseLine.Y2 = BaseLine.Y1 + Math.Sin(angle) * (BaseLine.Y1-TextMargin);
 
                 int SpacingLines = (int)((obj.MaxValue-obj.MinValue)/obj.Interval);
-                
+
 
                 if (SpacingLines > 0)
                 {
@@ -260,16 +261,16 @@ namespace AMFramework.Components.Charting
                                             new Point(BaseLine.X2, BaseLine.Y2));
 
                     double Line_length = Math.Abs(Point.Subtract(
-                                            new Point(CenterX, CenterY), 
+                                            new Point(CenterX, CenterY),
                                             new Point(BaseLine.X2, BaseLine.Y2)).Length);
 
-                    Point unit_vector = new(point_difference.X/ Line_length, 
+                    Point unit_vector = new(point_difference.X/ Line_length,
                                                   point_difference.Y/ Line_length);
                     _AxesUnitVectors.Add(unit_vector);
 
                     Point perpendicular_vector = new(-unit_vector.Y, unit_vector.X);
 
-                    
+
                     double LinePerp_length = Math.Abs(Point.Subtract(
                                             new Point(unit_vector.X, unit_vector.Y),
                                             new Point(perpendicular_vector.X, perpendicular_vector.Y)).Length);
@@ -284,12 +285,12 @@ namespace AMFramework.Components.Charting
                     _AxesStepSize.Add(StepSize);
                     for (int n1 = 1; n1 < SpacingLines; n1++)
                     {
-                        Point point_toDistance = new(CenterX - unit_vector.X * CurrentLength, 
+                        Point point_toDistance = new(CenterX - unit_vector.X * CurrentLength,
                                                            CenterY - unit_vector.Y * CurrentLength);
                         double X_Calc = point_toDistance.X;
                         double Y_Calc = point_toDistance.Y;
 
-                        if(Double.IsNaN(X_Calc) != true)
+                        if (Double.IsNaN(X_Calc) != true)
                         {
                             Line TestLine = new()
                             {
@@ -329,7 +330,7 @@ namespace AMFramework.Components.Charting
                             this.Children.Add(TestLine);
                             this.Children.Add(PT01);
 
-                            if(SpacingLines-1 == n1) 
+                            if (SpacingLines-1 == n1)
                             {
                                 double vector_mult = unitPerp_vector.X * unit_vector.X;
                                 double vector_mult2 = unitPerp_vector.Y * unit_vector.Y;
@@ -362,7 +363,7 @@ namespace AMFramework.Components.Charting
                                 this.Children.Add(PT02);
                             }
                         }
-                        
+
 
                         CurrentLength += StepSize;
                     }
@@ -385,12 +386,12 @@ namespace AMFramework.Components.Charting
 
             }
 
-           
+
 
         }
         private void BuildDataPoints()
         {
-            for(int n1 = 0; n1 < _DataLength; n1++)
+            for (int n1 = 0; n1 < _DataLength; n1++)
             {
                 Polygon polygon = new()
                 {
@@ -408,9 +409,9 @@ namespace AMFramework.Components.Charting
                 foreach (List<double> Listy in _Data)
                 {
                     Point calculated = new(
-                            _chartCenter.X - _AxesUnitVectors[Index].X * (Listy[n1] * _AxesStepSize[Index] / _AxesList[Index].Interval), 
+                            _chartCenter.X - _AxesUnitVectors[Index].X * (Listy[n1] * _AxesStepSize[Index] / _AxesList[Index].Interval),
                             _chartCenter.Y - _AxesUnitVectors[Index].Y * (Listy[n1] * _AxesStepSize[Index] / _AxesList[Index].Interval));
-                    
+
                     polygon.Points.Add(calculated);
 
                     Path path = new();
@@ -438,7 +439,7 @@ namespace AMFramework.Components.Charting
 
         }
 
-        private void BuidDataPoints_usingStructure() 
+        private void BuidDataPoints_usingStructure()
         {
             int Index_pallette = 0;
             for (int n1 = 0; n1 < _series.Count; n1++)
@@ -456,7 +457,7 @@ namespace AMFramework.Components.Charting
                 };
 
                 Index_pallette += 1;
-                if(Index_pallette > _PalleteData.Count - 1) { Index_pallette = 0; }
+                if (Index_pallette > _PalleteData.Count - 1) { Index_pallette = 0; }
 
                 int Index = 0;
                 int IndexVisible = 0;
@@ -483,7 +484,7 @@ namespace AMFramework.Components.Charting
                     {
                         Radius = 3
                     };
-                    
+
                     this.Children.Add(path);
 
                     Index++; IndexVisible++;
@@ -497,7 +498,7 @@ namespace AMFramework.Components.Charting
 
         }
 
-        private void Build_legend() 
+        private void Build_legend()
         {
             Border LegendBorder = new()
             {
@@ -524,7 +525,7 @@ namespace AMFramework.Components.Charting
             foreach (SpyderSeriesData item in Series)
             {
                 Grid seriesGrid = new();
-                seriesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30)});
+                seriesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30) });
                 seriesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
                 seriesGrid.Margin = new Thickness(3);
 
@@ -550,7 +551,7 @@ namespace AMFramework.Components.Charting
                 LegendStackPanel.Children.Add(seriesGrid);
                 Index += 1;
 
-                if(Index >= _PalleteData.Count) 
+                if (Index >= _PalleteData.Count)
                 {
                     Index = 0;
                 }
@@ -558,9 +559,9 @@ namespace AMFramework.Components.Charting
             LegendExpander.Content = LegendStackPanel;
 
             this.Children.Add(LegendBorder);
-            
+
         }
-        private void Build_axis_legend() 
+        private void Build_axis_legend()
         {
             Border LegendBorder = new()
             {
@@ -594,7 +595,7 @@ namespace AMFramework.Components.Charting
                 seriesGrid.Margin = new Thickness(3);
 
                 Border seriesColor = new();
-                if(item.IsVisible) seriesColor.Background = new SolidColorBrush(Colors.Black);
+                if (item.IsVisible) seriesColor.Background = new SolidColorBrush(Colors.Black);
                 else seriesColor.Background = new SolidColorBrush(Colors.White);
                 seriesColor.BorderBrush = new SolidColorBrush(Colors.Silver);
                 seriesColor.BorderThickness = new Thickness(1);
@@ -620,7 +621,7 @@ namespace AMFramework.Components.Charting
 
             this.Children.Add(LegendBorder);
         }
-        private void Show_series(int Index) 
+        private void Show_series(int Index)
         {
             foreach (SpyderSeriesData item in Series)
             {
@@ -658,7 +659,7 @@ namespace AMFramework.Components.Charting
             Line line = (Line)sender;
             Axes axes = (Axes)line.Tag;
 
-            if(e.Delta > 0)
+            if (e.Delta > 0)
             {
                 axes.Interval = (double)axes.Interval * 1.10;
             }
@@ -683,7 +684,7 @@ namespace AMFramework.Components.Charting
         {
             _mouseDown = false;
             UpdateImage();
-            
+
         }
 
         private void HandleMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -695,15 +696,15 @@ namespace AMFramework.Components.Charting
 
                 double toMove = axes.Interval*3;
                 double Distance = Point.Subtract(_mousePosition, e.GetPosition(this)).Length;
-                
-                if(Distance > 0)
+
+                if (Distance > 0)
                 {
                     axes.MinValue += toMove;
                     axes.MaxValue += toMove;
                     _mouseDown = false;
                     UpdateImage();
                 }
-                else if(Distance < 0)
+                else if (Distance < 0)
                 {
                     axes.MinValue -= toMove;
                     axes.MaxValue -= toMove;

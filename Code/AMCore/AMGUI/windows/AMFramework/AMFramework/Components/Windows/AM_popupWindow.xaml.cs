@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.ComponentModel;
 
 namespace AMFramework.Components.Windows
 {
@@ -21,23 +10,24 @@ namespace AMFramework.Components.Windows
     /// </summary>
     public partial class AM_popupWindow : UserControl, INotifyPropertyChanged
     {
-        public AM_popupWindow() 
-        { 
+        public AM_popupWindow()
+        {
             InitializeComponent();
             DataContext = this;
         }
 
         private string _title = "";
-        public string Title 
-        { 
-            get { return _title; } 
-            set { 
+        public string Title
+        {
+            get { return _title; }
+            set
+            {
                 _title = value;
                 OnPropertyChanged(nameof(Title));
-            } 
+            }
         }
 
-        public void add_button(Components.Button.AM_button toAdd) 
+        public void add_button(Components.Button.AM_button toAdd)
         {
             toAdd.Height = 25;
             toAdd.Width = 25;
@@ -47,7 +37,7 @@ namespace AMFramework.Components.Windows
 
         public void clear_buttons()
         {
-            while (ButtonsPanel.Children.Count > 1) 
+            while (ButtonsPanel.Children.Count > 1)
             {
                 foreach (UserControl item in ButtonsPanel.Children)
                 {
@@ -75,7 +65,7 @@ namespace AMFramework.Components.Windows
             PopupWindowClosed?.Invoke(this, e);
         }
 
-        public void AM_Close_Window_Event(object? sender, EventArgs e) 
+        public void AM_Close_Window_Event(object? sender, EventArgs e)
         {
             PopupWindowClosed?.Invoke(this, e);
         }

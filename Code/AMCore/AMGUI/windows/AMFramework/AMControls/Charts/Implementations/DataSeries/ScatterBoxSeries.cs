@@ -1,14 +1,10 @@
-﻿using System;
+﻿using AMControls.Charts.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using AMControls.Charts.Interfaces;
-using AMControls.Interfaces.Implementations;
 
 namespace AMControls.Charts.Implementations.DataSeries
 {
@@ -19,19 +15,19 @@ namespace AMControls.Charts.Implementations.DataSeries
         public Point Location;
 
 
-        public ScatterBoxSeries_DataGroupStruct() 
+        public ScatterBoxSeries_DataGroupStruct()
         {
             this.DataGroup = new();
-            this.Size = new(0,0);
+            this.Size = new(0, 0);
             this.Location = new();
         }
 
-        public void Add_DataPointToGroup(IDataPoint dPoint) 
+        public void Add_DataPointToGroup(IDataPoint dPoint)
         {
             DataGroup.Add(dPoint);
         }
 
-        public Rect Get_rectangle() 
+        public Rect Get_rectangle()
         {
             Rect Result = new(this.Location, this.Size);
             return Result;
@@ -50,7 +46,7 @@ namespace AMControls.Charts.Implementations.DataSeries
         private List<ScatterBoxSeries_DataGroupStruct> _groupedPoints = new();
         private double _groupRadius = 15;
         private Size _scale = new(0, 0);
-        
+
 
         private FontFamily _axisLabelFontFamily = new("Lucida Sans");
         private int _axisLabelFontSize = 9;
@@ -70,7 +66,7 @@ namespace AMControls.Charts.Implementations.DataSeries
 
         public ScatterBoxSeries() { Index = IndexCount++; }
 
-        
+
 
         public override void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, double xSize, double ySize, double xStart, double yStart)
         {
@@ -130,10 +126,10 @@ namespace AMControls.Charts.Implementations.DataSeries
                     if (pointy.Selected) ContextMenus.Add(pointy);
                 }
 
-                
+
                 // Show either search results or all available points
                 if (_searchResult.Count > 0) Draw_Search_Result(dc, canvas, ChartArea, BackgroundSelection);
-                else 
+                else
                 {
                     // Update Grouping point position
                     if (_showGroupPoints) Group_Objects();
@@ -257,7 +253,7 @@ namespace AMControls.Charts.Implementations.DataSeries
             Rect windowAllowed = new(50, 0, canvas.Width - 150, canvas.Height - 50);
             Point currLoc = new Point(windowAllowed.X, windowAllowed.Y);
 
-            foreach (IDataPoint dP in dPL) 
+            foreach (IDataPoint dP in dPL)
             {
                 if (dP.ContextMenu == null) return;
                 Rect conWin = new(currLoc, dP.ContextMenu.SizeObject);
@@ -267,10 +263,10 @@ namespace AMControls.Charts.Implementations.DataSeries
 
                 currLoc = new(currLoc.X + conWin.Width, currLoc.Y);
             }
-            
+
         }
 
-        private void Draw_DataGroup(DrawingContext dc, Rect ChartArea) 
+        private void Draw_DataGroup(DrawingContext dc, Rect ChartArea)
         {
             SolidColorBrush GroupBox = new SolidColorBrush(_ColorBoxBackground);
             GroupBox.Opacity = 0.3;
@@ -287,12 +283,12 @@ namespace AMControls.Charts.Implementations.DataSeries
             }
         }
 
-        private void Draw_Search_Result(DrawingContext dc, Canvas canvas, Rect ChartArea, SolidColorBrush BackgroundSelection) 
+        private void Draw_Search_Result(DrawingContext dc, Canvas canvas, Rect ChartArea, SolidColorBrush BackgroundSelection)
         {
             Draw_Points_Action(dc, canvas, ChartArea, _searchResult, BackgroundSelection);
         }
 
-        private void Draw_Points_Action(DrawingContext dc, Canvas canvas, Rect ChartArea, List <IDataPoint> DataPoints, SolidColorBrush BackgroundSelection) 
+        private void Draw_Points_Action(DrawingContext dc, Canvas canvas, Rect ChartArea, List<IDataPoint> DataPoints, SolidColorBrush BackgroundSelection)
         {
             foreach (var pointy in DataPoints)
             {
@@ -403,7 +399,7 @@ namespace AMControls.Charts.Implementations.DataSeries
 
             foreach (var item in _groupedPoints)
             {
-                if(item.Get_rectangle().Contains(x, y)) 
+                if (item.Get_rectangle().Contains(x, y))
                 {
                     foreach (var dP in item.DataGroup)
                     {
@@ -411,7 +407,7 @@ namespace AMControls.Charts.Implementations.DataSeries
                         dP.ContextMenu.DoAnimation = true;
                         IsSelected = true;
                     }
-                } 
+                }
             }
 
             if (selectedPoints) DataPointSelectionChanged?.Invoke(this, EventArgs.Empty);
@@ -428,13 +424,13 @@ namespace AMControls.Charts.Implementations.DataSeries
 
         public override Color ColorSeries { get { return _ColorBox; } set { _ColorBox = value; _ColorBoxBackground = value; } }
 
-        protected override void OnDataPoint_Change() 
+        protected override void OnDataPoint_Change()
         {
-            
+
             // do nothing
         }
 
-        private void Group_Objects() 
+        private void Group_Objects()
         {
             if (_showGroupPoints)
             {

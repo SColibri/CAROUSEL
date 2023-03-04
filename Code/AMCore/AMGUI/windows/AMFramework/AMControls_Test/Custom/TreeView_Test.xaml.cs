@@ -1,23 +1,12 @@
 ﻿using AMControls.Custom.ProjectTreeView;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Documents.DocumentStructures;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace AMControls_Test.Custom
 {
-    
+
 
 
     /// <summary>
@@ -25,7 +14,7 @@ namespace AMControls_Test.Custom
     /// </summary>
     public partial class TreeView_Test : Window, INotifyPropertyChanged
     {
-        public class ListItem: INotifyPropertyChanged
+        public class ListItem : INotifyPropertyChanged
         {
             private string _name;
             public string Name
@@ -75,10 +64,10 @@ namespace AMControls_Test.Custom
 
         private TV_TopView_controller _tvController = new();
 
-        public TV_TopView_controller TVController 
-        { 
+        public TV_TopView_controller TVController
+        {
             get { return _tvController; }
-            set 
+            set
             {
                 _tvController = value;
                 OnPropertyChanged("TVController");
@@ -120,15 +109,15 @@ namespace AMControls_Test.Custom
             OnPropertyChanged("MainTreeList");
 
             TVController.Items.Add(new TV_TopView(new()));
-            TVController.Items.Add(new TextBlock() { Text = "Wohooo"});
+            TVController.Items.Add(new TextBlock() { Text = "Wohooo" });
         }
 
         private List<ListItem> _mainTreeList;
         public List<ListItem> MainTreeList
         {
             get { return _mainTreeList; }
-            set 
-            { 
+            set
+            {
                 _mainTreeList = value;
                 OnPropertyChanged("MainTreeList");
             }

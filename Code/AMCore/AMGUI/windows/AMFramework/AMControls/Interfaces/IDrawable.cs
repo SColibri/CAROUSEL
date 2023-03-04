@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace AMControls.Interfaces
@@ -33,7 +28,7 @@ namespace AMControls.Interfaces
         /// <summary>
         /// Flag used to determine if object should or not be drawn
         /// </summary>
-        public bool IsVisible { get; set; } 
+        public bool IsVisible { get; set; }
 
         /// <summary>
         /// Flag that specifies if object needs to be redrawn

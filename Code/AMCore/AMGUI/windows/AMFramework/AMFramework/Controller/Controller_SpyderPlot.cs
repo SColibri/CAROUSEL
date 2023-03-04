@@ -1,20 +1,18 @@
 ﻿using AMControls.Charts.DataPointContextMenu;
-using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Implementations;
+using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Interfaces;
+using AMControls.Charts.Spyder;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Model.Model_Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AMControls.Charts.Spyder;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Model.Model_Controllers;
-using System.Windows.Media;
-using System.Windows.Input;
-using System.Windows;
 using System.Threading;
-using AMFramework_Lib.Core;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace AMFramework.Controller
 {
@@ -28,7 +26,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Constructor
-        public Controller_SpyderPlot(IAMCore_Comm comm,Controller_Project projectController) : base(comm)
+        public Controller_SpyderPlot(IAMCore_Comm comm, Controller_Project projectController) : base(comm)
         {
             _projectController = projectController;
 
@@ -43,10 +41,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// List of unique phases available in all case elements
         /// </summary>
-        public List<ControllerM_Phase> PhaseList 
+        public List<ControllerM_Phase> PhaseList
         {
             get => _phaseList;
-            set 
+            set
             {
                 _phaseList = value;
 
@@ -66,10 +64,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// Flag used for showing/hiding the loading GUI element
         /// </summary>
-        public bool UpdatingFlag 
+        public bool UpdatingFlag
         {
             get => _updatingFlag;
-            set 
+            set
             {
                 _updatingFlag = value;
                 OnPropertyChanged(nameof(UpdatingFlag));
@@ -109,10 +107,10 @@ namespace AMFramework.Controller
             TH01.Priority = ThreadPriority.Normal;
             TH01.Start();
 
-            
+
         }
 
-        private void CreatePlot() 
+        private void CreatePlot()
         {
             SpyderPlot SpyderMain = new();
 
@@ -132,7 +130,7 @@ namespace AMFramework.Controller
             SpyderPlot = SpyderMain;
         }
 
-        private void LoadData_Async() 
+        private void LoadData_Async()
         {
             if (_projectController.SelectedProject == null) return;
 
@@ -167,7 +165,7 @@ namespace AMFramework.Controller
             Application.Current.Dispatcher.BeginInvoke(new Action(() => { CreatePlot(); }));
         }
 
-        private void Add_DataPoints(IDataSeries series, ModelController<Model_Case> caseModel) 
+        private void Add_DataPoints(IDataSeries series, ModelController<Model_Case> caseModel)
         {
             double solidificationTemp = caseModel.ModelObject.ScheilPhaseFractions.Min(e => e.ModelObject.Temperature);
 

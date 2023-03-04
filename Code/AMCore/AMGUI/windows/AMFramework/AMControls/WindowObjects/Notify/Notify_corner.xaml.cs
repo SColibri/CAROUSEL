@@ -1,21 +1,11 @@
 ﻿using AMControls.Implementations.Commands;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace AMControls.WindowObjects.Notify
 {
@@ -38,7 +28,7 @@ namespace AMControls.WindowObjects.Notify
         public Color TitleBackground
         {
             get { return _titleBackground; }
-            set 
+            set
             {
                 _titleBackground = value;
                 OnPropertyChanged(nameof(TitleBackground));
@@ -46,10 +36,10 @@ namespace AMControls.WindowObjects.Notify
         }
 
         private Brush _contentBackground = Brushes.Black;
-        public Brush ContentBackground 
+        public Brush ContentBackground
         {
             get { return _contentBackground; }
-            set 
+            set
             {
                 _contentBackground = value;
                 OnPropertyChanged(nameof(ContentBackground));
@@ -57,10 +47,10 @@ namespace AMControls.WindowObjects.Notify
         }
 
         private string _title = "New item";
-        public string Title 
+        public string Title
         {
             get { return _title; }
-            set 
+            set
             {
                 _title = value;
                 OnPropertyChanged(nameof(Title));
@@ -68,10 +58,10 @@ namespace AMControls.WindowObjects.Notify
         }
 
         private FontAwesome.WPF.FontAwesomeIcon _icon = FontAwesome.WPF.FontAwesomeIcon.None;
-        public FontAwesome.WPF.FontAwesomeIcon Icon 
+        public FontAwesome.WPF.FontAwesomeIcon Icon
         {
             get { return _icon; }
-            set 
+            set
             {
                 _icon = value;
                 OnPropertyChanged(nameof(Icon));
@@ -90,10 +80,10 @@ namespace AMControls.WindowObjects.Notify
         }
 
         private string _text = "";
-        public string Text 
+        public string Text
         {
             get { return _text; }
-            set 
+            set
             {
                 _text = value;
                 OnPropertyChanged(nameof(Text));
@@ -104,7 +94,7 @@ namespace AMControls.WindowObjects.Notify
         public object? ContentTag
         {
             get { return _contentTag; }
-            set 
+            set
             {
                 _contentTag = value;
                 OnPropertyChanged(nameof(ContentTag));
@@ -115,7 +105,7 @@ namespace AMControls.WindowObjects.Notify
         public bool ShowAnimation
         {
             get { return _showAnimation; }
-            set 
+            set
             {
                 _showAnimation = value;
                 OnPropertyChanged(nameof(ShowAnimation));
@@ -138,7 +128,7 @@ namespace AMControls.WindowObjects.Notify
         {
             this.Visibility = Visibility.Visible;
             _showTime.Stop();
-            _showTime.Interval  = interval; 
+            _showTime.Interval  = interval;
             _showTime.Start();
 
             ShowAnimation = true;
@@ -149,7 +139,7 @@ namespace AMControls.WindowObjects.Notify
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Show_timer_elapsedHandle(object? sender, ElapsedEventArgs e) 
+        private void Show_timer_elapsedHandle(object? sender, ElapsedEventArgs e)
         {
             ShowAnimation = false;
 
@@ -157,9 +147,9 @@ namespace AMControls.WindowObjects.Notify
             {
                 this.Visibility = Visibility.Collapsed;
             }));
-            
-            if(sender != null)
-            ((Timer)sender).Stop();
+
+            if (sender != null)
+                ((Timer)sender).Stop();
         }
 
         #endregion
@@ -189,7 +179,7 @@ namespace AMControls.WindowObjects.Notify
         /// <summary>
         /// Command handle for when command is executed. Invokes the clicked event.
         /// </summary>
-        private void ClickOnItem_Action() 
+        private void ClickOnItem_Action()
         {
             Clicked?.Invoke(this, EventArgs.Empty);
         }
@@ -198,7 +188,7 @@ namespace AMControls.WindowObjects.Notify
         /// Click on item is possible by default, insert conditions if needed
         /// </summary>
         /// <returns></returns>
-        private bool ClickOnItem_Check() 
+        private bool ClickOnItem_Check()
         {
             return true;
         }

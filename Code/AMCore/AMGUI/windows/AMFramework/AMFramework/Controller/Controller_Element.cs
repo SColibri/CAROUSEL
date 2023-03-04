@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using AMFramework_Lib.Model;
+﻿using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
-using AMFramework_Lib.Controller;
+using AMFramework_Lib.Model;
 using AMFramework_Lib.Model.Model_Controllers;
+using System.Collections.Generic;
 
 namespace AMFramework.Controller
 {
@@ -16,7 +16,7 @@ namespace AMFramework.Controller
         /// <param name="projectController"></param>
         public Controller_Element(ref IAMCore_Comm socket, Controller_Project projectController) : base(socket)
         {
-            if ( projectController.SelectedProject != null)
+            if (projectController.SelectedProject != null)
                 Elements = ControllerM_Element.Get_elementsFromProjectID(_comm, projectController.SelectedProject.MCObject.ModelObject.ID);
         }
 
@@ -35,10 +35,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// Get/set List of allavailable elements
         /// </summary>
-        public List<ModelController<Model_Element>> Elements 
-        { 
+        public List<ModelController<Model_Element>> Elements
+        {
             get => _elements;
-            set 
+            set
             {
                 _elements = value;
                 OnPropertyChanged(nameof(_elements));

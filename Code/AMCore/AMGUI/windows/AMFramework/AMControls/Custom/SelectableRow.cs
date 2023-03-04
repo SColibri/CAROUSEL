@@ -1,13 +1,8 @@
 ﻿using AMControls.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Catel.MVVM;
 using Catel.Data;
+using Catel.MVVM;
 using FontAwesome.WPF;
-using ICSharpCode.AvalonEdit.Search;
+using System;
 
 namespace AMControls.Custom
 {
@@ -20,8 +15,8 @@ namespace AMControls.Custom
         public static readonly PropertyData IsSelectedProperty = RegisterProperty(nameof(IsSelected), typeof(bool), false);
         public bool IsSelected
         {
-            get => GetValue<bool>(IsSelectedProperty); 
-            set => SetValue(IsSelectedProperty, value); 
+            get => GetValue<bool>(IsSelectedProperty);
+            set => SetValue(IsSelectedProperty, value);
         }
 
         public static readonly PropertyData AllowsMultiSelectProperty = RegisterProperty(nameof(AllowsMultiSelect), typeof(bool), false);
@@ -87,7 +82,7 @@ namespace AMControls.Custom
         }
         #endregion
 
-       
+
 
     }
 }

@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AMControls.Custom.ProjectTreeView;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Interfaces;
+using AMFramework_Lib.Logging;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using AMControls.Custom.ProjectTreeView;
-using AMFramework.Controller;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.Controller;
-using AMFramework_Lib.Model;
-using ScintillaNET;
-using AMFramework_Lib.Model.Model_Controllers;
-using AMFramework.Views.Case;
-using AMFramework.Views.Case.plotViews;
-using AMFramework_Lib.Logging;
 
 namespace AMFramework
 {
@@ -46,7 +37,7 @@ namespace AMFramework
             // Initialize Logger
             LoggerManager.Setup();
             LoggerManager.Info("Framework started");
-            
+
             // When closed add the closing handle, this closes all additional
             // windows.
             this.Closing += Closing_window;
@@ -80,7 +71,7 @@ namespace AMFramework
         // Main window controller. This also applies for some of the methods included
         // in this file.
         // ------------------------------------------------------------------
-       
+
 
         private void RibbonButton_Click(object sender, RoutedEventArgs e)
         {
@@ -133,6 +124,6 @@ namespace AMFramework
 
         #endregion
 
-        
+
     }
 }

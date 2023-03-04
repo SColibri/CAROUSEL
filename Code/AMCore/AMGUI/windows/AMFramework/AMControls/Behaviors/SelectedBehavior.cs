@@ -1,16 +1,11 @@
 ﻿using AMControls.ExtensionMethods;
 using AMControls.Interfaces;
+using Catel.Collections;
 using Microsoft.Xaml.Behaviors;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Linq;
-using Catel.Collections;
 using System.Windows.Media;
 
 namespace AMControls.Behaviors
@@ -46,18 +41,18 @@ namespace AMControls.Behaviors
 
         #region Handles 
 
-        private void OnMouseEnter(object sender, MouseEventArgs e) 
+        private void OnMouseEnter(object sender, MouseEventArgs e)
         {
             SetBackgroundHover(sender as Border);
         }
 
-        private void OnMouseLeave(object sender, MouseEventArgs e) 
+        private void OnMouseLeave(object sender, MouseEventArgs e)
         {
             if (GetSelectableObject() is ISelectable selectableObject && !selectableObject.IsSelected)
             {
                 SetBackgroundUnSelected(sender as Border);
             }
-            else 
+            else
             {
                 SetBackgroundSelected(sender as Border);
             }
@@ -68,13 +63,13 @@ namespace AMControls.Behaviors
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnMouseDown(object sender, MouseButtonEventArgs e) 
-        { 
-            if (e.LeftButton == MouseButtonState.Pressed && GetSelectableObject() is ISelectable selectableObject) 
+        private void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && GetSelectableObject() is ISelectable selectableObject)
             {
                 selectableObject.IsSelected = !selectableObject.IsSelected;
 
-                if (!selectableObject.AllowsMultiSelect && selectableObject.IsSelected) 
+                if (!selectableObject.AllowsMultiSelect && selectableObject.IsSelected)
                 {
                     SelectableObjects().Where(e => e != selectableObject).ForEach(e => { e.IsSelected = false; });
                 }
@@ -91,7 +86,7 @@ namespace AMControls.Behaviors
         /// Get selectable object from associated object
         /// </summary>
         /// <returns></returns>
-        private ISelectable? GetSelectableObject() 
+        private ISelectable? GetSelectableObject()
         {
             if (AssociatedObject.DataContext is ISelectable) return AssociatedObject.DataContext as ISelectable;
             return null;
@@ -101,10 +96,10 @@ namespace AMControls.Behaviors
         /// Get list of selectable objects
         /// </summary>
         /// <returns></returns>
-        private ISelectable[] SelectableObjects() 
+        private ISelectable[] SelectableObjects()
         {
 
-            if (_containerObject != null) 
+            if (_containerObject != null)
             {
                 ISelectable?[] items = _containerObject.FindChildrenOfType<ContentPresenter>()
                     .Where(e => e.DataContext is ISelectable).Select(e => e.DataContext as ISelectable).ToArray();
@@ -115,12 +110,12 @@ namespace AMControls.Behaviors
             return Array.Empty<ISelectable>();
         }
 
-        private void SetBackgroundSelected(Border border) 
+        private void SetBackgroundSelected(Border border)
         {
             if (border == null) return;
 
-            border.Background = new SolidColorBrush() 
-            { 
+            border.Background = new SolidColorBrush()
+            {
                 Color = Colors.DodgerBlue,
                 Opacity = 0.3
             };

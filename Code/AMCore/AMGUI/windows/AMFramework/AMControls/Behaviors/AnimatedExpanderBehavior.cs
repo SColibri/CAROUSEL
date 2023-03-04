@@ -1,18 +1,10 @@
-﻿using Microsoft.Xaml.Behaviors;
+﻿using AMControls.ExtensionMethods;
+using Microsoft.Xaml.Behaviors;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using AMControls.ExtensionMethods;
-using System.Windows.Media.Animation;
-using System.Windows.Data;
-using AMControls.Converters;
-using System.Windows.Media;
-using SharpDX.Direct3D9;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media.Animation;
 
 namespace AMControls.Behaviors
 {
@@ -182,7 +174,7 @@ namespace AMControls.Behaviors
         /// <summary>
         /// Attach handles to gridsplitter
         /// </summary>
-        private void SetRowAutoSized() 
+        private void SetRowAutoSized()
         {
             if (_parentGrid != null)
             {
@@ -195,7 +187,7 @@ namespace AMControls.Behaviors
         /// </summary>
         private void GridSplitterDragSplitterCompletedHandle(object sender, DragCompletedEventArgs e)
         {
-            if (_parentGrid != null) 
+            if (_parentGrid != null)
             {
                 DoubleAnimation expandAnimation = new()
                 {

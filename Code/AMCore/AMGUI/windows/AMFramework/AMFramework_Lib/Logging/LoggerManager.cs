@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using NLog;
+﻿using NLog;
 using NLog.Config;
 
 namespace AMFramework_Lib.Logging
@@ -23,7 +16,7 @@ namespace AMFramework_Lib.Logging
         /// <summary>
         /// Setup logger and create new instance of NLog logger
         /// </summary>
-        public static void Setup() 
+        public static void Setup()
         {
             LogManager.Configuration = new XmlLoggingConfiguration("Logging/NLog.config");
             _logger = LogManager.GetCurrentClassLogger();
@@ -33,8 +26,8 @@ namespace AMFramework_Lib.Logging
         /// Log trace
         /// </summary>
         /// <param name="message"></param>
-        public static void Trace(string message) 
-        { 
+        public static void Trace(string message)
+        {
             _logger?.Trace(message);
         }
 

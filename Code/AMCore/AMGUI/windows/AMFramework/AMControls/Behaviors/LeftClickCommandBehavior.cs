@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xaml.Behaviors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -21,7 +16,7 @@ namespace AMControls.Behaviors
         /// <summary>
         /// Command parameter
         /// </summary>
-        public object CommandParameter 
+        public object CommandParameter
         {
             get => GetValue(ParameterProperty);
             set => SetValue(ParameterProperty, value);
@@ -56,9 +51,9 @@ namespace AMControls.Behaviors
 
         #region Methods
 
-        private void OnMouseDown(object sender, MouseButtonEventArgs e) 
-        { 
-            if (e.LeftButton == MouseButtonState.Pressed && Command != null) 
+        private void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && Command != null)
             {
                 Command.Execute(CommandParameter);
             }

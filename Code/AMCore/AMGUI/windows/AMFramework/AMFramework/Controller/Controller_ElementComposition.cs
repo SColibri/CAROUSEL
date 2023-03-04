@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using AMFramework_Lib.Controller;
+﻿using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
 using AMFramework_Lib.Model.Model_Controllers;
-using System.Collections.ObjectModel;
-using System.Reactive.Linq;
+using System.Collections.Generic;
 
 namespace AMFramework.Controller
 {
@@ -33,9 +26,9 @@ namespace AMFramework.Controller
         /// <summary>
         /// Returns composition list for current IDCase
         /// </summary>
-        public List<ModelController<Model_ElementComposition>> Composition 
-        { 
-            get { return _composition; } 
+        public List<ModelController<Model_ElementComposition>> Composition
+        {
+            get { return _composition; }
         }
         #endregion
 

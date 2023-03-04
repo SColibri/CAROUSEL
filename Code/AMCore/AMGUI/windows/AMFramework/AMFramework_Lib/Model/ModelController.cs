@@ -46,7 +46,7 @@ namespace AMFramework_Lib.Model
             }
             set
             {
-                _model = (Model_Interface)value;
+                _model = value;
 
                 // Add default commands to current data model
                 SaveAction = new(ref _coreCommunication, ref _model);

@@ -1,16 +1,12 @@
 ﻿using AMControls.Charts.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMFramework.Components.Charting.Interfaces
 {
     public interface IDataPlot
     {
         public string Name { get; }
-        public string SeriesName { get; set; }   
+        public string SeriesName { get; set; }
 
         public List<string> DataOptions { get; }
         public List<IDataPoint> DataPoints { get; }

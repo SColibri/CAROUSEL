@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using AMFramework_Lib.Model;
+﻿using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
-using AMFramework_Lib.Controller;
+using AMFramework_Lib.Model;
 using AMFramework_Lib.Model.Model_Controllers;
+using System.Collections.Generic;
 
 namespace AMFramework.Controller
 {
@@ -12,7 +12,7 @@ namespace AMFramework.Controller
         #region Socket
         public Controller_Selected_Elements(ref IAMCore_Comm comm, Controller_Project projectController) : base(comm)
         {
-            if(projectController.SelectedProject != null)
+            if (projectController.SelectedProject != null)
                 SelectedElements = ControllerM_SelectedElements.Get_SelectedElements_FromIDProject(comm, projectController.SelectedProject.MCObject.ModelObject.ID);
         }
         #endregion
@@ -25,7 +25,7 @@ namespace AMFramework.Controller
         public List<ModelController<Model_SelectedElements>> SelectedElements
         {
             get => _selectedElements;
-            set 
+            set
             {
                 _selectedElements = value;
                 OnPropertyChanged(nameof(_selectedElements));
@@ -34,7 +34,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Commands
-        
+
         #endregion
 
     }

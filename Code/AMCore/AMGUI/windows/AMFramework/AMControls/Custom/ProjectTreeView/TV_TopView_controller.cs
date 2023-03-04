@@ -1,25 +1,20 @@
 ﻿using AMControls.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace AMControls.Custom.ProjectTreeView
 {
-    public class TV_TopView_controller: INotifyPropertyChanged, ISearchable
+    public class TV_TopView_controller : INotifyPropertyChanged, ISearchable
     {
 
         private TV_TopView_controller? _selectedItem;
         private int _id = -1;
-        public int ID 
-        { 
+        public int ID
+        {
             get { return _id; }
-            set 
-            { 
+            set
+            {
                 _id = value;
                 OnPropertyChanged("ID");
             }
@@ -53,7 +48,7 @@ namespace AMControls.Custom.ProjectTreeView
             get { return _isExpanded; }
             set
             {
-                if(Items.Count > 0) _isExpanded = value;
+                if (Items.Count > 0) _isExpanded = value;
                 else _isExpanded = false;
 
                 if (!_isExpanded) UnselectTree();
@@ -70,7 +65,7 @@ namespace AMControls.Custom.ProjectTreeView
                 _isSelected = value;
                 OnPropertyChanged("IsSelected");
 
-                if(_isSelected) Selected?.Invoke(this, EventArgs.Empty);
+                if (_isSelected) Selected?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -106,11 +101,11 @@ namespace AMControls.Custom.ProjectTreeView
         }
 
         #region Methods
-        public void Add_Item(object itemToAdd) 
-        { 
+        public void Add_Item(object itemToAdd)
+        {
             Items.Add(itemToAdd);
             SubscribeToItemEvents(itemToAdd);
-            OnPropertyChanged("Items"); 
+            OnPropertyChanged("Items");
         }
 
         public void Clear_Items()
@@ -121,19 +116,19 @@ namespace AMControls.Custom.ProjectTreeView
         }
 
 
-        public bool Search_Tree(List<int> IDElements, int Index) 
+        public bool Search_Tree(List<int> IDElements, int Index)
         {
             bool isContained = false;
 
-            if (IDElements.Count <= Index) 
+            if (IDElements.Count <= Index)
             {
                 IsExpanded = false;
                 IsSelected = false;
             }
-            if (ID == IDElements[Index]) 
+            if (ID == IDElements[Index])
             {
-                if(IDElements.Count == Index) isContained = true;
-                else if (IDElements.Count > Index) 
+                if (IDElements.Count == Index) isContained = true;
+                else if (IDElements.Count > Index)
                 {
                     foreach (var item in Items)
                     {
@@ -147,12 +142,12 @@ namespace AMControls.Custom.ProjectTreeView
                     }
                 }
 
-                if (isContained) 
+                if (isContained)
                 {
                     IsExpanded = true;
                     IsSelected = true;
                 }
-    
+
             }
 
 
@@ -171,7 +166,7 @@ namespace AMControls.Custom.ProjectTreeView
             bool isContained = false;
 
             if (Title.ToLower().Contains(textString.ToLower())) isContained = true;
-       
+
             foreach (var item in Items)
             {
                 if (item is not TV_TopView) continue;
@@ -188,7 +183,7 @@ namespace AMControls.Custom.ProjectTreeView
                 IsExpanded = true;
                 IsSelected = true;
             }
-            else 
+            else
             {
                 IsExpanded = false;
                 IsSelected = false;
@@ -213,7 +208,7 @@ namespace AMControls.Custom.ProjectTreeView
         {
             foreach (var item in Items)
             {
-                if(item is not TV_TopView) continue;
+                if (item is not TV_TopView) continue;
                 TV_TopView refOpt = (TV_TopView)item;
                 TV_TopView_controller tvRef = (TV_TopView_controller)refOpt.DataContext;
                 tvRef.Selected -= Selected_Handle;
@@ -228,7 +223,7 @@ namespace AMControls.Custom.ProjectTreeView
             }
         }
 
-        private void SubscribeToItemEvents(object itemToSubs) 
+        private void SubscribeToItemEvents(object itemToSubs)
         {
             if (itemToSubs is not TV_TopView) return;
             TV_TopView refOpt = (TV_TopView)itemToSubs;
@@ -236,7 +231,7 @@ namespace AMControls.Custom.ProjectTreeView
             tvRef.Selected += Selected_Handle;
         }
 
-        private void UnselectTree() 
+        private void UnselectTree()
         {
             foreach (var item in Items)
             {
@@ -251,14 +246,14 @@ namespace AMControls.Custom.ProjectTreeView
         {
             _selectedItem = (TV_TopView_controller?)sender;
 
-            if(this != sender) this.IsSelected = false;
+            if (this != sender) this.IsSelected = false;
 
             foreach (var item in Items)
             {
                 if (item is not TV_TopView) continue;
                 TV_TopView refOpt = (TV_TopView)item;
                 TV_TopView_controller tvRef = (TV_TopView_controller)refOpt.DataContext;
-                if (tvRef != _selectedItem) 
+                if (tvRef != _selectedItem)
                     tvRef.IsSelected = false;
             }
 

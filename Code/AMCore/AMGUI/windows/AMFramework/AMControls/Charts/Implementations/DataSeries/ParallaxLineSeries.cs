@@ -3,8 +3,6 @@ using AMControls.Charts.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -27,14 +25,14 @@ namespace AMControls.Charts.Implementations.DataSeries
 
         public override void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, double xSize, double ySize, double xStart, double yStart)
         {
-            if (DataPoints.Count > 0 && IsVisible == true) 
+            if (DataPoints.Count > 0 && IsVisible == true)
             {
                 double minX_Value = DataPoints.Min(e => e.X) * xSize;
                 double maxX_Value = DataPoints.Max(e => e.X) * xSize;
                 double minY_Value = DataPoints.Min(e => e.Y) * ySize;
                 double maxY_Value = DataPoints.Max(e => e.Y) * ySize;
                 if (minX_Value > maxX_Value || minY_Value > maxY_Value) return;
-                
+
                 double xLoc = xStart + minX_Value;
                 double yLoc = yStart + ChartArea.Height - maxY_Value;
                 Rect RBox = new(xLoc - 10, yLoc - 10, (maxX_Value - minX_Value), (maxY_Value - minY_Value));
@@ -48,7 +46,7 @@ namespace AMControls.Charts.Implementations.DataSeries
                 ContextMenus.Clear();
                 foreach (var pointy in DataPoints)
                 {
-                    pointy.X_draw = pointy.X * xSize + xStart ;
+                    pointy.X_draw = pointy.X * xSize + xStart;
                     pointy.Y_draw = yStart + ChartArea.Height - pointy.Y * ySize;
 
                     if (pointy.Selected) ContextMenus.Add(pointy);
@@ -81,13 +79,13 @@ namespace AMControls.Charts.Implementations.DataSeries
 
                     if (DataPoints[n1].Selected) ContextMenus.Add(DataPoints[n1]);
                 }
-                
+
 
                 Draw_Points_Action(dc, canvas, ChartArea, DataPoints, new SolidColorBrush(_ColorBoxBackground));
             }
         }
 
-        public override void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, List<IAxes> axesList) 
+        public override void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, List<IAxes> axesList)
         { }
         #region Drawing
         private void Draw_DataPoint(DrawingContext dc, IDataPoint dP, Rect pointRect)
@@ -183,6 +181,6 @@ namespace AMControls.Charts.Implementations.DataSeries
             //throw new NotImplementedException();
         }
 
-        
+
     }
 }

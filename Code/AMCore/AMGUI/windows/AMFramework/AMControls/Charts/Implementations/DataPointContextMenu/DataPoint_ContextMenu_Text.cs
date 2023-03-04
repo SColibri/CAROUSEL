@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AMControls.Charts.Implementations.DataPointContextMenu;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using AMControls.Charts.Implementations.DataPointContextMenu;
-using AMControls.Charts.Interfaces;
 
 namespace AMControls.Charts.DataPointContextMenu
 {
@@ -105,17 +100,17 @@ namespace AMControls.Charts.DataPointContextMenu
 
         #endregion
 
-        
+
 
         #endregion
 
-        public string Title 
+        public string Title
         {
-            get { return _title; } 
-            set 
-            { 
+            get { return _title; }
+            set
+            {
                 _title = value;
-            } 
+            }
         }
 
 
