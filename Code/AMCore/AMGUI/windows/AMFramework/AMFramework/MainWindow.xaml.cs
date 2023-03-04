@@ -14,6 +14,7 @@ using ScintillaNET;
 using AMFramework_Lib.Model.Model_Controllers;
 using AMFramework.Views.Case;
 using AMFramework.Views.Case.plotViews;
+using AMFramework_Lib.Logging;
 
 namespace AMFramework
 {
@@ -41,6 +42,10 @@ namespace AMFramework
             TV_Menu_Controller tvmController = new();
             tvmController.Main_Nodes.Add(new TV_TopView(((Controller.Controller_MainWindow)DataContext).TreeViewController));
             tvc.DataContext = tvmController;
+
+            // Initialize Logger
+            LoggerManager.Setup();
+            LoggerManager.Info("Framework started");
             
             // When closed add the closing handle, this closes all additional
             // windows.

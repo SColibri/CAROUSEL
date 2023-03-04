@@ -13,7 +13,7 @@
         xmlns:tvc ="clr-namespace:AMControls.Custom.ProjectTreeView;assembly=AMControls"
         xmlns:noty="clr-namespace:AMControls.WindowObjects.Notify;assembly=AMControls"
         xmlns:tab="clr-namespace:AMFramework.Components.TabControl"
-        xmlns:log="clr-namespace:AMFramework.Components.Log"
+        xmlns:log="clr-namespace:AMFramework.Components.LogDisplay"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:be="clr-namespace:AMControls.Behaviors;assembly=AMControls"
         mc:Ignorable="d"
@@ -256,7 +256,8 @@
         </Grid>
 
         <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1" Grid.RowSpan="2" 
-              Panel.ZIndex="16" Margin="3">
+              Panel.ZIndex="16" Margin="3" Visibility="Visible">
+            <Border Background="Black"/>
             <ContentControl Content="{Binding Path=NotificationObject, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
     </Grid>

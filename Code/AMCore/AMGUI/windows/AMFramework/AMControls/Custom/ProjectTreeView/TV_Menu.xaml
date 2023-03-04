@@ -25,7 +25,14 @@
             <TextBlock Grid.Column="1" Text="Search" FontFamily="Lucida Sans" FontSize="10"
                        VerticalAlignment="Center" Margin="5,7,1,5"/>
             <TextBox Grid.Column="2" Margin="5,5,5,5" FontSize="10" VerticalAlignment="Center"
-                     Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                     VerticalContentAlignment="Center"
+                     Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Value="3" Property="CornerRadius"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
         </Grid>
         
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">

@@ -35,9 +35,9 @@ namespace AMFramework.Components.ScriptingEditor
         {
             if (File.Exists(filename)) 
             {
-                ((Scripting_ViewModel)DataContext).load(Scripting, filename);
+                ((Scripting_ViewModel)DataContext).load(Scripting as Scintilla, filename);
                 Scripting.FoldAll(FoldAction.Contract);
-                Update_Highlight(Scripting);
+                Update_Highlight(Scripting as Scintilla);
             }
         }
         #region Initialization
@@ -210,7 +210,7 @@ namespace AMFramework.Components.ScriptingEditor
                     string path = a.GetValue(0).ToString();
 
                     if (path == null) return;
-                    ((Scripting_ViewModel)DataContext).load(Scripting, path);
+                    ((Scripting_ViewModel)DataContext).load(Scripting as Scintilla, path);
                 }
             }
         }

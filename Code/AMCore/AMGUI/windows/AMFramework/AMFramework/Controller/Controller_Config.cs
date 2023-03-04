@@ -55,7 +55,7 @@ namespace AMFramework.Controller
             datamodel.Physical_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_physical_database_path", "");
             datamodel.Mobility_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_mobility_database_path", "");
             datamodel.IsLoaded = true;
-            Callbacks.RegisterCallbacks(Controller_Global.ApiHandle);
+            Callbacks.RegisterCallbacks();
         }
 
         private void save_model_data()

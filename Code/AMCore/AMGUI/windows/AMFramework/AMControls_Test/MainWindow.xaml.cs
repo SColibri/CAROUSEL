@@ -20,6 +20,7 @@ using AMControls.Charts.Implementations.DataSeries;
 using AMControls_Test.Custom;
 using AMControls_Test.Charts;
 using AMControls_Test.WindowObjects.Notify;
+using AMControls.Custom.Scripting;
 
 namespace AMControls_Test
 {
@@ -90,6 +91,9 @@ namespace AMControls_Test
 
             NotifyCorner_Test notyExample = new();
             notyExample.Show();
+
+            ScriptingView scView = new();
+            scView.Show();
         }
 
         private void OnChartMouseMove_Handle(object? sender, MouseEventArgs e)
