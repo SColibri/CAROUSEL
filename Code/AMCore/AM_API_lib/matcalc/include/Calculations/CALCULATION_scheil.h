@@ -56,6 +56,7 @@ namespace matcalc
 				_commandList.push_back(new COMMAND_export_variables(mccComm, configuration, _filename, variableType, variableNames, ""));
 
 			}
+
 			~CALCULATION_scheil() 
 			{
 				// Remove text file if created

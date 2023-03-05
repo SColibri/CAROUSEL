@@ -1,7 +1,9 @@
 ﻿using AMFramework.Controller;
 using AMFramework_Lib.Controller;
 using AMFramework_Lib.Interfaces;
+using AMFramework_Lib.Logging;
 using ScintillaNET;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
@@ -142,8 +144,9 @@ namespace AMFramework.Components.ScriptingEditor
                     sw.Close();
                     ChangesMade = false;
                 }
-                catch
+                catch (Exception e)
                 {
+                    LoggerManager.Error($"ScriptingViewModel: {e.Message}");
                     Result++;
                 }
             }

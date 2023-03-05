@@ -95,7 +95,7 @@ namespace AMControls.Behaviors
         /// </summary>
         private void OnExpanded(object sender, EventArgs e)
         {
-            if (sender is FrameworkElement dependencyObject)
+            if (sender is Expander dependencyObject)
             {
                 EnableDisableSplitter(true);
                 DoubleAnimation expandAnimation = new()
@@ -106,8 +106,22 @@ namespace AMControls.Behaviors
                     EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut },
                 };
 
+                // Avoid UI lag by hiding the controls when expanding
+                (dependencyObject.Content as UIElement).Visibility = Visibility.Hidden;
+                expandAnimation.Completed += ExpandedAnimationCompleted;
                 dependencyObject.BeginAnimation(FrameworkElement.HeightProperty, expandAnimation);
             }
+        }
+
+        /// <summary>
+        /// After animation has been completed make controls visible, this way we avoid lagging
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExpandedAnimationCompleted(object sender, EventArgs e) 
+        { 
+            (sender as AnimationClock).Completed -= ExpandedAnimationCompleted;
+            (AssociatedObject.Content as UIElement).Visibility = Visibility.Visible;
         }
 
         /// <summary>

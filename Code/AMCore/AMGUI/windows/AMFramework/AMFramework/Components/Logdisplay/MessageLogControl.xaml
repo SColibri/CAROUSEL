@@ -9,6 +9,7 @@
              xmlns:cn="clr-namespace:AMControls.Converters;assembly=AMControls"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:b="clr-namespace:AMControls.Behaviors;assembly=AMControls"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              d:DataContext="{d:DesignInstance Type=c:ControllerCallbacks}"
              mc:Ignorable="d" 
              d:DesignHeight="850" d:DesignWidth="800">
@@ -85,7 +86,18 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" 
                       Background="White"
                       Margin="25,10,10,10">
-            <ItemsControl ItemsSource="{Binding MessageLog}" d:ItemsSource="{StaticResource DummyString}">
+            <ItemsControl d:ItemsSource="{StaticResource DummyString}"
+                          VirtualizingStackPanel.IsVirtualizing="True" >
+                <ItemsControl.Resources>
+                    <CollectionViewSource x:Key="ItemsViewSource" Source="{Binding MessageLog}">
+                        <CollectionViewSource.SortDescriptions>
+                            <scm:SortDescription PropertyName="Icon" Direction="Descending" />
+                        </CollectionViewSource.SortDescriptions>
+                    </CollectionViewSource>
+                </ItemsControl.Resources>
+                <ItemsControl.ItemsSource>
+                    <Binding Source="{StaticResource ItemsViewSource}" />
+                </ItemsControl.ItemsSource>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="2" Visibility="{Binding IsVisible,Converter={StaticResource BoolToVis}}">
@@ -102,7 +114,7 @@
                             <TextBlock Grid.Column="1" Text="{Binding Text}" Margin="5" d:Text="{Binding}"
                                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
-                            <TextBlock Grid.Column="2" Text="{Binding TimeStamp}" Margin="5" d:Text="01/20/21"
+                            <TextBlock Grid.Column="2" Text="{Binding TimeStamp, FallbackValue=NotAvail}" Margin="5" d:Text="01/20/21"
                                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
                             <Border BorderThickness="0,0,0,1" BorderBrush="Silver" Background="Transparent" 
@@ -119,7 +131,7 @@
                                             </MenuItem.Icon>
                                         </MenuItem>
 
-                                        <MenuItem Header="Remove" Command="{Binding Path=DataContext.RemoveMessages, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" CommandParameter="{Binding}">
+                                        <MenuItem Header="Remove" >
                                             <MenuItem.Icon>
                                                 <a:ImageAwesome Icon="Remove" Foreground="Crimson"/>
                                             </MenuItem.Icon>

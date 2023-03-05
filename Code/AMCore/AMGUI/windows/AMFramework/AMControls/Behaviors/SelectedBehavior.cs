@@ -10,13 +10,23 @@ using System.Windows.Media;
 
 namespace AMControls.Behaviors
 {
+    /// <summary>
+    /// SelectedBehavior does the selected item behavior for border items by changing the background to the
+    /// selected state.
+    /// </summary>
     public class SelectedBehavior : Behavior<Border>
     {
         #region Fields
+        /// <summary>
+        /// Container on which the border is contained in
+        /// </summary>
         private Panel? _containerObject;
 
         #endregion
         #region Behavior
+        /// <summary>
+        /// Attached handle
+        /// </summary>
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -28,6 +38,9 @@ namespace AMControls.Behaviors
 
         }
 
+        /// <summary>
+        /// Detached handle
+        /// </summary>
         protected override void OnDetaching()
         {
             base.OnDetaching();
@@ -40,12 +53,21 @@ namespace AMControls.Behaviors
         #endregion
 
         #region Handles 
-
+        /// <summary>
+        /// On mouse enter Handle, sets the background to hover color
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnMouseEnter(object sender, MouseEventArgs e)
         {
             SetBackgroundHover(sender as Border);
         }
 
+        /// <summary>
+        /// On mouse leave handle, sets the background to current state (selected or not selected)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnMouseLeave(object sender, MouseEventArgs e)
         {
             if (GetSelectableObject() is ISelectable selectableObject && !selectableObject.IsSelected)
@@ -110,6 +132,10 @@ namespace AMControls.Behaviors
             return Array.Empty<ISelectable>();
         }
 
+        /// <summary>
+        /// Sets background color to selected
+        /// </summary>
+        /// <param name="border"></param>
         private void SetBackgroundSelected(Border border)
         {
             if (border == null) return;
@@ -121,6 +147,10 @@ namespace AMControls.Behaviors
             };
         }
 
+        /// <summary>
+        /// Sets background to hover color
+        /// </summary>
+        /// <param name="border"></param>
         private void SetBackgroundHover(Border border)
         {
             if (border == null) return;
@@ -132,6 +162,10 @@ namespace AMControls.Behaviors
             };
         }
 
+        /// <summary>
+        /// Sets background to unselected color
+        /// </summary>
+        /// <param name="border"></param>
         private void SetBackgroundUnSelected(Border border)
         {
             if (border == null) return;

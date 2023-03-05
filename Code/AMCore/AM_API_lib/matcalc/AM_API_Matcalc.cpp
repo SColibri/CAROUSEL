@@ -35,7 +35,7 @@ std::string AM_API_Matcalc::run_lua_command(const std::string& command)
 std::string AM_API_Matcalc::run_lua_command(const std::string& command, std::vector<std::string> parameters)
 {
 	std::string out = _luaInterpreter.run_command(command, parameters);
-	AMFramework::Callback::MessageCallBack::TriggerCallback("running commands");
+	AMFramework::Callback::MessageCallBack::TriggerCallback(&out[0]);
 
 	return out;
 }

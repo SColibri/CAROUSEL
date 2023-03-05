@@ -34,6 +34,7 @@ namespace matcalc
 				_output += comm->DoAction();
 			}
 
+			AMFramework::Callback::MessageCallBack::TriggerCallback(&_output[0]);
 			AfterCalculation();
 			return _output;
 		}

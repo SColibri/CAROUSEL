@@ -4,6 +4,9 @@ using System.Windows.Input;
 
 namespace AMControls.Behaviors
 {
+    /// <summary>
+    /// LeftClickCommandBehavior is similar to MouseDown inputBindings that allow you to bind an event to a command 
+    /// </summary>
     public class LeftClickCommandBehavior : Behavior<FrameworkElement>
     {
         #region Fields
@@ -35,12 +38,19 @@ namespace AMControls.Behaviors
         #endregion
 
         #region Behavior
+        /// <summary>
+        /// Attached behavior
+        /// </summary>
         protected override void OnAttached()
         {
             base.OnAttached();
 
             AssociatedObject.MouseDown += OnMouseDown;
         }
+
+        /// <summary>
+        /// Detached behavior
+        /// </summary>
         protected override void OnDetaching()
         {
             base.OnDetaching();
@@ -50,7 +60,11 @@ namespace AMControls.Behaviors
         #endregion
 
         #region Methods
-
+        /// <summary>
+        /// On mouse down handle, executes the command
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && Command != null)

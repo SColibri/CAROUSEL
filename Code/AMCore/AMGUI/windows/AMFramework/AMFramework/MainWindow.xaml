@@ -158,7 +158,7 @@
                         <DropShadowEffect />
                     </Border.Effect>
                 </Border>
-                <TextBlock Grid.Row="1" Text="{Binding Path=IsLoading}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="15" Margin="0,12,0,0"/>
+                <TextBlock Grid.Row="1" Text="Loading..." HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="15" Margin="0,12,0,0"/>
                 <fa:ImageAwesome Icon="Spinner" Spin="True" SpinDuration="2" Margin="5" Width="50"/>
             </Grid>
         </Grid>

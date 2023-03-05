@@ -21,7 +21,7 @@ namespace AMControls.Charts.Implementations.DataSeries
         }
 
         // IData series
-        public List<IDataPoint> DataPoints { get; set; } = new();
+        public List<IDataPoint> DataPoints { get; set; }
         public List<IDataPoint> ContextMenus { get; set; } = new();
         public int Index { get; set; } = 0;
         public string Label { get; set; } = "New series";

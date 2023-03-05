@@ -30,13 +30,13 @@ namespace AMFramework.Controller
         /// <summary>
         /// Max number of messages to be stored in memory
         /// </summary>
-        private int _maxMessages = 500;
+        private int _maxMessages = 50;
 
         /// <summary>
         /// Amount of logs to be saved and discarded from memory
         /// each time it reaches the maxMessage limit
         /// </summary>
-        private int _storeBatchSize = 400;
+        private int _storeBatchSize = 10;
 
         /// <summary>
         /// Callback message type
@@ -273,7 +273,7 @@ namespace AMFramework.Controller
             }
             catch (Exception e)
             {
-                // Do nothing for now
+                LoggerManager.Error($"Controller Callbacks: {e.Message}");
                 throw;
             }
 

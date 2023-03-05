@@ -3,9 +3,13 @@ using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Interfaces;
 using AMFramework.Components.Charting.Interfaces;
 using AMFramework.Controller;
+using AMFramework_Lib.Controller;
+using Catel.Collections;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -209,38 +213,55 @@ namespace AMFramework.Views.Project_Map
             }
             OnPropertyChanged(nameof(DataOrigin));
 
-            Plot_Data();
+            Controller_Global.MainControl?.Show_loading(true);
+
+            Thread TH01 = new(Plot_Data);
+            TH01.Priority = ThreadPriority.Highest;
+            TH01.Start();
+
+            // Plot_Data();
         }
 
         public void Plot_Data()
         {
-
-            Main_plot.Clear_Series();
-
             if (_dataPlots.Count == 0) return;
+
             SelectedDataOrigin = _dataPlots[0].Name;
             XDataColumn = _dataPlots[0].DataOptions[_xDataOption];
             YDataColumn = _dataPlots[0].DataOptions[_yDataOption];
 
-            _xaxis.Name = _dataPlots[0].DataOptions[_xDataOption];
-            _yaxis.Name = _dataPlots[0].DataOptions[_yDataOption];
+            _xaxis.Name = XDataColumn;
+            _yaxis.Name = YDataColumn;
 
             Random random = new();
 
-            foreach (var dplot in _dataPlots)
+            // set data  options
+            foreach (var dplot in _dataPlots) 
             {
-                ScatterBoxSeries sbs = new();
                 dplot.X_Data_Option(_xDataOption);
                 dplot.Y_Data_Option(_yDataOption);
-                sbs.Label = dplot.SeriesName;
-                sbs.DataPoints = dplot.DataPoints;
-                if (sbs.DataPoints.Count == 0) continue;
-                Main_plot.Add_series(sbs);
-                sbs.ColorSeries = Color.FromRgb((byte)random.Next(1, 255), (byte)random.Next(1, 255), (byte)random.Next(1, 255));
             }
 
-            Main_plot.Adjust_axes_to_data();
+                ScatterBoxSeries[] sbsArray = new ScatterBoxSeries[_dataPlots.Count];
 
+            for (int i = 0; i < _dataPlots.Count; i++)
+            {
+                sbsArray[i] = new();
+                sbsArray[i].Label = _dataPlots[i].SeriesName;
+
+                AMControls.Charts.Interfaces.IDataPoint[] tempVals = new AMControls.Charts.Interfaces.IDataPoint[_dataPlots[i].DataPoints.Count];
+                _dataPlots[i].DataPoints.CopyTo(tempVals, 0);
+                sbsArray[i].DataPoints = tempVals.ToList();
+                sbsArray[i].ColorSeries = Color.FromRgb((byte)random.Next(1, 255), (byte)random.Next(1, 255), (byte)random.Next(1, 255));
+            }
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                Main_plot.Clear_Series();
+                sbsArray.Where(e => e.DataPoints.Count > 0).ForEach(e => Main_plot.Add_series(e));
+                Main_plot.Adjust_axes_to_data();
+                Controller_Global.MainControl?.Show_loading(false);
+            }));
         }
 
         public void Select_Data()
@@ -404,7 +425,9 @@ namespace AMFramework.Views.Project_Map
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Plot_Data();
+            Thread TH01 = new(Plot_Data);
+            TH01.Priority = ThreadPriority.Highest;
+            TH01.Start();
         }
     }
 }

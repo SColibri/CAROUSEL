@@ -2,6 +2,7 @@
 using AMFramework.Components.Button;
 using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
+using AMFramework_Lib.Logging;
 using AMFramework_Lib.Model;
 using System;
 using System.Collections.Generic;
@@ -297,9 +298,10 @@ namespace AMFramework.Controller
             {
                 Application.Current.Dispatcher.Invoke(new Action(Refresh_DTV));
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // Woops looks like the window was closed before this finished
+                LoggerManager.Error($"Controller DBSProject: {e.Message}");
             }
         }
 

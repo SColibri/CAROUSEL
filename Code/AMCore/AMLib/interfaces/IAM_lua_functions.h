@@ -12,6 +12,7 @@
 #include "../include/lua/LuaDatabaseModule.h"
 #include "../include/callbackFunctions/CallbackDefinitions.h"
 #include "../include/callbackFunctions/MessageCallBack.h"
+#include "../include/callbackFunctions/ErrorCallback.h"
 #include "../include/callbackFunctions/Callbacks.h"
 
 
@@ -410,6 +411,10 @@ protected:
 	
 
 #pragma region helpers
+	/// <summary>
+	/// Clears the file with all available commands. The function list is used in the
+	/// GUI application for loading, doing actions and more.
+	/// </summary>
 	void functionsList_clear()
 	{
 		std::ofstream ofs;
@@ -417,6 +422,10 @@ protected:
 		ofs.close();
 	}
 
+	/// <summary>
+	/// Add command to file.
+	/// </summary>
+	/// <param name="newEntry"></param>
 	static void functionsList_addEntry(std::vector<std::string> newEntry)
 	{
 		std::ofstream ofs;
@@ -430,6 +439,7 @@ protected:
 		if (_openProject == nullptr)
 		{
 			lua_pushstring(state, "No selected project!, select or create a project first :)");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("No selected project!, select or create a project first :)");
 			return 1;
 		}
 		return 0;
@@ -441,6 +451,7 @@ protected:
 		{
 			std::string strBuilder = "Missing parameters: " + message;
 			lua_pushstring(state, strBuilder.c_str());
+			AMFramework::Callback::ErrorCallback::TriggerCallback(&strBuilder[0]);
 			return 1;
 		}
 		return 0;
@@ -480,6 +491,7 @@ protected:
 		{
 			std::string IDerror = "Wrong type, ID is not a number \'" + csvF[0] + "\'";
 			lua_pushstring(state, IDerror.c_str());
+			AMFramework::Callback::ErrorCallback::TriggerCallback(&IDerror[0]);
 			return 1;
 		}
 
@@ -515,6 +527,7 @@ protected:
 		if (parameters.size() < 1)
 		{
 			lua_pushstring(state, "Ups... what name should we use?");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Ups... what name should we use?");
 			return 1;
 		}
 
@@ -533,12 +546,18 @@ protected:
 #pragma endregion
 
 #pragma region LUA
+	/// <summary>
+	/// Adds to the function file list the function described in a lua script
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
 	static int Bind_add_function_to_framework(lua_State* state)
 	{
 		int noParameters = lua_gettop(state);
 		if (noParameters < 3)
 		{
 			lua_pushstring(state, "Ups... what name should we use?");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Ups... what name should we use?");
 			return 1;
 		}
 
@@ -550,7 +569,11 @@ protected:
 	}
 
 #pragma endregion
-	
+	/// <summary>
+	/// Executes a SQL query
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
 	static int baseBind_DatabaseQuery(lua_State* state)
 	{
 		std::string out{""};
@@ -574,6 +597,11 @@ protected:
 		return 1;
 	}
 
+	/// <summary>
+	/// Create SQL View
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
 	static int baseBind_DatabaseCreateView(lua_State* state)
 	{
 		std::vector<std::string> parameters = get_parameters(state);
@@ -594,12 +622,18 @@ protected:
 		else
 		{
 			out = "An error ocurred while executing the SQL command: " + IAM_Database::csv_join_row(parameters, " ");
+			AMFramework::Callback::ErrorCallback::TriggerCallback(&out[0]);
 		}
 
 		lua_pushstring(state, out.c_str());
 		return 1;
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
 	static int baseBind_DatabaseByQuery(lua_State* state)
 	{
 		std::vector<std::string> parameters = get_parameters(state);
@@ -609,6 +643,7 @@ protected:
 		{
 			out = "Error, wrong parameters!";
 			lua_pushstring(state, out.c_str());
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error; no parameters");
 			return 1;
 		}
 
@@ -670,7 +705,10 @@ protected:
 
 		try
 		{
+			AMFramework::Callback::ProgressUpdateCallback::TriggerCallback("Starting script", 0);
 			bool outy = luaL_dofile(state, parameter.c_str());
+			AMFramework::Callback::ProgressUpdateCallback::TriggerCallback("Script finished running", 100);
+			AMFramework::Callback::ScriptFinishedCallback::TriggerCallback(&parameter[0]);
 		}
 		catch (std::exception& em)
 		{
@@ -721,6 +759,7 @@ protected:
 		else
 		{
 			lua_pushstring(state, "Error; no parameters");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error; no parameters");
 		}
 		
 		return 1;
@@ -761,6 +800,7 @@ protected:
 		else
 		{
 			lua_pushstring(state, "Error; no parameters");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error; no parameters");
 		}
 
 		return 1;
@@ -804,6 +844,7 @@ protected:
 		else
 		{
 			lua_pushstring(state, "Error; no parameters");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error; no parameters");
 		}
 		
 		return 1;
@@ -843,6 +884,7 @@ protected:
 		else
 		{
 			lua_pushstring(state, "Error; no parameters");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error; no parameters");
 		}
 
 		return 1;
@@ -882,6 +924,7 @@ protected:
 		else
 		{
 			lua_pushstring(state, "Error; no parameters");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error; no parameters");
 		}
 
 		return 1;
@@ -921,6 +964,7 @@ protected:
 		else
 		{
 			lua_pushstring(state, "Error; no parameters");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error; no parameters");
 		}
 
 		return 1;
@@ -946,6 +990,7 @@ protected:
 		else
 		{
 			lua_pushstring(state, "Bind_configuration_setMaxThreadNumber Error; no parameters");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Bind_configuration_setMaxThreadNumber Error; no parameters");
 		}
 
 		return 1;
@@ -994,6 +1039,7 @@ protected:
 		if (parameters.size() == 0)
 		{
 			lua_pushstring(state, "Input in csv format not given");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Input in csv format not given");
 			return 1;
 		}
 
@@ -1092,6 +1138,7 @@ protected:
 		if (parameters.size() == 0)
 		{
 			lua_pushstring(state, "Input in csv format not given");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Input in csv format not given");
 			return 1;
 		}
 
@@ -1159,6 +1206,7 @@ protected:
 		if (noParameters == 0)
 		{
 			lua_pushstring(state, "Ups... what name should we use?");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Ups... what name should we use?");
 			return 1;
 		}
 
@@ -1171,6 +1219,7 @@ protected:
 		if(_openProject->get_project_ID() == -1)
 		{
 			lua_pushstring(state, "Project does not exist");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Project does not exist");
 			return 1;
 		}
 
@@ -1208,6 +1257,7 @@ protected:
 		if (parameters.size() == 0)
 		{
 			lua_pushstring(state, "Bind_project_new: Error, missing input");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Bind_project_new: Error, missing input");
 			return 1;
 		}
 
@@ -1322,6 +1372,7 @@ protected:
 			{
 				DBS_Project::remove_project_data(_dbFramework->get_database(), std::stoi(parameters[0]));
 				lua_pushstring(state, "Bind_project_clearContent: All data has been removed");
+				AMFramework::Callback::ErrorCallback::TriggerCallback("Bind_project_clearContent: All data has been removed");
 				return 1;
 			}
 			lua_pushstring(state, "Bind_project_clearContent: Input parameter is not an integer for ID project.");
@@ -1499,6 +1550,7 @@ protected:
 		if (parameters.size() == 0)
 		{
 			lua_pushstring(state, "Error: missing parameter -> ID Project");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: missing parameter -> ID Project");
 			return 1;
 		}
 
@@ -1517,6 +1569,7 @@ protected:
 		if (parameters.size() == 0)
 		{
 			lua_pushstring(state, "Error: missing parameter -> ID Project");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: missing parameter -> ID Project");
 			return 1;
 		}
 
@@ -1535,6 +1588,7 @@ protected:
 		if (parameters.size() == 0)
 		{
 			lua_pushstring(state, "Error: missing parameter -> ID Project");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: missing parameter -> ID Project");
 			return 1;
 		}
 
@@ -1637,6 +1691,7 @@ protected:
 		if (DT.row_count() == 0)
 		{
 			lua_pushstring(state, "Error: no data was found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
 			return 1;
 		}
 
@@ -1662,6 +1717,7 @@ protected:
 		if (DT.row_count() == 0)
 		{
 			lua_pushstring(state, "Error: no data was found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
 			return 1;
 		}
 
@@ -1687,6 +1743,7 @@ protected:
 		if (DT.row_count() == 0)
 		{
 			lua_pushstring(state, "Error: no data was found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
 			return 1;
 		}
 
@@ -1754,6 +1811,7 @@ protected:
 		if (DT.row_count() == 0)
 		{
 			lua_pushstring(state, "Error: no data was found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
 			return 1;
 		}
 		// send csv
@@ -1840,6 +1898,7 @@ protected:
 		if(DT.row_count() == 0)
 		{
 			lua_pushstring(state,"Error: no data was found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
 			return 1;
 		}
 
@@ -1922,6 +1981,7 @@ protected:
 		if(parameters.size() == 0)
 		{
 			lua_pushstring(state, "Error: missing parameter -> Name");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: missing parameter -> Name");
 			return 1;
 		}
 
@@ -2008,6 +2068,7 @@ protected:
 		if (parameters.size() == 0)
 		{
 			lua_pushstring(state, "Error: missing parameter -> Name");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: missing parameter -> Name");
 			return 1;
 		}
 
@@ -2526,6 +2587,7 @@ protected:
 		if (csvF.size() < 3) 
 		{
 			lua_pushstring(state, "Error, missing parameters in Bind_HeatTreatment_load_ByName");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error, missing parameters in Bind_HeatTreatment_load_ByName");
 			return 1;
 		}
 
@@ -2595,7 +2657,6 @@ protected:
 	template<typename DBS>
 	static int Bind_Templated_loadID(lua_State* state)
 	{
-		AMFramework::Callback::MessageCallBack::TriggerCallback("Loading by ID");
 		// check input
 		std::vector<std::string> parameters, csvF;
 		if (check_input_csv(state, parameters, csvF) == 1) return 1;
