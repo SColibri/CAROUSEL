@@ -107,11 +107,10 @@
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Text="Phase list:" 
+                            <TextBlock Grid.Row="0" Text="Found active phases:" 
                                        Margin="5,5,5,2"/>
 
-                            <Border Grid.Row="1" BorderBrush="Silver" 
-                                    BorderThickness="1" CornerRadius="3" 
+                            <Border Grid.Row="1"
                                     Margin="5,1,5,1">
                                 <ItemsControl ItemsSource="{Binding Path=SelectedProject.MCObject.ModelObject.ActivePhases}">
                                     <ItemsControl.ItemsPanel>
@@ -121,10 +120,11 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Background="White" Margin="3" CornerRadius="3"
-                                                    BorderBrush="Silver" BorderThickness="0.5">
+                                            <Border Style="{StaticResource SelectedBorderTextItem}" Margin="3">
                                                 <Grid Margin="5">
-                                                    <TextBlock Text ="{Binding Path=ModelObject.PhaseName}"/>
+                                                    <TextBlock Text ="{Binding Path=ModelObject.PhaseName}" 
+                                                               Foreground="WhiteSmoke"
+                                                               FontWeight="DemiBold"/>
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>

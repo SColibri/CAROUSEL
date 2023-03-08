@@ -83,6 +83,9 @@ namespace AMControls_Test
 
             ScriptingView scView = new();
             scView.Show();
+
+            Viewer3DTest vie3D = new();
+            vie3D.Show();
         }
 
         private void OnChartMouseMove_Handle(object? sender, MouseEventArgs e)

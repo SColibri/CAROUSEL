@@ -8,6 +8,7 @@ using AMFramework_Lib.Model;
 using InteractiveDataDisplay.WPF;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -32,7 +33,7 @@ namespace AMFramework.Controller
 
         #endregion
 
-        public List<ModelController<Model_Phase>> Used_Phases_inCases => _projectController.UsedPhases;
+        public ObservableCollection<ModelController<Model_Phase>> Used_Phases_inCases => _projectController.UsedPhases;
         public Model_Projects SelectedProject { get; }
 
         #region Line_graphs
@@ -157,7 +158,7 @@ namespace AMFramework.Controller
         private void Plot_linear_phases_async()
         {
             List<ModelController<Model_Case>> selCases = _projectController.CaseController.Cases.FindAll(e => e.ModelObject.IsSelected == true);
-            List<ModelController<Model_Phase>> selPhases = Used_Phases_inCases.FindAll(e => e.ModelObject.IsSelected == true);
+            List<ModelController<Model_Phase>> selPhases = Used_Phases_inCases.ToList().FindAll(e => e.ModelObject.IsSelected == true);
 
             for (int n1 = 0; n1 < selCases.Count; n1++)
             {

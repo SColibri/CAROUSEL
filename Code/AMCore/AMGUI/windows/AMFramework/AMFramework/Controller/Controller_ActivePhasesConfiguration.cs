@@ -103,12 +103,20 @@ namespace AMFramework.Controller
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Find active phases handle
+        /// </summary>
         private void Method_Find_Active_Phases()
         {
             if (_activePhasesConfiguration == null) return;
             string outy = _comm.run_lua_command("get_active_phases", _activePhasesConfiguration.ModelObject.IDProject.ToString());
             Controller_Global.MainControl?.Set_Core_Output(outy);
             Searching_Active_Phases = false;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Controller_Global.MainControl?.Show_loading(false);
+            });
 
         }
         #endregion
