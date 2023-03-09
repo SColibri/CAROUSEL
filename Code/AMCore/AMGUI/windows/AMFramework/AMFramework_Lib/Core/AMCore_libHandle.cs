@@ -1,4 +1,5 @@
 ﻿using AMFramework_Lib.Libs;
+using AMFramework_Lib.Logging;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -165,33 +166,37 @@ namespace AMFramework_Lib.Core
                 fullPath = AppDomain.CurrentDomain.BaseDirectory + pathToLibrary;
 
             // Check if file exists
-            if (!System.IO.File.Exists(fullPath))
+            if (System.IO.File.Exists(fullPath))
             {
-                throw new FileNotFoundException($"path to library was not found: {pathToLibrary}");
+                try
+                {
+                    // Load library
+                    Load_library(fullPath);
+
+                    // Create new API control
+                    Load_api_controll();
+
+                    // Get command address space
+                    Load_run_lua_command_address_space();
+
+                    // Set callbacks
+                    CallbackManager.RegisterCallbacks(_library);
+
+                    // set to api available
+                    _apiAvailable = true;
+                }
+                catch (Exception e)
+                {
+                    _apiAvailable = true;
+                    LoggerManager.Error("An error occured when loading the API: " + e.Message + " Path: " + fullPath);
+                }
             }
-
-            try
+            else 
             {
-                // Load library
-                Load_library(fullPath);
-
-                // Create new API control
-                Load_api_controll();
-
-                // Get command address space
-                Load_run_lua_command_address_space();
-
-                // Set callbacks
-                CallbackManager.RegisterCallbacks(_library);
-
-                // set to api available
-                _apiAvailable = true;
-            }
-            catch (Exception e)
-            {
-                throw new Exception("An error occured when loading the API: " + e.Message + " Path: " + fullPath);
+                // Log invalid path
+                LoggerManager.Warn($"path to library was not found: {pathToLibrary}");
+                _apiAvailable = false;
             }
         }
-
     }
 }

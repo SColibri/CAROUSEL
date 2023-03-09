@@ -32,8 +32,17 @@ namespace AMFramework.Controller
         /// <param name="PathToLib">Path to library that implements the IAM_API interface</param>
         public Controller_Config(string PathToLib)
         {
-            Controller_Global.ApiHandle = new AMCore_libHandle(PathToLib);
-            load_model_data();
+            try
+            {
+                Controller_Global.ApiHandle = new AMCore_libHandle(PathToLib);
+                load_model_data();
+            }
+            catch (Exception)
+            {
+                Controller_Global.MainControl?.Show_Notification("Missing dll", "Please select a valid API library", 
+                    (int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null, null);
+            }
+            
         }
 
         /// <summary>
