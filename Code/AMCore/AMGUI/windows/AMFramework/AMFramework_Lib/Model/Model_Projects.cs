@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AMFramework_Lib.AMSystem.Attributes;
 using System.ComponentModel;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.AMSystem.Attributes;
 
 namespace AMFramework_Lib.Model
 {
@@ -14,14 +8,14 @@ namespace AMFramework_Lib.Model
 
         private int _id = -1;
         [Order]
-        public int ID 
-        { 
-            get { return _id; } 
-            set 
+        public int ID
+        {
+            get { return _id; }
+            set
             {
                 _id = value;
-                OnPropertyChanged(nameof(ID)); 
-            } 
+                OnPropertyChanged(nameof(ID));
+            }
         }
 
         private string _name = "New Name";
@@ -29,7 +23,7 @@ namespace AMFramework_Lib.Model
         public string Name
         {
             get { return _name; }
-            set 
+            set
             {
                 _name = value;
                 OnPropertyChanged(nameof(Name));
@@ -42,7 +36,7 @@ namespace AMFramework_Lib.Model
         public string APIName
         {
             get { return _apiName; }
-            set 
+            set
             {
                 _apiName = value;
                 OnPropertyChanged(nameof(APIName));
@@ -85,10 +79,10 @@ namespace AMFramework_Lib.Model
 
         // Selected elements
         private List<ModelController<Model_SelectedElements>> _selectedElements = new();
-        public List<ModelController<Model_SelectedElements>> SelectedElements 
+        public List<ModelController<Model_SelectedElements>> SelectedElements
         {
             get { return _selectedElements; }
-            set 
+            set
             {
                 _selectedElements = value;
                 OnPropertyChanged(nameof(SelectedElements));
@@ -104,7 +98,7 @@ namespace AMFramework_Lib.Model
         public ModelController<Model_ActivePhasesConfiguration>? ActivePhasesConfiguration
         {
             get { return _activePhasesConfiguration; }
-            set 
+            set
             {
                 _activePhasesConfiguration = value;
                 OnPropertyChanged(nameof(ActivePhasesConfiguration));
@@ -112,7 +106,7 @@ namespace AMFramework_Lib.Model
         }
 
         // Active Phases
-        private List<ModelController<Model_ActivePhases>> _activePhases= new();
+        private List<ModelController<Model_ActivePhases>> _activePhases = new();
         public List<ModelController<Model_ActivePhases>> ActivePhases
         {
             get { return _activePhases; }
@@ -143,7 +137,7 @@ namespace AMFramework_Lib.Model
                     {
                         item.ModelObject.PropertyChanged += ActivePhasesElementComposition_CheckValues;
                     }
-                    else 
+                    else
                     {
                         item.ModelObject.IsReferenceElement = true;
                     }
@@ -156,7 +150,7 @@ namespace AMFramework_Lib.Model
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ActivePhasesElementComposition_CheckValues(object? sender, PropertyChangedEventArgs e) 
+        private void ActivePhasesElementComposition_CheckValues(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName?.CompareTo("Value") != 0) return;
 
@@ -166,15 +160,15 @@ namespace AMFramework_Lib.Model
             double totalSum = 0;
             foreach (var item in ActivePhasesElementComposition)
             {
-                if(item.ModelObject.IDElement != refElement.ModelObject.IDElement) 
+                if (item.ModelObject.IDElement != refElement.ModelObject.IDElement)
                 {
                     totalSum += item.ModelObject.Value;
                 }
             }
 
             var refElementComposition = ActivePhasesElementComposition.Find(e => e.ModelObject.IDElement == refElement.ModelObject.IDElement);
-            
-            if(refElementComposition != null)
+
+            if (refElementComposition != null)
                 refElementComposition.ModelObject.Value = 1 - totalSum;
         }
         #endregion

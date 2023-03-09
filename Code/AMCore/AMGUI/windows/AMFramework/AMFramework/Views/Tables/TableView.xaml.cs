@@ -1,21 +1,9 @@
 ﻿using AMFramework_Lib.Core;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace AMFramework.Views.Tables
 {
@@ -65,16 +53,16 @@ namespace AMFramework.Views.Tables
         }
 
         private DataTable _tableData = new();
-        public DataView DView 
-        { 
-            get { return _tableData.DefaultView; } 
+        public DataView DView
+        {
+            get { return _tableData.DefaultView; }
         }
 
         public DataTable TableData
         {
-            get { return _tableData; } 
+            get { return _tableData; }
         }
-        private void Fill_Table() 
+        private void Fill_Table()
         {
             Get_ColumnNames();
             //MainGrid.Columns.Clear();
@@ -102,7 +90,7 @@ namespace AMFramework.Views.Tables
                 _tableData.Rows.Add(dR);
             }
 
-           
+
             OnPropertyChanged(nameof(DView));
         }
 
@@ -130,6 +118,6 @@ namespace AMFramework.Views.Tables
         }
         #endregion
 
-        
+
     }
 }

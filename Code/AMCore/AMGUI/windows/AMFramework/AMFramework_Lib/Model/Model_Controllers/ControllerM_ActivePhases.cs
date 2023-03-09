@@ -1,15 +1,7 @@
-﻿using AMFramework_Lib.Controller;
-using AMFramework_Lib.Core;
+﻿using AMFramework_Lib.Core;
 using AMFramework_Lib.Interfaces;
 using AMFramework_Lib.Model.Controllers;
 using AMFramework_Lib.Model.ModelCoreExecutors;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMFramework_Lib.Model.Model_Controllers
 {
@@ -44,7 +36,7 @@ namespace AMFramework_Lib.Model.Model_Controllers
             return result;
         }
 
-        private static void Set_PhaseName(IAMCore_Comm comm, ref ModelController<Model_ActivePhases> modController) 
+        private static void Set_PhaseName(IAMCore_Comm comm, ref ModelController<Model_ActivePhases> modController)
         {
             modController.ModelObject.PhaseName = ControllerM_Phase.Get_PhaseByID(comm, modController.ModelObject.IDPhase).ModelObject.Name;
         }

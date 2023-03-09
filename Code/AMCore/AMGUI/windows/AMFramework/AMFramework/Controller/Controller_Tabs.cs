@@ -1,14 +1,9 @@
 ﻿using AMFramework.Components.ScriptingEditor;
-using AMFramework.Views.Case;
 using AMFramework_Lib.Controller;
-using AMFramework_Lib.Core;
 using AMFramework_Lib.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -68,10 +63,10 @@ namespace AMFramework.Controller
         }
 
         private bool _dataHasChanged = false;
-        public bool DataHasChanged 
-        { 
+        public bool DataHasChanged
+        {
             get => _dataHasChanged;
-            set 
+            set
             {
                 _dataHasChanged = value;
                 OnPropertyChanged(nameof(DataHasChanged));
@@ -110,13 +105,13 @@ namespace AMFramework.Controller
         public void Remove_ByTagType(Type objType)
         {
             bool tagFound = true;
-            while (tagFound) 
+            while (tagFound)
             {
                 tagFound = false;
                 for (int i = 0; i < TabItems.Count; i++)
                 {
                     if (TabItems[i].Tag == null) continue;
-                    if (TabItems[i].Tag.GetType().Equals(objType) && 
+                    if (TabItems[i].Tag.GetType().Equals(objType) &&
                         !TabItems[i].Tag.GetType().Equals(typeof(Scripting_ViewModel)))
                     {
                         // Note removing tabs and WPF cause a binding error, however,
@@ -126,7 +121,7 @@ namespace AMFramework.Controller
                     }
                 }
             }
-            
+
 
             //TabItems.RemoveAll(e => e.Tag.GetType().Equals(objType));
             UpdateTabItems();
@@ -136,9 +131,9 @@ namespace AMFramework.Controller
         /// This implementation just avoids using the IAbservable list
         /// 
         /// </summary>
-        private void UpdateTabItems() 
+        private void UpdateTabItems()
         {
-            if(SelectedTab == null && TabItems.Count > 0) 
+            if (SelectedTab == null && TabItems.Count > 0)
             {
                 SelectedTab = TabItems.Last();
             }
@@ -168,7 +163,7 @@ namespace AMFramework.Controller
 
             //Remove existing tabs of existing type, tabs with null are
             //Ignored
-            if(modelObject != null) 
+            if (modelObject != null)
             {
                 Remove_ByTagType(modelObject.GetType());
             }
@@ -243,7 +238,7 @@ namespace AMFramework.Controller
         private void CloseTabCommand_Action(object? vmInterface)
         {
             // Check if selected tab is not null
-            if (vmInterface is TabItem tabItem) 
+            if (vmInterface is TabItem tabItem)
             {
                 if (tabItem.Tag is ViewModel_Interface vmObject)
                 {
@@ -251,7 +246,7 @@ namespace AMFramework.Controller
                     if (vmObject.Close())
                         Remove_tab_Item(tabItem);
                 }
-                else 
+                else
                 {
                     // closes the tab without calling the close action
                     Remove_tab_Item(tabItem);

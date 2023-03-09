@@ -2,14 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMControls.Custom.ProjectTreeView
 {
-    public class TV_Menu_Controller: INotifyPropertyChanged
+    public class TV_Menu_Controller : INotifyPropertyChanged
     {
         private TV_TopView_controller? _selectedItem;
         private List<TV_TopView> _main_Nodes = new();
@@ -29,8 +25,8 @@ namespace AMControls.Custom.ProjectTreeView
         private string _searchText = "";
         public string SearchText
         {
-            get {return _searchText; }
-            set 
+            get { return _searchText; }
+            set
             {
                 _searchText = value;
                 OnPropertyChanged("SearchText");
@@ -38,7 +34,7 @@ namespace AMControls.Custom.ProjectTreeView
             }
         }
 
-        public void Search() 
+        public void Search()
         {
             foreach (var item in _main_Nodes)
             {
@@ -59,7 +55,7 @@ namespace AMControls.Custom.ProjectTreeView
 
         #endregion
 
-        private void UnsubscribeToEvents() 
+        private void UnsubscribeToEvents()
         {
             foreach (var item in Main_Nodes)
             {
@@ -77,7 +73,7 @@ namespace AMControls.Custom.ProjectTreeView
             }
         }
 
-        private void Selected_Handle(object? sender, EventArgs e) 
+        private void Selected_Handle(object? sender, EventArgs e)
         {
             _selectedItem = (TV_TopView_controller?)sender;
 

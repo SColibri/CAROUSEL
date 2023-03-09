@@ -1,17 +1,19 @@
-﻿using AMFramework.Components.Windows;
-using AMFramework_Lib.Core;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Model.Model_Controllers;
-using AMFramework_Lib.Controller;
+﻿using AMFramework.Components.Button;
+using AMFramework.Components.Windows;
 using AMFramework.Views.ActivePhases;
 using AMFramework.Views.Elements;
 using AMFramework.Views.Projects.Other;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Model.Model_Controllers;
+using Catel.Collections;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using AMFramework.Components.Button;
-using System;
 
 namespace AMFramework.Controller
 {
@@ -22,83 +24,121 @@ namespace AMFramework.Controller
     /// </summary>
     public class Controller_Project : ControllerAbstract
     {
-        public Controller_Project(IAMCore_Comm comm) : base(comm) 
+
+        #region Fields
+        /// <summary>
+        /// Selected project item
+        /// </summary>
+        private ControllerM_Project? _selectedProject = null;
+
+        /// <summary>
+        /// List of available projects
+        /// </summary>
+        private ObservableCollection<ControllerM_Project> _projectList = new();
+
+        /// <summary>
+        /// List of available phases
+        /// </summary>
+        private ObservableCollection<ModelController<Model_Phase>> _usedPhases = new();
+
+        /// <summary>
+        /// Solidification calculation methods available
+        /// </summary>
+        private ObservableCollection<string> _solidificationCalculationMethods = new() { "Equilibrium", "Scheil" };
+
+        /// <summary>
+        /// Selected Solidification calculation method
+        /// </summary>
+        private string _selectedSolidificationCalculationMethod = string.Empty;
+
+        /// <summary>
+        /// Active phases view
+        /// </summary>
+        private object? _activePhasesConfigurationPage;
+
+        /// <summary>
+        /// List of all elements
+        /// </summary>
+        private ObservableCollection<ModelController<Model_Element>> _elementList = new();
+
+
+        // ----------------------------------------------------------------------------------
+        //                                    CONTROLLERS
+        // ----------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Case controller, contains all cases related to this project
+        /// </summary>
+        private Controller_Cases _caseController;
+
+        /// <summary>
+        /// Treeview controller
+        /// </summary>
+        private Controller_XDataTreeView _controller_xDataTreeView = new Controller_XDataTreeView();
+
+        // ----------------------------------------------------------------------------------
+        //                                     COMMANDS
+        // ----------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Case creator command
+        /// </summary>
+        private ICommand _openCaseCreator;
+
+        /// <summary>
+        /// Opens a list of available projects
+        /// </summary>
+        private ICommand _openProjectListCommand;
+
+        /// <summary>
+        /// Opens a new project
+        /// </summary>
+        private ICommand _openNewProjectCommand;
+
+        /// <summary>
+        /// Shows available elements from selected database
+        /// </summary>
+        private ICommand _showElementList;
+
+        /// <summary>
+        /// Accepts current element selection
+        /// </summary>
+        private ICommand _acceptElementList;
+
+        /// <summary>
+        /// Saves project
+        /// </summary>
+        private ICommand _saveProject;
+
+        /// <summary>
+        /// Searches for the active phases using current configuration
+        /// </summary>
+        private ICommand _findActivePhases;
+
+        /// <summary>
+        /// Selects a project
+        /// </summary>
+        private ICommand _selectProject;
+        #endregion
+
+        #region Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="comm"></param>
+        public Controller_Project(IAMCore_Comm comm) : base(comm)
         {
-            ElementList = ModelController<Model_Element>.LoadAll(ref _comm);
+            ElementList.AddRange(ModelController<Model_Element>.LoadAll(ref _comm));
             CaseController = new(ref comm, this);
         }
 
+        #endregion
+
         #region Properties
-        private ControllerM_Project? _selectedProject = null;
-        /// <summary>
-        /// Selected project :)
-        /// </summary>
-        public ControllerM_Project? SelectedProject
-        {
-            get { return _selectedProject; }
-            set
-            {
-                _selectedProject = value;
-                OnPropertyChanged(nameof(SelectedProject));
-
-                // Check for null value
-                if (_selectedProject == null) return;
-                
-                // Get list of all used phases
-                Get_UsedPhases();
-                
-                // Update Element list (TODO: we should move this logic somewhere else)
-                foreach (var item in ElementList)
-                {
-                    var itemRef = _selectedProject.MCObject.ModelObject.SelectedElements.Find(e => e.ModelObject.IDElement == item.ModelObject.ID);
-                    if (itemRef == null)
-                    {
-                        item.ModelObject.IsSelected = false;
-                        item.ModelObject.IsReferenceElement = false;
-                    }
-                    else
-                    {
-                        item.ModelObject.IsSelected = true;
-                        item.ModelObject.IsReferenceElement = itemRef.ModelObject.ISReferenceElementBool;
-                    }
-                }
-            }
-        }
-
-        private List<ControllerM_Project> _projectList = new();
-        /// <summary>
-        /// List of all available projects
-        /// </summary>
-        public List<ControllerM_Project> ProjectList
-        {
-            get { return _projectList; }
-            set
-            {
-                _projectList = value;
-                OnPropertyChanged(nameof(ProjectList));
-            }
-        }
-
-        private List<ModelController<Model_Phase>> _usedPhases = new();
-        /// <summary>
-        /// get/set list of phases used in this project
-        /// </summary>
-        public List<ModelController<Model_Phase>> UsedPhases
-        {
-            get => _usedPhases;
-            set 
-            {
-                _usedPhases = value;
-                OnPropertyChanged(nameof(UsedPhases));
-            }
-        }
-
-
-        private List<string> _solidificationCalculationMethods = new() { "Equilibrium", "Scheil" };
         /// <summary>
         /// Solidification calculation method
         /// </summary>
-        public List<string> SolidificationCalculationMethods
+        public ObservableCollection<string> SolidificationCalculationMethods
         {
             get { return _solidificationCalculationMethods; }
             set
@@ -108,7 +148,9 @@ namespace AMFramework.Controller
             }
         }
 
-        private string _selectedSolidificationCalculationMethod = "";
+        /// <summary>
+        /// Set/Get method used for solidification calculations
+        /// </summary>
         public string SelectedSolidificationCalculationMethod
         {
             get { return _selectedSolidificationCalculationMethod; }
@@ -127,7 +169,14 @@ namespace AMFramework.Controller
             }
         }
 
-        private object? _activePhasesConfigurationPage;
+
+        // ----------------------------------------------------------------------------------
+        //                                      VIEWS
+        // ----------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Get/Set Active phases configuration page
+        /// </summary>
         public object? ActivePhasesConfigurationPage
         {
             get { return _activePhasesConfigurationPage; }
@@ -138,8 +187,64 @@ namespace AMFramework.Controller
             }
         }
 
-        private List<ModelController<Model_Element>> _elementList = new();
-        public List<ModelController<Model_Element>> ElementList
+        // ----------------------------------------------------------------------------------
+        //                                    CONTROLLERS
+        // ----------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Selected project :)
+        /// </summary>
+        public ControllerM_Project? SelectedProject
+        {
+            get { return _selectedProject; }
+            set
+            {
+                _selectedProject = value;
+                OnPropertyChanged(nameof(SelectedProject));
+
+                // Check for null value
+                if (_selectedProject == null) return;
+
+                // Get list of all used phases
+                Get_UsedPhases();
+                
+                // Set model tag as selected and if element is a reference element
+                SetSelectedElements();
+              
+            }
+        }
+
+        /// <summary>
+        /// List of all available projects
+        /// </summary>
+        public ObservableCollection<ControllerM_Project> ProjectList
+        {
+            get { return _projectList; }
+            set
+            {
+                _projectList = value;
+                OnPropertyChanged(nameof(ProjectList));
+            }
+        }
+
+
+        /// <summary>
+        /// get/set list of phases used in this project
+        /// </summary>
+        public ObservableCollection<ModelController<Model_Phase>> UsedPhases
+        {
+            get => _usedPhases;
+            set
+            {
+                _usedPhases = value;
+                OnPropertyChanged(nameof(UsedPhases));
+            }
+        }
+
+        /// <summary>
+        /// Get/Set List of elements available in database
+        /// </summary>
+        public ObservableCollection<ModelController<Model_Element>> ElementList
         {
             get { return _elementList; }
             set
@@ -149,19 +254,24 @@ namespace AMFramework.Controller
             }
         }
 
-        #endregion
+        /// <summary>
+        /// Get/set Treeview Controller
+        /// </summary>
+        public Controller_XDataTreeView Controller_xDataTreeView => _controller_xDataTreeView;
 
-        #region Controllers
-        private Controller_Cases _caseController;
-        public Controller_Cases CaseController 
-        { 
+        /// <summary>
+        /// Case controller, contains all cases related to this project
+        /// </summary>
+        public Controller_Cases CaseController
+        {
             get { return _caseController; }
-            set 
-            { 
+            set
+            {
                 _caseController = value;
                 OnPropertyChanged(nameof(_caseController));
             }
         }
+
         #endregion
 
         #region Methods
@@ -176,18 +286,18 @@ namespace AMFramework.Controller
         /// <summary>
         /// Fills used phases list with all phases used in all cases
         /// </summary>
-        private void Get_UsedPhases() 
+        private void Get_UsedPhases()
         {
             if (SelectedProject == null) return;
 
-            List<ModelController<Model_Phase>> result = new();
+            ObservableCollection<ModelController<Model_Phase>> result = new();
             foreach (var item in SelectedProject.MCObject.ModelObject.Cases)
             {
                 List<ModelController<Model_SelectedPhases>> casePhases = item.ModelObject.SelectedPhases;
 
                 foreach (var casePhaseItem in casePhases)
                 {
-                    ModelController<Model_Phase>? iFound = result.Find(e => e.ModelObject.Name == casePhaseItem.ModelObject.PhaseName);
+                    ModelController<Model_Phase>? iFound = result.ToList().Find(e => e.ModelObject.Name == casePhaseItem.ModelObject.PhaseName);
 
                     if (iFound == null)
                     {
@@ -199,6 +309,52 @@ namespace AMFramework.Controller
             }
 
             UsedPhases = result;
+        }
+
+        /// <summary>
+        /// Updates the element list used for calculating the active phases
+        /// </summary>
+        private void UpdateElementsForActivePhases() 
+        {
+            List<ModelController<Model_ActivePhasesElementComposition>> tempList = new();
+            foreach (var element in SelectedProject.MCObject.ModelObject.SelectedElements)
+            {
+                ModelController<Model_ActivePhasesElementComposition> selModel = new(ref _comm);
+                selModel.ModelObject.IDProject = SelectedProject.MCObject.ModelObject.ID;
+                selModel.ModelObject.IDElement = element.ModelObject.ID;
+                selModel.ModelObject.ElementName = element.ModelObject.ElementName;
+                selModel.ModelObject.IsReferenceElement = element.ModelObject.ISReferenceElementBool;
+                selModel.ModelObject.Value = 0;
+                selModel.SaveAction?.DoAction();
+
+                tempList.Add(selModel);
+            }
+
+            SelectedProject.MCObject.ModelObject.ActivePhasesElementComposition = tempList;
+        }
+
+        /// <summary>
+        /// Sets flags in the element list based on the element list from the selected project
+        /// </summary>
+        private void SetSelectedElements() 
+        {
+            // Check for null value
+            if (_selectedProject == null) return;
+
+            // Update Element list (TODO: we should move this logic somewhere else)
+            ElementList.ToList().ForEach(e =>
+            {
+                if (_selectedProject.MCObject.ModelObject.SelectedElements.Find(s => s.ModelObject.IDElement == e.ModelObject.ID) is ModelController<Model_SelectedElements> itemRef)
+                {
+                    e.ModelObject.IsSelected = true;
+                    e.ModelObject.IsReferenceElement = itemRef.ModelObject.ISReferenceElementBool;
+                }
+                else
+                {
+                    e.ModelObject.IsSelected = false;
+                    e.ModelObject.IsReferenceElement = false;
+                }
+            });
         }
 
         #region Load
@@ -219,15 +375,20 @@ namespace AMFramework.Controller
                 Priority = System.Threading.ThreadPriority.Highest
             };
             TH01.Start(ID);
-            
+
         }
+
+        /// <summary>
+        /// Load project async
+        /// </summary>
+        /// <param name="ID"></param>
         private void Load_project_async(object? ID)
         {
             // check if object is null, because of threading, this is specified as object and not int
             if (ID == null) { LoadingData = false; return; }
 
             // Find project from list, previously loaded using Load_projectList.
-            SelectedProject = ProjectList.Find(e => ((Model_Projects)e.Model_Object).ID == (int)ID);
+            SelectedProject = ProjectList.ToList().Find(e => ((Model_Projects)e.Model_Object).ID == (int)ID);
 
             // Set all projects as unselected. Selection is visible in the project selection menu
             foreach (var item in ProjectList)
@@ -245,8 +406,8 @@ namespace AMFramework.Controller
             // Add cases to case controller
             CaseController.Cases = SelectedProject.MCObject.ModelObject.Cases;
 
-            Application.Current.Dispatcher.BeginInvoke(() => 
-            { 
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
                 _controller_xDataTreeView.Refresh_DTV(this.SelectedProject);
 
                 Controller_ActivePhasesConfiguration refController = new(ref _comm, SelectedProject.MCObject.ModelObject.ActivePhasesConfiguration);
@@ -273,11 +434,14 @@ namespace AMFramework.Controller
             TH01.Start();
         }
 
+        /// <summary>
+        /// Load list of available projects async
+        /// </summary>
         private void Load_projectList_async()
         {
             var rawTable = ModelController<Model_Projects>.LoadAll(ref _comm);
 
-            List<ControllerM_Project> pList = new();
+            ObservableCollection<ControllerM_Project> pList = new();
             foreach (var item in rawTable)
             {
                 pList.Add(new(_comm, item));
@@ -293,37 +457,33 @@ namespace AMFramework.Controller
 
         #endregion
 
-        #region GUI_Objects
-
-        #region Treeview
-        private Controller_XDataTreeView _controller_xDataTreeView = new Controller_XDataTreeView();
-        public Controller_XDataTreeView Controller_xDataTreeView => _controller_xDataTreeView;
-        #endregion
-
-        #endregion
-
         #region Commands
-
-        //-----------------------------------
-        // Show Views
-        //-----------------------------------
         #region open_case_creator
 
-        private ICommand _openCaseCreator;
+ 
         /// <summary>
         /// Opens the case creator view
         /// </summary>
         public ICommand OpenCaseCreator => _openCaseCreator ??= new RelayCommand(param => Open_CaseCreator(), param => Can_OpenCaseCreator());
 
+        /// <summary>
+        /// Open case creator handle
+        /// </summary>
         private void Open_CaseCreator()
         {
-            // TODO: notify the user, he will be confused if nothing happens
-            if (SelectedProject == null) return;
+            // Check if project has been selected
+            if (SelectedProject == null) 
+            {
+                Controller_Global.MainControl?.Show_Notification("Project", "Please select a project first", (int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null, null);
+                return;
+            }
 
+            // Show new popup window
             AM_popupWindow pWindow = new();
             Controller_ProjectCaseCreator cCreator = new(ref _comm, SelectedProject);
             pWindow.ContentPage.Children.Add(new Views.Projects.Other.Project_case_creator() { DataContext = cCreator });
 
+            // Show popup on main window
             Controller_Global.MainControl?.Show_Popup(pWindow);
         }
 
@@ -333,8 +493,6 @@ namespace AMFramework.Controller
         }
         #endregion
         #region open_project_list
-
-        private ICommand _openProjectListCommand;
         /// <summary>
         /// Shows the project list selector
         /// </summary>
@@ -365,9 +523,8 @@ namespace AMFramework.Controller
             return true;
         }
         #endregion
-        #region open_project_list
+        #region New project
 
-        private ICommand _openNewProjectCommand;
         /// <summary>
         /// Shows the project list selector
         /// </summary>
@@ -406,8 +563,9 @@ namespace AMFramework.Controller
         }
         #endregion
         #region Show_element_selection
-
-        private ICommand _showElementList;
+        /// <summary>
+        /// Shows available elements from selected database
+        /// </summary>
         public ICommand ShowElementList
         {
             get
@@ -423,9 +581,16 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Show element list handle
+        /// </summary>
         private void ShowElementList_Action()
         {
+            // Check if project is valid
             if (SelectedProject == null) return;
+
+            // Set current selected elements
+            SetSelectedElements();
 
             ElementView_List eList = new() { DataContext = this };
             AM_popupWindow popWin = new();
@@ -441,14 +606,19 @@ namespace AMFramework.Controller
             Controller_Global.MainControl?.Show_Popup(popWin);
         }
 
+        /// <summary>
+        /// Checks if showing element list is allowed
+        /// </summary>
+        /// <returns></returns>
         private bool ShowElementList_Check()
         {
             return true;
         }
         #endregion
         #region Accept_elementSelection
-
-        private ICommand _acceptElementList;
+        /// <summary>
+        /// Accepts current element selection
+        /// </summary>
         public ICommand AcceptElementList
         {
             get
@@ -464,6 +634,9 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Accept selection handle
+        /// </summary>
         private void AcceptElementList_Action()
         {
             if (SelectedProject == null) return;
@@ -472,10 +645,8 @@ namespace AMFramework.Controller
             ControllerM_Project.Clear_SimulationData(_comm, SelectedProject.MCObject.ModelObject.ID);
             SelectedProject.MCObject.ModelObject.SelectedElements.Clear();
 
-            // TODO: remove project previous simulation data
-
             // create new selected items list
-            var selectedElements = ElementList.FindAll(e => e.ModelObject.IsSelected == true);
+            var selectedElements = ElementList.ToList().FindAll(e => e.ModelObject.IsSelected == true);
             List<ModelController<Model_SelectedElements>> tempList = new();
             foreach (var element in selectedElements)
             {
@@ -491,8 +662,14 @@ namespace AMFramework.Controller
             }
 
             SelectedProject.MCObject.ModelObject.SelectedElements = tempList;
+            UpdateElementsForActivePhases();
+
         }
 
+        /// <summary>
+        /// Checks if current selection is allowed
+        /// </summary>
+        /// <returns></returns>
         private bool AcceptElementList_Check()
         {
             if (MessageBox.Show("This action will remove all simulation data, do you want to proceed?", "Project reset", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
@@ -500,13 +677,8 @@ namespace AMFramework.Controller
             else return false;
         }
         #endregion
-
-        //-----------------------------------
-        // Actions
-        //-----------------------------------
         #region Save
 
-        private ICommand _saveProject;
         /// <summary>
         /// Saves the current selected project
         /// </summary>
@@ -525,10 +697,17 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Save project handle
+        /// </summary>
         private void SaveProject_Action()
         {
-            // TODO: notify the user, he will be confused if nothing happens
-            if (SelectedProject == null) return;
+            // Check if valid project is selected
+            if (SelectedProject == null)
+            {
+                Controller_Global.MainControl?.Show_Notification("Project", "Please select a project first", (int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null, null);
+                return;
+            }
 
             // Save project data
             SelectedProject.MCObject.SaveAction?.DoAction();
@@ -541,6 +720,10 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Checks if save is allowed
+        /// </summary>
+        /// <returns></returns>
         private bool SaveProject_Check()
         {
             if (MessageBox.Show("Saving project, proceed?", "Save", MessageBoxButton.YesNo) == MessageBoxResult.Yes) return true;
@@ -549,7 +732,9 @@ namespace AMFramework.Controller
         #endregion
         #region Find_active_phases
 
-        private ICommand _findActivePhases;
+        /// <summary>
+        /// Searches for the active phases using current configuration
+        /// </summary>
         public ICommand FindActivePhases
         {
             get
@@ -565,6 +750,9 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Search active phases handle
+        /// </summary>
         private void FindActivePhases_Action()
         {
             if (SelectedProject == null) return;
@@ -577,8 +765,13 @@ namespace AMFramework.Controller
             Controller_ActivePhasesConfiguration conAP = new(ref _comm, refAP);
 
             if (conAP.Find_Active_Phases.CanExecute(null)) conAP.Find_Active_Phases.Execute(null);
+            SelectedProject.Load_ActivePhases();
         }
 
+        /// <summary>
+        /// Checks if searching for active phases is allowed
+        /// </summary>
+        /// <returns></returns>
         private bool FindActivePhases_Check()
         {
             return true;
@@ -586,7 +779,9 @@ namespace AMFramework.Controller
         #endregion
         #region Select_project
 
-        private ICommand _selectProject;
+        /// <summary>
+        /// Selects a project
+        /// </summary>
         public ICommand SelectProject
         {
             get
@@ -602,6 +797,9 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Select project handle
+        /// </summary>
         private void SelectProject_Action()
         {
             for (int n1 = 0; n1 < _projectList.Count(); n1++)
@@ -615,6 +813,9 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Checks if selecting a project is allowed
+        /// </summary>
         private bool SelectProject_Check()
         {
             return true;

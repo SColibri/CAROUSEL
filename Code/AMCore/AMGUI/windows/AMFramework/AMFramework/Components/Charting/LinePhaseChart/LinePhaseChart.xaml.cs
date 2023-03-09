@@ -1,19 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.ComponentModel;
-using InteractiveDataDisplay.WPF;
+using System.Windows.Controls;
 
 namespace AMFramework.Components.Charting.LinePhaseChart
 {
@@ -23,7 +10,7 @@ namespace AMFramework.Components.Charting.LinePhaseChart
     [Obsolete("Use AMControls instead")]
     public partial class LinePhaseChart : UserControl, INotifyPropertyChanged
     {
-        private Controller.Controller_Plot _plotController; 
+        private Controller.Controller_Plot _plotController;
         public LinePhaseChart()
         {
             InitializeComponent();
@@ -49,10 +36,10 @@ namespace AMFramework.Components.Charting.LinePhaseChart
 
         #region Handleevents
 
-        private void handle_updated_plot(object sender, PropertyChangedEventArgs e) 
+        private void handle_updated_plot(object sender, PropertyChangedEventArgs e)
         {
             if (e is null) return;
-            if(e.PropertyName.CompareTo("DataPlot") == 0) 
+            if (e.PropertyName.CompareTo("DataPlot") == 0)
             {
                 ListPlot.Plot.Clear();
                 for (int n1 = 0; n1 < _plotController.DataPlot.Count; n1++)
@@ -61,7 +48,7 @@ namespace AMFramework.Components.Charting.LinePhaseChart
                 }
                 ListPlot.Plot.XAxis.RulerMode(true);
                 ListPlot.Plot.YAxis.RulerMode(true);
-               
+
                 ListPlot.Plot.Legend(true, ScottPlot.Alignment.MiddleLeft);
                 ListPlot.Plot.XAxis.Label("Temperature °C");
                 ListPlot.Plot.YAxis.Label("Phase fraction");

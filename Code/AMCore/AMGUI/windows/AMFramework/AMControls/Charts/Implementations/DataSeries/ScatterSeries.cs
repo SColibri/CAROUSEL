@@ -1,12 +1,9 @@
-﻿using System;
+﻿using AMControls.Charts.Interfaces;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using AMControls.Charts.Interfaces;
 
 namespace AMControls.Charts.Implementations.DataSeries
 {
@@ -22,7 +19,7 @@ namespace AMControls.Charts.Implementations.DataSeries
         public ScatterSeries()
         {
             Index = IndexCount++;
-        }   
+        }
 
         public override void Draw(DrawingContext dc, Canvas canvas, System.Windows.Rect ChartArea, double xSize, double ySize, double xStart, double yStart)
         {

@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AMControls.Charts.Interfaces;
+using AMControls.Interfaces.Implementations;
+using System;
 using System.Windows.Controls;
 using System.Windows.Media;
-using AMControls.Charts.Interfaces;
-using AMControls.Interfaces;
-using AMControls.Interfaces.Implementations;
 
 namespace AMControls.Charts.Implementations
 {
     public class DataPoint : DrawObject_Abstract, IDataPoint
     {
-        public DataPoint() 
+        public DataPoint()
         {
             SizeObject = new(10, 10);
         }
@@ -31,15 +26,15 @@ namespace AMControls.Charts.Implementations
         private double _xDraw = 0;
         private double _yDraw = 0;
 
-        public double X_draw 
-        { 
-            get { return _xDraw; } 
-            set 
-            { 
+        public double X_draw
+        {
+            get { return _xDraw; }
+            set
+            {
                 _xDraw = value;
-                Location = new(_xDraw - SizeObject.Width / 2,_yDraw - SizeObject.Height / 2);
+                Location = new(_xDraw - SizeObject.Width / 2, _yDraw - SizeObject.Height / 2);
                 DataChanged?.Invoke(this, EventArgs.Empty);
-            } 
+            }
         }
         public double Y_draw
         {

@@ -10,13 +10,18 @@
     <Folder Include="Charts\Spyder\" />
     <Folder Include="Custom\TabControl\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Styles\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="3DTools" Version="1.0.0" />
+    <PackageReference Include="AvalonEdit" Version="6.2.0.78" />
+    <PackageReference Include="Catel.MVVM" Version="5.12.22" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="HelixToolkit.SharpDX.Assimp" Version="2.22.0" />
     <PackageReference Include="HelixToolkit.Wpf" Version="2.22.0" />
     <PackageReference Include="HelixToolkit.Wpf.SharpDX" Version="2.22.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
   </ItemGroup>
 
   <ItemGroup>

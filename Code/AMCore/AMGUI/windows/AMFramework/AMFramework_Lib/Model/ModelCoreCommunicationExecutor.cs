@@ -1,11 +1,5 @@
 ﻿using AMFramework_Lib.Core;
 using AMFramework_Lib.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace AMFramework_Lib.Model
 {
@@ -14,7 +8,7 @@ namespace AMFramework_Lib.Model
         #region Constructor
         protected readonly Core.IAMCore_Comm _coreCommunication;
         protected readonly Interfaces.Model_Interface _modelObject;
-        public ModelCoreCommunicationExecutor(ref Core.IAMCore_Comm comm, 
+        public ModelCoreCommunicationExecutor(ref Core.IAMCore_Comm comm,
                                               ref Interfaces.Model_Interface ModelObject)
         {
             _modelObjects = new();
@@ -52,7 +46,7 @@ namespace AMFramework_Lib.Model
         /// Check if the output is correct.
         /// </summary>
         /// <returns></returns>
-        protected bool CheckOutput() 
+        protected bool CheckOutput()
         {
             if (CoreOutput.Contains("Error")) return false;
             return true;
@@ -79,7 +73,7 @@ namespace AMFramework_Lib.Model
         /// creates objects of type defined by _modelObject using the Activator function in C# (reflection)
         /// </summary>
         /// <param name="csvTableData"></param>
-        protected void Create_ModelObjects(string csvTableData) 
+        protected void Create_ModelObjects(string csvTableData)
         {
             // clear old data
             _modelObjects.Clear();
@@ -97,7 +91,7 @@ namespace AMFramework_Lib.Model
                 // Create new object of type _modelObject, check for null.
                 Interfaces.Model_Interface? tempModel = (Model_Interface)Activator.CreateInstance(_modelObject.GetType());
                 if (tempModel == null || cellItems.Count < tempModel.Get_parameter_list().Count()) continue;
-                
+
                 // load into newly created model and add to
                 tempModel.Load_csv(cellItems);
                 _modelObjects.Add(tempModel);

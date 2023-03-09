@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace AMFramework_Lib.Structures
 {
@@ -16,8 +11,8 @@ namespace AMFramework_Lib.Structures
     public struct Struct_AMRange
     {
         public List<double> Values { get; set; }
-        public Struct_AMRange() 
-        { 
+        public Struct_AMRange()
+        {
             Values = new List<double>();
         }
 
@@ -78,13 +73,13 @@ namespace AMFramework_Lib.Structures
         /// </summary>
         /// <param name="checkThis"></param>
         /// <returns></returns>
-        private SplitType CheckType(string checkThis) 
+        private SplitType CheckType(string checkThis)
         {
             double dummyValue;
-            if(checkThis.Contains("-")) return SplitType.RANGE_TYPE;
-            else if(checkThis.Contains(",")) return SplitType.ARRAY_TYPE;
-            else if(double.TryParse(checkThis,out dummyValue)) return SplitType.NUMERICSTRING_TYPE;
-            
+            if (checkThis.Contains("-")) return SplitType.RANGE_TYPE;
+            else if (checkThis.Contains(",")) return SplitType.ARRAY_TYPE;
+            else if (double.TryParse(checkThis, out dummyValue)) return SplitType.NUMERICSTRING_TYPE;
+
             return SplitType.NONE;
         }
         /// <summary>
@@ -92,7 +87,7 @@ namespace AMFramework_Lib.Structures
         /// </summary>
         /// <param name="csvValue"></param>
         /// <returns></returns>
-        private int Add_From_csvFormat(string csvValue) 
+        private int Add_From_csvFormat(string csvValue)
         {
             List<string> splitV = csvValue.Split(",").ToList();
 
@@ -131,12 +126,12 @@ namespace AMFramework_Lib.Structures
 
 
             double currentValue = startParsedValue;
-            while (currentValue <= endParsedValue) 
+            while (currentValue <= endParsedValue)
             {
                 Values.Add(currentValue);
                 currentValue += stepSizeParsedValue;
             }
-            
+
             return 0;
         }
 

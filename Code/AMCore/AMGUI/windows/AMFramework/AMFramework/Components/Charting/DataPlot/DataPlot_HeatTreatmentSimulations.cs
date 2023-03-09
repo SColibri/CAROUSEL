@@ -1,16 +1,11 @@
-﻿using AMControls.Charts.DataPointContextMenu;
-using AMControls.Charts.Implementations;
+﻿using AMControls.Charts.Implementations;
 using AMControls.Charts.Interfaces;
 using AMFramework.Components.Charting.ContextMenu;
 using AMFramework.Components.Charting.Interfaces;
 using AMFramework_Lib.Core;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Text;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMFramework.Components.Charting.DataPlot
 {
@@ -19,7 +14,7 @@ namespace AMFramework.Components.Charting.DataPlot
         private string _name = "Heat treatment simulation";
         public string SeriesName { get; set; } = "Empty";
         private List<string> _DataOptions = new() { "PhaseFraction", "NumberDensity", "MeanRadius" };
-        private List<string> _DataUnits = new() { "","","m"};
+        private List<string> _DataUnits = new() { "", "", "m" };
         private List<string> _ColumnNames = new();
         private Dictionary<int, string> _compositionData;
         private string _tableViewName = "vd_HeatTreatment_Plot";
@@ -30,7 +25,7 @@ namespace AMFramework.Components.Charting.DataPlot
         private IAMCore_Comm _socket;
         private List<List<string>> _cellData;
 
-        public DataPlot_HeatTreatmentSimulations(IAMCore_Comm socket) 
+        public DataPlot_HeatTreatmentSimulations(IAMCore_Comm socket)
         {
             _compositionData = new();
             _socket = socket;
@@ -40,9 +35,9 @@ namespace AMFramework.Components.Charting.DataPlot
         public string Name => _name;
         public List<string> DataOptions => _DataOptions;
 
-        public List<IDataPoint> DataPoints 
-        { 
-            get 
+        public List<IDataPoint> DataPoints
+        {
+            get
             {
                 return Get_datapoints();
             }
@@ -70,12 +65,12 @@ namespace AMFramework.Components.Charting.DataPlot
             _zDataName = _DataOptions[option];
         }
 
-        public void Set_where_clause(string clause) 
-        { 
+        public void Set_where_clause(string clause)
+        {
             _whereClause = clause;
         }
 
-        private void Get_ColumnNames() 
+        private void Get_ColumnNames()
         {
             // select * from pragma_table_info('vd_HeatTreatment_Plot') as tblInfo
             string Query_T = "select name from pragma_table_info('" + _tableViewName + "') as tblInfo";
@@ -89,33 +84,33 @@ namespace AMFramework.Components.Charting.DataPlot
             }
         }
 
-        private int Get_ColumnIndex(string cName) 
+        private int Get_ColumnIndex(string cName)
         {
             if (cName.Length == 0) return -1;
 
             int Index = 0;
             foreach (var item in _ColumnNames)
             {
-                if(item.CompareTo(cName) == 0) { return Index; }
+                if (item.CompareTo(cName) == 0) { return Index; }
                 Index++;
             }
 
             return -1;
         }
 
-        private List<IDataPoint> Get_datapoints() 
+        private List<IDataPoint> Get_datapoints()
         {
 
-            if(_cellData == null) 
+            if (_cellData == null)
             {
                 _cellData = new();
                 Load_Data();
             }
-  
+
             return Get_DataFromExisiting();
         }
 
-        private void Load_Data() 
+        private void Load_Data()
         {
             string Query_T = "SELECT * FROM vd_HeatTreatment_Plot";
             if (_whereClause.Length > 0) Query_T += " WHERE " + _whereClause + "";
@@ -156,7 +151,7 @@ namespace AMFramework.Components.Charting.DataPlot
             }
 
         }
-        private List<IDataPoint> Get_DataFromExisiting() 
+        private List<IDataPoint> Get_DataFromExisiting()
         {
             List<IDataPoint> Result = new();
 

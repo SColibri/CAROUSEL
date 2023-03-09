@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Windows.Input;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Controller;
+﻿using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
 using System.Windows;
+using System.Windows.Input;
 
 namespace AMFramework.Controller
 {
@@ -91,7 +85,7 @@ namespace AMFramework.Controller
 
         private void Find_Active_Phases_Action()
         {
-            if(Searching_Active_Phases) return;
+            if (Searching_Active_Phases) return;
             ActivePhasesConfiguration?.SaveAction?.DoAction();
             Controller_Global.MainControl?.Show_loading(true);
             Controller_Global.MainControl?.Set_Core_Output("Calculating active phases");
@@ -109,18 +103,26 @@ namespace AMFramework.Controller
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Find active phases handle
+        /// </summary>
         private void Method_Find_Active_Phases()
         {
             if (_activePhasesConfiguration == null) return;
             string outy = _comm.run_lua_command("get_active_phases", _activePhasesConfiguration.ModelObject.IDProject.ToString());
             Controller_Global.MainControl?.Set_Core_Output(outy);
             Searching_Active_Phases = false;
-            
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Controller_Global.MainControl?.Show_loading(false);
+            });
+
         }
         #endregion
 
         #region Flags
-        
+
         #endregion
 
     }

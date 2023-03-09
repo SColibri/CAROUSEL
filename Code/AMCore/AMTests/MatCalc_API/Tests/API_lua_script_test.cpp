@@ -9,7 +9,6 @@
 #include "../../../AMLib/interfaces/IAM_API.h"
 #include "../../../AMLib/interfaces/IAM_lua_functions.h"	
 #include "../../../AMLib/include/Database_implementations/Database_Factory.h"
-#include "../../../AMLib/x_Helpers/IPC_pipe.h"
 #include "../../../AMLib/x_Helpers/IPC_winapi.h"
 namespace main_setup
 {
@@ -76,7 +75,7 @@ TEST_CASE("IAM_lua_functions")
 	{
 		// C:/Users/drogo/Desktop/Homless/QueryCommand.lua
 		// C:\\Users\\drogo\\Desktop\\Homless\\AAA_Implementation.lua OerlikonRun basetest
-		std::string outScript = main_setup::api->run_lua_command("run_lua_script", std::vector <std::string>{ "C:\\Users\\drogo\\Desktop\\Homless\\AAA_Implementation.lua" });
+		std::string outScript = main_setup::api->run_lua_command("run_lua_script", std::vector <std::string>{ "C:\\Users\\drogo\\Desktop\\Homeless_2\\paperScript.lua" });
 		REQUIRE(string_manipulators::find_index_of_keyword(outScript, "Error") == std::string::npos);
 		bool stopHere = true;
 	}

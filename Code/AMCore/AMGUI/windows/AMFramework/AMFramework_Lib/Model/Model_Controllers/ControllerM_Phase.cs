@@ -1,11 +1,5 @@
 ﻿using AMFramework_Lib.Core;
 using AMFramework_Lib.Model.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMFramework_Lib.Model.Model_Controllers
 {
@@ -27,14 +21,14 @@ namespace AMFramework_Lib.Model.Model_Controllers
         /// <param name="comm"></param>
         /// <param name="phaseList"></param>
         /// <param name="IDCase"></param>
-        public static void SetSelectedFromIDCase(IAMCore_Comm comm, List<ControllerM_Phase> phaseList, int IDCase) 
+        public static void SetSelectedFromIDCase(IAMCore_Comm comm, List<ControllerM_Phase> phaseList, int IDCase)
         {
             List<ControllerM_Phase> selectedObjects = UniquePhasesByIDCase(comm, IDCase);
 
             foreach (var item in phaseList)
             {
                 ControllerM_Phase? refObject = selectedObjects.Find(e => e.MCObject.ModelObject.Name.CompareTo(item.MCObject.ModelObject.Name) == 0);
-                
+
                 if (refObject == null) continue;
                 item.MCObject.ModelObject.IsSelected = true;
             }
@@ -134,8 +128,8 @@ namespace AMFramework_Lib.Model.Model_Controllers
         /// <param name="comm"></param>
         /// <param name="ID"></param>
         /// <returns></returns>
-        private static ControllerM_Phase CreateModelFromID(IAMCore_Comm comm, int ID) 
-        {          
+        private static ControllerM_Phase CreateModelFromID(IAMCore_Comm comm, int ID)
+        {
             ControllerM_Phase refTemp = new(comm);
             refTemp.MCObject.ModelObject.ID = ID;
             refTemp.MCObject.LoadByIDAction.DoAction();
@@ -149,7 +143,7 @@ namespace AMFramework_Lib.Model.Model_Controllers
         /// <param name="comm"></param>
         /// <param name="rowItems"></param>
         /// <returns></returns>
-        private static List<ControllerM_Phase> CreateControllersFromData(IAMCore_Comm comm, List<string> rowItems) 
+        private static List<ControllerM_Phase> CreateControllersFromData(IAMCore_Comm comm, List<string> rowItems)
         {
             List<ControllerM_Phase> result = new();
 
@@ -173,7 +167,7 @@ namespace AMFramework_Lib.Model.Model_Controllers
         public static ModelController<Model_Phase> Get_PhaseByID(IAMCore_Comm comm, int IDPhase)
         {
             ModelController<Model_Phase> pName = new(ref comm);
-            pName.ModelObject.ID = (int)IDPhase;
+            pName.ModelObject.ID = IDPhase;
             pName.LoadByIDAction?.DoAction();
 
             return pName;

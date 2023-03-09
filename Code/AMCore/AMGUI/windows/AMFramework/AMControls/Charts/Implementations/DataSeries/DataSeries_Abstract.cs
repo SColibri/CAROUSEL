@@ -3,8 +3,6 @@ using AMControls.Interfaces.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,7 +11,7 @@ namespace AMControls.Charts.Implementations.DataSeries
 {
     public abstract class DataSeries_Abstract : DrawObject_Abstract, IDataSeries
     {
-       ~DataSeries_Abstract()
+        ~DataSeries_Abstract()
         {
             // Remove all calls to event DataChanged
             foreach (IDataPoint item in DataPoints)
@@ -43,11 +41,11 @@ namespace AMControls.Charts.Implementations.DataSeries
         public abstract void Draw(DrawingContext dc, Canvas canvas, Rect ChartArea, List<IAxes> axesList);
 
 
-        public override abstract void Mouse_Hover_Action(double x, double y);
+        public abstract override void Mouse_Hover_Action(double x, double y);
 
-        public override abstract void Mouse_LeftButton_Action(double x, double y);
+        public abstract override void Mouse_LeftButton_Action(double x, double y);
 
-        public override abstract void Mouse_RightButton_Action(double x, double y);
+        public abstract override void Mouse_RightButton_Action(double x, double y);
 
         public void Add_DataPoint(IDataPoint dPoint)
         {
@@ -70,7 +68,7 @@ namespace AMControls.Charts.Implementations.DataSeries
             if (searchContent.Length == 0) return _searchResult;
 
             // Allow user to refine search
-            List <string> splitSearch = searchContent.Split('+').ToList();
+            List<string> splitSearch = searchContent.Split('+').ToList();
 
             // Check Label
             foreach (var item in DataPoints)
@@ -101,8 +99,8 @@ namespace AMControls.Charts.Implementations.DataSeries
 
                     if (!item.IsVisible) break;
                 }
-                
-                if (item.IsVisible) 
+
+                if (item.IsVisible)
                 {
                     _searchResult.Add(item);
                 }

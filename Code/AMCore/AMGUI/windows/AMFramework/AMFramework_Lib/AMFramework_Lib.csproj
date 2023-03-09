@@ -7,15 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NewFolder\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
-    <None Remove="NewFolder\**" />
+    <PackageReference Include="NLog" Version="5.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.Windows.Presentation">
       <HintPath>..\..\..\..\..\..\..\..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\System.Windows.Presentation.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Logging\NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

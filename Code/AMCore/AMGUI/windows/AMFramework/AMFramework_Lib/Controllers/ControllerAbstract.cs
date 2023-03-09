@@ -1,10 +1,5 @@
 ﻿using AMFramework_Lib.Core;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMFramework_Lib.Controller
 {
@@ -12,7 +7,7 @@ namespace AMFramework_Lib.Controller
     {
         protected IAMCore_Comm _comm;
         public ControllerAbstract() { }
-        public ControllerAbstract(IAMCore_Comm comm) 
+        public ControllerAbstract(IAMCore_Comm comm)
         {
             _comm = comm;
         }

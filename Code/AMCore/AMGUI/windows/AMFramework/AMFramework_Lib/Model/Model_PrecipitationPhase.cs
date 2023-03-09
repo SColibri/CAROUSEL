@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.AMSystem.Attributes;
+﻿using AMFramework_Lib.AMSystem.Attributes;
 
 namespace AMFramework_Lib.Model
 {
-    public class Model_PrecipitationPhase : ModelAbstract 
+    public class Model_PrecipitationPhase : ModelAbstract
     {
         private int _ID = -1;
         [Order]
@@ -168,13 +161,13 @@ namespace AMFramework_Lib.Model
         }
 
         #region Other_properties
-        
+
         private string _phaseName = "";
-        public string PhaseName 
-        { 
-            get { return _phaseName; } 
-            set 
-            { 
+        public string PhaseName
+        {
+            get { return _phaseName; }
+            set
+            {
                 _phaseName = value;
                 OnPropertyChanged(nameof(PhaseName));
             }

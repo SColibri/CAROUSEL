@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
+﻿using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
-using AMFramework_Lib.Controller;
 using AMFramework_Lib.Model.Model_Controllers;
 
-namespace AMFramework.Controller 
+namespace AMFramework.Controller
 {
     public class Controller_EquilibriumConfiguration : ControllerAbstract
     {
@@ -17,7 +11,7 @@ namespace AMFramework.Controller
         #region Socket
         public Controller_EquilibriumConfiguration(ref IAMCore_Comm comm, Controller_Cases caseController) : base(comm)
         {
-            if(caseController.SelectedCase != null)
+            if (caseController.SelectedCase != null)
                 _configuration = ControllerM_EquilibriumConfiguration.Get_EquilibriumConfiguration_FromIDCase(comm, caseController.SelectedCase.ModelObject.ID);
             else
                 _configuration = ControllerM_EquilibriumConfiguration.Get_EquilibriumConfiguration_FromIDCase(comm, -1);

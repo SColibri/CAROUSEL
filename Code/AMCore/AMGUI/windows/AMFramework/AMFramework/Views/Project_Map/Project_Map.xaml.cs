@@ -1,25 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using AMControls.Charts;
+﻿using AMControls.Charts.Implementations;
+using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Interfaces;
-using AMControls.Charts.Implementations;
-using System.Windows.Media.Animation;
 using AMFramework.Components.Charting.Interfaces;
 using AMFramework.Controller;
-using AMControls.Charts.Implementations.DataSeries;
+using AMFramework_Lib.Controller;
+using Catel.Collections;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace AMFramework.Views.Project_Map
 {
@@ -36,8 +31,8 @@ namespace AMFramework.Views.Project_Map
         private int _xDataOption = 2;
         private int _yDataOption = 0;
 
-        public enum DataOptions 
-        { 
+        public enum DataOptions
+        {
             Precipitation_Phase
         }
 
@@ -58,7 +53,7 @@ namespace AMFramework.Views.Project_Map
             Refresh_Data();
         }
 
-        private void OnChartMouseMove_Handle(object? sender, MouseEventArgs e) 
+        private void OnChartMouseMove_Handle(object? sender, MouseEventArgs e)
         {
             if (sender == null) return;
             Point mPos = e.GetPosition(this);
@@ -79,12 +74,12 @@ namespace AMFramework.Views.Project_Map
             }
         }
 
-        private void Selection_Changed_Handle(object? sender, EventArgs e) 
+        private void Selection_Changed_Handle(object? sender, EventArgs e)
         {
             SelectedPoints = Main_plot.Get_Selected_DataPoints();
         }
 
-        private void ContextMenuClicked(object? sender, EventArgs e) 
+        private void ContextMenuClicked(object? sender, EventArgs e)
         {
             if (sender == null) return;
             if (!(sender is IDataPoint)) return;
@@ -101,22 +96,22 @@ namespace AMFramework.Views.Project_Map
         }
 
         private List<IDataPoint> _selectePoints = new();
-        public List<IDataPoint> SelectedPoints 
-        { 
-            get { return _selectePoints; } 
-            set 
+        public List<IDataPoint> SelectedPoints
+        {
+            get { return _selectePoints; }
+            set
             {
                 _selectePoints = value;
                 OnPropertyChanged(nameof(SelectedPoints));
-            } 
+            }
         }
 
         private List<string> _dataOrigin = new();
-        public List<string> DataOrigin 
+        public List<string> DataOrigin
         {
             get { return _dataOrigin; }
-            set 
-            { 
+            set
+            {
                 _dataOrigin = value;
                 OnPropertyChanged(nameof(DataOrigin));
             }
@@ -179,19 +174,19 @@ namespace AMFramework.Views.Project_Map
         }
 
         private bool _showToolTip = false;
-        public bool ShowToolTip 
-        { 
-            get { return _showToolTip; } 
-            set 
-            { 
+        public bool ShowToolTip
+        {
+            get { return _showToolTip; }
+            set
+            {
                 _showToolTip = value;
                 OnPropertyChanged(nameof(ShowToolTip));
 
-                if (value) 
+                if (value)
                 {
                     Main_plot.ChartAreaMouseMove += OnChartMouseMove_Handle;
                 }
-                else 
+                else
                 {
                     Main_plot.ChartAreaMouseMove -= OnChartMouseMove_Handle;
                 }
@@ -207,7 +202,7 @@ namespace AMFramework.Views.Project_Map
         }
         #endregion
 
-        public void Refresh_Data() 
+        public void Refresh_Data()
         {
             _dataPlots = _plotController.Get_HeatMap_GrainSize_vs_PhaseFraction_ObjectData();
 
@@ -218,60 +213,77 @@ namespace AMFramework.Views.Project_Map
             }
             OnPropertyChanged(nameof(DataOrigin));
 
-            Plot_Data();
+            Controller_Global.MainControl?.Show_loading(true);
+
+            Thread TH01 = new(Plot_Data);
+            TH01.Priority = ThreadPriority.Highest;
+            TH01.Start();
+
+            // Plot_Data();
         }
 
-        public void Plot_Data() 
+        public void Plot_Data()
         {
-
-            Main_plot.Clear_Series();
-
             if (_dataPlots.Count == 0) return;
+
             SelectedDataOrigin = _dataPlots[0].Name;
             XDataColumn = _dataPlots[0].DataOptions[_xDataOption];
             YDataColumn = _dataPlots[0].DataOptions[_yDataOption];
 
-            _xaxis.Name = _dataPlots[0].DataOptions[_xDataOption];
-            _yaxis.Name = _dataPlots[0].DataOptions[_yDataOption];
+            _xaxis.Name = XDataColumn;
+            _yaxis.Name = YDataColumn;
 
             Random random = new();
 
-            foreach (var dplot in _dataPlots)
+            // set data  options
+            foreach (var dplot in _dataPlots) 
             {
-                ScatterBoxSeries sbs = new();
                 dplot.X_Data_Option(_xDataOption);
                 dplot.Y_Data_Option(_yDataOption);
-                sbs.Label = dplot.SeriesName;
-                sbs.DataPoints = dplot.DataPoints;
-                if (sbs.DataPoints.Count == 0) continue;
-                Main_plot.Add_series(sbs);
-                sbs.ColorSeries = Color.FromRgb((byte)random.Next(1, 255), (byte)random.Next(1, 255), (byte)random.Next(1, 255));
             }
 
-            Main_plot.Adjust_axes_to_data();
+                ScatterBoxSeries[] sbsArray = new ScatterBoxSeries[_dataPlots.Count];
 
+            for (int i = 0; i < _dataPlots.Count; i++)
+            {
+                sbsArray[i] = new();
+                sbsArray[i].Label = _dataPlots[i].SeriesName;
+
+                AMControls.Charts.Interfaces.IDataPoint[] tempVals = new AMControls.Charts.Interfaces.IDataPoint[_dataPlots[i].DataPoints.Count];
+                _dataPlots[i].DataPoints.CopyTo(tempVals, 0);
+                sbsArray[i].DataPoints = tempVals.ToList();
+                sbsArray[i].ColorSeries = Color.FromRgb((byte)random.Next(1, 255), (byte)random.Next(1, 255), (byte)random.Next(1, 255));
+            }
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                Main_plot.Clear_Series();
+                sbsArray.Where(e => e.DataPoints.Count > 0).ForEach(e => Main_plot.Add_series(e));
+                Main_plot.Adjust_axes_to_data();
+                Controller_Global.MainControl?.Show_loading(false);
+            }));
         }
 
-        public void Select_Data() 
-        { 
-            
+        public void Select_Data()
+        {
+
         }
 
         private void Main_plot_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.F && Keyboard.IsKeyDown(Key.LeftCtrl)) 
+            if (e.Key == Key.F && Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                if(SearchControl.Visibility != Visibility.Visible) 
+                if (SearchControl.Visibility != Visibility.Visible)
                 {
                     SearchControl.Visibility = Visibility.Visible;
                 }
-                else 
+                else
                 {
                     SearchControl.Visibility = Visibility.Collapsed;
                 }
-                
+
             }
-            else if(e.Key == Key.T && Keyboard.IsKeyDown(Key.LeftCtrl)) 
+            else if (e.Key == Key.T && Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 if (ToolBorder.Visibility != Visibility.Visible)
                 {
@@ -329,14 +341,14 @@ namespace AMFramework.Views.Project_Map
 
         private void AM_button_ClickButton(object? sender, EventArgs e)
         {
-            if (SearchByRegion.IsChecked == true) 
-            { 
-            
-            }
-            else 
+            if (SearchByRegion.IsChecked == true)
             {
-               List<IDataPoint> dResult = Main_plot.Search(stringSearch.Text);
-                if(dResult.Count == 0) 
+
+            }
+            else
+            {
+                List<IDataPoint> dResult = Main_plot.Search(stringSearch.Text);
+                if (dResult.Count == 0)
                 {
                     MainWindow.notify.ShowBalloonTip(5000, "No results", "No available data was found with the given search criteria", System.Windows.Forms.ToolTipIcon.Info);
                 }
@@ -345,7 +357,7 @@ namespace AMFramework.Views.Project_Map
 
         private void TextBlock_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Enter) 
+            if (e.Key == Key.Enter)
             {
                 AM_button_ClickButton(null, EventArgs.Empty);
             }
@@ -376,7 +388,7 @@ namespace AMFramework.Views.Project_Map
             storyboard.Begin();
         }
 
-        private void Animation_expand_completed(object? sender, EventArgs e) 
+        private void Animation_expand_completed(object? sender, EventArgs e)
         {
             ExpanderColumn.MinWidth = 200;
             ExpanderColumn.MaxWidth = 500;
@@ -413,7 +425,9 @@ namespace AMFramework.Views.Project_Map
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Plot_Data();
+            Thread TH01 = new(Plot_Data);
+            TH01.Priority = ThreadPriority.Highest;
+            TH01.Start();
         }
     }
 }

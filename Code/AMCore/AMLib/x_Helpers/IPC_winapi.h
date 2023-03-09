@@ -207,7 +207,7 @@ private:
     {
         try
         {
-            UINT uExitCode;
+            UINT uExitCode = 0;
             TerminateProcess(si->proc, uExitCode);
             //CloseHandle(si->child_in_r);
             //CloseHandle(si->child_in_w);

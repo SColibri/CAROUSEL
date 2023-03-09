@@ -1,21 +1,16 @@
-﻿using System;
+﻿using AMControls.Custom.ProjectTreeView;
+using AMFramework.Components.Button;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Logging;
+using AMFramework_Lib.Model;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using AMControls.Custom.ProjectTreeView;
-using System.Reflection;
-using AutocompleteMenuNS;
 using System.Windows.Media;
-using System.Windows.Threading;
-using AMFramework.Components.Button;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Core;
-using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
@@ -59,10 +54,10 @@ namespace AMFramework.Controller
         }
 
         private TABS _selected_tab = TABS.NONE;
-        public TABS SelectedTab 
-        { 
-            get { return _selected_tab; } 
-            set 
+        public TABS SelectedTab
+        {
+            get { return _selected_tab; }
+            set
             {
                 _selected_tab = value;
                 OnPropertyChanged(nameof(SelectedTab));
@@ -70,10 +65,10 @@ namespace AMFramework.Controller
         }
 
         private TabItem _tab_view = new();
-        public TabItem TabView 
-        { 
-            get { return _tab_view;}
-            set 
+        public TabItem TabView
+        {
+            get { return _tab_view; }
+            set
             {
                 _tab_view = value;
                 OnPropertyChanged(nameof(TabView));
@@ -105,7 +100,8 @@ namespace AMFramework.Controller
         }
 
         private bool _selected_caseID = false;
-        public bool SelectedCaseID {
+        public bool SelectedCaseID
+        {
             get { return _selected_caseID; }
             set
             {
@@ -148,7 +144,7 @@ namespace AMFramework.Controller
         public bool Loading_project
         {
             get { return _loading_project; }
-            set 
+            set
             {
                 _loading_project = value;
                 OnPropertyChanged(nameof(Loading_project));
@@ -159,7 +155,7 @@ namespace AMFramework.Controller
         public int TreeIDCase
         {
             get { return _treeIDCase; }
-            set 
+            set
             {
                 _treeIDCase = value;
             }
@@ -176,10 +172,10 @@ namespace AMFramework.Controller
         }
 
         private List<int> _selectionTree = new();
-        public List<int> SelectionTree 
-        { 
+        public List<int> SelectionTree
+        {
             get { return _selectionTree; }
-            set 
+            set
             {
                 _selectionTree = value;
                 OnPropertyChanged(nameof(SelectionTree));
@@ -243,9 +239,9 @@ namespace AMFramework.Controller
             set
             {
                 _selectedProject = value;
-                Controller_Global.MainControl?.Show_Notification("Project", "New Project has been selected", 
+                Controller_Global.MainControl?.Show_Notification("Project", "New Project has been selected",
                                                                 (int)FontAwesome.WPF.FontAwesomeIcon.Info,
-                                                                null, null,null);
+                                                                null, null, null);
                 SelectProject(_selectedProject.ID);
             }
         }
@@ -261,12 +257,12 @@ namespace AMFramework.Controller
             TH01.Start(ID);
         }
 
-        private void Load_project_async(object ID) 
+        private void Load_project_async(object ID)
         {
-            if (!ID.GetType().Equals(typeof(int))) 
+            if (!ID.GetType().Equals(typeof(int)))
             {
                 Loading_project = false;
-                MainWindow.notify.ShowBalloonTip(5000, "Internal error","Error: wrong input type for Load_project_async", System.Windows.Forms.ToolTipIcon.Error);
+                MainWindow.notify.ShowBalloonTip(5000, "Internal error", "Error: wrong input type for Load_project_async", System.Windows.Forms.ToolTipIcon.Error);
                 return;
             }
 
@@ -282,18 +278,18 @@ namespace AMFramework.Controller
             OnPropertyChanged(nameof(Cases));
             OnPropertyChanged(nameof(SelectedElements));
 
-            if(_treeIDCase > -1 && _treeIDHeatTreatment > -1) 
+            if (_treeIDCase > -1 && _treeIDHeatTreatment > -1)
             {
                 Model_Case? CaseID = Cases.Find(e => e.ID == _treeIDCase);
-                if(CaseID != null) 
+                if (CaseID != null)
                 {
                     Model_HeatTreatment? Htreat = CaseID.HeatTreatmentsOLD.Find(e => e.ID == _treeIDHeatTreatment);
-                    if(Htreat != null) 
+                    if (Htreat != null)
                     {
                         Htreat.IsSelected = true;
                     }
                 }
-                
+
             }
 
             Loading_project = false;
@@ -302,9 +298,10 @@ namespace AMFramework.Controller
             {
                 Application.Current.Dispatcher.Invoke(new Action(Refresh_DTV));
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // Woops looks like the window was closed before this finished
+                LoggerManager.Error($"Controller DBSProject: {e.Message}");
             }
         }
 
@@ -344,7 +341,7 @@ namespace AMFramework.Controller
             model.APIName = dataIn[2];
         }
 
-        private void Update_project() 
+        private void Update_project()
         {
             SelectProject(_selectedProject.ID);
         }
@@ -387,13 +384,13 @@ namespace AMFramework.Controller
             {
                 for (int n1 = 0; n1 < _cases_BySelectedPhases.Count; n1++)
                 {
-                    if (!_cases_BySelectedPhases[n1][0].SelectedPhasesOLD.Except(caseItem.SelectedPhasesOLD).Any()) 
+                    if (!_cases_BySelectedPhases[n1][0].SelectedPhasesOLD.Except(caseItem.SelectedPhasesOLD).Any())
                     {
                         _cases_BySelectedPhases[n1].Add(caseItem);
                         break;
                     }
 
-                    if(n1 == _cases_BySelectedPhases.Count - 1) 
+                    if (n1 == _cases_BySelectedPhases.Count - 1)
                     {
                         _cases_BySelectedPhases.Add(new());
                         _cases_BySelectedPhases[n1+1].Add(caseItem);
@@ -403,12 +400,12 @@ namespace AMFramework.Controller
             OnPropertyChanged(nameof(Cases_BySelectedPhases));
         }
 
-        public void Case_load_equilibrium_phase_fraction(Model_Case model) 
+        public void Case_load_equilibrium_phase_fraction(Model_Case model)
         {
             //controllerCases.update_phaseFractions(model);
         }
 
-        public void Case_clear_phase_fraction_data() 
+        public void Case_clear_phase_fraction_data()
         {
             //controllerCases.Clear_phase_fractions();
         }
@@ -417,7 +414,7 @@ namespace AMFramework.Controller
         public List<Model_Phase> Used_Phases_inCases
         { get { return _used_Phases_inCases; } }
 
-        public void refresh_used_Phases_inCases() 
+        public void refresh_used_Phases_inCases()
         {
             IsWorking = true;
 
@@ -441,7 +438,7 @@ namespace AMFramework.Controller
             OnPropertyChanged(nameof(AvailablePhase));
         }
 
-        public void get_phase_selection_from_current_case() 
+        public void get_phase_selection_from_current_case()
         {
             foreach (Model_Phase item in AvailablePhase)
             {
@@ -478,20 +475,20 @@ namespace AMFramework.Controller
         }
 
         [Obsolete("We")]
-        public void set_phase_selection_ifActive() 
+        public void set_phase_selection_ifActive()
         {
             if (_ActivePhasesController.ActivePhasesOLD.Count == 0) return;
 
             foreach (var item in AvailablePhase)
             {
                 Model_ActivePhases tempRef = _ActivePhasesController.ActivePhasesOLD.Find(e => e.IDPhase == item.ID);
-                if (tempRef is null) 
+                if (tempRef is null)
                 {
                     item.IsActive = false;
                     continue;
                 }
                 else
-                { 
+                {
                     item.IsActive = true;
                 }
             }
@@ -504,13 +501,13 @@ namespace AMFramework.Controller
         public string search_phase_text
         {
             get { return _search_phase_text; }
-            set 
-            { 
+            set
+            {
                 _search_phase_text = value;
 
                 foreach (Model_Phase item in AvailablePhase)
-                { 
-                    if(item.Name.ToUpper().Contains(_search_phase_text.ToUpper())) item.IsVisible = true;
+                {
+                    if (item.Name.ToUpper().Contains(_search_phase_text.ToUpper())) item.IsVisible = true;
                     else item.IsVisible = false;
                 }
 
@@ -540,7 +537,7 @@ namespace AMFramework.Controller
         private List<Model_Element> _available_Elements = new();
         public List<Model_Element> AvailableElements { get { return _available_Elements; } }
 
-        public void load_database_available_elements() 
+        public void load_database_available_elements()
         {
             ElementsIsLoading = true;
             //_available_Elements = Controller_Elements.get_available_elements_in_database();
@@ -548,7 +545,7 @@ namespace AMFramework.Controller
             foreach (Model_SelectedElements Elementy in SelectedElements)
             {
                 Model_Element SelElement = AvailableElements.Find(e => e.ID == Elementy.IDElement);
-                
+
                 if (SelElement == null) continue;
                 SelElement.IsSelected = true;
 
@@ -560,14 +557,14 @@ namespace AMFramework.Controller
         }
 
         private bool _elementsIsLoading = false;
-        public bool ElementsIsLoading 
-        { 
-            get { return _elementsIsLoading; } 
-            set 
-            { 
+        public bool ElementsIsLoading
+        {
+            get { return _elementsIsLoading; }
+            set
+            {
                 _elementsIsLoading = value;
                 OnPropertyChanged("_elementsIsLoading");
-            } 
+            }
         }
 
         private bool _elementsIsSaving = false;
@@ -580,31 +577,31 @@ namespace AMFramework.Controller
                 OnPropertyChanged(nameof(ElementsIsSaving));
             }
         }
-        public void Save_elementSelection_Handle(object sender, EventArgs e) 
+        public void Save_elementSelection_Handle(object sender, EventArgs e)
         {
             List<Model_Element> ElementListy = AvailableElements.FindAll(e => e.IsSelected == true);
 
-            if(ElementListy.Count == 0) 
+            if (ElementListy.Count == 0)
             {
                 System.Windows.Forms.MessageBox.Show("Please select at least one element!");
                 return;
             }
 
             // check if user actually changed something before deleting cases
-            if (ElementListy.Count == SelectedElements.Count) 
+            if (ElementListy.Count == SelectedElements.Count)
             {
                 bool somethingChanged = false;
                 foreach (Model_Element Elementy in ElementListy)
                 {
                     int Index = SelectedElements.FindIndex(e => e.IDElement == Elementy.ID);
-                    if(Index == -1) 
+                    if (Index == -1)
                     {
                         somethingChanged = true;
                         break;
                     }
                 }
 
-                if (!somethingChanged) 
+                if (!somethingChanged)
                 {
                     MainWindow.notify.ShowBalloonTip(5000, "Element selection", "No change has been made", System.Windows.Forms.ToolTipIcon.Warning);
                     return;
@@ -638,9 +635,9 @@ namespace AMFramework.Controller
         #region ActivePhases
         private Controller.Controller_ActivePhasesConfiguration _ActivePhasesConfigurationController;
         [Obsolete("Beter use ModelController<> from data model")]
-        public Controller.Controller_ActivePhasesConfiguration ActivePhasesConfigurationController 
-        { 
-            get { return _ActivePhasesConfigurationController; } 
+        public Controller.Controller_ActivePhasesConfiguration ActivePhasesConfigurationController
+        {
+            get { return _ActivePhasesConfigurationController; }
         }
 
         private Controller.Controller_ActivePhases _ActivePhasesController;
@@ -657,7 +654,7 @@ namespace AMFramework.Controller
             get { return _ActivePhasesElementCompositionController; }
         }
 
-        public void Refresh_ActivePhases() 
+        public void Refresh_ActivePhases()
         {
             _ActivePhasesController.Refresh();
         }
@@ -672,14 +669,14 @@ namespace AMFramework.Controller
         public TV_TopView_controller DTV_Controller
         {
             get { return _dtv_Controller; }
-            set 
+            set
             {
                 _dtv_Controller = value;
                 OnPropertyChanged(nameof(DTV_Controller));
             }
         }
 
-        private void Refresh_DTV() 
+        private void Refresh_DTV()
         {
 
             _dtv_Controller.Title = SelectedProject.Name;
@@ -736,7 +733,7 @@ namespace AMFramework.Controller
             OnPropertyChanged(nameof(DTV_Controller));
         }
 
-        private void OnMouseClick_Plot_Handle(object? sender, EventArgs e) 
+        private void OnMouseClick_Plot_Handle(object? sender, EventArgs e)
         {
             if (sender is not AM_button) return;
             AM_button sRef = (AM_button)sender;
@@ -758,7 +755,7 @@ namespace AMFramework.Controller
             Controller_Global.MainControl?.Show_Project_EditView(mRef);
         }
 
-        private TV_TopView_controller dtv_Add_elements() 
+        private TV_TopView_controller dtv_Add_elements()
         {
             TV_TopView_controller TC_proj = new()
             {
@@ -926,7 +923,7 @@ namespace AMFramework.Controller
             Controller_Global.MainControl?.Show_Case_EditWindow(mRef);
         }
 
-        private TV_TopView_controller dtv_Add_Precipitation_kinetics(Model_Case casey) 
+        private TV_TopView_controller dtv_Add_Precipitation_kinetics(Model_Case casey)
         {
             TV_TopView_controller TC_Kinetics = new()
             {
@@ -1042,7 +1039,7 @@ namespace AMFramework.Controller
             return TC_proj;
         }
 
-        private Border dtv_ElementFormat(string content) 
+        private Border dtv_ElementFormat(string content)
         {
             Border Belement = new()
             {
@@ -1070,22 +1067,22 @@ namespace AMFramework.Controller
 
         #region Handles
         public void Select_project_Handle(object sender, EventArgs e)
-        { 
-            for(int n1 = 0; n1 < DB_projects.Count(); n1++) 
+        {
+            for (int n1 = 0; n1 < DB_projects.Count(); n1++)
             {
-                if (DB_projects[n1].IsSelected) 
+                if (DB_projects[n1].IsSelected)
                 {
                     SelectedProject = DB_projects[n1];
 
                     break;
                 }
             }
-        
+
         }
 
-        public void selected_treeview_item(object sender, RoutedPropertyChangedEventArgs<object> e) 
+        public void selected_treeview_item(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-   
+
             TreeView refTreeView = sender as TreeView;
             if (refTreeView.SelectedItem == null) return;
 
@@ -1097,7 +1094,7 @@ namespace AMFramework.Controller
 
         }
 
-        private bool selected_treeview_item_tagString(object refTreeItem) 
+        private bool selected_treeview_item_tagString(object refTreeItem)
         {
             //Check if Tag is of type string
             //if (!refTreeItem.GetType().Equals(typeof(TreeViewItem))) return false;

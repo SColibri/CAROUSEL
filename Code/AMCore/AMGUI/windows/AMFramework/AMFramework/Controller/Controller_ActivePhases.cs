@@ -1,22 +1,17 @@
-﻿using System;
+﻿using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Model.Model_Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using AMFramework_Lib;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Core;
-using AMFramework_Lib.Model.Model_Controllers;
-using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
     /// <summary>
     /// Active phases controller
     /// </summary>
-    public class Controller_ActivePhases : AMFramework_Lib.Controller.ControllerAbstract 
+    public class Controller_ActivePhases : AMFramework_Lib.Controller.ControllerAbstract
     {
         #region Constructor
         private IAMCore_Comm _AMCore_Socket;
@@ -35,10 +30,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// List of all active phases
         /// </summary>
-        public List<ModelController<Model_ActivePhases>> ActivePhases 
-        { 
+        public List<ModelController<Model_ActivePhases>> ActivePhases
+        {
             get => _ActivePhases;
-            set 
+            set
             {
                 _ActivePhases = value;
                 OnPropertyChanged(nameof(ActivePhases));
@@ -48,10 +43,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// Update active phases for current project
         /// </summary>
-        private void RefreshActivePhases() 
+        private void RefreshActivePhases()
         {
             if (_projectController.SelectedProject?.MCObject?.ModelObject == null) return;
-            ActivePhases = ControllerM_ActivePhases.Get_ActivePhaseList(Controller_Global.ApiHandle, 
+            ActivePhases = ControllerM_ActivePhases.Get_ActivePhaseList(Controller_Global.ApiHandle,
                                                     _projectController.SelectedProject.MCObject.ModelObject.ID);
         }
         #endregion
@@ -59,11 +54,11 @@ namespace AMFramework.Controller
 
         #region ActivePhases
         private List<Model_ActivePhases> _ActivePhasesOLD;
-        public List<Model_ActivePhases> ActivePhasesOLD 
-        { 
-            get { return _ActivePhasesOLD; } 
-            set 
-            { 
+        public List<Model_ActivePhases> ActivePhasesOLD
+        {
+            get { return _ActivePhasesOLD; }
+            set
+            {
                 _ActivePhasesOLD = value;
                 OnPropertyChanged(nameof(ActivePhasesOLD));
             }
@@ -117,7 +112,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Update values
         /// </summary>
-        public override void Refresh() 
+        public override void Refresh()
         {
             RefreshActivePhases();
         }

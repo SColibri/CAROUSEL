@@ -1,19 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.ComponentModel;
-using FontAwesome.WPF;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace AMFramework.Components.Button
 {
@@ -23,21 +11,21 @@ namespace AMFramework.Components.Button
     public partial class AM_button : UserControl, INotifyPropertyChanged
     {
         private string _iconName = "Close";
-        public  string IconName 
-        { 
-            get { return _iconName; } 
-            set 
-            { 
+        public string IconName
+        {
+            get { return _iconName; }
+            set
+            {
                 _iconName = value;
                 OnPropertyChanged(nameof(IconName));
-            } 
+            }
         }
 
         private string _foregroundIcon = "Black";
-        public string ForegroundIcon 
-        { 
-            get { return _foregroundIcon; } 
-            set 
+        public string ForegroundIcon
+        {
+            get { return _foregroundIcon; }
+            set
             {
                 _foregroundIcon = value;
                 OnPropertyChanged(nameof(ForegroundIcon));
@@ -82,8 +70,8 @@ namespace AMFramework.Components.Button
         public string CornerRadius
         {
             get { return _cornerRadius; }
-            set 
-            { 
+            set
+            {
                 _cornerRadius = value;
                 OnPropertyChanged(nameof(CornerRadius));
             }
@@ -91,11 +79,11 @@ namespace AMFramework.Components.Button
 
         private object _modelTag = null;
 
-        public object ModelTag 
-        { 
-            get { return _modelTag; } 
-            set 
-            { 
+        public object ModelTag
+        {
+            get { return _modelTag; }
+            set
+            {
                 _modelTag = value;
                 OnPropertyChanged(nameof(ModelTag));
             }

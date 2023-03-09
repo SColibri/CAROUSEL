@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Net;
+using System.Text;
 
 namespace AMFramework_Lib.Core
 {
@@ -15,14 +11,14 @@ namespace AMFramework_Lib.Core
                 ProtocolType.Tcp);
         private bool _connected = false;
         public bool connected { get { return _connected; } }
-        public void init() 
+        public void init()
         {
             s.ReceiveTimeout = 10000;
             connect_to_server("127.0.0.1", 27015);
         }
-        private void connect_to_server(string host, int port) 
+        private void connect_to_server(string host, int port)
         {
-            try 
+            try
             {
                 IPAddress[] IPs = Dns.GetHostAddresses(host);
 
@@ -31,18 +27,18 @@ namespace AMFramework_Lib.Core
                 Console.WriteLine("Connection established");
                 _connected = true;
             }
-            catch(Exception e)
-            { 
+            catch (Exception e)
+            {
                 Console.WriteLine(e.Message);
             }
-            
+
         }
 
-        public string send_receive(string sendMessage) 
+        public string send_receive(string sendMessage)
         {
             string strBuild = "";
 
-            try 
+            try
             {
                 if (!_connected) { init(); }
                 byte[] msg = Encoding.UTF8.GetBytes(sendMessage);
@@ -70,11 +66,11 @@ namespace AMFramework_Lib.Core
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 s.Close();
-                
+
                 s = new Socket(AddressFamily.InterNetwork,
                 SocketType.Stream,
                 ProtocolType.Tcp);
@@ -87,9 +83,9 @@ namespace AMFramework_Lib.Core
             return strBuild;
         }
 
-        public void dispose() 
-        { 
-        
+        public void dispose()
+        {
+
         }
 
         #region Interface

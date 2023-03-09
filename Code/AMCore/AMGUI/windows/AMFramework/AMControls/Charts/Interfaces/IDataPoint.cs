@@ -1,13 +1,9 @@
 ﻿using AMControls.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMControls.Charts.Interfaces
 {
-    public interface IDataPoint: IDrawable, IObjectInteraction
+    public interface IDataPoint : IDrawable, IObjectInteraction
     {
         /// <summary>
         /// Shape of the data point

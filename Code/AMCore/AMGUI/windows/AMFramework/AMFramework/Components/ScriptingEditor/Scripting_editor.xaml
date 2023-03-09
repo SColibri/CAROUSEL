@@ -27,9 +27,7 @@
                 Delete="scintilla_Delete"
                 Lexer="Lua"
                 Zoom="1"
-                FontQuality="LcdOptimized"
-                    />
+                FontQuality="LcdOptimized"/>
         </WindowsFormsHost>
-
     </Grid>
 </UserControl>

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows;
 
 namespace AMControls.Interfaces.Implementations
 {
@@ -58,7 +53,7 @@ namespace AMControls.Interfaces.Implementations
             Mouse_Hover_Action(x, y);
             return IsMouseHover;
         }
-        public bool Mouse_LeftButton_Down(double x, double y) 
+        public bool Mouse_LeftButton_Down(double x, double y)
         {
             IsMouseHover = false;
             IsLButton = IsInside(x, y);
@@ -67,7 +62,7 @@ namespace AMControls.Interfaces.Implementations
             Mouse_LeftButton_Action(x, y);
             return IsLButton;
         }
-        public bool Mouse_RightButton_Down(double x, double y) 
+        public bool Mouse_RightButton_Down(double x, double y)
         {
             IsMouseHover = false;
             IsLButton = false;
@@ -89,6 +84,6 @@ namespace AMControls.Interfaces.Implementations
         }
 
 
-        protected virtual void OnBoundUpdate(){}
+        protected virtual void OnBoundUpdate() { }
     }
 }

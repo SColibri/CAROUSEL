@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Windows.Data;
-using System.Collections;
-using System.Windows.Input;
-using System.Net.Sockets;
+﻿using AMFramework.Views.HeatTreatments;
+using AMFramework.Views.Phase;
+using AMFramework.Views.Solidification;
+using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
-using AMFramework_Lib.Controller;
 using AMFramework_Lib.Model.Model_Controllers;
-using AMFramework.Views.Phase;
+using System.Collections.Generic;
 using System.Windows.Controls;
-using AMFramework_Lib.Structures;
-using AMFramework.Views.HeatTreatments;
-using AMFramework.Views.Solidification;
+using System.Windows.Input;
 
 namespace AMFramework.Controller
 {
@@ -86,10 +77,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// phaseList view, consider not using object?
         /// </summary>
-        public object? PhaseList 
+        public object? PhaseList
         {
             get { return _phaseList; }
-            set 
+            set
             {
                 _phaseList = value;
                 OnPropertyChanged(nameof(PhaseList));
@@ -119,10 +110,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// Heat treatment view container
         /// </summary>
-        public object? HeatTreatmentView 
+        public object? HeatTreatmentView
         {
             get => _heatTreatmentView;
-            set 
+            set
             {
                 _heatTreatmentView = value;
                 OnPropertyChanged(nameof(HeatTreatmentView));
@@ -144,7 +135,7 @@ namespace AMFramework.Controller
             {
                 return _cases;
             }
-            set 
+            set
             {
                 _cases = value;
                 OnPropertyChanged(nameof(Cases));
@@ -165,7 +156,7 @@ namespace AMFramework.Controller
 
                 // creates phaselist_view for selected case
                 CreateViews();
-                
+
                 OnPropertyChanged(nameof(SelectedCase));
             }
         }
@@ -188,8 +179,8 @@ namespace AMFramework.Controller
         #endregion
 
         #region Methods
-        public void Set_SelectedCase(Model_Case modelObject) 
-        { 
+        public void Set_SelectedCase(Model_Case modelObject)
+        {
             var caseS = Cases.Find(x => x.ModelObject == modelObject);
             if (caseS is null) return;
             SelectedCase = caseS;
@@ -222,14 +213,14 @@ namespace AMFramework.Controller
         {
             int IDProject = SelectedCase.ModelObject.IDProject;
             int IDCase = SelectedCase.ModelObject.ID;
-            
+
             if (ControllerM_EquilibriumConfiguration.Run_EquilibriumSimulation(_comm, IDProject, IDCase, IDCase))
             {
-                
+
             }
-            else 
-            { 
-            
+            else
+            {
+
             }
 
         }
@@ -343,7 +334,7 @@ namespace AMFramework.Controller
 
             if (PhaseList != null)
                 PopupView.ContentPage.Children.Add((UserControl)PhaseList);
-            else Controller_Global.MainControl?.Show_Notification("","",(int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null ,null);
+            else Controller_Global.MainControl?.Show_Notification("", "", (int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null, null);
         }
 
         private bool ShowPhaseList_Check()
@@ -376,7 +367,7 @@ namespace AMFramework.Controller
 
             var selection = ((PhaseList_View)PhaseList).Get_Selection();
 
-            
+
 
         }
 

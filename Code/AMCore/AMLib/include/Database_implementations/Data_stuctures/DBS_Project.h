@@ -3,6 +3,7 @@
 #include "DBS_Case.h"
 #include "DBS_ActivePhases_ElementComposition.h"
 #include "DBS_ActivePhases.h"
+#include "../../callbackFunctions/MessageCallBack.h"
 
 /// <summary>
 /// Implements IAM_DBS.h interface, this is a project

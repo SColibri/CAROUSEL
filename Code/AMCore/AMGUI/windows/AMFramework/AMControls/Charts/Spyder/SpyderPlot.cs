@@ -1,15 +1,11 @@
-﻿using System;
+﻿using AMControls.Charts.Fonts;
+using AMControls.Charts.Interfaces;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
-using AMControls.Charts.Fonts;
-using AMControls.Charts.Interfaces;
 
 namespace AMControls.Charts.Spyder
 {
@@ -66,7 +62,7 @@ namespace AMControls.Charts.Spyder
         // Legend
         private ILegend _legend = new Charts.Implementations.LegendBox();
 
-        public SpyderPlot() 
+        public SpyderPlot()
         {
             _axes = new();
             _axisUnitVector = new();
@@ -76,21 +72,21 @@ namespace AMControls.Charts.Spyder
         }
 
 
-        public void Add_axis(IAxes newaxis) 
+        public void Add_axis(IAxes newaxis)
         {
             _axes.Add(newaxis);
             _angleSplit = 360 / _axes.Count;
             _axisUnitVector.Add(new());
         }
 
-        public void Add_series(IDataSeries dSeries) 
-        { 
-            if(_axes.Count == dSeries.DataPoints.Count) 
+        public void Add_series(IDataSeries dSeries)
+        {
+            if (_axes.Count == dSeries.DataPoints.Count)
             {
                 _dataSeries.Add(dSeries);
             }
-            else 
-            { 
+            else
+            {
                 // send error
             }
         }
@@ -106,7 +102,7 @@ namespace AMControls.Charts.Spyder
 
             _center = new(this.ActualWidth / 2, this.ActualHeight / 2);
             _drawingRadius = Math.Min(_center.X, _center.Y) - _margin;
-            _chartSpyderArea = new(new System.Windows.Point(_center.X - _drawingRadius, _center.Y - _drawingRadius), 
+            _chartSpyderArea = new(new System.Windows.Point(_center.X - _drawingRadius, _center.Y - _drawingRadius),
                                    new System.Windows.Size(_drawingRadius * 2, _drawingRadius * 2));
 
             Draw_Base(dc);
@@ -120,24 +116,24 @@ namespace AMControls.Charts.Spyder
             _legend.Draw(dc, this, _chartArea, _dataSeries);
         }
 
-        private void Draw_Base(DrawingContext dc) 
+        private void Draw_Base(DrawingContext dc)
         {
 
-            dc.DrawEllipse(new SolidColorBrush(Colors.White), 
-                           new Pen(new SolidColorBrush(_base_BorderColor), _base_Thickness), 
+            dc.DrawEllipse(new SolidColorBrush(Colors.White),
+                           new Pen(new SolidColorBrush(_base_BorderColor), _base_Thickness),
                            _center, _drawingRadius, _drawingRadius);
 
         }
 
-        private void Draw_Axes(DrawingContext dc) 
+        private void Draw_Axes(DrawingContext dc)
         {
             _currentAngle = _currentAngle + 1;
             double currentAngle = _currentAngle;
-            _chartArea = new(new System.Windows.Point(0,0), new System.Windows.Size(this.ActualWidth, this.ActualHeight));
+            _chartArea = new(new System.Windows.Point(0, 0), new System.Windows.Size(this.ActualWidth, this.ActualHeight));
 
-            for (int n1 = 0; n1 < _axes.Count; n1++) 
+            for (int n1 = 0; n1 < _axes.Count; n1++)
             {
-                System.Windows.Point _pointToBorder = new(_center.X + Math.Cos(currentAngle * 0.0174533)* _drawingRadius, 
+                System.Windows.Point _pointToBorder = new(_center.X + Math.Cos(currentAngle * 0.0174533)* _drawingRadius,
                                                           _center.Y + Math.Sin(currentAngle * 0.0174533) *_drawingRadius);
 
                 double lineLength = Math.Abs(System.Windows.Point.Subtract(_center, _pointToBorder).Length);
@@ -160,9 +156,9 @@ namespace AMControls.Charts.Spyder
             Draw_AxisTicks(dc);
         }
 
-        private void Draw_AxisLabel(DrawingContext dc, IAxes axis, double currentAngle) 
+        private void Draw_AxisLabel(DrawingContext dc, IAxes axis, double currentAngle)
         {
-            double realAngle =  (currentAngle % 360);
+            double realAngle = (currentAngle % 360);
 
             _axisLabel.Text = axis.Name + " " + currentAngle;
 
@@ -170,8 +166,8 @@ namespace AMControls.Charts.Spyder
             System.Windows.Size textSize = new(fText.Width, fText.Height);
 
             _axisLabel.Location = new(axis.EndPoint.X, axis.EndPoint.Y);
-            
-            if(realAngle <= 25 && realAngle >= 0) 
+
+            if (realAngle <= 25 && realAngle >= 0)
             {
                 _axisLabel.Location = new(axis.EndPoint.X + 20, axis.EndPoint.Y - textSize.Height/2);
             }
@@ -238,10 +234,10 @@ namespace AMControls.Charts.Spyder
 
         }
 
-        private void Draw_AxisTicks(DrawingContext dc) 
+        private void Draw_AxisTicks(DrawingContext dc)
         {
-            for (int n1 = 0; n1 < _axes.Count; n1++) 
-            { 
+            for (int n1 = 0; n1 < _axes.Count; n1++)
+            {
                 System.Windows.Point perpendicular_vector = new System.Windows.Point(-_axisUnitVector[n1].Y, _axisUnitVector[n1].X);
 
                 double currValue = _axes[n1].MinValue;
@@ -259,7 +255,7 @@ namespace AMControls.Charts.Spyder
             }
         }
 
-        private void Draw_AxisConnectingLines(DrawingContext dc) 
+        private void Draw_AxisConnectingLines(DrawingContext dc)
         {
             if (_axes.Count <= 1) return;
 

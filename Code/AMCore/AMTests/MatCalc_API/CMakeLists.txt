@@ -13,20 +13,29 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../AMGUI/windows/AMFramework/AMFramewor
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
 message(${CMAKE_CURRENT_BINARY_DIR})
 
-set(TEST_SET 
-	API_lua_functions_Test
-    API_lua_script_test
-    API_Phases
-)
 
-foreach(target ${TEST_SET})
-    add_executable(${target} "Tests/${target}.cpp")
-	set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
-    target_compile_features(${target} PUBLIC cxx_std_17)
-    target_compile_options(${target} PRIVATE ${DEFAULT_COMPILER_OPTIONS_AND_WARNINGS})
-    target_link_libraries(${target} AMLib Catch2::Catch2WithMain sqlite3)
+# Directory that contains the tests
+set(APILib_MATCALC_TEST_DIRECTORY ${PROJECT_SOURCE_DIR}/AMTests/MatCalc_API/Tests)
 
-    add_test(NAME ${target} COMMAND ${target})
+# Get list of all files
+file(GLOB APILib_MATCALC_TESTS ${APILib_MATCALC_TEST_DIRECTORY}/*.cpp)
+
+# Create all tests
+foreach(target IN LISTS APILib_MATCALC_TESTS)
+    
+    # Get test name
+    get_filename_component(fname ${target} NAME)
+    string(REGEX REPLACE ".cpp" "" fname ${fname})
+
+    # create tests
+    message("Looking into filename: ${fname}")
+    add_executable(${fname} "${target}")
+	set_target_properties(${fname} PROPERTIES CXX_EXTENSIONS OFF)
+    target_compile_features(${fname} PUBLIC cxx_std_17)
+    target_compile_options(${fname} PRIVATE ${DEFAULT_COMPILER_OPTIONS_AND_WARNINGS})
+    target_link_libraries(${fname} PRIVATE AMLib Catch2::Catch2WithMain sqlite3)
+
+    add_test(NAME ${fname} COMMAND ${fname})
 endforeach()
 
 

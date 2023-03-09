@@ -1,19 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.ComponentModel;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace AMControls.Custom.ProjectTreeView
 {
@@ -22,7 +9,7 @@ namespace AMControls.Custom.ProjectTreeView
     /// </summary>
     public partial class TV_TopView : UserControl, INotifyPropertyChanged
     {
-        public TV_TopView() 
+        public TV_TopView()
         {
             InitializeComponent();
         }
@@ -46,12 +33,12 @@ namespace AMControls.Custom.ProjectTreeView
         {
             TV_TopView_controller tref = (TV_TopView_controller)this.DataContext;
 
-            if (tref.IsSelected) 
+            if (tref.IsSelected)
             {
                 tref.IsExpanded = false;
                 tref.IsSelected = false;
             }
-            else 
+            else
             {
                 tref.IsExpanded = true;
                 tref.IsSelected = true;

@@ -1,10 +1,8 @@
-﻿using System;
+﻿using AMFramework_Lib.Core;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
-using AMFramework_Lib.Core;
+using System.Linq;
 
 namespace AMFramework.Controller
 {
@@ -12,12 +10,12 @@ namespace AMFramework.Controller
     {
 
         private IAMCore_Comm _AMCore_comm;
-        public Controller_AMCore(IAMCore_Comm socket) 
+        public Controller_AMCore(IAMCore_Comm socket)
         {
             _AMCore_comm = socket;
         }
 
-        
+
         #region Interfaces
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -39,7 +37,7 @@ namespace AMFramework.Controller
             }
         }
 
-        
+
 
 
         private List<string> _DB_tables = new();
@@ -47,7 +45,7 @@ namespace AMFramework.Controller
         {
             get
             {
-                string outy = _AMCore_comm.run_lua_command("database_tableList","");
+                string outy = _AMCore_comm.run_lua_command("database_tableList", "");
                 _DB_tables = outy.Split(",").ToList();
                 return _DB_tables;
             }
@@ -55,7 +53,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Commands
-        public string Run_command(string commy) 
+        public string Run_command(string commy)
         {
             List<string> comms = commy.Split(" ").ToList();
             string parameters = "";

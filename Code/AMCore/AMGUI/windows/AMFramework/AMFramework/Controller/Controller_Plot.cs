@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using InteractiveDataDisplay.WPF;
-using System.Windows.Media;
-using System.Windows.Input;
-using System.Windows;
-using AMControls.Charts;
+﻿using AMControls.Charts.Implementations.DataSeries;
 using AMControls.Charts.Interfaces;
-using AMControls.Charts.Implementations;
-using AMControls.Charts.Implementations.DataSeries;
 using AMFramework.Components.Charting.DataPlot;
 using AMFramework.Components.Charting.Interfaces;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Core;
 using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using InteractiveDataDisplay.WPF;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace AMFramework.Controller
 {
@@ -31,15 +27,15 @@ namespace AMFramework.Controller
             _AMCore_Socket = comm;
             _projectController = projectController;
 
-            if(_projectController.SelectedProject != null)
+            if (_projectController.SelectedProject != null)
                 SelectedProject = _projectController.SelectedProject.MCObject.ModelObject;
         }
 
         #endregion
 
-        public List<ModelController<Model_Phase>> Used_Phases_inCases => _projectController.UsedPhases;
+        public ObservableCollection<ModelController<Model_Phase>> Used_Phases_inCases => _projectController.UsedPhases;
         public Model_Projects SelectedProject { get; }
-        
+
         #region Line_graphs
         private List<LineGraph> _lineGraphs = new();
         public List<LineGraph> LineGraphs { get { return _lineGraphs; } }
@@ -81,12 +77,12 @@ namespace AMFramework.Controller
 
             DataPlot.Add(new(tempAxis, phaseFraction));
 
-            Application.Current.Dispatcher.Invoke((Action)delegate
+            Application.Current.Dispatcher.Invoke(delegate
             {
                 // create new line plots
                 var lg = new LineGraph
                 {
-                    Stroke = new SolidColorBrush(Color.FromArgb(255, 0, (byte)(1 * 10), 0)),
+                    Stroke = new SolidColorBrush(Color.FromArgb(255, 0, 1 * 10, 0)),
                     Description = String.Format("Data series {0}", phaseSelected.ModelObject.PhaseName),
                     StrokeThickness = 2
                 };
@@ -111,7 +107,7 @@ namespace AMFramework.Controller
             OnPropertyChanged(nameof(LineGraphs));
         }
 
-        public void refresh_used_Phases_inCases() 
+        public void refresh_used_Phases_inCases()
         {
             //_projectController.refresh_used_Phases_inCases();
         }
@@ -120,11 +116,11 @@ namespace AMFramework.Controller
 
         #region Flags
         private bool _is_loading = false;
-        public bool IsLoading 
-        { 
+        public bool IsLoading
+        {
             get { return _is_loading; }
-            set 
-            { 
+            set
+            {
                 _is_loading = value;
                 OnPropertyChanged(nameof(IsLoading));
             }
@@ -159,10 +155,10 @@ namespace AMFramework.Controller
             TH01.Start();
         }
 
-        private void Plot_linear_phases_async() 
+        private void Plot_linear_phases_async()
         {
             List<ModelController<Model_Case>> selCases = _projectController.CaseController.Cases.FindAll(e => e.ModelObject.IsSelected == true);
-            List<ModelController<Model_Phase>> selPhases = Used_Phases_inCases.FindAll(e => e.ModelObject.IsSelected == true);
+            List<ModelController<Model_Phase>> selPhases = Used_Phases_inCases.ToList().FindAll(e => e.ModelObject.IsSelected == true);
 
             for (int n1 = 0; n1 < selCases.Count; n1++)
             {
@@ -183,10 +179,10 @@ namespace AMFramework.Controller
         #endregion
 
         private Model_HeatTreatment _heatModel = new();
-        public Model_HeatTreatment HeatModel 
+        public Model_HeatTreatment HeatModel
         {
-            get { return _heatModel; } 
-            set 
+            get { return _heatModel; }
+            set
             {
                 _heatModel = value;
                 _heatModel.HeatTreatmentProfileOLD.Clear();
@@ -196,7 +192,7 @@ namespace AMFramework.Controller
             }
         }
 
-        public List<Tuple<double,Tuple<string, string>>> Get_heat_map_phaseFraction_kinetics() 
+        public List<Tuple<double, Tuple<string, string>>> Get_heat_map_phaseFraction_kinetics()
         {
             // This function was only built for test purposes, we should optimize and refactor this part of code after testing
             List<Tuple<double, Tuple<string, string>>> result = new();
@@ -214,8 +210,8 @@ namespace AMFramework.Controller
                 if (cell.Count < 6) continue;
 
                 double phaseFraction = 0;
-                if (!double.TryParse(cell[3],out phaseFraction)) continue;
-                
+                if (!double.TryParse(cell[3], out phaseFraction)) continue;
+
                 Tuple<double, Tuple<string, string>> tempItem = Tuple.Create(phaseFraction, Tuple.Create(cell[4], cell[5]));
                 result.Add(tempItem);
             }
@@ -251,8 +247,8 @@ namespace AMFramework.Controller
         }
 
 
-        public List<IDataSeries> Get_HeatMap_GrainSize_vs_PhaseFraction() 
-        { 
+        public List<IDataSeries> Get_HeatMap_GrainSize_vs_PhaseFraction()
+        {
             List<IDataSeries> Result = new();
 
             string Query_T = "SELECT DISTINCT Name FROM PrecipitationPhase;";
@@ -306,7 +302,7 @@ namespace AMFramework.Controller
             return Result;
         }
 
-        public void Find_DataPoint(int IDProject, int IDCase, int IDHT) 
+        public void Find_DataPoint(int IDProject, int IDCase, int IDHT)
         {
             //_projectController.TreeIDCase = IDCase;
             //_projectController.TreeIDHeatTreatment = IDHT;

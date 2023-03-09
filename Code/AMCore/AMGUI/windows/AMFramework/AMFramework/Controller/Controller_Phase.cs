@@ -1,15 +1,10 @@
-﻿using System;
+﻿using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
+using AMFramework_Lib.Model;
+using AMFramework_Lib.Model.Model_Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Windows.Input;
-using System.Windows;
-using AMFramework_Lib.Model.Model_Controllers;
-using AMFramework_Lib.Model;
-using AMFramework_Lib.Core;
-using AMFramework_Lib.Controller;
 
 namespace AMFramework.Controller
 {
@@ -19,14 +14,14 @@ namespace AMFramework.Controller
         private Controller_Cases _CaseController;
 
         [Obsolete("Controller is independent from other controllers, bad design for the phase object")]
-        public Controller_Phase(ref IAMCore_Comm socket, Controller_Cases caseController):base(socket)
+        public Controller_Phase(ref IAMCore_Comm socket, Controller_Cases caseController) : base(socket)
         {
             _CaseController = caseController;
         }
 
         public Controller_Phase(IAMCore_Comm comm) : base(comm)
-        { 
-            
+        {
+
         }
 
         #endregion
@@ -57,19 +52,19 @@ namespace AMFramework.Controller
         public string SearchString
         {
             get { return _searchText; }
-            set 
+            set
             {
                 _searchText = value;
-                SearchText_Action(); 
+                SearchText_Action();
                 OnPropertyChanged(nameof(SearchString));
             }
         }
 
         private void SearchText_Action()
         {
-            if (SearchString.Length == 0) 
+            if (SearchString.Length == 0)
             {
-                foreach (var item in PhaseList) 
+                foreach (var item in PhaseList)
                 {
                     item.MCObject.ModelObject.IsVisible = true;
                 }
@@ -82,7 +77,7 @@ namespace AMFramework.Controller
                 {
                     item.MCObject.ModelObject.IsVisible = true;
                 }
-                else 
+                else
                 {
                     item.MCObject.ModelObject.IsVisible = false;
                 }
@@ -98,7 +93,7 @@ namespace AMFramework.Controller
         public List<ControllerM_Phase> PhaseList
         {
             get { return _phaseList; }
-            set 
+            set
             {
                 _phaseList = value;
                 OnPropertyChanged(nameof(PhaseList));
@@ -109,7 +104,7 @@ namespace AMFramework.Controller
         /// Returns all selected phases
         /// </summary>
         /// <returns></returns>
-        public List<ControllerM_Phase> Get_Selected() 
+        public List<ControllerM_Phase> Get_Selected()
         {
             return PhaseList.FindAll(e => e.MCObject.ModelObject.IsSelected);
         }
@@ -118,7 +113,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Loads phases from CALPHAD database
         /// </summary>
-        public void LoadFromDatabase() 
+        public void LoadFromDatabase()
         {
             PhaseList = ControllerM_Phase.LoadFromDatabase(_comm);
         }
@@ -126,7 +121,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Loads ALL phases from local database
         /// </summary>
-        public void LoadAll() 
+        public void LoadAll()
         {
             PhaseList = ControllerM_Phase.LoadPhases(_comm);
         }
@@ -135,7 +130,7 @@ namespace AMFramework.Controller
         /// Loads Phases used in project
         /// </summary>
         /// <param name="IDProject"></param>
-        public void LoadByIDProject(int IDProject) 
+        public void LoadByIDProject(int IDProject)
         {
             PhaseList = ControllerM_Phase.UniquePhasesByIDProject(_comm, IDProject);
         }
@@ -144,7 +139,7 @@ namespace AMFramework.Controller
         /// Loads phases used in case
         /// </summary>
         /// <param name="IDCase"></param>
-        public void LoadByIDCase(int IDCase) 
+        public void LoadByIDCase(int IDCase)
         {
             PhaseList = ControllerM_Phase.UniquePhasesByIDCase(_comm, IDCase);
         }
@@ -162,7 +157,7 @@ namespace AMFramework.Controller
             {
                 // Find the corresponding ID
                 ModelController<Model_ActivePhases>? tempRef = cActive.ActivePhases.Find(e => e.ModelObject?.IDPhase == item.MCObject?.ModelObject?.ID);
-                
+
                 // Check for result, if none then it is not an active phase
                 if (tempRef is null)
                 {
@@ -193,17 +188,17 @@ namespace AMFramework.Controller
         /// before he makes any changes, so maybe just a color indicator or similar.
         /// </summary>
         /// <param name="caseModelController"></param>
-        public void SetSelected(ModelController<Model_Case> caseModelController) 
+        public void SetSelected(ModelController<Model_Case> caseModelController)
         {
             foreach (var item in caseModelController.ModelObject.SelectedPhases)
             {
                 ControllerM_Phase? pObject = PhaseList.Find(e => e.MCObject.ModelObject.Name.Equals(item.ModelObject.PhaseName, StringComparison.InvariantCultureIgnoreCase));
-                
+
                 if (pObject != null)
                 {
                     pObject.MCObject.ModelObject.IsSelected = true;
                 }
-                else 
+                else
                 {
                     ModelController<Model_Phase> mPhase = ControllerM_Phase.Get_PhaseByName(_comm, item.ModelObject.PhaseName);
                     mPhase.ModelObject.IsSelected = true;
@@ -269,7 +264,7 @@ namespace AMFramework.Controller
             List<Model_Phase> composition = new();
             string Query = "database_table_custom_query SELECT DISTINCT Phase.*, SelectedPhases.IDPhase FROM Phase INNER JOIN SelectedPhases ON Phase.ID = SelectedPhases.IDPhase INNER JOIN \'Case\' ON \'Case\'.IDProject = " + IDProject;
 
-            string outCommand = socket.run_lua_command(Query,"");
+            string outCommand = socket.run_lua_command(Query, "");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)
@@ -286,7 +281,7 @@ namespace AMFramework.Controller
         {
             List<Model_Phase> composition = new();
             string Query = "database_table_custom_query SELECT Phase.ID as IDP, Phase.Name, SelectedPhases.* FROM SelectedPhases INNER JOIN Phase ON Phase.ID=SelectedPhases.IDPhase WHERE IDCase = " + IDCase;
-            string outCommand = _comm.run_lua_command(Query,"");
+            string outCommand = _comm.run_lua_command(Query, "");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)
@@ -303,7 +298,7 @@ namespace AMFramework.Controller
         {
             List<Model_Phase> composition = new();
             string Query = "database_table_custom_query SELECT Phase.* FROM Phase";
-            string outCommand = _comm.run_lua_command(Query,"");
+            string outCommand = _comm.run_lua_command(Query, "");
             List<string> rowItems = outCommand.Split("\n").ToList();
 
             foreach (string item in rowItems)
@@ -316,7 +311,7 @@ namespace AMFramework.Controller
             return composition;
         }
 
-        
+
         #endregion
     }
 }

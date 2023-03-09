@@ -1,103 +1,116 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AMFramework_Lib.Libs;
+using AMFramework_Lib.Logging;
 using System.Runtime.InteropServices;
-using System.ComponentModel;
-using System.Windows;
+using System.Text;
 
 namespace AMFramework_Lib.Core
 {
     /// <summary>
     /// Link to the AmFramework library instead of using IPC.
     /// </summary>
-    public class AMCore_libHandle: IAMCore_Comm
+    public class AMCore_libHandle : IAMCore_Comm
     {
+        #region Fields
+        /// <summary>
+        /// Pointer to library - AMFramework
+        /// </summary>
+        private IntPtr _library;
 
-        private IntPtr _library; // AMFramework_Lib
-        private IntPtr _api; // IAM_API pointer - implementation
-        private API_run_lua_command run_lua; // run lua command address space
+        /// <summary>
+        /// Pointer to API object, used in combination 
+        /// </summary>
+        private IntPtr _api;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private AMFrameworkLib.API_run_lua_command _runLua;
+
+        /// <summary>
+        /// Returns true if API oject was loaded
+        /// </summary>
+        private bool _apiAvailable = false;
+
+        #endregion
+
 
         #region Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="pathToLibrary"></param>
         public AMCore_libHandle(string pathToLibrary)
         {
             Link_to_library(pathToLibrary);
         }
 
-        ~AMCore_libHandle() 
+        /// <summary>
+        /// Destructor
+        /// </summary>
+        ~AMCore_libHandle()
         {
+            // free the library
             Free_library();
         }
 
-        private void Free_library() 
-        {
-            if (_library != IntPtr.Zero)
-            {
-                FreeLibrary(_library);
-            }
-            _api_available = false;
-        }
+        #endregion
 
         #region Load
-        private void Load_library(string pathToLibrary) 
-        {
-            _library = LoadLibrary(pathToLibrary);
-
-            // Uff user32 on windows 7 causes module load error 126 win32
-            //if (Marshal.GetLastWin32Error() != 0) 
-            //{
-                
-            //    Win32Exception ex = new Win32Exception();
-            //    string report = "Linking to the library was not possible: \n" + 
-            //                    "Module Name: " + ex.TargetSite?.Module.Name + "\n" +
-            //                    "Target site: " + ex.TargetSite?.Name + "\n" +
-            //                    "Internal error: " + ex.InnerException?.Message + "\n" +
-            //                    "Error Message: " + ex.Message;
-            //    System.Windows.Forms.MessageBox.Show(report);
-            //}
-        }
-
-        private void Load_api_controll() 
+        /// <summary>
+        /// Load AMFramwork lubrary
+        /// </summary>
+        /// <param name="pathToLibrary"></param>
+        private void Load_library(string pathToLibrary)
         {
             try
             {
-                IntPtr AddressPointer_api_object = GetProcAddress(_library, "get_API_controll_default");
+                _library = Kernel32Lib.LoadLibrary(pathToLibrary);
+            }
+            catch (Exception)
+            {
+                _apiAvailable = false;
+            }
+        }
 
-                get_API_controll_default apiObject = (get_API_controll_default)Marshal.GetDelegateForFunctionPointer(AddressPointer_api_object, typeof(get_API_controll_default));
+        /// <summary>
+        /// Frees the library
+        /// </summary>
+        private void Free_library()
+        {
+            if (_library != IntPtr.Zero)
+            {
+                Kernel32Lib.FreeLibrary(_library);
+            }
+            _apiAvailable = false;
+        }
+
+        /// <summary>
+        /// Get Pointer to API object
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        private void Load_api_controll()
+        {
+            try
+            {
+                IntPtr AddressPointer_api_object = Kernel32Lib.GetProcAddress(_library, "get_API_controll_default");
+
+                AMFrameworkLib.get_API_controll_default apiObject = (AMFrameworkLib.get_API_controll_default)Marshal.GetDelegateForFunctionPointer(AddressPointer_api_object, typeof(AMFrameworkLib.get_API_controll_default));
                 _api = apiObject();
-
-                // User32.dll causes loading error
-                //if (Marshal.GetLastWin32Error() == 0)
-                //{
-                //    get_API_controll_default apiObject = (get_API_controll_default)Marshal.GetDelegateForFunctionPointer(AddressPointer_api_object, typeof(get_API_controll_default));
-                //    _api = apiObject();
-                //}
-                //else
-                //{
-                //    System.Windows.Forms.MessageBox.Show("Library does not contain the correct function address \'get_API_controll_default\' that implements IAM_API");
-                //}
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-            
-                
         }
 
-        private void Load_run_lua_command_address_space() 
+        /// <summary>
+        /// Get pointer to lua commands, this allows sending commands using lua syntax
+        /// </summary>
+        private void Load_run_lua_command_address_space()
         {
-            IntPtr AddressPointer_run_lua = GetProcAddress(_library, "API_run_lua_command");
-            run_lua = (API_run_lua_command)Marshal.GetDelegateForFunctionPointer(AddressPointer_run_lua, typeof(API_run_lua_command));
+            IntPtr AddressPointer_run_lua = Kernel32Lib.GetProcAddress(_library, "API_run_lua_command");
+            _runLua = (AMFrameworkLib.API_run_lua_command)Marshal.GetDelegateForFunctionPointer(AddressPointer_run_lua, typeof(AMFrameworkLib.API_run_lua_command));
         }
-
-        #endregion
-
-        #endregion
-
-        #region Flags
-        private bool _api_available = false; // Flag used to specify if api is loaded
 
         #endregion
 
@@ -110,79 +123,80 @@ namespace AMFramework_Lib.Core
         /// <returns></returns>
         public string run_lua_command(string command, string parameters)
         {
-            if (!_api_available) return "Error: api not available!";
-            IntPtr AddressPointer_run_lua = GetProcAddress(_library, "API_run_lua_command");
-            API_run_lua_command apiObject = (API_run_lua_command)Marshal.GetDelegateForFunctionPointer(AddressPointer_run_lua, typeof(API_run_lua_command));
+            // Check if API is availabe
+            if (!_apiAvailable) return "Error: api not available!";
 
-            string? outCommand;
-
+            // execute command
+            string outCommand;
             try
             {
-                outCommand = Marshal.PtrToStringAnsi(apiObject(_api, new StringBuilder(command), new StringBuilder(parameters)));
-                if (outCommand == null) outCommand = "";
+                outCommand = Marshal.PtrToStringAnsi(_runLua(_api, new StringBuilder(command), new StringBuilder(parameters))) ?? "";
             }
             catch (Exception e)
             {
-                outCommand = "Error: " + e.Message;
+                outCommand = $"Error: {e.Message}";
             }
 
-            return outCommand.ToString();
+            return outCommand;
         }
 
-
+        /// <summary>
+        /// Load new library using path
+        /// </summary>
+        /// <param name="apiPath"></param>
         public void update_path(string apiPath)
         {
             Link_to_library(apiPath);
         }
 
+        /// <summary>
+        /// Link to library 
+        /// </summary>
+        /// <param name="pathToLibrary"></param>
+        /// <exception cref="Exception">Load library</exception>
+        /// <exception cref="FileNotFoundException">pathToFile has to be valid</exception>
         private void Link_to_library(string pathToLibrary)
         {
+            // Free library if already loaded
             Free_library();
+
+            // Check for path type
             string fullPath = pathToLibrary;
-            if(!System.IO.Path.IsPathRooted(pathToLibrary)) 
+            if (!System.IO.Path.IsPathRooted(pathToLibrary))
                 fullPath = AppDomain.CurrentDomain.BaseDirectory + pathToLibrary;
 
-            if (!System.IO.File.Exists(fullPath)) return;
-            try
+            // Check if file exists
+            if (System.IO.File.Exists(fullPath))
             {
-                Load_library(fullPath);
-                Load_api_controll();
-                Load_run_lua_command_address_space();
-                _api_available = true;
+                try
+                {
+                    // Load library
+                    Load_library(fullPath);
+
+                    // Create new API control
+                    Load_api_controll();
+
+                    // Get command address space
+                    Load_run_lua_command_address_space();
+
+                    // Set callbacks
+                    CallbackManager.RegisterCallbacks(_library);
+
+                    // set to api available
+                    _apiAvailable = true;
+                }
+                catch (Exception e)
+                {
+                    _apiAvailable = true;
+                    LoggerManager.Error("An error occured when loading the API: " + e.Message + " Path: " + fullPath);
+                }
             }
-            catch (Exception e)
+            else 
             {
-                throw new Exception("An error occured when loading the API: " + e.Message + " Path: " + fullPath);
+                // Log invalid path
+                LoggerManager.Warn($"path to library was not found: {pathToLibrary}");
+                _apiAvailable = false;
             }
         }
-
-        
-        #region Library
-        #region kernel32
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern bool SetDLLDirectory(string libDirectoryPath);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern IntPtr LoadLibrary(string pathToDLL);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
-        static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern bool FreeLibrary(IntPtr hModule);
-
-        [DllImport("kernel32.dll")]
-        static extern uint GetLastError();
-
-        #endregion
-
-        #region AMFramework_library
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate IntPtr get_API_controll_default();
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        private delegate IntPtr API_run_lua_command(IntPtr API_pointer, StringBuilder command, StringBuilder parameters);
-        #endregion
-        #endregion
     }
 }

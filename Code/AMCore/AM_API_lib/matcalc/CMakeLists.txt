@@ -6,7 +6,7 @@ project(AM_MATCALC_Lib VERSION 1.0.1 DESCRIPTION "AMFramework library using matc
 
 # Add source to this project's executable.
 file(GLOB AM_MATCALC_LIB_SRC "src/*.cpp")
-file(GLOB AM_MATCALC_LIB_H "include/*.h")
+file(GLOB_RECURSE AM_MATCALC_LIB_H "include/*.h")
 file(GLOB AM_MATCALC_LIBCOMMANDS_H "include/Commands/*.h")
 
 add_library(AM_MATCALC_Lib SHARED AM_API_Matcalc.cpp AM_API_Matcalc.h ${AM_MATCALC_LIB_SRC} ${AM_MATCALC_LIB_H} ${AM_MATCALC_LIBCOMMANDS_H} "include/Commands/COMMAND_start_precipitate_simulation.h")

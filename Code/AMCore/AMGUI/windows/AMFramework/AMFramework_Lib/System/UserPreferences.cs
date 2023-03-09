@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace AMFramework_Lib.AMSystem
 {
@@ -14,12 +8,12 @@ namespace AMFramework_Lib.AMSystem
         public string IAM_API_PATH { get; set; } = "";
 
 
-        public void save() 
+        public void save()
         {
             WriteToXmlFile<UserPreferences>("UserPreferences", this);
         }
 
-        public static UserPreferences load() 
+        public static UserPreferences load()
         {
             if (!File.Exists("UserPreferences")) return new();
 

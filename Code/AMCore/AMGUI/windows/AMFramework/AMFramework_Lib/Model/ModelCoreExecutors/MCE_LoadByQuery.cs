@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMFramework_Lib.Model.ModelCoreExecutors
+﻿namespace AMFramework_Lib.Model.ModelCoreExecutors
 {
-    internal class MCE_LoadByQuery:Model.ModelCoreCommunicationExecutor
+    internal class MCE_LoadByQuery : Model.ModelCoreCommunicationExecutor
     {
         private string _query;
         public MCE_LoadByQuery(ref Core.IAMCore_Comm comm,

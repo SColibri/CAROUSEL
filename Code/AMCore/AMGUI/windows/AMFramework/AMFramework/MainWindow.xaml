@@ -7,17 +7,23 @@
         xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
         xmlns:AMWindow="clr-namespace:AMFramework.Components.Windows" 
         xmlns:controller="clr-namespace:AMFramework.Controller" 
+        xmlns:st="clr-namespace:AMControls;assembly=AMControls"
+        xmlns:glob="clr-namespace:AMFramework_Lib.Controller;assembly=AMFramework_Lib"
         d:DataContext="{d:DesignInstance Type=controller:Controller_MainWindow}"
         xmlns:tvc ="clr-namespace:AMControls.Custom.ProjectTreeView;assembly=AMControls"
         xmlns:noty="clr-namespace:AMControls.WindowObjects.Notify;assembly=AMControls"
         xmlns:tab="clr-namespace:AMFramework.Components.TabControl"
+        xmlns:log="clr-namespace:AMFramework.Components.LogDisplay"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:be="clr-namespace:AMControls.Behaviors;assembly=AMControls"
         mc:Ignorable="d"
         Title="AMFramework" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="1*"   />
-            <RowDefinition Height="auto" MaxHeight="50"  />
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.Resources>
             <LinearGradientBrush x:Key="Color_1" StartPoint="0,0" EndPoint="0,1">
@@ -152,20 +158,36 @@
                         <DropShadowEffect />
                     </Border.Effect>
                 </Border>
-                <TextBlock Grid.Row="1" Text="{Binding Path=IsLoading}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="15" Margin="0,12,0,0"/>
+                <TextBlock Grid.Row="1" Text="Loading..." HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontSize="15" Margin="0,12,0,0"/>
                 <fa:ImageAwesome Icon="Spinner" Spin="True" SpinDuration="2" Margin="5" Width="50"/>
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="2" Margin="2" Panel.ZIndex="2" Visibility="Visible">
+        <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" Grid.ColumnSpan="3"
+                      Background="LightGray" Visibility="Visible" ResizeDirection="Rows"/>
+
+        <Grid Grid.Row="3" Margin="2" Panel.ZIndex="2" Visibility="Collapsed">
+            
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="AMFramework: " Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5"/>
-            <TextBlock Text="{Binding Path=CoreOut, Mode=OneWay, UpdateSourceTrigger=PropertyChanged }" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <TextBlock Visibility="Collapsed" Text="AMFramework: " Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5"/>
+            <TextBlock Visibility="Collapsed" Text="{Binding Path=CoreOut, Mode=OneWay, UpdateSourceTrigger=PropertyChanged }" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+            
         </Grid>
+
+        <Expander Grid.Row="3" Grid.ColumnSpan="3" Header="Output" VerticalAlignment="Top" IsExpanded="True" Background="GhostWhite">
+            <i:Interaction.Behaviors>
+                <be:AnimatedVerticalExpanderBehavior/>
+            </i:Interaction.Behaviors>
+
+            <log:MessageLogControl DataContext="{Binding DataContext_Callbacks}" Margin="5"/>
+
+        </Expander>
+
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
@@ -234,7 +256,8 @@
         </Grid>
 
         <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1" Grid.RowSpan="2" 
-              Panel.ZIndex="16" Margin="3">
+              Panel.ZIndex="16" Margin="3" Visibility="Visible">
+            <Border Background="Black"/>
             <ContentControl Content="{Binding Path=NotificationObject, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
     </Grid>

@@ -1,9 +1,5 @@
 ﻿using AMControls.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace AMControls.Charts.Fonts
@@ -19,7 +15,7 @@ namespace AMControls.Charts.Fonts
             ContextMenuSubtitle,
             ContextMenuTitle
         }
-        public static IFontObject Get_FontObject(ChartFonts fObject, Visual vObject) 
+        public static IFontObject Get_FontObject(ChartFonts fObject, Visual vObject)
         {
             switch (fObject)
             {

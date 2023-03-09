@@ -1,3 +1,4 @@
+#pragma once
 #include "../include/API_controll.h"
 
 API_controll::API_controll(AM_Config& configuration)

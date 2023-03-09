@@ -4,8 +4,6 @@ using AMControls.Charts.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -47,7 +45,7 @@ namespace AMControls.Charts.Parallax
         private ILegend _legend = new Charts.Implementations.LegendBox();
 
 
-        public ParallaxPlot() 
+        public ParallaxPlot()
         {
             this.Background = new SolidColorBrush(Colors.White);
             _viewPosition = new(_xLeft + 10, _yTop);
@@ -64,15 +62,15 @@ namespace AMControls.Charts.Parallax
         }
 
         #region Drawing
-        private void Draw_Main_Axes(DrawingContext dc) 
+        private void Draw_Main_Axes(DrawingContext dc)
         {
             //_yAxis.MaxValue = _dataSeries.Max(e => e.DataPoints.Max(e => e.Y));
             //_yAxis.MinValue = _dataSeries.Min(e => e.DataPoints.Min(e => e.Y));
 
 
             _chartingArea = new(_xLeft,
-                                _yTop, 
-                                this.ActualWidth - (_xLeft + _xRight), 
+                                _yTop,
+                                this.ActualWidth - (_xLeft + _xRight),
                                 this.ActualHeight - (_yTop + _yBottom));
             _yAxis.DrawInterval = _chartingArea.Height / _yAxis.Ticks;
 
@@ -97,10 +95,10 @@ namespace AMControls.Charts.Parallax
 
         }
 
-        private void Draw_Parallel_Axes(DrawingContext dc) 
+        private void Draw_Parallel_Axes(DrawingContext dc)
         {
             FONT_AxisLabel fLabel = new(this);
-            
+
             //Draw Vertical data axis
             FONT_AxisData dLabel = new(this);
             for (int i = 0; i < _yAxis.Ticks; i++)
@@ -109,9 +107,9 @@ namespace AMControls.Charts.Parallax
                 double tLength = _tickLength / 2;
                 double dValue = _yAxis.MaxValue - i * _yAxis.Interval;
 
-                Point sPoint = new(_chartingArea.X - tLength, 
+                Point sPoint = new(_chartingArea.X - tLength,
                                    _chartingArea.Y + cValue);
-                Point ePoint = new(_chartingArea.X + tLength, 
+                Point ePoint = new(_chartingArea.X + tLength,
                                    _chartingArea.Y + cValue);
 
                 dc.DrawLine(new Pen(new SolidColorBrush(_axisColor), _axisLineWidth),
@@ -127,16 +125,16 @@ namespace AMControls.Charts.Parallax
             double xValue = _viewPosition.X;
             foreach (var item in _yParallel)
             {
-                Rect axisR = new(xValue - _tickLength/2, 
+                Rect axisR = new(xValue - _tickLength/2,
                                  _chartingArea.Y,
-                                 _tickLength, 
+                                 _tickLength,
                                  _chartingArea.Height);
 
 
-                if (!_chartingArea.IntersectsWith(axisR)) 
+                if (!_chartingArea.IntersectsWith(axisR))
                 {
                     xValue += _axesSeparation;
-                    continue; 
+                    continue;
                 }
 
                 Point sPoint = new(xValue,
@@ -153,10 +151,10 @@ namespace AMControls.Charts.Parallax
 
                 xValue += _axesSeparation;
             }
-            
+
         }
 
-        private void Draw_DataSeries(DrawingContext dc) 
+        private void Draw_DataSeries(DrawingContext dc)
         {
             List<double> aSep = new();
             List<double> yPar = new();
@@ -182,7 +180,7 @@ namespace AMControls.Charts.Parallax
         #endregion
 
         #region Methods
-        private void NormalizeData() 
+        private void NormalizeData()
         {
             if (_dataSeries.Count == 0) return;
             if (_useNormalizedData)
@@ -194,7 +192,7 @@ namespace AMControls.Charts.Parallax
                 foreach (var item in _yParallel)
                 {
                     item.DrawInterval = _chartingArea.Height / item.Ticks;
-                    
+
                     item.MaxValue = _dataSeries.Max(e => e.DataPoints[index_series].Y);
                     item.MinValue = _dataSeries.Min(e => e.DataPoints[index_series].Y);
 
@@ -205,7 +203,7 @@ namespace AMControls.Charts.Parallax
                     index_series++;
                 }
             }
-            else 
+            else
             {
                 _yAxis.MaxValue = _dataSeries.Max(e => e.DataPoints.Max(e => e.Y));
                 _yAxis.MinValue = _dataSeries.Min(e => e.DataPoints.Min(e => e.Y));
@@ -221,9 +219,9 @@ namespace AMControls.Charts.Parallax
             }
         }
 
-        private void Series_ToFront() 
-        { 
-        
+        private void Series_ToFront()
+        {
+
         }
         #endregion
 
@@ -239,13 +237,13 @@ namespace AMControls.Charts.Parallax
         public void Add_series(IDataSeries value)
         {
             List<string> pList = value.Get_pointLabelList();
-            if(_yParallel.Count != pList.Count) 
+            if (_yParallel.Count != pList.Count)
             {
                 _yParallel.Clear();
 
                 foreach (var item in pList)
                 {
-                    _yParallel.Add(new LinearAxe() { Name = item});
+                    _yParallel.Add(new LinearAxe() { Name = item });
                 }
             }
 
@@ -307,7 +305,7 @@ namespace AMControls.Charts.Parallax
             base.OnMouseDown(e);
 
             Point mouseLocation = e.GetPosition(this);
-            if (_chartingArea.Contains(mouseLocation)) 
+            if (_chartingArea.Contains(mouseLocation))
             {
                 _mouseDown = true;
                 Scroll_Position = new(_viewPosition.X, _viewPosition.Y);
@@ -321,9 +319,9 @@ namespace AMControls.Charts.Parallax
 
             Point mouseLocation = e.GetPosition(this);
 
-            if (_mouseDown) 
+            if (_mouseDown)
             {
-                _viewPosition = new(Scroll_Position.X - Translate_StartPosition.X + mouseLocation.X, 
+                _viewPosition = new(Scroll_Position.X - Translate_StartPosition.X + mouseLocation.X,
                                     Scroll_Position.Y);
                 InvalidateVisual();
             }

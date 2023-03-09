@@ -1,14 +1,11 @@
 ﻿using AMFramework_Lib.Core;
+using AMFramework_Lib.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using AMFramework_Lib.Interfaces;
 
 namespace AMFramework
 {
@@ -16,7 +13,7 @@ namespace AMFramework
     /// TODO: Split the functionality of this pseudo-controller, use the correct controller for the main Window and discard this one
     /// </summary>
     [Obsolete("Use the Controller_MainWindow instead")]
-    public class MainWindow_ViewModel:ViewModel_Interface
+    public class MainWindow_ViewModel : ViewModel_Interface
     {
         private List<Components.ScriptingEditor.Scripting_ViewModel> _openScripts = new();
         public List<Components.ScriptingEditor.Scripting_ViewModel> OpenScripts { get { return _openScripts; } }
@@ -46,7 +43,7 @@ namespace AMFramework
 
             string headerTitle = filename;
             Uri ImageUri = null; //TODO add lua Icon here
-            if(headerTitle.Length == 0)
+            if (headerTitle.Length == 0)
             {
                 result.Header = get_TabHeader("New Lua script", ImageUri);
             }
@@ -56,7 +53,7 @@ namespace AMFramework
             }
 
             _openScripts.Add(new Components.ScriptingEditor.Scripting_ViewModel() { Filename=filename });
-            
+
             result.Content = _openScripts[^1].ScriptingEditor;
             result.Tag = _openScripts[^1];
 
@@ -113,7 +110,7 @@ namespace AMFramework
             {
                 result.Header = get_TabHeader(headerTitle, ImageUri);
             }
-            
+
 
             Views.Project_Map.Project_Map pM = new(plotController);
 
@@ -209,8 +206,8 @@ namespace AMFramework
 
         #endregion
 
-        
-        
+
+
 
     }
 }

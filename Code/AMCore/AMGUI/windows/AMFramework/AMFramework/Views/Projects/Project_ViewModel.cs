@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AMFramework_Lib.Interfaces;
+﻿using AMFramework_Lib.Interfaces;
 
 namespace AMFramework.Views.Projects
 {
     public class Project_ViewModel : ViewModel_Interface
     {
-#region interface
+        #region interface
         public bool Close()
         {
             return true;
@@ -19,7 +14,7 @@ namespace AMFramework.Views.Projects
         {
             return true;
         }
-#endregion  
+        #endregion
 
     }
 }

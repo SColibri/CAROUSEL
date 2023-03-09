@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.ComponentModel;
+﻿using AMFramework_Lib.Core;
 using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.Core;
-using static AMFramework_Lib.Model.ModelFactory;
+using System.ComponentModel;
 
 namespace AMFramework_Lib.Model
 {
@@ -19,14 +12,14 @@ namespace AMFramework_Lib.Model
     {
         private IAMCore_Comm _coreCommunication;
         private Model_Interface _model;
-        public ModelController(ref IAMCore_Comm comm) 
-        { 
+        public ModelController(ref IAMCore_Comm comm)
+        {
             _coreCommunication = comm;
 
             // Create instance of template using the activator class
             var refT = Activator.CreateInstance(typeof(T));
 
-            if (refT != null) 
+            if (refT != null)
             {
                 _model = (T)refT;
                 ModelObject = (T)_model;
@@ -45,15 +38,15 @@ namespace AMFramework_Lib.Model
         /// <summary>
         /// Returns the data model object of generic type T
         /// </summary>
-        public T ModelObject 
-        { 
-            get 
+        public T ModelObject
+        {
+            get
             {
-                return (T)_model; 
-            } 
-            set 
+                return (T)_model;
+            }
+            set
             {
-                _model = (Model_Interface)value;
+                _model = value;
 
                 // Add default commands to current data model
                 SaveAction = new(ref _coreCommunication, ref _model);
@@ -64,12 +57,12 @@ namespace AMFramework_Lib.Model
         }
 
         // Interface implementation
-        public Model_Interface Model_Object 
-        { 
-            get 
+        public Model_Interface Model_Object
+        {
+            get
             {
-                return _model; 
-            } 
+                return _model;
+            }
         }
 
         // Default Model actions 
@@ -85,7 +78,7 @@ namespace AMFramework_Lib.Model
         /// Returns a list of model controllers ALL
         /// </summary>
         /// <returns></returns>
-        public static List<ModelController<T>> LoadAll(ref Core.IAMCore_Comm comm) 
+        public static List<ModelController<T>> LoadAll(ref Core.IAMCore_Comm comm)
         {
             var refT = Activator.CreateInstance(typeof(T));
             if (refT == null) return new();
@@ -164,7 +157,7 @@ namespace AMFramework_Lib.Model
         /// <param name="comm"></param>
         /// <param name="MCEObject"></param>
         /// <returns></returns>
-        private static List<ModelController<T>> ExtractMCE(Core.IAMCore_Comm comm, ModelCoreCommunicationExecutor MCEObject) 
+        private static List<ModelController<T>> ExtractMCE(Core.IAMCore_Comm comm, ModelCoreCommunicationExecutor MCEObject)
         {
             List<ModelController<T>> listObjects = new();
 

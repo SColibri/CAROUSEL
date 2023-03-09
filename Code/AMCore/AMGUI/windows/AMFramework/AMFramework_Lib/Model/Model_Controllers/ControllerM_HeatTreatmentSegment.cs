@@ -1,10 +1,5 @@
 ﻿using AMFramework_Lib.Core;
 using AMFramework_Lib.Model.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AMFramework_Lib.Model.Model_Controllers
 {
@@ -37,11 +32,11 @@ namespace AMFramework_Lib.Model.Model_Controllers
                     item.ModelObject.TemplateValue = item.ModelObject.TemperatureGradient.ToString();
                     item.ModelObject.SelectedModeType = Model_HeatTreatmentSegment.ModeType.TEMPERATURE_GRADIENT;
                 }
-                else 
+                else
                 {
                     item.ModelObject.TemplateValue = item.ModelObject.Duration.ToString();
                     item.ModelObject.SelectedModeType = Model_HeatTreatmentSegment.ModeType.TIME_INTERVAL;
-                }               
+                }
             }
 
             return result;

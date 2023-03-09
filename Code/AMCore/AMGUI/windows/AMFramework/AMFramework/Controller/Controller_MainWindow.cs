@@ -1,32 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Controls;
-using System.Windows.Controls.Ribbon;
-using System.Windows.Data;
-using System.Windows;
-using System.Windows.Input;
+﻿using AMControls.Custom.ProjectTreeView;
+using AMFramework.Components.ScriptingEditor;
+using AMFramework.Components.Windows;
+using AMFramework.Views.Case;
+using AMFramework.Views.Precipitation_Kinetics;
+using AMFramework.Views.Projects;
+using AMFramework_Lib.AMSystem;
+using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Interfaces;
 using AMFramework_Lib.Model;
-using AMFramework_Lib.Controller;
-using AMFramework_Lib.AMSystem;
 using AMFramework_Lib.Structures;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
-using AMFramework.Views.Projects;
-using AMFramework.Views.Case;
-using AMFramework.Views.Precipitation_Kinetics;
-using AMFramework.Components.Windows;
-using AMControls.Custom.ProjectTreeView;
-using AMFramework.Components.ScriptingEditor;
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace AMFramework.Controller
 {
     public class Controller_MainWindow : ControllerAbstract, IMainWindow
-    {      
+    {
         private readonly Controller_AMCore _AMCore;
 
         private readonly Controller_Config _configurationController;
@@ -35,7 +31,7 @@ namespace AMFramework.Controller
         public Controller_MainWindow()
         {
             UserPreferences? uPref = UserPreferences.load();
-            
+
             Controller_Config cConfig = new(Controller_Global.UserPreferences.IAM_API_PATH);
             Controller_Global.Configuration = cConfig.datamodel;
 
@@ -44,7 +40,7 @@ namespace AMFramework.Controller
             _comm = Controller.Controller_Config.ApiHandle;
 
             AMFramework_startup.Start(ref _comm);
-            
+
             _AMCore = new Controller_AMCore(_comm);
 
             _projectController = new(_comm);
@@ -66,10 +62,10 @@ namespace AMFramework.Controller
 
         }
 
-        private void Core_output_changed_Handle(object sender, PropertyChangedEventArgs e) 
+        private void Core_output_changed_Handle(object sender, PropertyChangedEventArgs e)
         {
             if (e is null) return;
-            if (e.PropertyName.CompareTo("CoreOutput") == 0) 
+            if (e.PropertyName.CompareTo("CoreOutput") == 0)
             {
                 CoreOut = _AMCore.CoreOutput;
             }
@@ -79,7 +75,7 @@ namespace AMFramework.Controller
 
         public Controller_Plot get_plot_Controller() { return _plotController; }
 
-        public ref IAMCore_Comm Get_socket() 
+        public ref IAMCore_Comm Get_socket()
         {
             return ref _comm;
         }
@@ -89,7 +85,7 @@ namespace AMFramework.Controller
         #region GUIElements
 
         #region TreeViewItem
-            public TV_TopView_controller TreeViewController { get => _projectController.Controller_xDataTreeView.DTV_Controller; }
+        public TV_TopView_controller TreeViewController { get => _projectController.Controller_xDataTreeView.DTV_Controller; }
         #endregion
 
         #endregion
@@ -138,13 +134,14 @@ namespace AMFramework.Controller
         /// <summary>
         /// Set/get core output text
         /// </summary>
-        public string CoreOut { 
-            get { return _coreOut; } 
-            set 
+        public string CoreOut
+        {
+            get { return _coreOut; }
+            set
             {
                 _coreOut = value;
                 OnPropertyChanged(nameof(CoreOut));
-            } 
+            }
         }
 
         /// <summary>
@@ -203,11 +200,11 @@ namespace AMFramework.Controller
         }
         #endregion
 
-        private void Project_property_changed_handle(object sender, PropertyChangedEventArgs e) 
+        private void Project_property_changed_handle(object sender, PropertyChangedEventArgs e)
         {
             if (e is null) return;
             if (e.PropertyName is null) return;
-            if(e?.PropertyName?.CompareTo("IsWorking") == 0) 
+            if (e?.PropertyName?.CompareTo("IsWorking") == 0)
             {
                 OnPropertyChanged(nameof(IsLoading));
             }
@@ -294,7 +291,7 @@ namespace AMFramework.Controller
 
             pWindow.PopupWindowClosed += Close_popup;
             PopupVisibility = true;
-            
+
             PopupWindow = pWindow;
         }
 
@@ -303,7 +300,7 @@ namespace AMFramework.Controller
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Close_popup(object? sender, EventArgs e) 
+        private void Close_popup(object? sender, EventArgs e)
         {
             PopupWindow = null;
             PopupVisibility = false;
@@ -313,10 +310,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// set/get shows or hides the popup control
         /// </summary>
-        public bool PopupVisibility 
-        { 
+        public bool PopupVisibility
+        {
             get { return _popupVisibility; }
-            set 
+            set
             {
                 _popupVisibility = value;
 
@@ -337,13 +334,13 @@ namespace AMFramework.Controller
         /// <summary>
         /// Using Notification object we can notify anything to the user as a small comment box
         /// </summary>
-        public AMControls.WindowObjects.Notify.Notify_corner NotificationObject 
-        { 
+        public AMControls.WindowObjects.Notify.Notify_corner NotificationObject
+        {
             get { return _notificationObject; }
-            set 
+            set
             {
                 _notificationObject = value;
-                
+
                 // set default size max/min sizes
                 _notificationObject.MaxHeight = 300;
                 _notificationObject.MaxWidth = 500;
@@ -370,10 +367,10 @@ namespace AMFramework.Controller
             NotificationObject.Icon = (FontAwesome.WPF.FontAwesomeIcon)IconType;
 
             //If Brushes are null, set default values
-            if (IconForeground != null) 
+            if (IconForeground != null)
             {
                 Color nColor = Color.FromArgb((byte)IconForeground.A, (byte)IconForeground.R, (byte)IconForeground.G, (byte)IconForeground.B);
-                NotificationObject.IconForeground = new SolidColorBrush(nColor); 
+                NotificationObject.IconForeground = new SolidColorBrush(nColor);
             }
             else NotificationObject.IconForeground = Brushes.White;
 
@@ -439,10 +436,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// Set/get the title description
         /// </summary>
-        public string TitleAdditionalInformation 
-        { 
+        public string TitleAdditionalInformation
+        {
             get { return _titleAdditionalInformation; }
-            set 
+            set
             {
                 _titleAdditionalInformation = value;
                 OnPropertyChanged(nameof(TitleAdditionalInformation));
@@ -454,10 +451,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// set/get content for additional information window
         /// </summary>
-        public string ContentAdditionalInformation 
-        { 
+        public string ContentAdditionalInformation
+        {
             get { return _contentAdditionalInformation; }
-            set 
+            set
             {
                 _contentAdditionalInformation = value;
                 OnPropertyChanged(nameof(ContentAdditionalInformation));
@@ -469,10 +466,10 @@ namespace AMFramework.Controller
         /// <summary>
         /// set/get flag used to indicate if window is expanded (visible or not)
         /// </summary>
-        public bool AdditionalInformationIsExpanded 
-        { 
+        public bool AdditionalInformationIsExpanded
+        {
             get { return _additionalInformationIsExpanded; }
-            set 
+            set
             {
                 _additionalInformationIsExpanded = value;
                 OnPropertyChanged(nameof(AdditionalInformationIsExpanded));
@@ -493,6 +490,10 @@ namespace AMFramework.Controller
         public Controller_Scripting DataContext_Scripting => _dataContextScripting;
         private readonly Controller_Scripting _dataContextScripting;
 
+        /// <summary>
+        /// Handles callback actions
+        /// </summary>
+        public ControllerCallbacks DataContext_Callbacks => _configurationController.Callbacks;
         #endregion
 
         #region Commands
@@ -527,7 +528,7 @@ namespace AMFramework.Controller
         public void Cancel_Script()
         {
             Controller_Global.MainControl?.Set_Core_Output("Cancelling operation.. ");
-            Controller_Global.ApiHandle.run_lua_command("core_cancel_operation ","");
+            Controller_Global.ApiHandle.run_lua_command("core_cancel_operation ", "");
         }
         #endregion
         #region ClosePopupCommand
@@ -565,7 +566,7 @@ namespace AMFramework.Controller
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ClosedTab_Handle(object? sender, EventArgs e) 
+        private void ClosedTab_Handle(object? sender, EventArgs e)
         {
             if (sender == null) return;
             if (sender is not TabItem tabObject) return;
@@ -579,7 +580,7 @@ namespace AMFramework.Controller
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SavedFileEvent_Handle(object? sender, EventArgs e) 
+        private void SavedFileEvent_Handle(object? sender, EventArgs e)
         {
             if (sender == null) return;
             if (sender is not Scripting_ViewModel sViewModel) return;

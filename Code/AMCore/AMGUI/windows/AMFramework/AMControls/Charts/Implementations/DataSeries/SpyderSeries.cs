@@ -1,13 +1,9 @@
 ﻿using AMControls.Charts.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
 
 namespace AMControls.Charts.Implementations.DataSeries
 {
@@ -43,7 +39,7 @@ namespace AMControls.Charts.Implementations.DataSeries
             if (DataPoints.Count != axesList.Count) return;
 
             _dataGeometry = new StreamGeometry();
-            using (StreamGeometryContext ctx = _dataGeometry.Open()) 
+            using (StreamGeometryContext ctx = _dataGeometry.Open())
             {
                 ctx.BeginFigure(axesList[0].ValueToPoint(DataPoints[0].X), true, true);
                 for (int n1 = 1; n1 < axesList.Count; n1++)
@@ -54,7 +50,7 @@ namespace AMControls.Charts.Implementations.DataSeries
                 ctx.Close();
             }
 
-                
+
 
             _dataGeometry.Freeze();
             SolidColorBrush scb = new(ColorSeries) { Opacity = 0.4 };

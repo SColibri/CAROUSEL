@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace AMFramework_Lib.Interfaces
 {
@@ -16,7 +11,7 @@ namespace AMFramework_Lib.Interfaces
     /// 
     /// 
     /// </summary>
-    public interface IModelController: INotifyPropertyChanged
+    public interface IModelController : INotifyPropertyChanged
     {
         /// <summary>
         /// Returns the model object that contains the data

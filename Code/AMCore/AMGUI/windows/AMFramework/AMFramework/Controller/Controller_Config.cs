@@ -1,15 +1,9 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using System.IO;
-using AMFramework_Lib.Controller;
+﻿using AMFramework_Lib.Controller;
 using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
+using Microsoft.Win32;
+using System;
+using System.Windows.Input;
 
 namespace AMFramework.Controller
 {
@@ -17,7 +11,7 @@ namespace AMFramework.Controller
     /// Controller config points to the core implementation library using the interface IAMCore_Comm
     /// for sending commands. The config model contains paths to databases and to the working directory.
     /// 
-    /// Note: The working directory is where the database will get created, thus modifiying the working directory will
+    /// Note: The working directory is where the database will get created, thus modifying the working directory will
     /// also create a new working database. 
     /// </summary>
     public class Controller_Config
@@ -36,16 +30,25 @@ namespace AMFramework.Controller
         /// Constructor
         /// </summary>
         /// <param name="PathToLib">Path to library that implements the IAM_API interface</param>
-            public Controller_Config(string PathToLib)
+        public Controller_Config(string PathToLib)
         {
-            Controller_Global.ApiHandle = new AMCore_libHandle(PathToLib);
-            load_model_data();
+            try
+            {
+                Controller_Global.ApiHandle = new AMCore_libHandle(PathToLib);
+                load_model_data();
+            }
+            catch (Exception)
+            {
+                Controller_Global.MainControl?.Show_Notification("Missing dll", "Please select a valid API library", 
+                    (int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null, null);
+            }
+            
         }
 
         /// <summary>
         /// Loads the model data
         /// </summary>
-        private void load_model_data() 
+        private void load_model_data()
         {
             if (Controller_Global.ApiHandle == null) return;
             datamodel.API_path = Controller_Global.ApiHandle.run_lua_command("configuration_getAPI_path", "");
@@ -55,11 +58,12 @@ namespace AMFramework.Controller
             datamodel.Physical_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_physical_database_path", "");
             datamodel.Mobility_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_mobility_database_path", "");
             datamodel.IsLoaded = true;
+            Callbacks.RegisterCallbacks();
         }
 
-        private void save_model_data() 
+        private void save_model_data()
         {
-            if (Controller_Global.ApiHandle == null) 
+            if (Controller_Global.ApiHandle == null)
             {
                 MainWindow.notify.ShowBalloonTip(5000, "AM_API not linked!", "Please link the AM_API library", System.Windows.Forms.ToolTipIcon.Info);
                 return;
@@ -68,26 +72,26 @@ namespace AMFramework.Controller
 
             string std01 = Controller_Global.ApiHandle.run_lua_command("configuration_setAPI_path " + datamodel.API_path, "");
 
-            if (Controller_Global.ApiHandle.run_lua_command("configuration_setAPI_path " + datamodel.API_path,"").CompareTo("OK") != 0) dataSaved = false;
+            if (Controller_Global.ApiHandle.run_lua_command("configuration_setAPI_path " + datamodel.API_path, "").CompareTo("OK") != 0) dataSaved = false;
             if (Controller_Global.ApiHandle.run_lua_command("configuration_setExternalAPI_path " + datamodel.External_API_path, "").CompareTo("OK") != 0) dataSaved = false;
             if (Controller_Global.ApiHandle.run_lua_command("configuration_set_working_directory " + datamodel.Working_Directory, "").CompareTo("OK") != 0) dataSaved = false;
             if (Controller_Global.ApiHandle.run_lua_command("configuration_set_thermodynamic_database_path " + datamodel.Thermodynamic_database_path, "").CompareTo("OK") != 0) dataSaved = false;
             if (Controller_Global.ApiHandle.run_lua_command("configuration_set_physical_database_path " + datamodel.Physical_database_path, "").CompareTo("OK") != 0) dataSaved = false;
             if (Controller_Global.ApiHandle.run_lua_command("configuration_set_mobility_database_path " + datamodel.Mobility_database_path, "").CompareTo("OK") != 0) dataSaved = false;
 
-            if(dataSaved == false) 
+            if (dataSaved == false)
             {
                 MainWindow.notify.ShowBalloonTip(5000, "Something went wrong, configuration was not saved", "Error", System.Windows.Forms.ToolTipIcon.Error);
                 return;
             }
             MainWindow.notify.ShowBalloonTip(5000, "Configuration was saved", "Success", System.Windows.Forms.ToolTipIcon.Info);
 
-            if(datamodel.API_path.CompareTo(Controller_Global.UserPreferences.IAM_API_PATH) != 0) 
+            if (datamodel.API_path.CompareTo(Controller_Global.UserPreferences.IAM_API_PATH) != 0)
             {
                 Controller_Global.UserPreferences.IAM_API_PATH = datamodel.API_path;
                 Controller_Global.UserPreferences.save();
             }
-            
+
         }
 
         #endregion
@@ -99,6 +103,7 @@ namespace AMFramework.Controller
         #region Model
 
         public Model_configuration datamodel { get; set; } = new Model_configuration();
+        public ControllerCallbacks Callbacks { get; set; } = new ControllerCallbacks();
 
         #endregion
 
@@ -346,7 +351,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Handles
-        public void saveClickHandle(object sender, EventArgs e) 
+        public void saveClickHandle(object sender, EventArgs e)
         {
             save_model_data();
         }

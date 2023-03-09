@@ -6,6 +6,7 @@
 #include <codecvt>
 #include "../include/API_scripting.h"
 #include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+#include "../../../AMLib/include/Database_implementations/Data_triggers/DBSTrigger_ActivePhases.h"
 #include "../../../AMLib/interfaces/IAM_lua_functions.h"
 #include "../../../AMLib/include/AM_Config.h"
 #include "../../../AMLib/interfaces/IAM_Database.h"
@@ -395,7 +396,8 @@ private:
 		AM_Project ProjectData(_dbFramework->get_database(), _configuration, idProject);
 		ProjectData.refresh_data();
 
-		// DBS_ActivePhases::remove_project_data();
+		// Remove previous data
+		TRIGGERS::DBSTriggers_ActivePhases::remove_project_data(_dbFramework->get_database(), idProject);
 
 		// run calulations
 		std::string outCommand_1 = runVectorCommands(API_Scripting::Script_run_stepScheilEquilibrium(_configuration,

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using AMFramework_Lib.Interfaces;
-using AMFramework_Lib.AMSystem.Attributes;
+﻿using AMFramework_Lib.AMSystem.Attributes;
 
 namespace AMFramework_Lib.Model
 {
@@ -13,9 +6,9 @@ namespace AMFramework_Lib.Model
     {
 
         #region Constructor
-        public Model_ActivePhases() 
-        { 
-        
+        public Model_ActivePhases()
+        {
+
         }
 
         #endregion
@@ -58,10 +51,10 @@ namespace AMFramework_Lib.Model
 
         #region Other
         private string _phaseName = "";
-        public string PhaseName 
-        { 
-            get { return _phaseName; } 
-            set 
+        public string PhaseName
+        {
+            get { return _phaseName; }
+            set
             {
                 _phaseName = value;
                 OnPropertyChanged(nameof(PhaseName));

@@ -1,24 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HelixToolkit.Wpf.SharpDX;
-using HelixToolkit.Wpf.SharpDX.Animations;
+﻿using AMControls.Implementations.Commands;
 using HelixToolkit.SharpDX.Core.Assimp;
-using HelixToolkit.Wpf.SharpDX.Controls;
-using HelixToolkit.Wpf.SharpDX.Model;
-using HelixToolkit.Wpf.SharpDX.Model.Scene;
 using Microsoft.Win32;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Windows;
 using System.Windows.Input;
-using SharpDX;
-using Point3D = System.Windows.Media.Media3D.Point3D;
-using AMControls.Implementations.Commands;
 
 namespace AMControls.Object_viewer
 {
@@ -51,10 +34,10 @@ namespace AMControls.Object_viewer
             OpenFileDialog ofd = new();
             ofd.Filter = OpenFileFilter;
 
-            if (ofd.ShowDialog() == false) return; 
+            if (ofd.ShowDialog() == false) return;
             var scene = loader.Load(ofd.FileName);
 
-            
+
         }
         private bool LoadFile_Check()
         {

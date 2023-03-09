@@ -1,13 +1,5 @@
 ﻿using AMFramework_Lib.Core;
-using AMFramework_Lib.Interfaces;
 using AMFramework_Lib.Model.Controllers;
-using AMFramework_Lib.Model.ModelCoreExecutors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace AMFramework_Lib.Model.Model_Controllers
 {
@@ -23,13 +15,13 @@ namespace AMFramework_Lib.Model.Model_Controllers
         /// <summary>
         /// Loads selected elements in project level
         /// </summary>
-        public void Load_SelectedElements() 
+        public void Load_SelectedElements()
         {
             MCObject.ModelObject.SelectedElements = ControllerM_SelectedElements.Get_SelectedElements_FromIDProject(_comm, MCObject.ModelObject.ID);
         }
 
         /// <summary>
-        /// Loads all active pahses obtained from simulation
+        /// Loads all active phases obtained from simulation
         /// </summary>
         public void Load_ActivePhases()
         {
@@ -44,7 +36,7 @@ namespace AMFramework_Lib.Model.Model_Controllers
         /// <summary>
         /// Load all cases related to this project
         /// </summary>
-        public void Load_cases() 
+        public void Load_cases()
         {
             MCObject.ModelObject.Cases = ControllerM_Case.Get_CasesByIDProject(_comm, MCObject.ModelObject.ID);
         }
@@ -54,11 +46,11 @@ namespace AMFramework_Lib.Model.Model_Controllers
         /// </summary>
         /// <param name="comm"></param>
         /// <param name="IDProject"></param>
-        public static void Clear_SimulationData(IAMCore_Comm comm, int IDProject ) 
+        public static void Clear_SimulationData(IAMCore_Comm comm, int IDProject)
         {
             var outy = comm.run_lua_command("project_remove_dependentData", IDProject.ToString());
         }
-        
+
         #endregion
 
 

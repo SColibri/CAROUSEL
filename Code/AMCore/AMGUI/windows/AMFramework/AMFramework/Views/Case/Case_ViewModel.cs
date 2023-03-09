@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AMFramework_Lib.Interfaces;
+﻿using AMFramework_Lib.Interfaces;
 
 namespace AMFramework.Views.Case
 {

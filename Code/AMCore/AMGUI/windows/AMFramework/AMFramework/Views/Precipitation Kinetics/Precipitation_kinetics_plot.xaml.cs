@@ -1,19 +1,9 @@
-﻿using System;
+﻿using AMFramework_Lib.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using AMFramework_Lib.Controller;
-using AMFramework_Lib.Model;
 
 namespace AMFramework.Views.Precipitation_Kinetics
 {
@@ -36,7 +26,7 @@ namespace AMFramework.Views.Precipitation_Kinetics
             updatePlots();
         }
 
-        public void updatePlots() 
+        public void updatePlots()
         {
             if (ControllerPlot is null) return;
             if (ControllerPlot.HeatModel.ID == -1) return;
@@ -44,9 +34,9 @@ namespace AMFramework.Views.Precipitation_Kinetics
 
             double[] time_________ = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];
             double[] temperature__ = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];
-            
 
-            for(int n1 = 0; n1 < ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count; n1++) 
+
+            for (int n1 = 0; n1 < ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count; n1++)
             {
                 time_________[n1] = ControllerPlot.HeatModel.HeatTreatmentProfileOLD[n1].Time/(60*60);
                 temperature__[n1] = ControllerPlot.HeatModel.HeatTreatmentProfileOLD[n1].Temperature;
@@ -61,7 +51,7 @@ namespace AMFramework.Views.Precipitation_Kinetics
             List<double[]> listData03 = new();
             List<double[]> listData04 = new();
 
-            for (int n0 = 0; n0 < distinctIDphase.Count; n0++) 
+            for (int n0 = 0; n0 < distinctIDphase.Count; n0++)
             {
                 List<Model_PrecipitateSimulationData> SlectedMod = ControllerPlot.HeatModel.PrecipitationDataOLD.FindAll(x => x.IDPrecipitationPhase == distinctIDphase[n0]);
                 double[] radius_______ = new double[ControllerPlot.HeatModel.HeatTreatmentProfileOLD.Count];
@@ -83,7 +73,7 @@ namespace AMFramework.Views.Precipitation_Kinetics
                 var handl_03 = plot03.Plot.AddScatterLines(time_________, listData03[listData03.Count - 1], label: SlectedMod[0].PrecipitationName);
                 var handl_04 = plot04.Plot.AddScatterLines(time_________, ScottPlot.Tools.Log10(listData04[listData04.Count - 1]), label: SlectedMod[0].PrecipitationName);
             }
-            
+
 
             plot01.Plot.YLabel("Temperature (°C)");
             plot01.Plot.XLabel("Time (h)");
@@ -119,7 +109,7 @@ namespace AMFramework.Views.Precipitation_Kinetics
         }
 
 
-        private void getHM(List<Tuple<double, Tuple<string, string>>>  HMdata) 
+        private void getHM(List<Tuple<double, Tuple<string, string>>> HMdata)
         {
             Window Nw01 = new();
             Components.Charting.HeatMapFractions.HeatMap_PhaseFractions CompT = new();

@@ -1,19 +1,13 @@
-﻿using System;
+﻿using AMFramework.Controller;
+using AMFramework_Lib.Controller;
+using AMFramework_Lib.Interfaces;
+using AMFramework_Lib.Logging;
+using ScintillaNET;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
-using ScintillaNET;
-using System.Windows.Forms.Integration;
-using AMFramework_Lib.Interfaces;
-using System.Windows.Shapes;
-using AMFramework.Controller;
 using System.Windows.Input;
-using Microsoft.Maps.MapControl.WPF;
-using AMFramework_Lib.Controller;
-using System.Windows;
 
 namespace AMFramework.Components.ScriptingEditor
 {
@@ -25,9 +19,9 @@ namespace AMFramework.Components.ScriptingEditor
         /// <summary>
         /// Default constructor
         /// </summary>
-        public Scripting_ViewModel() 
+        public Scripting_ViewModel()
         {
-            
+
             // Initialize scripting editor
             _scriptingEditor = new()
             {
@@ -36,39 +30,43 @@ namespace AMFramework.Components.ScriptingEditor
 
         }
 
-        private bool _changesMade = false; 
+        private bool _changesMade = false;
         /// <summary>
         /// Returns true if document has modifications
         /// </summary>
-        public bool ChangesMade { get { return _changesMade; } 
-            set 
-            { 
-                _changesMade = value; 
-            } 
+        public bool ChangesMade
+        {
+            get { return _changesMade; }
+            set
+            {
+                _changesMade = value;
+            }
         } // returns true if changes have been made to the document
 
         private string _filename = "";
         /// <summary>
         /// Filename of document
         /// </summary>
-        public string Filename { 
-            get { return _filename; } 
-            set 
+        public string Filename
+        {
+            get { return _filename; }
+            set
             {
-                _filename = value; 
-            } 
+                _filename = value;
+            }
         } // path to file
 
         private string _autocompleteSelection = "";
         public string autocompleteSelection { get { return _autocompleteSelection; } set { _autocompleteSelection = value; } } // current autocomplete selection
 
         private static List<string> _autocomplete = new();
-        public static List<string> Autocomplete 
-        { 
-            get {
-                if(_autocomplete.Count == 0) {load_autocomplete();}
-                return _autocomplete; 
-            } 
+        public static List<string> Autocomplete
+        {
+            get
+            {
+                if (_autocomplete.Count == 0) { load_autocomplete(); }
+                return _autocomplete;
+            }
             set { _autocomplete = value; }
         } // autocomplete list
 
@@ -146,8 +144,9 @@ namespace AMFramework.Components.ScriptingEditor
                     sw.Close();
                     ChangesMade = false;
                 }
-                catch
+                catch (Exception e)
                 {
+                    LoggerManager.Error($"ScriptingViewModel: {e.Message}");
                     Result++;
                 }
             }
@@ -181,7 +180,7 @@ namespace AMFramework.Components.ScriptingEditor
         /// Load file using filename path
         /// </summary>
         /// <param name="filename"></param>
-        public void Load(string filename) 
+        public void Load(string filename)
         {
             //First check if the open file has modifications
             if (before_closing(ScriptingEditor.Scripting))
@@ -300,7 +299,7 @@ namespace AMFramework.Components.ScriptingEditor
         /// </summary>
         private void Run_script_async()
         {
-            Controller_Global.MainControl?.Set_Core_Output(Controller_Global.ApiHandle.run_lua_command("run_lua_script " , Filename));
+            Controller_Global.MainControl?.Set_Core_Output(Controller_Global.ApiHandle.run_lua_command("run_lua_script ", Filename));
             Controller_Global.MainControl?.Show_loading(false);
         }
         #endregion
@@ -309,12 +308,12 @@ namespace AMFramework.Components.ScriptingEditor
         #region Interface
         public bool Save()
         {
-            if(_scriptingEditor != null)
+            if (_scriptingEditor != null)
             {
-                if(save(_scriptingEditor.Scripting) == 0) 
-                { 
-                    _changesMade = false; 
-                    return true; 
+                if (save(_scriptingEditor.Scripting) == 0)
+                {
+                    _changesMade = false;
+                    return true;
                 }
                 return false;
             }

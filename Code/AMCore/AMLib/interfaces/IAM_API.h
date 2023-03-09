@@ -2,7 +2,11 @@
 #include <string>
 #include "../../AMLib/include/AM_Config.h"
 #include "../../AMLib/include/AM_lua_interpreter.h"
+#include "../../AMLib/include/callbackFunctions/MessageCallBack.h"
 #include "IAM_lua_functions.h"
+#include "../../AMLib/include/callbackFunctions/MessageCallBack.h"
+#include "../../AMLib/include/callbackFunctions/Callbacks.h"
+
 
 /** \addtogroup AMLib
  *  @{

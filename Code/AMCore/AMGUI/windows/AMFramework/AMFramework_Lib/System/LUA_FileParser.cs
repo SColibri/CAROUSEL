@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AMFramework_Lib.AMSystem
+﻿namespace AMFramework_Lib.AMSystem
 {
     public class LUA_FileParser
     {
@@ -48,7 +42,7 @@ namespace AMFramework_Lib.AMSystem
             File_parse(fileContent, this, filename, "lua/");
         }
 
-        public string Get_Classes_keywords() 
+        public string Get_Classes_keywords()
         {
             string keywords = "";
 
@@ -100,7 +94,7 @@ namespace AMFramework_Lib.AMSystem
             return keywords;
         }
 
-        public string Get_Global_variable_parameters(List<string> variableLine) 
+        public string Get_Global_variable_parameters(List<string> variableLine)
         {
             if (variableLine.Count == 0) return "";
 
@@ -112,7 +106,7 @@ namespace AMFramework_Lib.AMSystem
             {
                 keywords = Get_recursive_parameters_keywords(refTemp, variableLine, 1);
             }
-            else 
+            else
             {
                 foreach (var item in refTemp.Parameters)
                 {
@@ -131,7 +125,7 @@ namespace AMFramework_Lib.AMSystem
         /// <param name="VariableTrail"></param>
         /// <param name="Index"></param>
         /// <returns></returns>
-        public string Get_recursive_parameters_keywords(ParseObject ClassObject, List<string> VariableTrail, int Index) 
+        public string Get_recursive_parameters_keywords(ParseObject ClassObject, List<string> VariableTrail, int Index)
         {
 
             // Check if parameter is contained in current class object
@@ -151,7 +145,7 @@ namespace AMFramework_Lib.AMSystem
             {
                 return Get_recursive_parameters_keywords(parseClasses, VariableTrail, Index++);
             }
-            else 
+            else
             {
                 string keywords = "";
                 foreach (var item in parseClasses.Parameters)
@@ -162,8 +156,8 @@ namespace AMFramework_Lib.AMSystem
             }
         }
 
-        private void Remove_bracket_from_parameter(ref string ParamName) 
-        { 
+        private void Remove_bracket_from_parameter(ref string ParamName)
+        {
             int IndexOpen = ParamName.IndexOf('[');
             int IndexClose = ParamName.IndexOf(']');
             if (IndexOpen == -1 || IndexClose == -1 || IndexClose <= IndexOpen) return;
@@ -205,7 +199,7 @@ namespace AMFramework_Lib.AMSystem
                 }
 
                 ParseObject refTemp_Class = AMParser.Find(e => e.Name.CompareTo(refTemp.ParametersType) == 0);
-                if (refTemp_Class != null) 
+                if (refTemp_Class != null)
                 {
                     foreach (var item in refTemp_Class.functions)
                     {
@@ -218,9 +212,9 @@ namespace AMFramework_Lib.AMSystem
             return keywords;
         }
 
-        public string Remove_Icon_tags(string keywords) 
+        public string Remove_Icon_tags(string keywords)
         {
-            return keywords.Replace("?0","").Replace("?1", "").Replace("?2", "").Replace("?3", "");
+            return keywords.Replace("?0", "").Replace("?1", "").Replace("?2", "").Replace("?3", "");
         }
 
         /// <summary>
@@ -245,21 +239,21 @@ namespace AMFramework_Lib.AMSystem
             List<string> file_classFunctions = fileRows.FindAll(e => e.Contains("function") == true && e.Contains(':') == true);
             List<string> file_functions = fileRows.FindAll(e => e.Contains("function") == true && e.Contains(':') == false);
 
-            List<string> file_global_variables = fileRows.FindAll(e => e.Contains("=") == true && 
+            List<string> file_global_variables = fileRows.FindAll(e => e.Contains("=") == true &&
                                                                        e.Contains(":new") == true &&
                                                                        e.Contains("o.") == false &&
                                                                        e.Contains("self.") == false &&
-                                                                       e.Contains("local") == false && 
+                                                                       e.Contains("local") == false &&
                                                                        e.Contains("function") == false);
 
-            List<string> file_local_variables = fileRows.FindAll(e => e.Contains("=") == true && 
+            List<string> file_local_variables = fileRows.FindAll(e => e.Contains("=") == true &&
                                                                       e.Contains(":new") == true &&
                                                                       e.Contains("o.") == false &&
                                                                       e.Contains("self.") == false &&
-                                                                      e.Contains("local") == true && 
+                                                                      e.Contains("local") == true &&
                                                                       e.Contains("function") == false);
-            
-            List<string> file_parameter_types = fileRows.FindAll(e => e.Contains("--@TYPE",StringComparison.OrdinalIgnoreCase) == true);
+
+            List<string> file_parameter_types = fileRows.FindAll(e => e.Contains("--@TYPE", StringComparison.OrdinalIgnoreCase) == true);
 
             // Modules
             foreach (var item in file_require)
@@ -277,7 +271,7 @@ namespace AMFramework_Lib.AMSystem
                 // check if it defines parameter names or if it is just a table
                 int IndexP1 = item.IndexOf('=');
                 int IndexP2 = item.LastIndexOf('=');
-                if(IndexP1 == IndexP2) continue;
+                if (IndexP1 == IndexP2) continue;
 
                 // extract class name, check if it is already contained
                 string className = Get_class_name(item);
@@ -350,12 +344,12 @@ namespace AMFramework_Lib.AMSystem
                     ParametersType = Get_variable_className(item)
                 };
 
-                tempParse.Parameters = Parser.AMParser.FindAll(e => e.Name.CompareTo(tempParse.ParametersType) == 0 && 
+                tempParse.Parameters = Parser.AMParser.FindAll(e => e.Name.CompareTo(tempParse.ParametersType) == 0 &&
                                                                e.ObjectType == ParseObject.PTYPE.CLASS).Select(e => e.Parameters).ToList().SelectMany(e => e).ToList();
 
                 tempParse.functions = Parser.AMParser.FindAll(e => e.Name.CompareTo(tempParse.ParametersType) == 0 &&
                                                                e.ObjectType == ParseObject.PTYPE.CLASS).Select(e => e.functions).ToList().SelectMany(e => e).ToList();
-                
+
                 tempParse.Description = Get_description(item);
                 Parser.AMParser.Add(tempParse);
             }
@@ -393,7 +387,7 @@ namespace AMFramework_Lib.AMSystem
         /// </summary>
         /// <param name="modName">file path to module</param>
         /// <param name="Parser"></param>
-        public static void Remove_module(string modName, LUA_FileParser Parser) 
+        public static void Remove_module(string modName, LUA_FileParser Parser)
         {
             Parser.AMParser.RemoveAll(e => e.ModuleName.CompareTo(modName) == 0);
         }
@@ -408,8 +402,8 @@ namespace AMFramework_Lib.AMSystem
         {
             // copy string and remove spaces
             string copyRowLine = rowLine;
-            copyRowLine = copyRowLine.Replace("local", "").Replace(" ","");
-        
+            copyRowLine = copyRowLine.Replace("local", "").Replace(" ", "");
+
             // find key where class name ends
             int Index = copyRowLine.IndexOf('=');
             if (Index == -1) return "";
@@ -488,11 +482,11 @@ namespace AMFramework_Lib.AMSystem
         /// <param name="content"></param>
         /// <param name="ToFind"></param>
         /// <returns>List of indexes</returns>
-        public static List<int> Find_all_occurrences(string content, string ToFind) 
-        { 
+        public static List<int> Find_all_occurrences(string content, string ToFind)
+        {
             List<int> ocurrences = new();
 
-            for (int n1 = 0; n1 < content.Length; n1++) 
+            for (int n1 = 0; n1 < content.Length; n1++)
             {
                 n1 = content.IndexOf(ToFind, n1);
                 if (n1 == -1) break;
@@ -519,7 +513,7 @@ namespace AMFramework_Lib.AMSystem
             List<ParseObject> classParameters = new();
 
             // get parameter names
-            foreach (string item in parameterRow) 
+            foreach (string item in parameterRow)
             {
                 int IndexEqSgn = item.IndexOf('=');
                 if (IndexEqSgn == -1) continue;
@@ -550,8 +544,8 @@ namespace AMFramework_Lib.AMSystem
             // find parameter values
             int IndexStart = copyRowLine.IndexOf('(');
             int IndexEnd = copyRowLine.IndexOf(')');
-            if (IndexStart == -1 || 
-                IndexEnd == -1 || 
+            if (IndexStart == -1 ||
+                IndexEnd == -1 ||
                 IndexStart + 1 == IndexEnd) return "";
 
             // get parameters only
@@ -603,7 +597,7 @@ namespace AMFramework_Lib.AMSystem
             {
                 // Get parameter line
                 int IndexOfEqual = item.IndexOf('=');
-                if(IndexOfEqual == -1) 
+                if (IndexOfEqual == -1)
                 {
                     NewParameters.Add(item);
                     continue;
@@ -641,7 +635,7 @@ namespace AMFramework_Lib.AMSystem
         /// </summary>
         /// <param name="LineContent"></param>
         /// <param name="Params"></param>
-        private static void Get_parameter_type(List<string> LineContent, List<ParseObject> Params) 
+        private static void Get_parameter_type(List<string> LineContent, List<ParseObject> Params)
         {
             foreach (var item in LineContent)
             {
@@ -687,7 +681,7 @@ namespace AMFramework_Lib.AMSystem
         /// </summary>
         /// <param name="rowLine"></param>
         /// <returns></returns>
-        private static string Get_variable_className(string rowLine) 
+        private static string Get_variable_className(string rowLine)
         {
             // copy string and remove spaces
             string copyRowLine = rowLine;

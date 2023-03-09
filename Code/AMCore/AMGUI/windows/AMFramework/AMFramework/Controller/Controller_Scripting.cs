@@ -1,20 +1,17 @@
-﻿using AMFramework_Lib.Controller;
+﻿using AMFramework.Components.ScriptingEditor;
+using AMFramework_Lib.Controller;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AMFramework.Components.ScriptingEditor;
-using System.Windows.Input;
 using System.IO;
+using System.Linq;
+using System.Windows.Input;
 
 namespace AMFramework.Controller
 {
     public class Controller_Scripting : ControllerAbstract
     {
 
-        public Controller_Scripting() 
+        public Controller_Scripting()
         {
             _openScripts = new();
         }
@@ -30,13 +27,13 @@ namespace AMFramework.Controller
         #endregion
 
         #region Methods
-        public void Close_Script(Scripting_ViewModel viewObject) 
-        { 
+        public void Close_Script(Scripting_ViewModel viewObject)
+        {
             OpenScripts.Remove(viewObject);
         }
 
-        public Scripting_ViewModel Create_NewScript() 
-        { 
+        public Scripting_ViewModel Create_NewScript()
+        {
             OpenScripts.Add(new Scripting_ViewModel());
             return OpenScripts.Last();
         }
