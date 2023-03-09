@@ -21,7 +21,7 @@ namespace AMFramework.Components.ScriptingEditor
         {
             InitializeComponent();
 
-            string filename = "Components/Scripting/Templates/NewScript.AMFramework";
+            string filename = "Components/ScriptingEditor/Templates/NewScript.AMFramework";
             if (!System.IO.File.Exists(filename)) return;
             Scripting.Text = System.IO.File.ReadAllText(filename);
         }
