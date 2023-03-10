@@ -33,6 +33,9 @@ namespace AMFramework_Lib.Core
 
         #endregion
 
+        #region Properties
+        public bool Connected => _apiAvailable;
+        #endregion
 
         #region Constructor
         /// <summary>

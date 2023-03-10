@@ -368,6 +368,9 @@ namespace AMFramework.Controller
             // If project is already loading, stop
             if (LoadingData) return;
 
+            // Make sure core is initialized
+            _comm.run_lua_command("initialize_core", "");
+
             // set loading flag and use threading for loading data.
             LoadingData = true;
             System.Threading.Thread TH01 = new(Load_project_async)

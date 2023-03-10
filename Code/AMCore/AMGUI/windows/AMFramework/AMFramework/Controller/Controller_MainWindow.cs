@@ -21,13 +21,45 @@ using System.Windows.Media;
 
 namespace AMFramework.Controller
 {
+    /// <summary>
+    /// Controller_MainWindow logic used as data context for the Main window control
+    /// </summary>
     public class Controller_MainWindow : ControllerAbstract, IMainWindow
     {
+        #region Fields
+        private bool _apiLoaded = false;
+
+        //------------------------------------------------------------------------------------
+        //                                      CONTROLLERS
+        //------------------------------------------------------------------------------------
         private readonly Controller_AMCore _AMCore;
-
         private readonly Controller_Config _configurationController;
-        private Controller_Plot _plotController;
+        private readonly Controller_Plot _plotController;
+        private readonly Controller_Project _projectController;
+        private readonly Controller_Tabs _dataContextTabs;
+        private readonly Controller_Scripting _dataContextScripting;
+        #endregion
 
+        #region Properties
+        /// <summary>
+        /// Get/Set API loaded. Returns true if an API library has been loaded.
+        /// </summary>
+        public bool APILoaded 
+        {
+            get => _apiLoaded;
+            set 
+            {
+                _apiLoaded = value;
+                OnPropertyChanged(nameof(APILoaded));
+            }
+        }
+
+        #endregion
+
+        #region Constructor
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public Controller_MainWindow()
         {
             UserPreferences? uPref = UserPreferences.load();
@@ -46,9 +78,6 @@ namespace AMFramework.Controller
             _projectController = new(_comm);
             _projectController.Load_projectList();
 
-            //_DBSProjects = new(_comm);
-            //_DBSProjects.PropertyChanged += Project_property_changed_handle;
-
             _plotController = new(ref _comm, _projectController);
             _AMCore.PropertyChanged += Core_output_changed_Handle;
 
@@ -61,6 +90,13 @@ namespace AMFramework.Controller
             _dataContextScripting.SavedFileEvent += SavedFileEvent_Handle;
 
         }
+        #endregion
+
+        #region Methods
+
+        #endregion
+
+
 
         private void Core_output_changed_Handle(object sender, PropertyChangedEventArgs e)
         {
@@ -181,7 +217,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Projects
-        private Controller_Project _projectController;
+        
         /// <summary>
         /// Project content
         /// </summary>
@@ -482,18 +518,23 @@ namespace AMFramework.Controller
         /// Handles all the tab controls
         /// </summary>
         public Controller_Tabs DataContext_Tabs => _dataContextTabs;
-        private readonly Controller_Tabs _dataContextTabs;
+        
 
         /// <summary>
         /// Handles all file scripting
         /// </summary>
         public Controller_Scripting DataContext_Scripting => _dataContextScripting;
-        private readonly Controller_Scripting _dataContextScripting;
+        
 
         /// <summary>
-        /// Handles callback actions
+        /// Callback controller
         /// </summary>
         public ControllerCallbacks DataContext_Callbacks => _configurationController.Callbacks;
+        
+        /// <summary>
+        /// Configuration controller
+        /// </summary>
+        public Controller_Config DataContext_Config => _configurationController;
         #endregion
 
         #region Commands

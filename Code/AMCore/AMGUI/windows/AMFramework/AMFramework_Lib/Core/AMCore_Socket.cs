@@ -10,6 +10,8 @@ namespace AMFramework_Lib.Core
                 SocketType.Stream,
                 ProtocolType.Tcp);
         private bool _connected = false;
+
+        public bool Connected => _connected;
         public bool connected { get { return _connected; } }
         public void init()
         {
