@@ -24,7 +24,8 @@
 
         <!-- Configurations -->
         <StackPanel Margin="3">
-            <Border Style="{StaticResource BorderButton}" Margin="2">
+            <Border Style="{StaticResource BorderButton}" Margin="2"
+                    ToolTip="API library that is used for communicating with the external software">
                 <Border.InputBindings>
                     <MouseBinding MouseAction="LeftClick" 
                                   Command="{Binding DataContext_Config.Search_API_Path}"/>
@@ -36,9 +37,20 @@
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <fa:SvgAwesome Icon="Solid_Ban" Height="15"
-                                   PrimaryColor="Green" Margin="3"
-                                       Grid.Column="0"/>
+                    <fa:SvgAwesome d:Icon="Solid_FileCircleXmark"
+                                   d:PrimaryColor="Red"
+                                   Height="15" 
+                                   Margin="3"
+                                   Grid.Column="0">
+                        <i:Interaction.Behaviors>
+                            <b:SwapImageBehavior FirstImage="Solid_Plug"
+                                                 FirstColor="Green"
+                                                 SecondImage="Solid_FileCircleXmark"
+                                                 SecondColor="Red"
+                                                 UseFirst="{Binding DataContext_Config.APILoaded, UpdateSourceTrigger=PropertyChanged}"/>
+                        </i:Interaction.Behaviors>    
+                    </fa:SvgAwesome>
+                    
                     <Image Width="50" Grid.Column="1"/>
                     <TextBlock Text="{Binding DataContext_Config.datamodel.API_path, Converter={StaticResource FilePathToName}}" VerticalAlignment="Center"
                                FontFamily="Segoe UI" TextTrimming="WordEllipsis" 
@@ -46,7 +58,8 @@
                 </Grid>
             </Border>
 
-            <Border Style="{StaticResource BorderButton}" Margin="2">
+            <Border Style="{StaticResource BorderButton}" Margin="2"
+                    ToolTip="Directory where external software can be found">
                 <Border.InputBindings>
                     <MouseBinding MouseAction="LeftClick" 
                                   Command="{Binding DataContext_Config.Search_externalAPI_Path}"/>
@@ -57,39 +70,59 @@
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <fa:SvgAwesome Icon="Solid_Folder" Height="15"
-                                   PrimaryColor="Red" Margin="3"
-                                       Grid.Column="0"/>
+                    
+                    <fa:SvgAwesome d:Icon="Regular_FolderOpen" Height="15"
+                                   d:PrimaryColor="Red" Margin="3"
+                                       Grid.Column="0">
+                        <i:Interaction.Behaviors>
+                            <b:SwapImageBehavior FirstImage="Regular_FolderOpen"
+                                                 FirstColor="Green"
+                                                 SecondImage="Solid_Folder"
+                                                 SecondColor="Red"
+                                                 UseFirst="{Binding DataContext_Config.datamodel.External_API_path, 
+                                                                    UpdateSourceTrigger=PropertyChanged,
+                                                                    Converter={StaticResource DirectoryToBoolean}}"/>
+                        </i:Interaction.Behaviors>
+                    </fa:SvgAwesome>
+                    
                     <Image Width="50" Grid.Column="1"/>
-                    <TextBlock Text="{Binding DataContext_Config.datamodel.External_API_path, Converter={StaticResource FilePathToName}}" VerticalAlignment="Center"
+                    <TextBlock Text="{Binding DataContext_Config.datamodel.External_API_path, Converter={StaticResource FilePathToName}}" 
+                               VerticalAlignment="Center"
                                FontFamily="Segoe UI" TextTrimming="WordEllipsis" 
                                    Grid.Column="2"/>
                 </Grid>
             </Border>
 
-            <Border Style="{StaticResource BorderButton}" Margin="2">
+            <Border Style="{StaticResource BorderButton}" Margin="2" 
+                    ToolTip="Working directory where databases and files will be stored">
+                <Border.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" 
+                                  Command="{Binding DataContext_Config.Search_workingDirectory_Path}"/>
+                </Border.InputBindings>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <fa:SvgAwesome Icon="Solid_Database" Height="15"
-                                   PrimaryColor="Red" Margin="3"
-                                       Grid.Column="0"/>
+                    <fa:SvgAwesome d:Icon="Solid_Sitemap" Height="15"
+                                   d:PrimaryColor="Red" Margin="3"
+                                       Grid.Column="0">
+                        <i:Interaction.Behaviors>
+                            <b:SwapImageBehavior FirstImage="Solid_Sitemap"
+                                                 FirstColor="Green"
+                                                 SecondImage="Solid_Sitemap"
+                                                 SecondColor="Red"
+                                                 UseFirst="{Binding DataContext_Config.datamodel.Working_Directory, 
+                                                                    UpdateSourceTrigger=PropertyChanged,
+                                                                    Converter={StaticResource DirectoryToBoolean}}"/>
+                        </i:Interaction.Behaviors>
+                    </fa:SvgAwesome>
 
-                    <Grid Grid.Column="1" >
-                        <fa:SvgAwesome Icon="Solid_TriangleExclamation" Height="15"
-                                   PrimaryColor="LightBlue" Margin="1,2,4,1" />
-
-                        <fa:SvgAwesome Icon="Solid_TriangleExclamation" Height="15"
-                                   PrimaryColor="CadetBlue"
-                                       Margin="-4,3,3,3"/>
-                    </Grid>
-
-                    <TextBlock Text="Databases" VerticalAlignment="Center"
+                    <TextBlock VerticalAlignment="Center"
                                FontFamily="Segoe UI" TextTrimming="WordEllipsis" 
-                                   Grid.Column="2"/>
+                               Text="{Binding DataContext_Config.datamodel.Working_Directory, Converter={StaticResource FilePathToName}}"
+                               Grid.Column="2"/>
                 </Grid>
             </Border>
 

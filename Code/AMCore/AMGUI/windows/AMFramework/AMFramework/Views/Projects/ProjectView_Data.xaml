@@ -4,7 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:fa6="http://schemas.fontawesome.com/icons/svg"
              xmlns:controller="clr-namespace:AMFramework.Controller"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="clr-namespace:AMControls.Behaviors;assembly=AMControls"
              d:DataContext="{d:DesignInstance Type=controller:Controller_Project}"
              mc:Ignorable="d" 
              d:DesignHeight="546.124" d:DesignWidth="584">
@@ -13,7 +16,7 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-       
+
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
             <StackPanel Margin="20">
                 <GroupBox Header="General" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
@@ -33,6 +36,166 @@
                     </StackPanel>
                 </GroupBox>
 
+                <!-- Databases -->
+                <GroupBox Style="{StaticResource AM_OptionSection}" 
+                          Header="Databases" 
+                          Margin="5,1,5,1" 
+                          BorderThickness="2" 
+                          BorderBrush="Black">
+
+                    <StackPanel>
+                        <Grid Background="WhiteSmoke" Margin="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Background="Gray">
+                                <TextBlock Text="Thermodynamic database"
+                                           VerticalAlignment="Center"
+                                           Margin="5,1,5,1"
+                                           Foreground="White"
+                                           FontWeight="DemiBold"/>
+                            </Border>
+                            
+
+                            <fa6:SvgAwesome Icon="Solid_CircleQuestion" 
+                                            Margin="2,2,2,2"
+                                            PrimaryColor="Red"
+                                            Height="20"
+                                            Grid.Column="1">
+                                <i:Interaction.Behaviors>
+                                    <b:SwapImageBehavior FirstImage="Solid_TemperatureHalf"
+                                                         FirstColor="Green"
+                                                         SecondImage="Solid_CircleQuestion"
+                                                         SecondColor="Red"
+                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase, Converter={StaticResource DirectoryToBoolean}}"/>
+                                    
+                                </i:Interaction.Behaviors>
+                            </fa6:SvgAwesome>
+
+                            <TextBlock d:Text="Hello world" Grid.Column="2"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase}"
+                                       TextTrimming="WordEllipsis"
+                                       Margin="5,2,2,2"/>
+
+                            <Border Grid.Column="3"
+                                    Style="{StaticResource BorderFlatButton}">
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" 
+                                                  Command="{Binding Path=SelectThermodynamicDatabase}"/>
+                                </Border.InputBindings>
+                                <fa6:SvgAwesome Icon="Solid_FolderOpen"
+                                                PrimaryColor="SteelBlue"/>
+                            </Border>
+                        </Grid>
+                        
+                        <Grid Background="WhiteSmoke" Margin="1,1,1,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Background="Gray">
+                                <TextBlock Text="Mobility database"
+                                           VerticalAlignment="Center"
+                                           Margin="5,1,5,1"
+                                           Foreground="White"
+                                           FontWeight="DemiBold"/>
+                            </Border>
+
+
+                            <fa6:SvgAwesome Icon="Solid_CircleQuestion" 
+                                            Margin="2,2,2,2"
+                                            PrimaryColor="Red"
+                                            Height="20"
+                                            Grid.Column="1">
+                                <i:Interaction.Behaviors>
+                                    <b:SwapImageBehavior FirstImage="Solid_TemperatureHalf"
+                                                         FirstColor="Green"
+                                                         SecondImage="Solid_CircleQuestion"
+                                                         SecondColor="Red"
+                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.MobilityDatabase, Converter={StaticResource DirectoryToBoolean}}"/>
+
+                                </i:Interaction.Behaviors>
+                            </fa6:SvgAwesome>
+
+                            <TextBlock d:Text="Hello world" Grid.Column="2"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.MobilityDatabase}"
+                                       TextTrimming="WordEllipsis"
+                                       Margin="5,2,2,2"/>
+
+                            <Border Grid.Column="3"
+                                    Style="{StaticResource BorderFlatButton}">
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" 
+                                                  Command="{Binding Path=SelectMobilityDatabase}"/>
+                                </Border.InputBindings>
+                                <fa6:SvgAwesome Icon="Solid_FolderOpen"
+                                                PrimaryColor="SteelBlue"/>
+                            </Border>
+                        </Grid>
+
+                        <Grid Background="WhiteSmoke" Margin="1,1,1,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Background="Gray">
+                                <TextBlock Text="Physical database"
+                                           VerticalAlignment="Center"
+                                           Margin="5,1,5,1"
+                                           Foreground="White"
+                                           FontWeight="DemiBold"/>
+                            </Border>
+
+
+                            <fa6:SvgAwesome Icon="Solid_CircleQuestion" 
+                                            Margin="2,2,2,2"
+                                            PrimaryColor="Red"
+                                            Height="20"
+                                            Grid.Column="1">
+                                <i:Interaction.Behaviors>
+                                    <b:SwapImageBehavior FirstImage="Solid_TemperatureHalf"
+                                                         FirstColor="Green"
+                                                         SecondImage="Solid_CircleQuestion"
+                                                         SecondColor="Red"
+                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.PhysicalDatabase, Converter={StaticResource DirectoryToBoolean}}"/>
+
+                                </i:Interaction.Behaviors>
+                            </fa6:SvgAwesome>
+
+                            <TextBlock d:Text="Hello world" Grid.Column="2"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.PhysicalDatabase}"
+                                       TextTrimming="WordEllipsis"
+                                       Margin="5,2,2,2"/>
+
+                            <Border Grid.Column="3"
+                                    Style="{StaticResource BorderFlatButton}">
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" 
+                                                  Command="{Binding Path=SelectPhysicalDatabase}"/>
+                                </Border.InputBindings>
+                                <fa6:SvgAwesome Icon="Solid_FolderOpen"
+                                                PrimaryColor="SteelBlue"/>
+                            </Border>
+                        </Grid>
+
+
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Element list -->
                 <GroupBox Header="Selected elements" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
                           Style="{StaticResource AM_OptionSection}">
                     <StackPanel>
@@ -43,14 +206,16 @@
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="20"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Row="0" Text="Element list:" 
                                        Margin="5,5,5,2"/>
 
                             <Border Grid.Row="1" BorderBrush="Silver" 
-                                    BorderThickness="1" CornerRadius="3" 
+                                    Background="WhiteSmoke"
+                                    BorderThickness="1" 
+                                    CornerRadius="3" 
                                     Margin="5,1,5,1">
                                 <ItemsControl ItemsSource="{Binding Path=SelectedProject.Model_Object.SelectedElements}">
                                     <ItemsControl.ItemsPanel>
@@ -70,7 +235,7 @@
                                                         <ColumnDefinition Width="1*"/>
                                                         <ColumnDefinition Width="10"/>
                                                     </Grid.ColumnDefinitions>
-                                                    
+
                                                     <TextBlock Text="{Binding Path=ModelObject.ElementName}" 
                                                                Margin="5" Grid.Row="1"
                                                                Grid.ColumnSpan="2"/>
@@ -82,17 +247,21 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                                
+
                             </Border>
-                            
-                            <fa:ImageAwesome Grid.Column="1" Grid.Row="1" 
-                                             Icon="Edit" Height="25" 
-                                             Foreground="SteelBlue"/>
-                            <Border Style="{StaticResource AM_MouseBorder}" Grid.Column="1" Grid.Row="1" 
-                                    CornerRadius="2" Margin="1,1,3,1">
+
+                            <Border Style="{StaticResource BorderFlatButton}" 
+                                    Grid.Column="1" 
+                                    Grid.Row="1" 
+                                    CornerRadius="2" 
+                                    Margin="1,1,3,1"
+                                    Height="20"
+                                    VerticalAlignment="Top">
                                 <Border.InputBindings>
                                     <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" Command="{Binding Path=ShowElementList}"/>
                                 </Border.InputBindings>
+                                <fa6:SvgAwesome Icon="Brands_Elementor"
+                                                PrimaryColor="SteelBlue"/>
                             </Border>
                         </Grid>
                     </StackPanel>
@@ -248,7 +417,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="40"/>
-                
+
             </Grid.ColumnDefinitions>
             <Border Grid.ColumnSpan="2" Margin="0,-10,0,-10" CornerRadius="3">
                 <Border.Background>

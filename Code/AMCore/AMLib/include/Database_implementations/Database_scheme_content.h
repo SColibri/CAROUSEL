@@ -57,7 +57,7 @@ namespace AMLIB
 		out.add_new("ID","INTEGER PRIMARY KEY"); // Auto increment ID
 		out.add_new("Name","TEXT"); // User defined project name
 		out.add_new("API_Name", "TEXT"); // API used -> API dll name (framework implementation)
-		out.add_new("externalAPI_Name", "TEXT"); // API used -> API dll name (e.g: matcalc)
+
 		out.tableName = "Projects";
 
 		return out;

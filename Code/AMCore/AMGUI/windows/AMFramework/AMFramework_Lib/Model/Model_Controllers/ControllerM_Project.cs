@@ -31,6 +31,8 @@ namespace AMFramework_Lib.Model.Model_Controllers
             MCObject.ModelObject.ActivePhasesConfiguration = ControllerM_ActivePhasesConfiguration.Get_ActivePhaseConfiguration_FromIDProject(_comm, MCObject.ModelObject.ID);
             // Element composition
             MCObject.ModelObject.ActivePhasesElementComposition = ControllerM_ActivePhasesElementComposition.Get_ActivePhaseElementComposition_FromIDProject(_comm, MCObject.ModelObject.ID);
+            // Databases
+            MCObject.ModelObject.Databases = ControllerM_CALPHADDatabase.GetDatabaseFromProjectID(_comm, MCObject.ModelObject.ID);
         }
 
         /// <summary>

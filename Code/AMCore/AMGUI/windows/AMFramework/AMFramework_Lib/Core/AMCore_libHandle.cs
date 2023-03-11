@@ -102,6 +102,7 @@ namespace AMFramework_Lib.Core
             }
             catch (Exception e)
             {
+                _apiAvailable = false;
                 throw new Exception(e.Message);
             }
         }
@@ -173,6 +174,10 @@ namespace AMFramework_Lib.Core
             {
                 try
                 {
+                    // set to api available, the following methods change it to false in case
+                    // loading the api was not possible
+                    _apiAvailable = true;
+
                     // Load library
                     Load_library(fullPath);
 
@@ -184,13 +189,10 @@ namespace AMFramework_Lib.Core
 
                     // Set callbacks
                     CallbackManager.RegisterCallbacks(_library);
-
-                    // set to api available
-                    _apiAvailable = true;
                 }
                 catch (Exception e)
                 {
-                    _apiAvailable = true;
+                    _apiAvailable = false;
                     LoggerManager.Error("An error occured when loading the API: " + e.Message + " Path: " + fullPath);
                 }
             }

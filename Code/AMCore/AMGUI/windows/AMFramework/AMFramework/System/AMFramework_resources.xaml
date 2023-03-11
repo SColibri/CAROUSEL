@@ -5,6 +5,7 @@
     <!-- Converters -->
     <BooleanToVisibilityConverter x:Key="BoolToVis" />
     <cframe:FilePathToNameConverter x:Key="FilePathToName" />
+    <ccontrols:ConverterDirectoryExistsBoolean x:Key="DirectoryToBoolean" />
 
     <!--Control colors.-->
     <Color x:Key="WindowColor">#FFE8EDF9</Color>

@@ -16,6 +16,7 @@ namespace AMFramework_Lib.Model
                 if (_is_loaded)
                 {
                     Controller.Controller_Global.ApiHandle?.update_path(_API_path);
+                    IsLoaded = Controller.Controller_Global.ApiHandle?.Connected ?? false;
                 }
 
                 OnPropertyChanged(nameof(API_path));

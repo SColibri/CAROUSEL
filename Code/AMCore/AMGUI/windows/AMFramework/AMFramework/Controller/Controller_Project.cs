@@ -8,6 +8,7 @@ using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
 using AMFramework_Lib.Model.Model_Controllers;
 using Catel.Collections;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,20 +27,6 @@ namespace AMFramework.Controller
     {
 
         #region Fields
-        /// <summary>
-        /// Selected project item
-        /// </summary>
-        private ControllerM_Project? _selectedProject = null;
-
-        /// <summary>
-        /// List of available projects
-        /// </summary>
-        private ObservableCollection<ControllerM_Project> _projectList = new();
-
-        /// <summary>
-        /// List of available phases
-        /// </summary>
-        private ObservableCollection<ModelController<Model_Phase>> _usedPhases = new();
 
         /// <summary>
         /// Solidification calculation methods available
@@ -56,15 +43,19 @@ namespace AMFramework.Controller
         /// </summary>
         private object? _activePhasesConfigurationPage;
 
-        /// <summary>
-        /// List of all elements
-        /// </summary>
-        private ObservableCollection<ModelController<Model_Element>> _elementList = new();
-
-
         // ----------------------------------------------------------------------------------
         //                                    CONTROLLERS
         // ----------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Selected project item
+        /// </summary>
+        private ControllerM_Project? _selectedProject = null;
+
+        /// <summary>
+        /// List of available projects
+        /// </summary>
+        private ObservableCollection<ControllerM_Project> _projectList = new();
 
         /// <summary>
         /// Case controller, contains all cases related to this project
@@ -75,6 +66,16 @@ namespace AMFramework.Controller
         /// Treeview controller
         /// </summary>
         private Controller_XDataTreeView _controller_xDataTreeView = new Controller_XDataTreeView();
+
+        /// <summary>
+        /// List of all elements
+        /// </summary>
+        private ObservableCollection<ModelController<Model_Element>> _elementList = new();
+
+        /// <summary>
+        /// List of available phases
+        /// </summary>
+        private ObservableCollection<ModelController<Model_Phase>> _usedPhases = new();
 
         // ----------------------------------------------------------------------------------
         //                                     COMMANDS
@@ -119,6 +120,22 @@ namespace AMFramework.Controller
         /// Selects a project
         /// </summary>
         private ICommand _selectProject;
+
+        /// <summary>
+        /// Set thermodynamic database
+        /// </summary>
+        private ICommand _selectThermodynamicDatabase;
+
+        /// <summary>
+        /// Set thermodynamic database
+        /// </summary>
+        private ICommand _selectMobilityDatabase;
+
+        /// <summary>
+        /// Set thermodynamic database
+        /// </summary>
+        private ICommand _selectPhysicalDatabase;
+
         #endregion
 
         #region Constructor
@@ -135,6 +152,8 @@ namespace AMFramework.Controller
         #endregion
 
         #region Properties
+        
+
         /// <summary>
         /// Solidification calculation method
         /// </summary>
@@ -721,6 +740,10 @@ namespace AMFramework.Controller
             {
                 item.SaveAction?.DoAction();
             }
+
+            // Save database paths
+            SelectedProject.MCObject.ModelObject.Databases.ModelObject.IDProject = SelectedProject.MCObject.ModelObject.ID;
+            SelectedProject.MCObject.ModelObject.Databases.SaveAction?.DoAction();
         }
 
         /// <summary>
@@ -820,6 +843,128 @@ namespace AMFramework.Controller
         /// Checks if selecting a project is allowed
         /// </summary>
         private bool SelectProject_Check()
+        {
+            return true;
+        }
+        #endregion
+        #region select thermodynamic database
+        /// <summary>
+        /// Opens the case creator view
+        /// </summary>
+        public ICommand SelectThermodynamicDatabase => _selectThermodynamicDatabase ??= new RelayCommand(param => SelectThermodynamicDatabaseAction(), param => Can_SelectThermodynamicDatabase());
+
+        /// <summary>
+        /// Open case creator handle
+        /// </summary>
+        private void SelectThermodynamicDatabaseAction()
+        {
+            // Check if project has been selected
+            if (SelectedProject == null)
+            {
+                Controller_Global.MainControl?.Show_Notification("Project", "Please select a project first", (int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null, null);
+                return;
+            }
+
+            OpenFileDialog OFD = new()
+            {
+                Multiselect = false,
+                Filter = "thermodynamic database|*.tdb",
+                Title = "Select a thermodynamic database",
+                CheckFileExists = true,
+                InitialDirectory = SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase
+            };
+
+            if (OFD.ShowDialog() == true)
+            {
+                SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase = OFD.FileName;
+                SelectedProject.MCObject?.SaveAction?.DoAction();
+                ControllerM_Project.Clear_SimulationData(_comm, SelectedProject.MCObject.ModelObject.ID);
+            }
+
+        }
+
+        private bool Can_SelectThermodynamicDatabase()
+        {
+            return true;
+        }
+        #endregion
+        #region SelectMobilityDatabase
+        /// <summary>
+        /// Opens the case creator view
+        /// </summary>
+        public ICommand SelectMobilityDatabase => _selectMobilityDatabase ??= new RelayCommand(param => SelectMobilityDatabaseAction(), param => Can_SelectMobilityDatabase());
+
+        /// <summary>
+        /// Open case creator handle
+        /// </summary>
+        private void SelectMobilityDatabaseAction()
+        {
+            // Check if project has been selected
+            if (SelectedProject == null)
+            {
+                Controller_Global.MainControl?.Show_Notification("Project", "Please select a project first", (int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null, null);
+                return;
+            }
+
+            OpenFileDialog OFD = new()
+            {
+                Multiselect = false,
+                Filter = "mobility database|*.ddb",
+                Title = "Select a mobility database",
+                CheckFileExists = true,
+                InitialDirectory = SelectedProject.MCObject.ModelObject.Databases.ModelObject.MobilityDatabase
+            };
+
+            if (OFD.ShowDialog() == true)
+            {
+                SelectedProject.MCObject.ModelObject.Databases.ModelObject.MobilityDatabase = OFD.FileName;
+                SelectedProject.MCObject?.SaveAction?.DoAction();
+                ControllerM_Project.Clear_SimulationData(_comm, SelectedProject.MCObject.ModelObject.ID);
+            }
+
+        }
+
+        private bool Can_SelectMobilityDatabase()
+        {
+            return true;
+        }
+        #endregion
+        #region SelectMobilityDatabase
+        /// <summary>
+        /// Opens the case creator view
+        /// </summary>
+        public ICommand SelectPhysicalDatabase => _selectPhysicalDatabase ??= new RelayCommand(param => SelectPhysicalDatabaseAction(), param => Can_SelectPhysicalDatabase());
+
+        /// <summary>
+        /// Open case creator handle
+        /// </summary>
+        private void SelectPhysicalDatabaseAction()
+        {
+            // Check if project has been selected
+            if (SelectedProject == null)
+            {
+                Controller_Global.MainControl?.Show_Notification("Project", "Please select a project first", (int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null, null);
+                return;
+            }
+
+            OpenFileDialog OFD = new()
+            {
+                Multiselect = false,
+                Filter = "physical database|*.pdb",
+                Title = "Select a physical database",
+                CheckFileExists = true,
+                InitialDirectory = SelectedProject.MCObject.ModelObject.Databases.ModelObject.PhysicalDatabase
+            };
+
+            if (OFD.ShowDialog() == true)
+            {
+                SelectedProject.MCObject.ModelObject.Databases.ModelObject.PhysicalDatabase = OFD.FileName;
+                SelectedProject.MCObject?.SaveAction?.DoAction();
+                ControllerM_Project.Clear_SimulationData(_comm, SelectedProject.MCObject.ModelObject.ID);
+            }
+        }
+
+        private bool Can_SelectPhysicalDatabase()
         {
             return true;
         }

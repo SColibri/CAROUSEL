@@ -1,5 +1,5 @@
 ﻿-- Project
-Project = {ID = -1, Name = "No name", API = "", ExternalAPI = "" , Columns ={} , selectedElements = {}, cases = {}, ActivePhases = {}, ActivePhasesConfig = {}, ActivePhasesElementComposition = {}} --@Description Project object. \n Project controlls all lower level objects
+Project = {ID = -1, Name = "No name", API = "", ExternalAPI = "" , Columns ={} , Databases = {}, selectedElements = {}, cases = {}, ActivePhases = {}, ActivePhasesConfig = {}, ActivePhasesElementComposition = {}} --@Description Project object. \n Project controlls all lower level objects
 
 -- Constructor
 function Project:new (o,ID,Name,API,ExternalAPI,selectedElements,cases) --@Description Creates a new project,\n create new object by calling newVar = Project:new{Name = value} or Project:new({},ID,Name).
@@ -19,6 +19,7 @@ function Project:new (o,ID,Name,API,ExternalAPI,selectedElements,cases) --@Descr
    o.ActivePhases = {} --@TYPE ActivePhases
    o.ActivePhasesConfig = {}
    o.ActivePhasesElementComposition = ActivePhasesConfig:new{IDProject = self.ID}
+   o.Databases = CALPHADDatabase:new{IDProject = self.ID}
 
    if o.ID > -1 or o.Name ~= "Empty project" then
     o:load()
@@ -42,6 +43,9 @@ function Project:load ()
    
     -- Load Project data
     if self.ID > -1 then
+
+        -- Load calphad Database
+        self.Databases = CALPHADDatabase:new{IDProject = self.ID}
 
         -- Load Cases
         self.cases = {}
@@ -88,6 +92,9 @@ function Project:save()
 
         self.ActivePhasesConfig.IDProject = self.ID
         self.ActivePhasesConfig:save()
+
+        self.Databases.IDProject = self.ID
+        self.Databases:save()
     end
 end
 

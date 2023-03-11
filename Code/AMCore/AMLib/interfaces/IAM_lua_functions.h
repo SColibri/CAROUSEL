@@ -190,6 +190,14 @@ protected:
 		add_new_function(state, "project_remove_dependentData", "<String> OK", "project_remove_dependentData <string> csv format", Bind_Project_Remove_projectData, "Model_Projects||RemoveDependentData");
 #pragma endregion
 
+		//###-> Selected Elements
+#pragma region CALPHADDatabase 
+		add_new_function(state, "calphad_database_save", "<string> OK", "calphad_database_save <INT> ID", Bind_Templated_Save<DBS_CALPHADDatabase>, "Model_CALPHADDatabase||Save");
+		add_new_function(state, "calphad_database_delete", "<string> OK", "calphad_database_delete <INT> ID", Bind_Templated_Delete<DBS_CALPHADDatabase>, "Model_CALPHADDatabase||Delete");
+		add_new_function(state, "calphad_database_loadID", "<string> OK", "calphad_database_loadID <String> csv", Bind_Templated_loadID<DBS_CALPHADDatabase>, "Model_CALPHADDatabase||LoadByID");
+		add_new_function(state, "calphad_database_load_IDProject", "<string> OK", "calphad_database_load_IDProject <String> csv", Bind_CALPHADDatabase_Load_ProjectID, "Model_CALPHADDatabase||LoadByIDProject");
+#pragma endregion
+
 		//###-> Active phases
 #pragma region ActivePhases_SaveDelete
 		add_new_function(state, "project_active_phases_save", "<ID> returns id of saved item", "project_active_phases_save <String> csv", Bind_Templated_Save<DBS_ActivePhases>,"Model_ActivePhases||Save");
@@ -859,7 +867,7 @@ protected:
 	{
 		int noParameters = lua_gettop(state);
 		std::string out = _configuration->get_ThermodynamicDatabase_path();
-
+		
 		lua_pushstring(state, out.c_str());
 		return 1;
 	}
@@ -1995,6 +2003,29 @@ protected:
 	}
 #pragma endregion
 #pragma endregion
+
+#pragma region CALPHAD Database
+	/// <summary>
+	/// Load selected phase by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_CALPHADDatabase_Load_ProjectID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_CALPHADDatabase());
+		DT.load_data("IDProject = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+
 
 #pragma region Elements
 #pragma region Save

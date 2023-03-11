@@ -3,6 +3,7 @@ using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
 using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Windows.Input;
 
 namespace AMFramework.Controller
@@ -58,6 +59,7 @@ namespace AMFramework.Controller
             datamodel.Physical_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_physical_database_path", "");
             datamodel.Mobility_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_mobility_database_path", "");
             datamodel.IsLoaded = true;
+            APILoaded = datamodel.IsLoaded;
             Callbacks.RegisterCallbacks();
         }
 
@@ -146,14 +148,17 @@ namespace AMFramework.Controller
                 Multiselect = false,
                 Filter = "AM_library|*.dll",
                 Title = "Select the AM_Framework API library",
-                CheckFileExists = true
+                CheckFileExists = true,
+                InitialDirectory = Path.GetDirectoryName(datamodel.API_path)
             };
 
             if (OFD.ShowDialog() == true)
             {
                 datamodel.IsLoaded = true;
                 datamodel.API_path = OFD.FileName;
-                APILoaded = true;
+                APILoaded = datamodel.IsLoaded;
+
+                if (APILoaded) save_model_data();
             }
         }
 
@@ -186,13 +191,15 @@ namespace AMFramework.Controller
             System.Windows.Forms.FolderBrowserDialog OFD = new()
             {
                 Description = "external API directory",
-                UseDescriptionForTitle = true
+                UseDescriptionForTitle = true,
+                InitialDirectory = datamodel.External_API_path
             };
 
             if (OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 datamodel.IsLoaded = true;
                 datamodel.External_API_path = OFD.SelectedPath;
+                save_model_data();
             }
         }
 
@@ -213,7 +220,7 @@ namespace AMFramework.Controller
                 {
                     _Search_workingDirectory_Path = new RelayCommand(
                         param => this.Search_workingDirectory_path_controll(),
-                        param => this.Can_Change_externalAPI_path()
+                        param => this.Can_Change_workingDirectory_path()
                     );
                 }
                 return _Search_workingDirectory_Path;
@@ -225,12 +232,14 @@ namespace AMFramework.Controller
             System.Windows.Forms.FolderBrowserDialog OFD = new()
             {
                 Description = "working directory",
-                UseDescriptionForTitle = true
+                UseDescriptionForTitle = true,
+                InitialDirectory = datamodel.Working_Directory
             };
 
             if (OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 datamodel.Working_Directory = OFD.SelectedPath;
+                save_model_data();
             }
         }
 
@@ -345,7 +354,7 @@ namespace AMFramework.Controller
                 Multiselect = false,
                 Filter = "physical database|*.ddb",
                 Title = "Select a physical database",
-                CheckFileExists = true
+                CheckFileExists = true,
             };
 
             if (OFD.ShowDialog() == true)

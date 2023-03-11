@@ -92,7 +92,7 @@ namespace AMFramework_Lib.Model
         }
 
         /// <summary>
-        /// Returns a list of model controllers IDProject, this does not apply for all models
+        /// Returns a list of model controllers IDProject, this only applies for models that have a IDProject property
         /// </summary>
         /// <returns></returns>
         public static List<ModelController<T>> LoadIDProject(ref Core.IAMCore_Comm comm, int IDproject)
