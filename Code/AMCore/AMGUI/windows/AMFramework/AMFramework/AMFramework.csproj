@@ -7959,6 +7959,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Components\ScriptingEditor\Templates\for.scriptTemplate">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -8057,6 +8065,10 @@
     </None>
     <None Update="lua\Objects\SelectedPhase.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Update="Resources\Icons\Logo.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

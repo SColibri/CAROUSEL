@@ -8,6 +8,7 @@ using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
 using AMFramework_Lib.Model.Model_Controllers;
 using Catel.Collections;
+using Catel.IO;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -152,7 +153,7 @@ namespace AMFramework.Controller
         #endregion
 
         #region Properties
-        
+
 
         /// <summary>
         /// Solidification calculation method
@@ -226,10 +227,10 @@ namespace AMFramework.Controller
 
                 // Get list of all used phases
                 Get_UsedPhases();
-                
+
                 // Set model tag as selected and if element is a reference element
                 SetSelectedElements();
-              
+
             }
         }
 
@@ -333,7 +334,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Updates the element list used for calculating the active phases
         /// </summary>
-        private void UpdateElementsForActivePhases() 
+        private void UpdateElementsForActivePhases()
         {
             List<ModelController<Model_ActivePhasesElementComposition>> tempList = new();
             foreach (var element in SelectedProject.MCObject.ModelObject.SelectedElements)
@@ -355,7 +356,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Sets flags in the element list based on the element list from the selected project
         /// </summary>
-        private void SetSelectedElements() 
+        private void SetSelectedElements()
         {
             // Check for null value
             if (_selectedProject == null) return;
@@ -386,9 +387,6 @@ namespace AMFramework.Controller
         {
             // If project is already loading, stop
             if (LoadingData) return;
-
-            // Make sure core is initialized
-            _comm.run_lua_command("initialize_core", "");
 
             // set loading flag and use threading for loading data.
             LoadingData = true;
@@ -424,6 +422,7 @@ namespace AMFramework.Controller
             SelectedProject.Load_SelectedElements();
             SelectedProject.Load_ActivePhases();
             SelectedProject.Load_cases();
+            SelectedProject.Load_Databases();
 
             // Add cases to case controller
             CaseController.Cases = SelectedProject.MCObject.ModelObject.Cases;
@@ -436,6 +435,16 @@ namespace AMFramework.Controller
                 ActivePhasesView_Configuration winRef = new() { DataContext = refController };
                 ActivePhasesConfigurationPage = winRef;
             });
+
+            // TODO: change where the core loads the database paths, the old version loaded it form the configuration file, but because of a last
+            // minute change this is patched here, so the best approach is to modify this so that each project gets to choose the database it want to
+            // use
+            Controller_Global.Configuration.Thermodynamic_database_path = SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase;
+            Controller_Global.Configuration.Physical_database_path = SelectedProject.MCObject.ModelObject.Databases.ModelObject.PhysicalDatabase;
+            Controller_Global.Configuration.Mobility_database_path = SelectedProject.MCObject.ModelObject.Databases.ModelObject.MobilityDatabase;
+            Controller_Global.ApiHandle.run_lua_command("configuration_set_thermodynamic_database_path " + Controller_Global.Configuration.Thermodynamic_database_path, "");
+            Controller_Global.ApiHandle.run_lua_command("configuration_set_physical_database_path " + Controller_Global.Configuration.Physical_database_path, "");
+            Controller_Global.ApiHandle.run_lua_command("configuration_set_mobility_database_path " + Controller_Global.Configuration.Mobility_database_path, "");
 
             // set loading data to false for visual
             LoadingData = false;
@@ -482,7 +491,7 @@ namespace AMFramework.Controller
         #region Commands
         #region open_case_creator
 
- 
+
         /// <summary>
         /// Opens the case creator view
         /// </summary>
@@ -494,7 +503,7 @@ namespace AMFramework.Controller
         private void Open_CaseCreator()
         {
             // Check if project has been selected
-            if (SelectedProject == null) 
+            if (SelectedProject == null)
             {
                 Controller_Global.MainControl?.Show_Notification("Project", "Please select a project first", (int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null, null);
                 return;
@@ -556,6 +565,7 @@ namespace AMFramework.Controller
         {
             // set new project object as selected
             SelectedProject = new(_comm);
+            SelectedProject.MCObject.ModelObject.APIName = Path.GetFileName(Controller_Global.Configuration?.API_path);
 
             // Create new view
             Views.Projects.Project_general Pg = new(this);
@@ -742,8 +752,11 @@ namespace AMFramework.Controller
             }
 
             // Save database paths
-            SelectedProject.MCObject.ModelObject.Databases.ModelObject.IDProject = SelectedProject.MCObject.ModelObject.ID;
-            SelectedProject.MCObject.ModelObject.Databases.SaveAction?.DoAction();
+            if (SelectedProject.MCObject.ModelObject.Databases != null)
+            {
+                SelectedProject.MCObject.ModelObject.Databases.ModelObject.IDProject = SelectedProject.MCObject.ModelObject.ID;
+                SelectedProject.MCObject.ModelObject.Databases.SaveAction?.DoAction();
+            }
         }
 
         /// <summary>
@@ -792,6 +805,7 @@ namespace AMFramework.Controller
 
             if (conAP.Find_Active_Phases.CanExecute(null)) conAP.Find_Active_Phases.Execute(null);
             SelectedProject.Load_ActivePhases();
+            SelectedProject.Load_Databases();
         }
 
         /// <summary>
@@ -871,7 +885,7 @@ namespace AMFramework.Controller
                 Filter = "thermodynamic database|*.tdb",
                 Title = "Select a thermodynamic database",
                 CheckFileExists = true,
-                InitialDirectory = SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase
+                InitialDirectory = SelectedProject.MCObject.ModelObject.Databases?.ModelObject.ThermodynamicDatabase
             };
 
             if (OFD.ShowDialog() == true)
@@ -879,6 +893,14 @@ namespace AMFramework.Controller
                 SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase = OFD.FileName;
                 SelectedProject.MCObject?.SaveAction?.DoAction();
                 ControllerM_Project.Clear_SimulationData(_comm, SelectedProject.MCObject.ModelObject.ID);
+
+                Controller_Global.Configuration.Thermodynamic_database_path = OFD.FileName;
+                Controller_Global.ApiHandle.run_lua_command("configuration_set_thermodynamic_database_path " + Controller_Global.Configuration.Thermodynamic_database_path, "");
+                // Make sure core is initialized
+                string puty = _comm.run_lua_command("initialize_core", "");
+
+                ElementList.Clear();
+                ElementList.AddRange(ModelController<Model_Element>.LoadAll(ref _comm));
             }
 
         }

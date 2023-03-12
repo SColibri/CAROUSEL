@@ -15,8 +15,6 @@
 #include "../include/callbackFunctions/ErrorCallback.h"
 #include "../include/callbackFunctions/Callbacks.h"
 
-
-
 #include "../external/lua542/include/lua.h"
 #include "../external/lua542/include/lua.hpp"
 #include "../external/lua542/include/lualib.h"

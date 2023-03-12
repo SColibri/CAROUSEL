@@ -7,7 +7,9 @@ namespace AMFramework_Lib.Model.Model_Controllers
     {
         // Constructors
         public ControllerM_Project(IAMCore_Comm comm) : base(comm)
-        { }
+        {
+            
+        }
         public ControllerM_Project(IAMCore_Comm comm, ModelController<Model_Projects> modelMC) : base(comm, modelMC)
         { }
 
@@ -21,6 +23,15 @@ namespace AMFramework_Lib.Model.Model_Controllers
         }
 
         /// <summary>
+        /// Loads the CALPHAD database paths
+        /// </summary>
+        public void Load_Databases() 
+        {
+            // Databases
+            MCObject.ModelObject.Databases = ControllerM_CALPHADDatabase.GetDatabaseFromProjectID(_comm, MCObject.ModelObject.ID);
+        }
+
+        /// <summary>
         /// Loads all active phases obtained from simulation
         /// </summary>
         public void Load_ActivePhases()
@@ -31,8 +42,6 @@ namespace AMFramework_Lib.Model.Model_Controllers
             MCObject.ModelObject.ActivePhasesConfiguration = ControllerM_ActivePhasesConfiguration.Get_ActivePhaseConfiguration_FromIDProject(_comm, MCObject.ModelObject.ID);
             // Element composition
             MCObject.ModelObject.ActivePhasesElementComposition = ControllerM_ActivePhasesElementComposition.Get_ActivePhaseElementComposition_FromIDProject(_comm, MCObject.ModelObject.ID);
-            // Databases
-            MCObject.ModelObject.Databases = ControllerM_CALPHADDatabase.GetDatabaseFromProjectID(_comm, MCObject.ModelObject.ID);
         }
 
         /// <summary>

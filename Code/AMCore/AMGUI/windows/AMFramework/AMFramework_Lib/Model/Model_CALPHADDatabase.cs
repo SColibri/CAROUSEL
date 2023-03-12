@@ -28,17 +28,17 @@ namespace AMFramework_Lib.Model
         /// <summary>
         /// Path to Thermodynamic database
         /// </summary>
-        private string _thermodynamicDatabase = string.Empty;
+        private string _thermodynamicDatabase = "Not available";
 
         /// <summary>
         /// Path to mobility database
         /// </summary>
-        private string _mobilityDatabase = string.Empty;
+        private string _mobilityDatabase = "Not available";
 
         /// <summary>
         /// Path to physical database
         /// </summary>
-        private string _physicalDatabase = string.Empty;
+        private string _physicalDatabase = "Not available";
 
         #endregion
 

@@ -71,7 +71,7 @@
                                                          FirstColor="Green"
                                                          SecondImage="Solid_CircleQuestion"
                                                          SecondColor="Red"
-                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase, Converter={StaticResource DirectoryToBoolean}}"/>
+                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase, Converter={StaticResource FilenameToBoolean}}"/>
                                     
                                 </i:Interaction.Behaviors>
                             </fa6:SvgAwesome>
@@ -116,11 +116,11 @@
                                             Height="20"
                                             Grid.Column="1">
                                 <i:Interaction.Behaviors>
-                                    <b:SwapImageBehavior FirstImage="Solid_TemperatureHalf"
+                                    <b:SwapImageBehavior FirstImage="Solid_ArrowRightArrowLeft"
                                                          FirstColor="Green"
                                                          SecondImage="Solid_CircleQuestion"
                                                          SecondColor="Red"
-                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.MobilityDatabase, Converter={StaticResource DirectoryToBoolean}}"/>
+                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.MobilityDatabase, Converter={StaticResource FilenameToBoolean}}"/>
 
                                 </i:Interaction.Behaviors>
                             </fa6:SvgAwesome>
@@ -165,11 +165,11 @@
                                             Height="20"
                                             Grid.Column="1">
                                 <i:Interaction.Behaviors>
-                                    <b:SwapImageBehavior FirstImage="Solid_TemperatureHalf"
+                                    <b:SwapImageBehavior FirstImage="Solid_CubesStacked"
                                                          FirstColor="Green"
                                                          SecondImage="Solid_CircleQuestion"
                                                          SecondColor="Red"
-                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.PhysicalDatabase, Converter={StaticResource DirectoryToBoolean}}"/>
+                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.PhysicalDatabase, Converter={StaticResource FilenameToBoolean}}"/>
 
                                 </i:Interaction.Behaviors>
                             </fa6:SvgAwesome>
@@ -197,7 +197,8 @@
 
                 <!-- Element list -->
                 <GroupBox Header="Selected elements" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
-                          Style="{StaticResource AM_OptionSection}">
+                          Style="{StaticResource AM_OptionSection}"
+                          Visibility="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase, Converter={StaticResource FilenameToVisibility}}">
                     <StackPanel>
                         <Grid Margin="3">
                             <Grid.RowDefinitions>
@@ -267,7 +268,8 @@
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Header="Active phases" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
-                          Style="{StaticResource AM_OptionSection}">
+                          Style="{StaticResource AM_OptionSection}"
+                          Visibility="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase, Converter={StaticResource FilenameToVisibility}}">
                     <StackPanel>
                         <Grid Margin="3">
                             <Grid.RowDefinitions>
@@ -404,7 +406,8 @@
                 </GroupBox>
 
                 <GroupBox Header="Tools" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
-                          Style="{StaticResource AM_OptionSection}">
+                          Style="{StaticResource AM_OptionSection}"
+                          Visibility="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase, Converter={StaticResource FilenameToVisibility}}">
                     <StackPanel>
                         <Grid Margin="3">
                             <Button Content="Case creator" Command="{Binding Path=OpenCaseCreator}"></Button>
