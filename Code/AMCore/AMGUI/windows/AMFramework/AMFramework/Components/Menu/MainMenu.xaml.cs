@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -23,6 +24,14 @@ namespace AMFramework.Components.Menu
         public MainMenu()
         {
             InitializeComponent();
+        }
+
+        private void Popup_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (sender is Popup pop)
+            {
+                pop.IsOpen = false;
+            }
         }
     }
 }

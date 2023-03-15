@@ -5,7 +5,9 @@ using AMFramework_Lib.Logging;
 using ScintillaNET;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -14,7 +16,7 @@ namespace AMFramework.Components.ScriptingEditor
     /// <summary>
     /// Scripting viewmodel
     /// </summary>
-    public class Scripting_ViewModel : ViewModel_Interface
+    public class Scripting_ViewModel : ViewModel_Interface, INotifyPropertyChanged
     {
         /// <summary>
         /// Default constructor
@@ -26,6 +28,7 @@ namespace AMFramework.Components.ScriptingEditor
             _scriptingEditor = new()
             {
                 DataContext = this
+
             };
 
         }
@@ -40,10 +43,11 @@ namespace AMFramework.Components.ScriptingEditor
             set
             {
                 _changesMade = value;
+                OnPropertyChanged();
             }
         } // returns true if changes have been made to the document
 
-        private string _filename = "";
+        private string _filename = "New script";
         /// <summary>
         /// Filename of document
         /// </summary>
@@ -53,6 +57,7 @@ namespace AMFramework.Components.ScriptingEditor
             set
             {
                 _filename = value;
+                OnPropertyChanged();
             }
         } // path to file
 
@@ -67,7 +72,10 @@ namespace AMFramework.Components.ScriptingEditor
                 if (_autocomplete.Count == 0) { load_autocomplete(); }
                 return _autocomplete;
             }
-            set { _autocomplete = value; }
+            set 
+            { 
+                _autocomplete = value;
+            }
         } // autocomplete list
 
         private Scripting_editor _scriptingEditor;
@@ -121,13 +129,13 @@ namespace AMFramework.Components.ScriptingEditor
         {
             int Result = 0;
 
-            if (File.Exists(_filename) == false)
+            if (File.Exists(Filename) == false)
             {
-                _filename = create_new_file();
+                Filename = create_new_file();
 
-                if (Directory.Exists(System.IO.Path.GetDirectoryName(_filename)))
+                if (Directory.Exists(System.IO.Path.GetDirectoryName(Filename)))
                 {
-                    File.Create(_filename).Close();
+                    File.Create(Filename).Close();
                 }
                 else
                 {
@@ -139,7 +147,7 @@ namespace AMFramework.Components.ScriptingEditor
             {
                 try
                 {
-                    StreamWriter sw = new(_filename);
+                    StreamWriter sw = new(Filename);
                     sw.Write(scintilla.Text);
                     sw.Close();
                     ChangesMade = false;
@@ -326,6 +334,21 @@ namespace AMFramework.Components.ScriptingEditor
                 return before_closing(_scriptingEditor.Scripting);
             }
             else { return false; }
+        }
+        #endregion
+
+        #region INotifyPropertyChanged_Interface
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // This method is called by the Set accessor of each property.
+        // The CallerMemberName attribute that is applied to the optional propertyName
+        // parameter causes the property name of the caller to be substituted as an argument.
+        private void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
         #endregion
     }

@@ -30,7 +30,7 @@
                     <MouseBinding MouseAction="LeftClick" 
                                   Command="{Binding DataContext_Config.Search_API_Path}"/>
                 </Border.InputBindings>
-                
+
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="20"/>
@@ -48,9 +48,9 @@
                                                  SecondImage="Solid_FileCircleXmark"
                                                  SecondColor="Red"
                                                  UseFirst="{Binding DataContext_Config.APILoaded, UpdateSourceTrigger=PropertyChanged}"/>
-                        </i:Interaction.Behaviors>    
+                        </i:Interaction.Behaviors>
                     </fa:SvgAwesome>
-                    
+
                     <Image Width="50" Grid.Column="1"/>
                     <TextBlock Text="{Binding DataContext_Config.datamodel.API_path, Converter={StaticResource FilePathToName}}" VerticalAlignment="Center"
                                FontFamily="Segoe UI" TextTrimming="WordEllipsis" 
@@ -70,7 +70,7 @@
                         <ColumnDefinition Width="20"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    
+
                     <fa:SvgAwesome d:Icon="Regular_FolderOpen" Height="15"
                                    d:PrimaryColor="Red" Margin="3"
                                        Grid.Column="0">
@@ -84,7 +84,7 @@
                                                                     Converter={StaticResource DirectoryToBoolean}}"/>
                         </i:Interaction.Behaviors>
                     </fa:SvgAwesome>
-                    
+
                     <Image Width="50" Grid.Column="1"/>
                     <TextBlock Text="{Binding DataContext_Config.datamodel.External_API_path, Converter={StaticResource FilePathToName}}" 
                                VerticalAlignment="Center"
@@ -139,7 +139,7 @@
 
                 <StackPanel Margin="2" 
                             IsEnabled="{Binding DataContext_Config.APILoaded, UpdateSourceTrigger=PropertyChanged}">
-                    
+
                     <Border Style="{StaticResource BorderFlatButton}">
                         <Border.InputBindings>
                             <MouseBinding MouseAction="LeftClick" Command="{Binding ProjectController.OpenProjectListCommand}"/>
@@ -364,6 +364,10 @@
 
                 <StackPanel Margin="2" Grid.Column="1" IsEnabled="{Binding DataContext_Config.APILoaded}">
                     <Border Style="{StaticResource BorderFlatButton}">
+                        <Border.InputBindings>
+                            <MouseBinding MouseAction="LeftClick" 
+                                          Command="{Binding DataContext_Scripting.ShowActiveScriptsCommand}"/>
+                        </Border.InputBindings>
                         <Grid x:Name="RunButton">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="17"/>
@@ -423,10 +427,48 @@
 
                     </Border>
                 </StackPanel>
-                <Popup IsOpen="False" StaysOpen="False" PlacementTarget="{Binding ElementName=RunButton}" Placement="Mouse">
-                    <StackPanel>
-                        <Border Height="10" Width="100" Background="Black"/>
-                    </StackPanel>
+                <Popup IsOpen="{Binding DataContext_Scripting.ShowActiveScriptsList, Mode=TwoWay}" 
+                       StaysOpen="True" 
+                       PlacementTarget="{Binding ElementName=RunButton}" 
+                       Placement="Bottom"
+                       AllowsTransparency="True"
+                       MouseLeave="Popup_MouseLeave">
+                    <Border Background="WhiteSmoke" 
+                            CornerRadius="5"
+                            BorderThickness="0.1"
+                            BorderBrush="Black"
+                            Margin="10">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="1" BlurRadius="10" />
+                        </Border.Effect>
+                        <ItemsControl ItemsSource="{Binding DataContext_Scripting.OpenScripts}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource BorderFlatButton}">
+                                        <Border.InputBindings>
+                                            <MouseBinding  MouseAction="LeftClick" Command="{Binding RunScriptCommand}"/>
+                                        </Border.InputBindings>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="25"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <fa:SvgAwesome Grid.Column="0"
+                                                       Icon="Solid_CirclePlay" 
+                                                       PrimaryColor="DodgerBlue"
+                                                       Margin="5"/>
+
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="{Binding Filename}" 
+                                                       VerticalAlignment="Center"
+                                                       Margin="5"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
                 </Popup>
 
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="2" 
