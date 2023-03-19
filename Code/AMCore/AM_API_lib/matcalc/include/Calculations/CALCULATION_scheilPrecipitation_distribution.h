@@ -3,8 +3,8 @@
 #include <filesystem>
 #include "CALCULATIONS_decorator.h"
 #include "CALCULATION_scheil.h"
-#include "../../../interfaces/IAM_DBS.h"
-#include "../../../include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+#include "../../../../AMLib/interfaces/IAM_DBS.h"
+#include "../../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
 
 namespace matcalc
 {

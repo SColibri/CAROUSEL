@@ -1,4 +1,5 @@
-﻿using AMFramework_Lib.Core;
+﻿using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,7 +7,8 @@ using System.Linq;
 
 namespace AMFramework.Controller
 {
-    public class Controller_AMCore : INotifyPropertyChanged
+    [Obsolete("Instead of using Controller AMCore, we now use callback controller and controller_global")]
+    public class Controller_AMCore :ControllerAbstract
     {
 
         private IAMCore_Comm _AMCore_comm;
@@ -14,16 +16,6 @@ namespace AMFramework.Controller
         {
             _AMCore_comm = socket;
         }
-
-
-        #region Interfaces
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
 
         #region Model
         private String _coreOutput = "Welcome!";

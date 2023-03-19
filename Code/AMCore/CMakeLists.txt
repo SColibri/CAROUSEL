@@ -22,7 +22,7 @@ endif()
 
 
 # Include sub-projects.
-add_subdirectory ("AMCore")
+# add_subdirectory ("AMCore")
 add_subdirectory ("AMLib")
 add_subdirectory ("AM_API_lib")
 

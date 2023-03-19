@@ -1,6 +1,7 @@
 #include "../../include/Database_implementations/Database_Sqlite3.h"
 #include <sstream>
 #include "../../include/Database_implementations/Database_Factory.h"
+#include "../../include/callbackFunctions/ErrorCallback.h"
 
 
 Database_Sqlite3::~Database_Sqlite3() {
@@ -185,7 +186,12 @@ int Database_Sqlite3::remove_row(const AM_Database_TableStruct* tableName, std::
 
 int Database_Sqlite3::insert_row(const AM_Database_TableStruct* tableName, std::vector<std::string>& newData)
 {
+	// Execute insert query
 	int result = sqlite3_exec(db, get_insert_query(tableName, newData).c_str(), NULL, NULL, &_errorMessage);
+	
+	// Error callback if retuned 1
+	if (result == 1) AMFramework::Callback::ErrorCallback::TriggerCallback(&_errorMessage[0]);
+
 	return result;
 }
 

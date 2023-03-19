@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using AMFramework.Controller;
+using System.Windows.Controls;
 
 namespace AMFramework.Components.LogDisplay
 {
@@ -10,6 +11,15 @@ namespace AMFramework.Components.LogDisplay
         public MessageLogControl()
         {
             InitializeComponent();
+        }
+
+		private void MenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+            if (DataContext is ControllerCallbacks controller) 
+            { 
+                controller.SelectAllMessages();
+                InvalidateVisual();
+            }
         }
     }
 }

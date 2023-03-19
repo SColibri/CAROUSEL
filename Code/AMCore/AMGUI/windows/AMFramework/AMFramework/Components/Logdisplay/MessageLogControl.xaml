@@ -17,18 +17,18 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/AMControls;component/Styles/DummyData.xaml" />
-                
+
             </ResourceDictionary.MergedDictionaries>
             <cn:ConverterCallbackImage x:Key="callbacckConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
-    
+
     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        
+
         <!-- Tools -->
         <Grid Grid.Row="0" Height="25">
             <Grid.ColumnDefinitions>
@@ -58,7 +58,7 @@
                     </TextBox.Resources>
                 </TextBox>
             </Grid>
-            
+
             <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,5,0">
                 <Border Width="25" Margin="2" BorderThickness="0,0,0.5,0" BorderBrush="CornflowerBlue" 
                         Background="Transparent">
@@ -67,7 +67,11 @@
                 <Border Width="25" Margin="2" BorderThickness="0,0,0.5,0" BorderBrush="CornflowerBlue">
                     <a:ImageAwesome Icon="FileArchiveOutline" Foreground="CornflowerBlue" Margin="2" />
                 </Border>
-                <Border Width="25" Margin="2" BorderThickness="0,0,0.5,0" BorderBrush="CornflowerBlue">
+                <Border Width="25" Margin="2" 
+                        BorderThickness="0,0,0.5,0" 
+                        BorderBrush="CornflowerBlue" 
+                        Background="Transparent"
+                        Style="{StaticResource BorderFlatButton}">
                     <i:Interaction.Behaviors>
                         <b:LeftClickCommandBehavior Command="{Binding RemoveMessages}"/>
                     </i:Interaction.Behaviors>
@@ -76,13 +80,13 @@
 
             </StackPanel>
         </Grid>
-        
+
         <!-- Items -->
         <Border BorderThickness="1" BorderBrush="Silver" Grid.Row="1" Margin="20,5,5,5"/>
-        
+
         <!-- Context menu -->
-        
-        
+
+
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" 
                       Background="White"
                       Margin="25,10,10,10">
@@ -136,6 +140,13 @@
                                                 <a:ImageAwesome Icon="Remove" Foreground="Crimson"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
+
+                                        <MenuItem Header="Select all" Click="MenuItem_Click" >
+                                            <MenuItem.Icon>
+                                                <a:ImageAwesome Icon="CheckCircle" 
+                                                                Foreground="Green"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
                                     </ContextMenu>
                                 </Border.ContextMenu>
                             </Border>
@@ -143,9 +154,9 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            
+
         </ScrollViewer>
-        
+
     </Grid>
 </UserControl>
 

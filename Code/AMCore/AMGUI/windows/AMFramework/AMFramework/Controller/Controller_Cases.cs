@@ -11,10 +11,30 @@ using System.Windows.Input;
 
 namespace AMFramework.Controller
 {
+    /// <summary>
+    /// Controller for the cases data model
+    /// </summary>
     public class Controller_Cases : ControllerAbstract
     {
         #region Fields
         private Controller_Project _projectController;
+        private bool _show_popup = false;
+
+        private object? _phaseList = null;
+
+        private object? _solidificationConfiguration = null;
+
+        private object? _heatTreatmentView = null;
+
+        private List<ModelController<Model_Case>> _cases = new();
+
+        private ModelController<Model_Case> _selectedCase;
+        private ICommand _run_equilibrium;
+        private ICommand _run_scheil;
+        private ICommand _saveCommand;
+        private ICommand _showPhaseList;
+        private ICommand _changePhaseSelection;
+
 
         #endregion
         #region Cons_Des
@@ -46,7 +66,6 @@ namespace AMFramework.Controller
         #region views
 
         #region Popup
-        private bool _show_popup = false;
         public bool ShowPopup
         {
             get { return _show_popup; }
@@ -73,7 +92,6 @@ namespace AMFramework.Controller
         #endregion
 
         #region PhaseList
-        private object? _phaseList = null;
         /// <summary>
         /// phaseList view, consider not using object?
         /// </summary>
@@ -90,7 +108,6 @@ namespace AMFramework.Controller
         #endregion
 
         #region Solidification simulation
-        private object? _solidificationConfiguration = null;
         /// <summary>
         /// Solidification configuration view container
         /// </summary>
@@ -106,7 +123,6 @@ namespace AMFramework.Controller
         #endregion
 
         #region HeatTreatment
-        private object? _heatTreatmentView = null;
         /// <summary>
         /// Heat treatment view container
         /// </summary>
@@ -124,8 +140,6 @@ namespace AMFramework.Controller
         #endregion
 
         #region Properties
-        #region CaseList
-        private List<ModelController<Model_Case>> _cases = new();
         /// <summary>
         /// get/set list of cases available
         /// </summary>
@@ -141,9 +155,8 @@ namespace AMFramework.Controller
                 OnPropertyChanged(nameof(Cases));
             }
         }
-        #endregion
+
         #region SelectedCase
-        private ModelController<Model_Case> _selectedCase;
         /// <summary>
         /// get/set Selected case
         /// </summary>
@@ -190,7 +203,6 @@ namespace AMFramework.Controller
         #region Commands
         #region run_equilibrium
 
-        private ICommand _run_equilibrium;
         /// <summary>
         /// Run Equilibrium solidification simulation
         /// </summary>
@@ -209,16 +221,15 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Run equilibrium simulation for this case
+        /// </summary>
         private void Run_equilibrium_controll()
         {
             int IDProject = SelectedCase.ModelObject.IDProject;
             int IDCase = SelectedCase.ModelObject.ID;
 
-            if (ControllerM_EquilibriumConfiguration.Run_EquilibriumSimulation(_comm, IDProject, IDCase, IDCase))
-            {
-
-            }
-            else
+            if (!ControllerM_EquilibriumConfiguration.Run_EquilibriumSimulation(_comm, IDProject, IDCase, IDCase))
             {
 
             }
@@ -233,7 +244,6 @@ namespace AMFramework.Controller
 
         #region run_scheil
 
-        private ICommand _run_scheil;
 
         /// <summary>
         /// Run scheil solidification simulation
@@ -253,6 +263,9 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Run scheil simulation
+        /// </summary>
         private void Run_scheil_controll()
         {
             int IDProject = SelectedCase.ModelObject.IDProject;
@@ -276,7 +289,6 @@ namespace AMFramework.Controller
 
         #region Save
 
-        private ICommand _saveCommand;
         /// <summary>
         /// Saves case object
         /// </summary>
@@ -308,7 +320,6 @@ namespace AMFramework.Controller
 
         #region ShowPhaseList
 
-        private ICommand _showPhaseList;
         /// <summary>
         /// Show phase list in popup window
         /// </summary>
@@ -345,7 +356,6 @@ namespace AMFramework.Controller
 
         #region ShowPhaseList
 
-        private ICommand _changePhaseSelection;
         public ICommand ChangePhaseSelection
         {
             get

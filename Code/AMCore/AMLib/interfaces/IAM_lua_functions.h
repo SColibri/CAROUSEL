@@ -386,7 +386,9 @@ protected:
 		//-------- SYSTEM
 		add_new_function(state, "core_cancel_operation", "void", "core_cancel_operation", Bind_CancelCalculations, "CoreMethods||CancelOperation");
 		add_new_function(state, "core_buffer", "string", "core_buffer", Bind_GetBUFFER, "CoreMethods||GetBuffer");
+		add_new_function(state, "message_callback", "void", "message_callback <string>", Bind_MessageCallback, "CoreMethods||MessageCallback");
 
+		//  Bind_MessageCallback
 		
 	}
 
@@ -1696,8 +1698,8 @@ protected:
 		DT.load_data("IDCase = " + parameters[0]);
 		if (DT.row_count() == 0)
 		{
-			lua_pushstring(state, "Error: no data was found");
-			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
+			lua_pushstring(state, "Error: Case data was not found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: Case data was not found");
 			return 1;
 		}
 
@@ -1722,8 +1724,8 @@ protected:
 		DT.load_data("IDCase = " + parameters[0]);
 		if (DT.row_count() == 0)
 		{
-			lua_pushstring(state, "Error: no data was found");
-			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
+			lua_pushstring(state, "Error: PrecipitationDomain data was not found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: PrecipitationDomain data was not found");
 			return 1;
 		}
 
@@ -1748,8 +1750,8 @@ protected:
 		DT.load_data("IDHeatTreatment = " + parameters[0]);
 		if (DT.row_count() == 0)
 		{
-			lua_pushstring(state, "Error: no data was found");
-			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
+			lua_pushstring(state, "Error: PrecipitationSimulationData data was not found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: PrecipitationSimulationData data was not found");
 			return 1;
 		}
 
@@ -1763,7 +1765,7 @@ protected:
 #pragma region Equilibrium
 #pragma region Save
 	/// <summary>
-	/// Save precipitatio Domain item using csv as input
+	/// Save precipitation Domain item using csv as input
 	/// </summary>
 	/// <param name="state"></param>
 	/// <returns></returns>
@@ -1781,7 +1783,7 @@ protected:
 #pragma endregion
 #pragma region Delete
 	/// <summary>
-	/// Remove Precipitatio Domain entry
+	/// Remove Precipitation Domain entry
 	/// </summary>
 	/// <param name="state"></param>
 	/// <returns></returns>
@@ -1816,8 +1818,8 @@ protected:
 		DT.load_data("IDCase = " + parameters[0]);
 		if (DT.row_count() == 0)
 		{
-			lua_pushstring(state, "Error: no data was found");
-			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
+			lua_pushstring(state, "Error: EquilibriumConfiguration data was not found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: EquilibriumConfiguration data was not found");
 			return 1;
 		}
 		// send csv
@@ -1903,8 +1905,8 @@ protected:
 		DT.load_data("IDCase = " + parameters[0]);
 		if(DT.row_count() == 0)
 		{
-			lua_pushstring(state,"Error: no data was found");
-			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
+			lua_pushstring(state,"Error: ScheilConfiguration data was not found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: ScheilConfiguration data was not found");
 			return 1;
 		}
 
@@ -1936,7 +1938,7 @@ protected:
 #pragma endregion
 #pragma region Delete
 	/// <summary>
-	/// Remove Precipitatio Domain entry
+	/// Remove Precipitation Domain entry
 	/// </summary>
 	/// <param name="state"></param>
 	/// <returns></returns>
@@ -3370,6 +3372,21 @@ protected:
 	{
 		_cancelCalculations = true;
 		lua_pushstring(state, "Cancelling");
+		return 1;
+	}
+
+	/// <summary>
+	/// Message Callback, 
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_MessageCallback(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters = get_parameters(state);
+		if (parameters.size() == 0) return 0;
+
+		AMFramework::Callback::MessageCallBack::TriggerCallback(&IAM_Database::csv_join_row(parameters, " ")[0]);
 		return 1;
 	}
 

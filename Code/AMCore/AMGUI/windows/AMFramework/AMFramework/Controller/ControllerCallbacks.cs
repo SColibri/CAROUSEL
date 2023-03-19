@@ -30,7 +30,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Max number of messages to be stored in memory
         /// </summary>
-        private int _maxMessages = 50;
+        private int _maxMessages = 30;
 
         /// <summary>
         /// Amount of logs to be saved and discarded from memory
@@ -279,6 +279,13 @@ namespace AMFramework.Controller
 
         }
 
+        /// <summary>
+        /// Set all messages as selected
+        /// </summary>
+        public void SelectAllMessages() 
+        {
+            MessageLog.ForEach(e => e.IsSelected = true);
+		}
         #endregion
 
         #region Handles

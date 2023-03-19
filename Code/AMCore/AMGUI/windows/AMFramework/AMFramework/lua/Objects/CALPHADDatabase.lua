@@ -23,7 +23,7 @@ function CALPHADDatabase:new (o,ID,IDProject,ThermodynamicDatabase,MobilityDatab
 end
 
 -- load
-function CALPHADDatabase:load () --@Description Loads data based on the ID or projectID, if the ID is -1 it will return an empty object
+function CALPHADDatabase:load() --@Description Loads data based on the ID or projectID, if the ID is -1 it will return an empty object
    local sqlData = {}
 
    if self.ID > -1 then
@@ -37,7 +37,6 @@ end
 
 -- save
 function CALPHADDatabase:save() --@Description Saves an object into the database, if ID = -1 it creates a new entry. Returns -1 if failed to save
-    self.Name = string.upper(self.Name)
     local saveString = join(self, ",")
     self.ID = tonumber(calphad_database_save(saveString)) or -1
 end

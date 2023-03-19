@@ -8009,6 +8009,9 @@
     <None Update="lua\Objects\AM_StringManipulators.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="lua\Objects\CALPHADDatabase.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="lua\Objects\Case.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

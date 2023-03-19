@@ -283,19 +283,20 @@ namespace AMFramework.Components.ScriptingEditor
         private void RunScriptCommand_Action()
         {
             // Save file before execute
-            Save();
+            if (Save()) 
+            {
+				// Notify user working on command
+				Controller_Global.MainControl?.Show_loading(true);
+				Controller_Global.MainControl?.Set_Core_Output("Running script");
 
-            // Notify user working on command
-            Controller_Global.MainControl?.Show_loading(true);
-            Controller_Global.MainControl?.Set_Core_Output("Running script");
+				// create thread and execute in background
+				System.Threading.Thread TH01 = new(Run_script_async);
+				TH01.Start();
 
-            // create thread and execute in background
-            System.Threading.Thread TH01 = new(Run_script_async);
-            TH01.Start();
-
-            // TODO: get progress info from core and update to user
-            // Core should implement a char buffer[500] or similar 
-        }
+				// TODO: get progress info from core and update to user
+				// Core should implement a char buffer[500] or similar 
+			}
+		}
 
         private bool RunScriptCommand_Check()
         {

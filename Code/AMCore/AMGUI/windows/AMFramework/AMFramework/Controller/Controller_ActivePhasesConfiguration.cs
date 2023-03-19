@@ -6,8 +6,27 @@ using System.Windows.Input;
 
 namespace AMFramework.Controller
 {
+    /// <summary>
+    /// Active phases configuration data controller
+    /// </summary>
     public class Controller_ActivePhasesConfiguration : ControllerAbstract
     {
+        #region Field
+        /// <summary>
+        /// Configuration for active phases
+        /// </summary>
+        private ModelController<Model_ActivePhasesConfiguration>? _activePhasesConfiguration;
+
+        /// <summary>
+        /// Flag, returns true if active phases are being searched
+        /// </summary>
+        private bool _Searching_Active_Phases = false;
+
+
+        private ICommand _Find_Active_Phases;
+
+        #endregion
+        
         #region Constructor
 
         public Controller_ActivePhasesConfiguration(ref IAMCore_Comm comm, int IDProject) : base(comm)
@@ -29,7 +48,6 @@ namespace AMFramework.Controller
 
         #region Properties
 
-        private ModelController<Model_ActivePhasesConfiguration>? _activePhasesConfiguration;
         /// <summary>
         /// get/set Configuration for obtaining the active phases
         /// </summary>
@@ -43,7 +61,6 @@ namespace AMFramework.Controller
             }
         }
 
-        private bool _Searching_Active_Phases = false;
         /// <summary>
         /// get/set flag for reporting working status
         /// </summary>
@@ -66,8 +83,9 @@ namespace AMFramework.Controller
 
         #region Commands
         #region FindActivePhases
-
-        private ICommand _Find_Active_Phases;
+        /// <summary>
+        /// Finds active phases using its current configuration
+        /// </summary>
         public ICommand Find_Active_Phases
         {
             get
@@ -83,6 +101,9 @@ namespace AMFramework.Controller
             }
         }
 
+        /// <summary>
+        /// Action to execute for finding the active phases
+        /// </summary>
         private void Find_Active_Phases_Action()
         {
             if (Searching_Active_Phases) return;
@@ -95,6 +116,10 @@ namespace AMFramework.Controller
             TH01.Start();
         }
 
+        /// <summary>
+        /// Check if finding phases is allowed
+        /// </summary>
+        /// <returns></returns>
         private bool Can_Find_Active_Phases()
         {
             return true;
@@ -104,20 +129,14 @@ namespace AMFramework.Controller
 
         #region Methods
         /// <summary>
-        /// Find active phases handle
+        /// Find active phases handle Async
         /// </summary>
         private void Method_Find_Active_Phases()
         {
             if (_activePhasesConfiguration == null) return;
-            string outy = _comm.run_lua_command("get_active_phases", _activePhasesConfiguration.ModelObject.IDProject.ToString());
+            string outy = Controller_Global.ApiHandle.run_lua_command("get_active_phases", _activePhasesConfiguration.ModelObject.IDProject.ToString());
             Controller_Global.MainControl?.Set_Core_Output(outy);
             Searching_Active_Phases = false;
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Controller_Global.MainControl?.Show_loading(false);
-            });
-
         }
         #endregion
 

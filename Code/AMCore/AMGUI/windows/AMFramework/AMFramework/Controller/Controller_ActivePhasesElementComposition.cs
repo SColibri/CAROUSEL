@@ -6,9 +6,25 @@ using System.Collections.Generic;
 
 namespace AMFramework.Controller
 {
+    /// <summary>
+    /// Active phases, element composition configuration controller
+    /// </summary>
     public class Controller_ActivePhasesElementComposition : ControllerAbstract
     {
-        #region Socket
+        #region Field
+        /// <summary>
+        /// Composition list
+        /// </summary>
+        private List<ModelController<Model_ActivePhasesElementComposition>> _composition = new();
+
+        #endregion
+        
+        #region Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="comm"></param>
+        /// <param name="projectController"></param>
         public Controller_ActivePhasesElementComposition(ref IAMCore_Comm comm, Controller_Project projectController) : base(comm)
         {
             if (projectController.SelectedProject != null)
@@ -17,14 +33,16 @@ namespace AMFramework.Controller
         #endregion
 
         #region Composition
-        private List<ModelController<Model_ActivePhasesElementComposition>> _composition = new();
+        /// <summary>
+        /// Composition list
+        /// </summary>
         public List<ModelController<Model_ActivePhasesElementComposition>> Composition
         {
-            get { return _composition; }
+            get => _composition;
             set
             {
                 _composition = value;
-                OnPropertyChanged(nameof(Composition));
+                OnPropertyChanged();
             }
         }
 

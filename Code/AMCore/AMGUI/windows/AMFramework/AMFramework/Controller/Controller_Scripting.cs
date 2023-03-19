@@ -89,7 +89,7 @@ namespace AMFramework.Controller
             System.Windows.Forms.OpenFileDialog ofd = new()
             {
                 Filter = " lua script | *.lua",
-                InitialDirectory = Controller_Global.Configuration?.Working_Directory,
+                InitialDirectory = $"{Controller_Global.Configuration?.Working_Directory}\\Scripts",
                 Multiselect = false
             };
 

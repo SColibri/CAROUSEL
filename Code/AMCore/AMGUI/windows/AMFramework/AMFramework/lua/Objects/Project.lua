@@ -17,8 +17,8 @@ function Project:new (o,ID,Name,API,ExternalAPI,selectedElements,cases) --@Descr
 
    --Active Phases
    o.ActivePhases = {} --@TYPE ActivePhases
-   o.ActivePhasesConfig = {}
-   o.ActivePhasesElementComposition = ActivePhasesConfig:new{IDProject = self.ID}
+   o.ActivePhasesConfig = ActivePhasesConfig:new{IDProject = self.ID}
+   o.ActivePhasesElementComposition = {}
    o.Databases = CALPHADDatabase:new{IDProject = self.ID}
 
    if o.ID > -1 or o.Name ~= "Empty project" then
@@ -30,7 +30,7 @@ end
 
 -- Load
 function Project:load ()
-   
+  
    local sqlData_project
    if self.ID > -1 then
     sqlData_project = split(project_loadID(self.ID),",")
@@ -68,10 +68,12 @@ function Project:load ()
         load_table_data(self.ActivePhases, ActivePhases, sqlDataRow_AP)
         load_table_data(self.ActivePhasesElementComposition, ActivePhasesElementComposition, sqlDataRow_APEC)
 
+        message_callback("Project with ID:"..self.ID.." was successfully loaded");
     else
         if string.len(tempName) > 0 then
          self.Name = tempName
-         self.ID = project_new(self.Name)
+         self:save()
+         message_callback("Project with Name:"..self.Name.." was created with ID "..self.ID);
         end
     end
 
@@ -95,6 +97,10 @@ function Project:save()
 
         self.Databases.IDProject = self.ID
         self.Databases:save()
+
+        message_callback("Project with Name:"..self.Name.." was successfully saved "..saveOut);
+    else
+        message_callback("Project with Name \""..self.Name.."\" was not saved, output: "..saveOut);
     end
 end
 

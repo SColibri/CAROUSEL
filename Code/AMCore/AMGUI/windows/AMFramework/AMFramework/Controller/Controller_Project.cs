@@ -744,8 +744,8 @@ namespace AMFramework.Controller
             // Save project data
             SelectedProject.MCObject.SaveAction?.DoAction();
 
-            // Save Active phases. We do not add the activephases since this is a calculated value
-            SelectedProject.MCObject.ModelObject?.ActivePhasesConfiguration?.SaveAction?.DoAction();
+			// Save Active phases. We do not add the activephases since this is a calculated value
+			SelectedProject.MCObject.ModelObject?.ActivePhasesConfiguration?.SaveAction?.DoAction();
             foreach (var item in SelectedProject.MCObject.ModelObject.ActivePhasesElementComposition)
             {
                 item.SaveAction?.DoAction();
@@ -796,8 +796,15 @@ namespace AMFramework.Controller
         {
             if (SelectedProject == null) return;
 
-            // Save all compositions
-            SelectedProject.MCObject.ModelObject.ActivePhasesElementComposition.ForEach(e => e.SaveAction?.DoAction());
+            SaveProject_Action();
+			// Save project before running
+			SelectedProject.MCObject.SaveAction?.DoAction();
+
+            // Save database
+            SelectedProject.MCObject.ModelObject.Databases.SaveAction?.DoAction();
+
+			// Save all compositions
+			SelectedProject.MCObject.ModelObject.ActivePhasesElementComposition.ForEach(e => e.SaveAction?.DoAction());
             SelectedProject.MCObject.ModelObject.ActivePhasesConfiguration?.SaveAction?.DoAction();
 
             var refAP = SelectedProject.MCObject.ModelObject.ActivePhasesConfiguration;
