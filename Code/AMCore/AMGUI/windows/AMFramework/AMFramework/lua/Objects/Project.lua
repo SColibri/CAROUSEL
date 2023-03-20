@@ -38,11 +38,12 @@ function Project:load ()
     sqlData_project = split(project_load_data(self.Name),",")
    end
 
-   local tempName = self.Name
-   load_data(self, sqlData_project)
+   local tempName = Project:new{}
+   load_data(tempName, sqlData_project)
    
     -- Load Project data
-    if self.ID > -1 then
+    if tempName.ID > -1 then
+        load_data(self, sqlData_project)
 
         -- Load calphad Database
         self.Databases = CALPHADDatabase:new{IDProject = self.ID}
@@ -70,8 +71,7 @@ function Project:load ()
 
         message_callback("Project with ID:"..self.ID.." was successfully loaded");
     else
-        if string.len(tempName) > 0 then
-         self.Name = tempName
+        if string.len(self.Name) > 0 then
          self:save()
          message_callback("Project with Name:"..self.Name.." was created with ID "..self.ID);
         end
@@ -98,7 +98,7 @@ function Project:save()
         self.Databases.IDProject = self.ID
         self.Databases:save()
 
-        message_callback("Project with Name:"..self.Name.." was successfully saved "..saveOut);
+        message_callback("Project with Name:"..self.Name.." was successfully saved "..saveOut.." with csv string:"..saveString);
     else
         message_callback("Project with Name \""..self.Name.."\" was not saved, output: "..saveOut);
     end
