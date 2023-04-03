@@ -1,7 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <string>
 #include <vector>
-#include "../../../include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+#include "../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
 #include "../../../AMLib/include/AM_pixel_parameters.h"
 #include "../../../AMLib/include/AM_Database_Framework.h"
 #include "../../../AMLib/include/AM_Project.h"
