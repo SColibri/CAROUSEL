@@ -23,7 +23,7 @@ public:
 #pragma region virtual
 
 	/// <summary>
-	/// Constructs a vector that contains all varibles in an ordered fashion and
+	/// Constructs a vector that contains all variables in an ordered fashion and
 	/// as declared under the database_scheme_content.h 
 	/// </summary>
 	/// <returns></returns>
@@ -33,7 +33,7 @@ public:
 	}
 
 	/// <summary>
-	/// Returns a string for building the query sent to the load fundtion.
+	/// Returns a string for building the query sent to the load function.
 	/// here we only add the content for the WHERE clause. for example: "ID = 1"
 	/// Note: Do not add the WHERE, add only the statement that comes before that
 	/// like column names, limit or ordering schemes
@@ -45,7 +45,7 @@ public:
 	}
 
 	/// <summary>
-	/// Loads data and udpates all variable contents
+	/// Loads data and updates all variable contents
 	/// </summary>
 	/// <returns></returns>
 	virtual int load()

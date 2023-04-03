@@ -3,10 +3,71 @@ using System.ComponentModel;
 
 namespace AMFramework_Lib.Model
 {
+    /// <summary>
+    /// Model_Projects class that defines the structure of a project model object
+    /// </summary>
     public class Model_Projects : ModelAbstract
     {
+        #region Fields
+        /// <summary>
+        /// Databases used in this project
+        /// </summary>
+        private ModelController<Model_CALPHADDatabase>? _databases;
 
+        /// <summary>
+        /// Cases contained in this project
+        /// </summary>
+        private List<ModelController<Model_Case>> _cases = new();
+
+        /// <summary>
+        /// List of selected elements
+        /// </summary>
+        private List<ModelController<Model_SelectedElements>> _selectedElements = new();
+
+        /// <summary>
+        /// Active phase search configuration
+        /// </summary>
+        private ModelController<Model_ActivePhasesConfiguration>? _activePhasesConfiguration = null;
+
+        /// <summary>
+        /// Element composition to be used for active phase search
+        /// </summary>
+        private List<ModelController<Model_ActivePhasesElementComposition>> _activePhasesElementComposition = new();
+
+        /// <summary>
+        /// List of found active phases
+        /// </summary>
+        private List<ModelController<Model_ActivePhases>> _activePhases = new();
+
+        #endregion
+
+        #region Model Fields
+        /// <summary>
+        /// Get/set Identifier
+        /// </summary>
         private int _id = -1;
+
+        /// <summary>
+        /// Project name
+        /// </summary>
+        private string _name = string.Empty;
+
+        /// <summary>
+        /// API used for communication
+        /// </summary>
+        private string _apiName = "Not_set";
+
+        /// <summary>
+        /// External Software used
+        /// </summary>
+        private string _externalAPI_Name = "Not_set";
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Get/set Identifier
+        /// </summary>
         [Order]
         public int ID
         {
@@ -18,7 +79,9 @@ namespace AMFramework_Lib.Model
             }
         }
 
-        private string _name = "New Name";
+        /// <summary>
+        /// Get/set name
+        /// </summary>
         [Order]
         public string Name
         {
@@ -30,8 +93,9 @@ namespace AMFramework_Lib.Model
             }
         }
 
-
-        private string _apiName = "Not_set";
+        /// <summary>
+        /// API used for communication
+        /// </summary>
         [Order]
         public string APIName
         {
@@ -43,7 +107,9 @@ namespace AMFramework_Lib.Model
             }
         }
 
-        private string _externalAPI_Name = "Not_set";
+        /// <summary>
+        /// External Software used
+        /// </summary>
         [Order]
         public string ExternalAPI_Name
         {
@@ -54,15 +120,26 @@ namespace AMFramework_Lib.Model
                 OnPropertyChanged(nameof(ExternalAPI_Name));
             }
         }
+        #endregion
 
         #region Relational_properties
 
-        // --------------------------------------------------
-        //                   Case
-        // --------------------------------------------------
+        /// <summary>
+        /// Get/set Databases used in this project
+        /// </summary>
+        public ModelController<Model_CALPHADDatabase> Databases 
+        {
+            get => _databases;
+            set 
+            { 
+                _databases = value;
+                OnPropertyChanged(nameof(Databases));
+            }
+        }
 
-        // Selected elements
-        private List<ModelController<Model_Case>> _cases = new();
+        /// <summary>
+        /// Get/set Cases contained in this project
+        /// </summary>
         public List<ModelController<Model_Case>> Cases
         {
             get { return _cases; }
@@ -73,12 +150,9 @@ namespace AMFramework_Lib.Model
             }
         }
 
-        // --------------------------------------------------
-        //                   ELEMENTS
-        // --------------------------------------------------
-
-        // Selected elements
-        private List<ModelController<Model_SelectedElements>> _selectedElements = new();
+        /// <summary>
+        /// Get/set List of selected elements
+        /// </summary>
         public List<ModelController<Model_SelectedElements>> SelectedElements
         {
             get { return _selectedElements; }
@@ -89,12 +163,9 @@ namespace AMFramework_Lib.Model
             }
         }
 
-        // --------------------------------------------------
-        //                   ACTIVE PHASES
-        // --------------------------------------------------
-
-        // Configuration
-        private ModelController<Model_ActivePhasesConfiguration>? _activePhasesConfiguration = null;
+        /// <summary>
+        /// Get/set Active phase search configuration
+        /// </summary>
         public ModelController<Model_ActivePhasesConfiguration>? ActivePhasesConfiguration
         {
             get { return _activePhasesConfiguration; }
@@ -105,8 +176,9 @@ namespace AMFramework_Lib.Model
             }
         }
 
-        // Active Phases
-        private List<ModelController<Model_ActivePhases>> _activePhases = new();
+        /// <summary>
+        /// Get/set List of found active phases
+        /// </summary>
         public List<ModelController<Model_ActivePhases>> ActivePhases
         {
             get { return _activePhases; }
@@ -117,8 +189,9 @@ namespace AMFramework_Lib.Model
             }
         }
 
-        // Composition
-        private List<ModelController<Model_ActivePhasesElementComposition>> _activePhasesElementComposition = new();
+        /// <summary>
+        /// Get/set Element composition to be used for active phase search
+        /// </summary>
         public List<ModelController<Model_ActivePhasesElementComposition>> ActivePhasesElementComposition
         {
             get { return _activePhasesElementComposition; }

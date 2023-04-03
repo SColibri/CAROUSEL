@@ -10,19 +10,44 @@ namespace AMFramework.Controller
 {
     public class Controller_Scripting : ControllerAbstract
     {
+        #region Fields
+        private ObservableCollection<Scripting_ViewModel> _openScripts;
+        private ICommand? _newScriptCommand;
+        private ICommand? _saveScriptCommand;
+        private ICommand? _showActiveScriptsCommand;
+        private bool _showActiveScripts = false;
+        #endregion
 
+        #region Constructor
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public Controller_Scripting()
         {
             _openScripts = new();
         }
+        #endregion
+
 
         #region Properties
-        private ObservableCollection<Scripting_ViewModel> _openScripts;
+        
         /// <summary>
         /// Available scripts that are open
         /// </summary>
         public ObservableCollection<Scripting_ViewModel> OpenScripts { get { return _openScripts; } }
 
+        /// <summary>
+        /// Get set 
+        /// </summary>
+        public bool ShowActiveScriptsList
+        {
+            get => _showActiveScripts;
+            set 
+            { 
+                _showActiveScripts = value;
+                OnPropertyChanged(nameof(ShowActiveScriptsList));
+            }
+        }
 
         #endregion
 
@@ -64,7 +89,7 @@ namespace AMFramework.Controller
             System.Windows.Forms.OpenFileDialog ofd = new()
             {
                 Filter = " lua script | *.lua",
-                InitialDirectory = Controller_Global.Configuration?.Working_Directory,
+                InitialDirectory = $"{Controller_Global.Configuration?.Working_Directory}\\Scripts",
                 Multiselect = false
             };
 
@@ -93,7 +118,7 @@ namespace AMFramework.Controller
         #endregion
         #region NewScript
 
-        private ICommand? _newScriptCommand;
+        
         /// <summary>
         /// Command for opening a ne script file
         /// close command
@@ -122,8 +147,6 @@ namespace AMFramework.Controller
         }
         #endregion
         #region SaveScriptCommand
-
-        private ICommand? _saveScriptCommand;
         /// <summary>
         /// Command for opening a ne script file
         /// close command
@@ -161,6 +184,39 @@ namespace AMFramework.Controller
             return true;
         }
 
+        #endregion
+        #region NewScript
+
+
+        /// <summary>
+        /// Command for opening a ne script file
+        /// close command
+        /// </summary>
+        public ICommand? ShowActiveScriptsCommand
+        {
+            get
+            {
+                _showActiveScriptsCommand ??= new RelayCommand(param => ShowActiveScriptsAction(), param => ShowActiveScriptsCheck());
+                return _showActiveScriptsCommand;
+            }
+        }
+
+        /// <summary>
+        /// Enable/Disable showing active script list
+        /// </summary>
+        private void ShowActiveScriptsAction()
+        {
+            ShowActiveScriptsList = !_showActiveScripts;
+        }
+
+        /// <summary>
+        /// Check if showing active scripts is allowed
+        /// </summary>
+        /// <returns></returns>
+        private bool ShowActiveScriptsCheck()
+        {
+            return true;
+        }
         #endregion
         #endregion
 

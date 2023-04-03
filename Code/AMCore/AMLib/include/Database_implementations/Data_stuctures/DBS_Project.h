@@ -12,21 +12,40 @@
 class DBS_Project : public IAM_DBS
 {
 public:
+#pragma region Fields
+
+#pragma endregion
+
+#pragma region Properties
 	// [DBS_Parameter] Project Name
-	std::string Name{""};
+	std::string Name{ "" };
 	// [DBS_Parameter] Name API used by the framework to communicate with the external software (e.g. AM_API_matcalc)
-	std::string APIName{""};
+	std::string APIName{ "" };
 	// [DBS_Parameter] name of External software API (e.g. Matcalc )
 	std::string External_APIName{ "" };
+#pragma endregion
 
-	DBS_Project(IAM_Database* database, int id): 
+#pragma region Constructor
+	/// <summary>
+	/// Constructor
+	/// </summary>
+	/// <param name="database">IAM_Database object</param>
+	/// <param name="id">Identifier, use -1 if new</param>
+	DBS_Project(IAM_Database* database, int id) :
 		IAM_DBS(database)
 	{
 		_id = id;
 		_tableStructure = AMLIB::TN_Projects();
 	}
+#pragma endregion
 
-	int load_ByName(std::string name) 
+#pragma region Methods
+	/// <summary>
+	/// Loads project by name
+	/// </summary>
+	/// <param name="name"></param>
+	/// <returns>Returns 0 when successful</returns>
+	int load_ByName(std::string name)
 	{
 		AM_Database_Datatable tempData(_db, &_tableStructure);
 		tempData.load_data(_tableStructure.columnNames[1] + " = \'" + name + "\'");
@@ -38,6 +57,12 @@ public:
 		return 0;
 	}
 
+	/// <summary>
+	/// Removes project from database, including all relational data
+	/// </summary>
+	/// <param name="database">IAM_Database object</param>
+	/// <param name="projectID">Id</param>
+	/// <returns>Returns 0 when successful</returns>
 	static int remove_project_data(IAM_Database* database, int projectID)
 	{
 		// Remove active phases element composition
@@ -54,23 +79,24 @@ public:
 		AM_Database_Datatable caseList(database, &AMLIB::TN_Case());
 		caseList.load_data(queryCase);
 
-		for(int n1 = 0; n1 < caseList.row_count(); n1++)
+		for (int n1 = 0; n1 < caseList.row_count(); n1++)
 		{
-			DBS_Case::remove_case_data(database, std::stoi(caseList(0,n1)));
+			DBS_Case::remove_case_data(database, std::stoi(caseList(0, n1)));
 		}
 
 		// Remove selected elements
 		return database->remove_row(&AMLIB::TN_SelectedElements(), query);
 	}
+#pragma endregion
 
-#pragma region implementation
+#pragma region IAM_DBS implementation
 
 	virtual std::vector<std::string> get_input_vector() override
 	{
 		std::vector<std::string> input{ std::to_string(_id),
 										Name,
 										APIName,
-										External_APIName };
+										External_APIName,};
 		return input;
 	}
 
@@ -93,12 +119,10 @@ public:
 		Name = rawData[1];
 		APIName = rawData[2];
 		External_APIName = rawData[3];
-		
+
 		return 0;
 	}
 
 #pragma endregion
-
-private:
 
 };

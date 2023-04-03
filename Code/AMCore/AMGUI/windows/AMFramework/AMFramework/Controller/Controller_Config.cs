@@ -3,6 +3,7 @@ using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
 using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Windows.Input;
 
 namespace AMFramework.Controller
@@ -14,7 +15,7 @@ namespace AMFramework.Controller
     /// Note: The working directory is where the database will get created, thus modifying the working directory will
     /// also create a new working database. 
     /// </summary>
-    public class Controller_Config
+    public class Controller_Config : ControllerAbstract
     {
 
         #region Cons_Des
@@ -32,6 +33,7 @@ namespace AMFramework.Controller
         /// <param name="PathToLib">Path to library that implements the IAM_API interface</param>
         public Controller_Config(string PathToLib)
         {
+            datamodel.IsLoaded = false;
             try
             {
                 Controller_Global.ApiHandle = new AMCore_libHandle(PathToLib);
@@ -42,7 +44,6 @@ namespace AMFramework.Controller
                 Controller_Global.MainControl?.Show_Notification("Missing dll", "Please select a valid API library", 
                     (int)FontAwesome.WPF.FontAwesomeIcon.Warning, null, null, null);
             }
-            
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace AMFramework.Controller
         /// </summary>
         private void load_model_data()
         {
-            if (Controller_Global.ApiHandle == null) return;
+            if (!Controller_Global.ApiHandle.Connected) return;
             datamodel.API_path = Controller_Global.ApiHandle.run_lua_command("configuration_getAPI_path", "");
             datamodel.External_API_path = Controller_Global.ApiHandle.run_lua_command("configuration_getExternalAPI_path", "");
             datamodel.Working_Directory = Controller_Global.ApiHandle.run_lua_command("configuration_get_working_directory", "");
@@ -58,6 +59,7 @@ namespace AMFramework.Controller
             datamodel.Physical_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_physical_database_path", "");
             datamodel.Mobility_database_path = Controller_Global.ApiHandle.run_lua_command("configuration_get_mobility_database_path", "");
             datamodel.IsLoaded = true;
+            APILoaded = datamodel.IsLoaded;
             Callbacks.RegisterCallbacks();
         }
 
@@ -98,6 +100,17 @@ namespace AMFramework.Controller
 
         #region getters
         public static IAMCore_Comm ApiHandle { get { return Controller_Global.ApiHandle; } }
+
+        private bool _apiLoaded = false;
+        public bool APILoaded
+        {
+            get => _apiLoaded;
+            set
+            {
+                _apiLoaded = value;
+                OnPropertyChanged(nameof(APILoaded));
+            }
+        }
         #endregion
 
         #region Model
@@ -135,13 +148,17 @@ namespace AMFramework.Controller
                 Multiselect = false,
                 Filter = "AM_library|*.dll",
                 Title = "Select the AM_Framework API library",
-                CheckFileExists = true
+                CheckFileExists = true,
+                InitialDirectory = Path.GetDirectoryName(datamodel.API_path)
             };
 
             if (OFD.ShowDialog() == true)
             {
                 datamodel.IsLoaded = true;
                 datamodel.API_path = OFD.FileName;
+                APILoaded = datamodel.IsLoaded;
+
+                if (APILoaded) save_model_data();
             }
         }
 
@@ -174,13 +191,15 @@ namespace AMFramework.Controller
             System.Windows.Forms.FolderBrowserDialog OFD = new()
             {
                 Description = "external API directory",
-                UseDescriptionForTitle = true
+                UseDescriptionForTitle = true,
+                InitialDirectory = datamodel.External_API_path
             };
 
             if (OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 datamodel.IsLoaded = true;
                 datamodel.External_API_path = OFD.SelectedPath;
+                save_model_data();
             }
         }
 
@@ -201,7 +220,7 @@ namespace AMFramework.Controller
                 {
                     _Search_workingDirectory_Path = new RelayCommand(
                         param => this.Search_workingDirectory_path_controll(),
-                        param => this.Can_Change_externalAPI_path()
+                        param => this.Can_Change_workingDirectory_path()
                     );
                 }
                 return _Search_workingDirectory_Path;
@@ -213,12 +232,14 @@ namespace AMFramework.Controller
             System.Windows.Forms.FolderBrowserDialog OFD = new()
             {
                 Description = "working directory",
-                UseDescriptionForTitle = true
+                UseDescriptionForTitle = true,
+                InitialDirectory = datamodel.Working_Directory
             };
 
             if (OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 datamodel.Working_Directory = OFD.SelectedPath;
+                save_model_data();
             }
         }
 
@@ -333,7 +354,7 @@ namespace AMFramework.Controller
                 Multiselect = false,
                 Filter = "physical database|*.ddb",
                 Title = "Select a physical database",
-                CheckFileExists = true
+                CheckFileExists = true,
             };
 
             if (OFD.ShowDialog() == true)

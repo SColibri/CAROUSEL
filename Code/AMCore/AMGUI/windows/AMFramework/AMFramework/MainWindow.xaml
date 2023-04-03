@@ -12,6 +12,7 @@
         d:DataContext="{d:DesignInstance Type=controller:Controller_MainWindow}"
         xmlns:tvc ="clr-namespace:AMControls.Custom.ProjectTreeView;assembly=AMControls"
         xmlns:noty="clr-namespace:AMControls.WindowObjects.Notify;assembly=AMControls"
+        xmlns:menu="clr-namespace:AMFramework.Components.Menu"
         xmlns:tab="clr-namespace:AMFramework.Components.TabControl"
         xmlns:log="clr-namespace:AMFramework.Components.LogDisplay"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -25,6 +26,7 @@
             <RowDefinition Height="5"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+        
         <Grid.Resources>
             <LinearGradientBrush x:Key="Color_1" StartPoint="0,0" EndPoint="0,1">
                 <GradientStop Color="white" Offset="0.0"/>
@@ -39,7 +41,10 @@
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
         </Grid.Resources>
 
-        <Ribbon Name="MainMenu" SelectedIndex="0" Grid.Row="0" Panel.ZIndex="0">
+        <menu:MainMenu DataContext="{Binding}"
+                       Grid.Row="0"/>
+        
+        <Ribbon Name="MainMenu" SelectedIndex="0" Grid.Row="0" Panel.ZIndex="0" Visibility="Collapsed">
             <Ribbon.HelpPaneContent>
                 <RibbonButton Width="25" Height="25" />
             </Ribbon.HelpPaneContent>
@@ -179,7 +184,7 @@
             
         </Grid>
 
-        <Expander Grid.Row="3" Grid.ColumnSpan="3" Header="Output" VerticalAlignment="Top" IsExpanded="True" Background="GhostWhite">
+        <Expander Grid.Row="3" Grid.ColumnSpan="3" Header="Output" VerticalAlignment="Top" IsExpanded="False" Background="GhostWhite">
             <i:Interaction.Behaviors>
                 <be:AnimatedVerticalExpanderBehavior/>
             </i:Interaction.Behaviors>
@@ -189,7 +194,7 @@
         </Expander>
 
 
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="500"/>
                 <ColumnDefinition Width="1*"/>

@@ -2006,7 +2006,9 @@
     <PackageReference Include="Catel.MVVM" Version="5.12.22" />
     <PackageReference Include="fernandreu.ScintillaNET.WPF" Version="3.1.0" />
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
+    <PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
     <PackageReference Include="InteractiveDataDisplay.WPF" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="ScottPlot.WPF" Version="4.1.50" />
   </ItemGroup>
 
@@ -7957,6 +7959,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Components\ScriptingEditor\Templates\for.scriptTemplate">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -7997,6 +8007,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="lua\Objects\AM_StringManipulators.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua\Objects\CALPHADDatabase.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="lua\Objects\Case.lua">
@@ -8055,6 +8068,10 @@
     </None>
     <None Update="lua\Objects\SelectedPhase.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Update="Resources\Icons\Logo.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

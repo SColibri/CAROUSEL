@@ -11,5 +11,7 @@
         {
             throw new NotImplementedException();
         }
+
+        public bool Connected => false;
     }
 }

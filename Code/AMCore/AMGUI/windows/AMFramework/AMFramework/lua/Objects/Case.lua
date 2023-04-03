@@ -262,31 +262,43 @@ end
 -- Set composition
 function Case:set_composition(In) --@Description Set composition for all elements specified in project level. Note: do not use as a templated object, refer to wiki on how to use templated objects
     assert(self.IDProject > -1, "Case:set_composition Error, Case has no reference to a project, if you wanted to use this case as a templated object, specify the composition using find_composition_ByName(name).value")
-    local Etable = split(In," ")
-
-    if #self.elementComposition ~= #Etable then
-        self:clear_elementComposition()
-
-        if #self.elementComposition == 0 then 
-            error("Case:set_composition -> element input is of different size to element selection in the project level.")
+    
+    -- Receive input as table format
+    if type(In) == "table" then
+        for i,Item in pairs(In) do
+            assert(type(Item) ~= "string", "Composition value can't be a string value'")
+            self:set_composition_ByName(i,Item)
         end
-    end
+    else
+        -- String input
+        local Etable = split(In," ")
 
-    if #Etable > 0 then
-        for i,Item in ipairs(Etable) do
-            if tonumber(Item) ~= nil then
-                self.elementComposition[i].value = tonumber(Item)
-                self.elementComposition[i]:save()
-            else
-                local STable = split(Etable[i],"=")
-                if #STable > 1 then 
-                    local tempRef = self:find_composition_ByName(STable[1])
-                    tempRef.value = tonumber(STable[2])
-                    tempRef:save()
+        if #self.elementComposition ~= #Etable then
+            self:clear_elementComposition()
+
+            if #self.elementComposition == 0 then 
+                error("Case:set_composition -> element input is of different size to element selection in the project level.")
+            end
+        end
+
+        if #Etable > 0 then
+            for i,Item in ipairs(Etable) do
+                if tonumber(Item) ~= nil then
+                    self.elementComposition[i].value = tonumber(Item)
+                    self.elementComposition[i]:save()
+                else
+                    local STable = split(Etable[i],"=")
+                    if #STable > 1 then 
+                        local tempRef = self:find_composition_ByName(STable[1])
+                        tempRef.value = tonumber(STable[2])
+                        tempRef:save()
+                    end
                 end
             end
         end
     end
+
+    
 end
 
 -- Composition by name
@@ -298,6 +310,14 @@ function Case:find_composition_ByName(nameObj) --@Description Searches for the e
     end
 
     return nil
+end
+
+function Case:set_composition_ByName(nameObj, value) --@Description Searches for the element and returns an elementComposition object if found, if not, it returns a nil object
+    for i,Item in ipairs(self.elementComposition) do
+        if string.upper(self.elementComposition[i].element.Name) == string.upper(nameObj) then
+            self.elementComposition[i].value = value
+        end
+    end
 end
 
 -- Clear all element compositions

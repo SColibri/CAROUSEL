@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 #include "CALCULATIONS_abstract.h"
-#include "../../../interfaces/IAM_DBS.h"
-#include "../../../include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+#include "../../../../AMLib/interfaces/IAM_DBS.h"
+#include "../../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
 
 namespace matcalc
 {

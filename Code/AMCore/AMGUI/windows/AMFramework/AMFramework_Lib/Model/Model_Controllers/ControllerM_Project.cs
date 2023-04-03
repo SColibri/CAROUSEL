@@ -7,7 +7,9 @@ namespace AMFramework_Lib.Model.Model_Controllers
     {
         // Constructors
         public ControllerM_Project(IAMCore_Comm comm) : base(comm)
-        { }
+        {
+            
+        }
         public ControllerM_Project(IAMCore_Comm comm, ModelController<Model_Projects> modelMC) : base(comm, modelMC)
         { }
 
@@ -18,6 +20,15 @@ namespace AMFramework_Lib.Model.Model_Controllers
         public void Load_SelectedElements()
         {
             MCObject.ModelObject.SelectedElements = ControllerM_SelectedElements.Get_SelectedElements_FromIDProject(_comm, MCObject.ModelObject.ID);
+        }
+
+        /// <summary>
+        /// Loads the CALPHAD database paths
+        /// </summary>
+        public void Load_Databases() 
+        {
+            // Databases
+            MCObject.ModelObject.Databases = ControllerM_CALPHADDatabase.GetDatabaseFromProjectID(_comm, MCObject.ModelObject.ID);
         }
 
         /// <summary>

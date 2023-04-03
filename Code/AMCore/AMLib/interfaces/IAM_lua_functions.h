@@ -15,8 +15,6 @@
 #include "../include/callbackFunctions/ErrorCallback.h"
 #include "../include/callbackFunctions/Callbacks.h"
 
-
-
 #include "../external/lua542/include/lua.h"
 #include "../external/lua542/include/lua.hpp"
 #include "../external/lua542/include/lualib.h"
@@ -188,6 +186,14 @@ protected:
 		add_new_function(state, "project_loadID", "<String> OK", "project_loadID <string> csv format", Bind_Templated_loadID<DBS_Project>, "Model_Projects||LoadByID");
 		add_new_function(state, "project_load_data", "<String> OK", "project_load_data <string> csv format", Bind_Project_LoadData, "Model_Projects||LoadInCore");
 		add_new_function(state, "project_remove_dependentData", "<String> OK", "project_remove_dependentData <string> csv format", Bind_Project_Remove_projectData, "Model_Projects||RemoveDependentData");
+#pragma endregion
+
+		//###-> Selected Elements
+#pragma region CALPHADDatabase 
+		add_new_function(state, "calphad_database_save", "<string> OK", "calphad_database_save <INT> ID", Bind_Templated_Save<DBS_CALPHADDatabase>, "Model_CALPHADDatabase||Save");
+		add_new_function(state, "calphad_database_delete", "<string> OK", "calphad_database_delete <INT> ID", Bind_Templated_Delete<DBS_CALPHADDatabase>, "Model_CALPHADDatabase||Delete");
+		add_new_function(state, "calphad_database_loadID", "<string> OK", "calphad_database_loadID <String> csv", Bind_Templated_loadID<DBS_CALPHADDatabase>, "Model_CALPHADDatabase||LoadByID");
+		add_new_function(state, "calphad_database_load_IDProject", "<string> OK", "calphad_database_load_IDProject <String> csv", Bind_CALPHADDatabase_Load_ProjectID, "Model_CALPHADDatabase||LoadByIDProject");
 #pragma endregion
 
 		//###-> Active phases
@@ -380,7 +386,9 @@ protected:
 		//-------- SYSTEM
 		add_new_function(state, "core_cancel_operation", "void", "core_cancel_operation", Bind_CancelCalculations, "CoreMethods||CancelOperation");
 		add_new_function(state, "core_buffer", "string", "core_buffer", Bind_GetBUFFER, "CoreMethods||GetBuffer");
+		add_new_function(state, "message_callback", "void", "message_callback <string>", Bind_MessageCallback, "CoreMethods||MessageCallback");
 
+		//  Bind_MessageCallback
 		
 	}
 
@@ -859,7 +867,7 @@ protected:
 	{
 		int noParameters = lua_gettop(state);
 		std::string out = _configuration->get_ThermodynamicDatabase_path();
-
+		
 		lua_pushstring(state, out.c_str());
 		return 1;
 	}
@@ -1690,8 +1698,8 @@ protected:
 		DT.load_data("IDCase = " + parameters[0]);
 		if (DT.row_count() == 0)
 		{
-			lua_pushstring(state, "Error: no data was found");
-			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
+			lua_pushstring(state, "Error: Case data was not found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: Case data was not found");
 			return 1;
 		}
 
@@ -1716,8 +1724,8 @@ protected:
 		DT.load_data("IDCase = " + parameters[0]);
 		if (DT.row_count() == 0)
 		{
-			lua_pushstring(state, "Error: no data was found");
-			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
+			lua_pushstring(state, "Error: PrecipitationDomain data was not found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: PrecipitationDomain data was not found");
 			return 1;
 		}
 
@@ -1742,8 +1750,8 @@ protected:
 		DT.load_data("IDHeatTreatment = " + parameters[0]);
 		if (DT.row_count() == 0)
 		{
-			lua_pushstring(state, "Error: no data was found");
-			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
+			lua_pushstring(state, "Error: PrecipitationSimulationData data was not found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: PrecipitationSimulationData data was not found");
 			return 1;
 		}
 
@@ -1757,7 +1765,7 @@ protected:
 #pragma region Equilibrium
 #pragma region Save
 	/// <summary>
-	/// Save precipitatio Domain item using csv as input
+	/// Save precipitation Domain item using csv as input
 	/// </summary>
 	/// <param name="state"></param>
 	/// <returns></returns>
@@ -1775,7 +1783,7 @@ protected:
 #pragma endregion
 #pragma region Delete
 	/// <summary>
-	/// Remove Precipitatio Domain entry
+	/// Remove Precipitation Domain entry
 	/// </summary>
 	/// <param name="state"></param>
 	/// <returns></returns>
@@ -1810,8 +1818,8 @@ protected:
 		DT.load_data("IDCase = " + parameters[0]);
 		if (DT.row_count() == 0)
 		{
-			lua_pushstring(state, "Error: no data was found");
-			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
+			lua_pushstring(state, "Error: EquilibriumConfiguration data was not found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: EquilibriumConfiguration data was not found");
 			return 1;
 		}
 		// send csv
@@ -1897,8 +1905,8 @@ protected:
 		DT.load_data("IDCase = " + parameters[0]);
 		if(DT.row_count() == 0)
 		{
-			lua_pushstring(state,"Error: no data was found");
-			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: no data was found");
+			lua_pushstring(state,"Error: ScheilConfiguration data was not found");
+			AMFramework::Callback::ErrorCallback::TriggerCallback("Error: ScheilConfiguration data was not found");
 			return 1;
 		}
 
@@ -1930,7 +1938,7 @@ protected:
 #pragma endregion
 #pragma region Delete
 	/// <summary>
-	/// Remove Precipitatio Domain entry
+	/// Remove Precipitation Domain entry
 	/// </summary>
 	/// <param name="state"></param>
 	/// <returns></returns>
@@ -1995,6 +2003,29 @@ protected:
 	}
 #pragma endregion
 #pragma endregion
+
+#pragma region CALPHAD Database
+	/// <summary>
+	/// Load selected phase by CaseID
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns>csv format of data</returns>
+	static int Bind_CALPHADDatabase_Load_ProjectID(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters, csvF;
+		if (check_input_csv(state, parameters, csvF) == 1) return 1;
+
+		// get data
+		AM_Database_Datatable DT(_dbFramework->get_database(), &AMLIB::TN_CALPHADDatabase());
+		DT.load_data("IDProject = " + parameters[0]);
+
+		// send csv
+		lua_pushstring(state, DT.get_csv().c_str());
+		return 1;
+	}
+#pragma endregion
+
 
 #pragma region Elements
 #pragma region Save
@@ -3341,6 +3372,21 @@ protected:
 	{
 		_cancelCalculations = true;
 		lua_pushstring(state, "Cancelling");
+		return 1;
+	}
+
+	/// <summary>
+	/// Message Callback, 
+	/// </summary>
+	/// <param name="state"></param>
+	/// <returns></returns>
+	static int Bind_MessageCallback(lua_State* state)
+	{
+		// check input
+		std::vector<std::string> parameters = get_parameters(state);
+		if (parameters.size() == 0) return 0;
+
+		AMFramework::Callback::MessageCallBack::TriggerCallback(&IAM_Database::csv_join_row(parameters, " ")[0]);
 		return 1;
 	}
 

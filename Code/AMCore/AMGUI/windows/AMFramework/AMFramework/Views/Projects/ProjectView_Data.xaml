@@ -4,7 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:fa="http://schemas.fontawesome.io/icons/"
+             xmlns:fa6="http://schemas.fontawesome.com/icons/svg"
              xmlns:controller="clr-namespace:AMFramework.Controller"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="clr-namespace:AMControls.Behaviors;assembly=AMControls"
              d:DataContext="{d:DesignInstance Type=controller:Controller_Project}"
              mc:Ignorable="d" 
              d:DesignHeight="546.124" d:DesignWidth="584">
@@ -13,44 +16,228 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-       
+
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
             <StackPanel Margin="20">
                 <GroupBox Header="General" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
                           Style="{StaticResource AM_OptionSection}">
                     <StackPanel>
-                        <Grid Margin="3">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
-                            </Grid.RowDefinitions>
+                        <Grid Margin="3" Background="WhiteSmoke">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0" Text="Project name:" Margin="5,5,5,2"/>
-                            <TextBox Grid.Row="1" Margin="5,2,5,5" 
+                            <Border Background="Gray">
+                                <TextBlock Text="Project name:"
+                                           VerticalAlignment="Center"
+                                           Margin="5,1,5,1"
+                                           Foreground="White"
+                                           FontWeight="DemiBold"/>
+                            </Border>
+
+                            <fa6:SvgAwesome Icon="Solid_Tarp" 
+                                            Margin="2,2,2,2"
+                                            PrimaryColor="Black"
+                                            Height="20"
+                                            Grid.Column="1">
+                            </fa6:SvgAwesome>
+
+                            <TextBox Grid.Column="2" Margin="2" 
+                                     VerticalAlignment="Center"
                                      Style="{StaticResource AM_RoundedTextbox}"
                                      Text="{Binding Path=SelectedProject.Model_Object.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
                     </StackPanel>
                 </GroupBox>
 
-                <GroupBox Header="Selected elements" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
-                          Style="{StaticResource AM_OptionSection}">
+                <!-- Databases -->
+                <GroupBox Style="{StaticResource AM_OptionSection}" 
+                          Header="Databases" 
+                          Margin="5,1,5,1" 
+                          BorderThickness="2" 
+                          BorderBrush="Black">
+
                     <StackPanel>
-                        <Grid Margin="3">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="auto"/>
-                            </Grid.RowDefinitions>
+                        <Grid Background="WhiteSmoke" Margin="1">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
                                 <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="20"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="0" Text="Element list:" 
-                                       Margin="5,5,5,2"/>
+                            <Border Background="Gray">
+                                <TextBlock Text="Thermodynamic database"
+                                           VerticalAlignment="Center"
+                                           Margin="5,1,5,1"
+                                           Foreground="White"
+                                           FontWeight="DemiBold"/>
+                            </Border>
 
-                            <Border Grid.Row="1" BorderBrush="Silver" 
-                                    BorderThickness="1" CornerRadius="3" 
+
+                            <fa6:SvgAwesome Icon="Solid_CircleQuestion" 
+                                            Margin="2,2,2,2"
+                                            PrimaryColor="Red"
+                                            Height="20"
+                                            Grid.Column="1">
+                                <i:Interaction.Behaviors>
+                                    <b:SwapImageBehavior FirstImage="Solid_TemperatureHalf"
+                                                         FirstColor="Green"
+                                                         SecondImage="Solid_CircleQuestion"
+                                                         SecondColor="Red"
+                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase, Converter={StaticResource FilenameToBoolean}}"/>
+
+                                </i:Interaction.Behaviors>
+                            </fa6:SvgAwesome>
+
+                            <TextBlock d:Text="Hello world" Grid.Column="2"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase}"
+                                       TextTrimming="WordEllipsis"
+                                       Margin="5,2,2,2"/>
+
+                            <Border Grid.Column="3"
+                                    Style="{StaticResource BorderFlatButton}">
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" 
+                                                  Command="{Binding Path=SelectThermodynamicDatabase}"/>
+                                </Border.InputBindings>
+                                <fa6:SvgAwesome Icon="Solid_FolderOpen"
+                                                PrimaryColor="SteelBlue"/>
+                            </Border>
+                        </Grid>
+
+                        <Grid Background="WhiteSmoke" Margin="1,1,1,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Background="Gray">
+                                <TextBlock Text="Mobility database"
+                                           VerticalAlignment="Center"
+                                           Margin="5,1,5,1"
+                                           Foreground="White"
+                                           FontWeight="DemiBold"/>
+                            </Border>
+
+
+                            <fa6:SvgAwesome Icon="Solid_CircleQuestion" 
+                                            Margin="2,2,2,2"
+                                            PrimaryColor="Red"
+                                            Height="20"
+                                            Grid.Column="1">
+                                <i:Interaction.Behaviors>
+                                    <b:SwapImageBehavior FirstImage="Solid_ArrowRightArrowLeft"
+                                                         FirstColor="Green"
+                                                         SecondImage="Solid_CircleQuestion"
+                                                         SecondColor="Red"
+                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.MobilityDatabase, Converter={StaticResource FilenameToBoolean}}"/>
+
+                                </i:Interaction.Behaviors>
+                            </fa6:SvgAwesome>
+
+                            <TextBlock d:Text="Hello world" Grid.Column="2"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.MobilityDatabase}"
+                                       TextTrimming="WordEllipsis"
+                                       Margin="5,2,2,2"/>
+
+                            <Border Grid.Column="3"
+                                    Style="{StaticResource BorderFlatButton}">
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" 
+                                                  Command="{Binding Path=SelectMobilityDatabase}"/>
+                                </Border.InputBindings>
+                                <fa6:SvgAwesome Icon="Solid_FolderOpen"
+                                                PrimaryColor="SteelBlue"/>
+                            </Border>
+                        </Grid>
+
+                        <Grid Background="WhiteSmoke" Margin="1,1,1,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Background="Gray">
+                                <TextBlock Text="Physical database"
+                                           VerticalAlignment="Center"
+                                           Margin="5,1,5,1"
+                                           Foreground="White"
+                                           FontWeight="DemiBold"/>
+                            </Border>
+
+
+                            <fa6:SvgAwesome Icon="Solid_CircleQuestion" 
+                                            Margin="2,2,2,2"
+                                            PrimaryColor="Red"
+                                            Height="20"
+                                            Grid.Column="1">
+                                <i:Interaction.Behaviors>
+                                    <b:SwapImageBehavior FirstImage="Solid_CubesStacked"
+                                                         FirstColor="Green"
+                                                         SecondImage="Solid_CircleQuestion"
+                                                         SecondColor="Red"
+                                                         UseFirst="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.PhysicalDatabase, Converter={StaticResource FilenameToBoolean}}"/>
+
+                                </i:Interaction.Behaviors>
+                            </fa6:SvgAwesome>
+
+                            <TextBlock d:Text="Hello world" Grid.Column="2"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.PhysicalDatabase}"
+                                       TextTrimming="WordEllipsis"
+                                       Margin="5,2,2,2"/>
+
+                            <Border Grid.Column="3"
+                                    Style="{StaticResource BorderFlatButton}">
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" 
+                                                  Command="{Binding Path=SelectPhysicalDatabase}"/>
+                                </Border.InputBindings>
+                                <fa6:SvgAwesome Icon="Solid_FolderOpen"
+                                                PrimaryColor="SteelBlue"/>
+                            </Border>
+                        </Grid>
+
+
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Element list -->
+                <GroupBox Header="Selected elements" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
+                          Style="{StaticResource AM_OptionSection}"
+                          Visibility="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase, Converter={StaticResource FilenameToVisibility}}">
+                    <StackPanel>
+                        <Grid Margin="1,3,3,3" Background="WhiteSmoke">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Background="Gray">
+                                <TextBlock Text="Element list:"
+                                           VerticalAlignment="Center"
+                                           Margin="5,1,5,1"
+                                           Foreground="White"
+                                           FontWeight="DemiBold"/>
+                            </Border>
+
+                            <Border Grid.Column="1" Grid.ColumnSpan="2"
+                                    BorderBrush="Silver" 
+                                    Background="WhiteSmoke"
+                                    BorderThickness="1" 
+                                    CornerRadius="3" 
                                     Margin="5,1,5,1">
                                 <ItemsControl ItemsSource="{Binding Path=SelectedProject.Model_Object.SelectedElements}">
                                     <ItemsControl.ItemsPanel>
@@ -70,7 +257,7 @@
                                                         <ColumnDefinition Width="1*"/>
                                                         <ColumnDefinition Width="10"/>
                                                     </Grid.ColumnDefinitions>
-                                                    
+
                                                     <TextBlock Text="{Binding Path=ModelObject.ElementName}" 
                                                                Margin="5" Grid.Row="1"
                                                                Grid.ColumnSpan="2"/>
@@ -82,23 +269,27 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                                
+
                             </Border>
-                            
-                            <fa:ImageAwesome Grid.Column="1" Grid.Row="1" 
-                                             Icon="Edit" Height="25" 
-                                             Foreground="SteelBlue"/>
-                            <Border Style="{StaticResource AM_MouseBorder}" Grid.Column="1" Grid.Row="1" 
-                                    CornerRadius="2" Margin="1,1,3,1">
+
+                            <Border Style="{StaticResource BorderFlatButton}" 
+                                    Grid.Column="3" 
+                                    CornerRadius="2" 
+                                    Margin="1,1,3,1"
+                                    Height="20"
+                                    VerticalAlignment="Top">
                                 <Border.InputBindings>
                                     <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" Command="{Binding Path=ShowElementList}"/>
                                 </Border.InputBindings>
+                                <fa6:SvgAwesome Icon="Brands_Elementor"
+                                                PrimaryColor="SteelBlue"/>
                             </Border>
                         </Grid>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Header="Active phases" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
-                          Style="{StaticResource AM_OptionSection}">
+                          Style="{StaticResource AM_OptionSection}"
+                          Visibility="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase, Converter={StaticResource FilenameToVisibility}}">
                     <StackPanel>
                         <Grid Margin="3">
                             <Grid.RowDefinitions>
@@ -107,135 +298,178 @@
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Text="Found active phases:" 
-                                       Margin="5,5,5,2"/>
+                            <StackPanel>
+                                <Grid Margin="-1,3,3,3" Background="WhiteSmoke">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="20"/>
+                                    </Grid.ColumnDefinitions>
 
-                            <Border Grid.Row="1"
-                                    Margin="5,1,5,1">
-                                <ItemsControl ItemsSource="{Binding Path=SelectedProject.MCObject.ModelObject.ActivePhases}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Style="{StaticResource SelectedBorderTextItem}" Margin="3">
-                                                <Grid Margin="5">
-                                                    <TextBlock Text ="{Binding Path=ModelObject.PhaseName}" 
+                                    <Border Background="Gray">
+                                        <TextBlock Text="Found active phases:"
+                                           VerticalAlignment="Center"
+                                           Margin="5,1,5,1"
+                                           Foreground="White"
+                                           FontWeight="DemiBold"/>
+                                    </Border>
+
+                                    <Border Grid.Column="1"
+                                            Grid.ColumnSpan="2"
+                                            Margin="5,1,5,1">
+                                        <ItemsControl ItemsSource="{Binding Path=SelectedProject.MCObject.ModelObject.ActivePhases}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Style="{StaticResource SelectedBorderTextItem}" Margin="3">
+                                                        <Grid Margin="5">
+                                                            <TextBlock Text ="{Binding Path=ModelObject.PhaseName}" 
                                                                Foreground="WhiteSmoke"
                                                                FontWeight="DemiBold"/>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Border>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
 
-                            <Expander Grid.Row="2" Header="Configurations" 
+
+
+                            <Expander Grid.Row="2" Background="Transparent"
                                       Margin="5" IsExpanded="false" d:IsExpanded="true">
-                                <StackPanel>
-                                    <Grid Margin="5">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto"/>
-                                            <RowDefinition Height="1*"/>
-                                        </Grid.RowDefinitions>
+                                <Expander.Header>
+                                    <Border Background="WhiteSmoke"
+                                            BorderBrush="Silver"
+                                            BorderThickness="1"
+                                            CornerRadius="5">
+                                        <TextBlock Text="Thermodynamic database"
+                                           VerticalAlignment="Center"
+                                           Margin="5,5,5,5"
+                                           Foreground="Black"
+                                           FontWeight="DemiBold"/>
+                                    </Border>
+                                </Expander.Header>
+                                <Grid>
 
-                                        <TextBlock Text="Element composition" 
-                                                   Margin="5"/>
-                                        <Border Background="White" Grid.Row="1"
+                                    <Border Background="White" 
+                                            CornerRadius="5"
+                                            Opacity="0.6">
+                                        <Border.Effect>
+                                            <BlurEffect Radius="5"/>
+                                        </Border.Effect>
+                                    </Border>
+
+                                    <StackPanel>
+                                        <Grid Margin="5">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="1*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Text="Element composition" 
+                                                   Margin="5" FontWeight="DemiBold"/>
+                                            <Border Background="Transparent" Grid.Row="1"
                                                 Opacity="0.8">
-                                            <Border.Effect>
-                                                <BlurEffect Radius="7"/>
-                                            </Border.Effect>
-                                        </Border>
-                                        <StackPanel Grid.Row="1">
-                                            <Grid Margin="10,1,1,1">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="60"/>
-                                                    <ColumnDefinition Width="150"/>
-                                                    <ColumnDefinition Width="30"/>
-                                                </Grid.ColumnDefinitions>
+                                                <Border.Effect>
+                                                    <BlurEffect Radius="7"/>
+                                                </Border.Effect>
+                                            </Border>
+                                            <StackPanel Grid.Row="1">
+                                                <Grid Margin="10,1,1,1">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="60"/>
+                                                        <ColumnDefinition Width="150"/>
+                                                        <ColumnDefinition Width="30"/>
+                                                    </Grid.ColumnDefinitions>
 
-                                                <Border Grid.ColumnSpan="1" Background="WhiteSmoke" CornerRadius="3"
+                                                    <Border Grid.ColumnSpan="1" Background="WhiteSmoke" CornerRadius="3"
                                                         BorderThickness="1" BorderBrush="Silver"/>
-                                                <Border Grid.Column="1" Background="WhiteSmoke" CornerRadius="3"
+                                                    <Border Grid.Column="1" Background="WhiteSmoke" CornerRadius="3"
                                                         BorderThickness="1" BorderBrush="Silver" Margin="5,0,5,0"/>
-                                                <TextBlock Text="Elements" FontWeight="DemiBold" HorizontalAlignment="Center" />
-                                                <TextBlock Text="Composition (%w)" FontWeight="DemiBold" Grid.Column="1" HorizontalAlignment="Center" />
-                                            </Grid>
-                                            <ItemsControl ItemsSource="{Binding Path=SelectedProject.Model_Object.ActivePhasesElementComposition}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid Margin="10,1,1,1">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="60"/>
-                                                                <ColumnDefinition Width="150"/>
-                                                                <ColumnDefinition Width="30"/>
-                                                                <ColumnDefinition Width="auto"/>
-                                                            </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="Elements" FontWeight="DemiBold" HorizontalAlignment="Center" />
+                                                    <TextBlock Text="Composition (%w)" FontWeight="DemiBold" Grid.Column="1" HorizontalAlignment="Center" />
+                                                </Grid>
+                                                <ItemsControl ItemsSource="{Binding Path=SelectedProject.Model_Object.ActivePhasesElementComposition}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid Margin="10,1,1,1">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="60"/>
+                                                                    <ColumnDefinition Width="150"/>
+                                                                    <ColumnDefinition Width="30"/>
+                                                                    <ColumnDefinition Width="auto"/>
+                                                                </Grid.ColumnDefinitions>
 
 
-                                                            <TextBlock Text="{Binding Path=Model_Object.ElementName}" HorizontalAlignment="Center"
+                                                                <TextBlock Text="{Binding Path=Model_Object.ElementName}" HorizontalAlignment="Center"
                                                                        Margin="2,2,5,2"/>
-                                                            <TextBox Text="{Binding Path=Model_Object.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,Delay=1000}" Grid.Column="1" Width="70"/>
-                                                            <fa:ImageAwesome Icon="HandOutlineLeft" Grid.Column="2" Height="13" Visibility="{Binding Path=Model_Object.IsReferenceElement, Converter={StaticResource BoolToVis}}"/>
-                                                            <TextBlock Grid.Column="3" Text="Reference element" 
+                                                                <TextBox Text="{Binding Path=Model_Object.Value,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,Delay=1000}" Grid.Column="1" Width="70"/>
+                                                                <fa:ImageAwesome Icon="HandOutlineLeft" Grid.Column="2" Height="13" Visibility="{Binding Path=Model_Object.IsReferenceElement, Converter={StaticResource BoolToVis}}"/>
+                                                                <TextBlock Grid.Column="3" Text="Reference element" 
                                                                        VerticalAlignment="Center"
                                                                        Visibility="{Binding Path=Model_Object.IsReferenceElement, Converter={StaticResource BoolToVis}}"/>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </Grid>
-
-                                    <Grid Margin="5">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto"/>
-                                            <RowDefinition Height="1*"/>
-                                        </Grid.RowDefinitions>
-
-                                        <TextBlock Text="Calculation parameters" 
-                                                   Margin="5"/>
-                                        <ContentControl Grid.Row="1" Content="{Binding Path=ActivePhasesConfigurationPage, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </Grid>
-
-                                    <Grid Margin="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="auto"/>
-                                            <ColumnDefinition Width="auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <!-- Equilibrium button -->
-                                        <Grid Grid.Column="2" Margin="5">
-                                            <Border Background="SteelBlue" Opacity="0.3" CornerRadius="5" Height="45"/>
-                                            <StackPanel Orientation="Horizontal" Margin="5" 
-                                                    FlowDirection="LeftToRight" Grid.Column="1">
-                                                <TextBlock Text="Run Equilibrium" 
-                                           VerticalAlignment="Center" Margin="5"
-                                           Foreground="SteelBlue" FontWeight="Bold"/>
-                                                <fa:ImageAwesome Icon="Play" Foreground="SteelBlue" Width="25"/>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
                                             </StackPanel>
-
-                                            <Border Style="{StaticResource AM_MouseBorder}"
-                                                CornerRadius="2" Margin="-5,-5,-5,-5">
-                                                <Border.InputBindings>
-                                                    <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" Command="{Binding Path=FindActivePhases}"/>
-                                                </Border.InputBindings>
-                                            </Border>
                                         </Grid>
 
-                                    </Grid>
-                                </StackPanel>
+                                        <Grid Margin="5">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="1*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Text="Calculation parameters" 
+                                                   Margin="5" FontWeight="DemiBold"/>
+                                            <ContentControl Grid.Row="1" Content="{Binding Path=ActivePhasesConfigurationPage, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </Grid>
+
+                                        <Grid Margin="5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="auto"/>
+                                                <ColumnDefinition Width="auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Equilibrium button -->
+                                            <Grid Grid.Column="2" Margin="5">
+                                                <Border Background="SteelBlue" Opacity="0.3" CornerRadius="5" Height="45"/>
+                                                <StackPanel Orientation="Horizontal" Margin="5" 
+                                                    FlowDirection="LeftToRight" Grid.Column="1">
+                                                    <TextBlock Text="Run Equilibrium" 
+                                           VerticalAlignment="Center" Margin="5"
+                                           Foreground="SteelBlue" FontWeight="Bold"/>
+                                                    <fa:ImageAwesome Icon="Play" Foreground="SteelBlue" Width="25"/>
+                                                </StackPanel>
+
+                                                <Border Style="{StaticResource AM_MouseBorder}"
+                                                CornerRadius="2" Margin="-5,-5,-5,-5">
+                                                    <Border.InputBindings>
+                                                        <MouseBinding MouseAction="{x:Static MouseAction.LeftClick}" Command="{Binding Path=FindActivePhases}"/>
+                                                    </Border.InputBindings>
+                                                </Border>
+                                            </Grid>
+
+                                        </Grid>
+                                    </StackPanel>
+                                </Grid>
                             </Expander>
                         </Grid>
                     </StackPanel>
                 </GroupBox>
 
                 <GroupBox Header="Tools" Margin="5,1,5,1" BorderThickness="2" BorderBrush="Black"
-                          Style="{StaticResource AM_OptionSection}">
+                          Style="{StaticResource AM_OptionSection}"
+                          Visibility="{Binding SelectedProject.MCObject.ModelObject.Databases.ModelObject.ThermodynamicDatabase, Converter={StaticResource FilenameToVisibility}}">
                     <StackPanel>
                         <Grid Margin="3">
                             <Button Content="Case creator" Command="{Binding Path=OpenCaseCreator}"></Button>
@@ -248,7 +482,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="40"/>
-                
+
             </Grid.ColumnDefinitions>
             <Border Grid.ColumnSpan="2" Margin="0,-10,0,-10" CornerRadius="3">
                 <Border.Background>

@@ -1,5 +1,5 @@
 ﻿-- Project
-Project = {ID = -1, Name = "No name", API = "", ExternalAPI = "" , Columns ={} , selectedElements = {}, cases = {}, ActivePhases = {}, ActivePhasesConfig = {}, ActivePhasesElementComposition = {}} --@Description Project object. \n Project controlls all lower level objects
+Project = {ID = -1, Name = "No name", API = "", ExternalAPI = "" , Columns ={} , Databases = {}, selectedElements = {}, cases = {}, ActivePhases = {}, ActivePhasesConfig = {}, ActivePhasesElementComposition = {}} --@Description Project object. \n Project controlls all lower level objects
 
 -- Constructor
 function Project:new (o,ID,Name,API,ExternalAPI,selectedElements,cases) --@Description Creates a new project,\n create new object by calling newVar = Project:new{Name = value} or Project:new({},ID,Name).
@@ -17,8 +17,9 @@ function Project:new (o,ID,Name,API,ExternalAPI,selectedElements,cases) --@Descr
 
    --Active Phases
    o.ActivePhases = {} --@TYPE ActivePhases
-   o.ActivePhasesConfig = {}
-   o.ActivePhasesElementComposition = ActivePhasesConfig:new{IDProject = self.ID}
+   o.ActivePhasesConfig = ActivePhasesConfig:new{IDProject = self.ID}
+   o.ActivePhasesElementComposition = {}
+   o.Databases = CALPHADDatabase:new{IDProject = self.ID}
 
    if o.ID > -1 or o.Name ~= "Empty project" then
     o:load()
@@ -29,7 +30,7 @@ end
 
 -- Load
 function Project:load ()
-   
+  
    local sqlData_project
    if self.ID > -1 then
     sqlData_project = split(project_loadID(self.ID),",")
@@ -37,11 +38,15 @@ function Project:load ()
     sqlData_project = split(project_load_data(self.Name),",")
    end
 
-   local tempName = self.Name
-   load_data(self, sqlData_project)
+   local tempName = Project:new{}
+   load_data(tempName, sqlData_project)
    
     -- Load Project data
-    if self.ID > -1 then
+    if tempName.ID > -1 then
+        load_data(self, sqlData_project)
+
+        -- Load calphad Database
+        self.Databases = CALPHADDatabase:new{IDProject = self.ID}
 
         -- Load Cases
         self.cases = {}
@@ -64,10 +69,11 @@ function Project:load ()
         load_table_data(self.ActivePhases, ActivePhases, sqlDataRow_AP)
         load_table_data(self.ActivePhasesElementComposition, ActivePhasesElementComposition, sqlDataRow_APEC)
 
+        message_callback("Project with ID:"..self.ID.." was successfully loaded");
     else
-        if string.len(tempName) > 0 then
-         self.Name = tempName
-         self.ID = project_new(self.Name)
+        if string.len(self.Name) > 0 then
+         self:save()
+         message_callback("Project with Name:"..self.Name.." was created with ID "..self.ID);
         end
     end
 
@@ -88,6 +94,13 @@ function Project:save()
 
         self.ActivePhasesConfig.IDProject = self.ID
         self.ActivePhasesConfig:save()
+
+        self.Databases.IDProject = self.ID
+        self.Databases:save()
+
+        message_callback("Project with Name:"..self.Name.." was successfully saved "..saveOut.." with csv string:"..saveString);
+    else
+        message_callback("Project with Name \""..self.Name.."\" was not saved, output: "..saveOut);
     end
 end
 

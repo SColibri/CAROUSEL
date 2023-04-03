@@ -34,5 +34,10 @@ end
 
 -- save
 function Configuration:save() --@Description saves a configuration setup
-   configuration_save()
+    configuration_setAPI_path(self.API_path)
+	configuration_set_thermodynamic_database_path(self.Thermodynamic_database)
+	configuration_set_physical_database_path(self.Physical_database)
+	configuration_set_mobility_database_path(self.Mobility_database)
+	configuration_set_max_thread_number(self.Max_thread_number)
+	configuration_save()
 end

@@ -1,5 +1,7 @@
-﻿using AMFramework_Lib.Core;
+﻿using AMFramework_Lib.Controller;
+using AMFramework_Lib.Core;
 using AMFramework_Lib.Interfaces;
+using AMFramework_Lib.Logging;
 
 namespace AMFramework_Lib.Model
 {
@@ -90,7 +92,12 @@ namespace AMFramework_Lib.Model
 
                 // Create new object of type _modelObject, check for null.
                 Interfaces.Model_Interface? tempModel = (Model_Interface)Activator.CreateInstance(_modelObject.GetType());
-                if (tempModel == null || cellItems.Count < tempModel.Get_parameter_list().Count()) continue;
+                if (tempModel == null || cellItems.Count < tempModel.Get_parameter_list().Count()) 
+                {
+                    LoggerManager.Warn("ModelCoreCommunicationExecutor - Create_ModelObjects: Object could not be initialized because data and model property list do not coincide, this" +
+                        " might be because data models from core and gui do not coincide.");
+                    continue;
+                }
 
                 // load into newly created model and add to
                 tempModel.Load_csv(cellItems);

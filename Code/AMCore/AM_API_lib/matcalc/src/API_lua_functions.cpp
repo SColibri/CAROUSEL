@@ -135,6 +135,8 @@ int API_lua_functions::bind_run_command(lua_State* state)
 int API_lua_functions::bind_initializeCore_command(lua_State* state)
 {
 	if (_configuration == nullptr) return -1;
+	// TODO: Database path should be obtained from the CALPHAD database class, and not from the configuration anymore.
+	_configuration->load();
 	std::string out = runVectorCommands(API_Scripting::Script_initialize(_configuration));
 	//TODO: if not loaded this causes an error you missed this one
 	// 
