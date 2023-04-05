@@ -3,8 +3,7 @@ ElementComposition = {ID = -1,IDCase = -1, IDElement=-1, TypeComposition="weight
 
 -- Constructor
 function ElementComposition:new (o,ID,IDCase,IDElement,TypeComposition,value) --@Description Creates a new ElementComposition,\n 
-   o = o or {}
-
+   local o = o or {}
    setmetatable(o, self)
    self.__index = self
    self.ID = ID or -1

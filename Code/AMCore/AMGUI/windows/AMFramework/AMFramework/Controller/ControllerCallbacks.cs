@@ -30,7 +30,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Max number of messages to be stored in memory
         /// </summary>
-        private int _maxMessages = 30;
+        private int _maxMessages = 10;
 
         /// <summary>
         /// Amount of logs to be saved and discarded from memory
@@ -322,7 +322,7 @@ namespace AMFramework.Controller
                 if (sender is string message)
                 {
                     Message = message;
-                    MessageLog.Add(new SelectableRow() { Text = message, Icon = MessageTypeEnum.Error, AllowsMultiSelect = true });
+                    // MessageLog.Add(new SelectableRow() { Text = message, Icon = MessageTypeEnum.Error, AllowsMultiSelect = true });
                     LoggerManager.Error(message);
                 }
             });

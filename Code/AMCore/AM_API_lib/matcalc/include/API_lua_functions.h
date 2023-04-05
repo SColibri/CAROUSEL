@@ -692,13 +692,13 @@ private:
 				}
 
 				// save in database and remove from memory
-				//_mutex.lock();
+				_mutex.lock();
 				int resp = IAM_DBS::save(tempPhaseFraction);
 				for (int n1 = 0; n1 < tempPhaseFraction.size(); n1++)
 				{
 					delete tempPhaseFraction[n1];
 				}
-				//_mutex.unlock();
+				_mutex.unlock();
 
 				//mccComm->send_command("exit\r\n");
 				//delete mccComm;
@@ -818,7 +818,10 @@ private:
 
 		// Save all entries
 		tempPhaseCumulativeFraction.insert(tempPhaseCumulativeFraction.end(), tempPhaseFraction.begin(), tempPhaseFraction.end());
+		
+		_mutex.lock();
 		int resp = IAM_DBS::save(tempPhaseCumulativeFraction);
+		_mutex.unlock();
 		for (int n1 = 0; n1 < tempPhaseFraction.size(); n1++)
 		{
 			delete tempPhaseFraction[n1];
@@ -830,7 +833,6 @@ private:
 	}
 	static int Bind_SPC_Parallel_StepScheil(lua_State* state) 
 	{
-		_luaBUFFER = "";
 
 		// Check and get parameters
 		if (check_parameters(state, lua_gettop(state), 2, "usage: <ID project> <ID Cases>") != 0) return 1;
@@ -868,8 +870,7 @@ private:
 			runVectorCommands(std::vector<string>{API_Scripting::script_initialize_core()}, mcc_comms[n1]);
 		}
 
-		_luaBUFFER = "Communication to matcalc established, calculating \n";
-		// define the parallel function
+		// define the lambda function
 		auto funcStep = [](IPC_winapi* mccComm, std::vector<AM_pixel_parameters*> PixelList, AM_Project* projectM)
 		{
 			int IndexPixel = 0;
@@ -877,9 +878,9 @@ private:
 			{
 				_luaBUFFER += "scheil calculation:  IDCase -> " + std::to_string(pixel_parameters->get_caseID()) + " current " + std::to_string(IndexPixel) + " / " + std::to_string(PixelList.size()); IndexPixel++;
 				std::string outCommand_1 = runVectorCommands(API_Scripting::Script_run_stepScheilEquilibrium(_configuration,
-					pixel_parameters->get_EquilibriumConfiguration()->StartTemperature,
-					pixel_parameters->get_EquilibriumConfiguration()->EndTemperature,
-					25,
+					pixel_parameters->get_ScheilConfiguration()->StartTemperature,
+					pixel_parameters->get_ScheilConfiguration()->EndTemperature,
+					pixel_parameters->get_ScheilConfiguration()->StepSize,
 					projectM->get_selected_elements_ByName(),
 					pixel_parameters->get_composition_string(),
 					pixel_parameters->get_selected_phases_ByName()), mccComm);
