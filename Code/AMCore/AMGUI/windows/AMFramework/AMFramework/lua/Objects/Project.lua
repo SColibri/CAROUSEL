@@ -388,7 +388,7 @@ function Project:balanceComposition(elementList)
     end
 
     -- Get residual value
-    local residualValue = 1 - totalSum
+    local residualValue = 100 - totalSum
     
     -- Residual value can't be negative
     if residualValue > -1e-6 then
