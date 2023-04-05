@@ -29,7 +29,7 @@ function Project:new (o,ID,Name,API,ExternalAPI,selectedElements,cases) --@Descr
 end
 
 -- Load
-function Project:load ()
+function Project:load()
   
    local sqlData_project
    if self.ID > -1 then
@@ -276,6 +276,8 @@ function Project:create_cases(caseTemplate)--@Description Create case items base
 
     -- After saving all cases we now proceed by populating the heat treatments
     
+    -- Reload project object 
+    self:load()
 end
 
 function Project:htBySegments(caseList, HeatTreatementConfig, listSegments) --@Description Create heat treatments
@@ -348,6 +350,7 @@ function Project:recursiveCaseByComposition(listElementComposition, rangeIndexes
 
             caseList[index] = Case:new{}
 			caseList[index].elementComposition = table.deepcopy(listElementComposition)
+            self:balanceComposition(caseList[index].elementComposition)
         end
     else
         for index,item in ipairs(rangeLists[currentIndex]) do 
@@ -360,10 +363,37 @@ function Project:recursiveCaseByComposition(listElementComposition, rangeIndexes
 				table.insert(caseList, itemy)
 			end
         end
-
     end
 
     return caseList
+end
+
+-- Private method, balances the composition values ans sets the reference element to the residual value
+function Project:balanceComposition(elementList)
+    -- Expected parameter is ElementComposition 
+	assert(type(elementList) == "table", "Project:balanceComposition Error; elementList has to be a table")
+    
+    -- get reference element index
+    local referenceElement = self:get_reference_element_index()
+
+    -- To balance the composition we need a reference element
+    assert(type(referenceElement) ~= "nil", "Project:balanceComposition Error; reference element was not set on the project level")
+    
+    -- Get total sum
+    local totalSum = 0
+    for i,item in ipairs(elementList) do
+        if item.value ~= nil and i ~= referenceElement then
+            totalSum = totalSum + item.value
+        end
+    end
+
+    -- Get residual value
+    local residualValue = 1 - totalSum
+    
+    -- Residual value can't be negative
+    if residualValue > -1e-6 then
+        elementList[referenceElement].value = residualValue
+    end
 end
 
 

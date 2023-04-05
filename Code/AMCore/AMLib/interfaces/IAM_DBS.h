@@ -105,7 +105,7 @@ public:
 	static int save(std::vector<IAM_DBS*>& vectorSave)
 	{
 		if (vectorSave.size() == 0) return 1;
-		std::string stringBuild{ "BEGIN TRANSACTION;\n" }; //TODO: this is specific to SQLIite 3, remove :)
+		std::string stringBuild{ "BEGIN TRANSACTION;\n" }; //TODO: this is specific to SQLIite 3
 
 		for(int n1 = 0; n1 < vectorSave.size(); n1++)
 		{

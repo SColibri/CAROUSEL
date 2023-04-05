@@ -182,9 +182,8 @@ end
 
 function Case:select_phases(In) --@Description Selects phases by name. usage("phase_1 phase_2 phase_3")
     local Etable = split(In," ")
+    assert(type(In) ~= nil, "Case:select_phases, Error; nil input was passed")
 
-    -- Save before adding selected phases
-    if self.ID == -1 then self:save() end
     if #Etable > 0 then
         self:clear_selected_phases()
         self.selectedPhases = {}
@@ -202,8 +201,6 @@ function Case:select_phases(In) --@Description Selects phases by name. usage("ph
             end
             
             self.selectedPhases[i] = SelectedPhase:new{IDPhase = phasey.ID, IDCase = self.ID}
-            self.selectedPhases[i]:save()
-
         end
     end
 end

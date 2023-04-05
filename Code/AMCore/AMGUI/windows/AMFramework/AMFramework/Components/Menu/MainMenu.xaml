@@ -129,6 +129,7 @@
         </StackPanel>
         <Border BorderBrush="Silver" BorderThickness="0,0,0.4,0"/>
 
+        <!-- Project -->
         <Border Grid.Column="1" BorderBrush="Silver" 
                 BorderThickness="0,0,0.4,0">
             <Grid>
@@ -225,6 +226,7 @@
             </Grid>
         </Border>
 
+        <!-- Scripting -->
         <Border Grid.Column="2" BorderBrush="Silver" 
                 BorderThickness="0,0,0.4,0">
             <Grid>
@@ -480,6 +482,7 @@
             </Grid>
         </Border>
 
+        <!-- Info bar -->
         <Border Grid.Column="4" 
                 Background="White" 
                 BorderBrush="Silver" 
