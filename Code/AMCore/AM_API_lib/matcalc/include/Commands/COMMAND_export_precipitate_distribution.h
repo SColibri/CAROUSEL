@@ -1,12 +1,13 @@
 #pragma once
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_export_precipitate_distribution : public COMMAND_abstract
 {
 public:
 	// constructor
-	COMMAND_export_precipitate_distribution(IPC_winapi* mccComm, AM_Config* configuration, std::string phaseName, std::string filename) :
+	COMMAND_export_precipitate_distribution(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::string phaseName, std::string filename) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 		_scriptContent = _command + phaseName + " file-name=\"" + filename + "\"\n";

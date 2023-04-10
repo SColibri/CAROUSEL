@@ -7,6 +7,7 @@ using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
 using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace AMFramework.Controller
         /// <summary>
         /// Max number of messages to be stored in memory
         /// </summary>
-        private int _maxMessages = 10;
+        private int _maxMessages = 30;
 
         /// <summary>
         /// Amount of logs to be saved and discarded from memory
@@ -286,6 +287,23 @@ namespace AMFramework.Controller
         {
             MessageLog.ForEach(e => e.IsSelected = true);
 		}
+
+        /// <summary>
+        /// Add messages to log
+        /// </summary>
+        /// <param name="selectableRow"></param>
+        private void AddMessage(SelectableRow selectableRow) 
+        { 
+            if (MessageLog.Count > _maxMessages) 
+            {
+				while (MessageLog.Count > _storeBatchSize)
+				{
+					MessageLog.RemoveFirst();
+				}
+			}
+
+            MessageLog.Add(selectableRow);
+		}
         #endregion
 
         #region Handles
@@ -304,8 +322,9 @@ namespace AMFramework.Controller
                 if (sender is string message)
                 {
                     Message = message;
-                    MessageLog.Add(new SelectableRow() { Text = message, Icon = MessageTypeEnum.Message, AllowsMultiSelect = true });
-                }
+					AddMessage(new SelectableRow() { Text = message, Icon = MessageTypeEnum.Message, AllowsMultiSelect = true });
+					LoggerManager.Info(message);
+				}
             });
 
         }
@@ -322,7 +341,7 @@ namespace AMFramework.Controller
                 if (sender is string message)
                 {
                     Message = message;
-                    // MessageLog.Add(new SelectableRow() { Text = message, Icon = MessageTypeEnum.Error, AllowsMultiSelect = true });
+					AddMessage(new SelectableRow() { Text = message, Icon = MessageTypeEnum.Error, AllowsMultiSelect = true });
                     LoggerManager.Error(message);
                 }
             });
@@ -353,7 +372,7 @@ namespace AMFramework.Controller
                 if (sender is string message)
                 {
                     ScriptEnd = message;
-                    MessageLog.Add(new SelectableRow() { Text = message, Icon = MessageTypeEnum.Script, AllowsMultiSelect = true });
+					AddMessage(new SelectableRow() { Text = message, Icon = MessageTypeEnum.Script, AllowsMultiSelect = true });
                     LoggerManager.Info(message);
                 }
             });

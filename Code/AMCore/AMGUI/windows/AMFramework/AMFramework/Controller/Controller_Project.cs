@@ -892,7 +892,7 @@ namespace AMFramework.Controller
                 Filter = "thermodynamic database|*.tdb",
                 Title = "Select a thermodynamic database",
                 CheckFileExists = true,
-                InitialDirectory = SelectedProject.MCObject.ModelObject.Databases?.ModelObject.ThermodynamicDatabase
+                InitialDirectory = Path.GetDirectoryName(SelectedProject.MCObject.ModelObject.Databases?.ModelObject.ThermodynamicDatabase)
             };
 
             if (OFD.ShowDialog() == true)

@@ -1,12 +1,13 @@
 #pragma once
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_set_composition : public COMMAND_abstract
 {
 public:
 	// constructor
-	COMMAND_set_composition(IPC_winapi* mccComm, AM_Config* configuration, std::vector<std::string> Elements, std::vector<double> Composition) :
+	COMMAND_set_composition(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::vector<std::string> Elements, std::vector<double> Composition) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 		if(Elements.size() != Composition.size()) return;

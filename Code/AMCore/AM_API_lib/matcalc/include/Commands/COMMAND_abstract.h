@@ -3,13 +3,13 @@
 #include "../../../../AMLib/x_Helpers/IPC_winapi.h"
 #include "../../../../AMLib/include/AM_Config.h"
 #include "../../../../AMLib/x_Helpers/string_manipulators.h"
-
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_abstract : public IAM_Command
 {
 public:
 	// constructor
-	COMMAND_abstract(IPC_winapi* mccComm, AM_Config* configuration) :
+	COMMAND_abstract(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration) :
 		_communication(mccComm), _configuration(configuration)
 	{
 		if (!_communication->isRunning()) { throw new exception("Command API: Communication is closed!"); }
@@ -29,7 +29,7 @@ public:
 
 protected:
 	std::string _name{ "Generic command" };
-	IPC_winapi* _communication;
+	AMFramework::Interfaces::IAM_Communication* _communication;
 	AM_Config* _configuration;
 	std::string _scriptContent{""};
 

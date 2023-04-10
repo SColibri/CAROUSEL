@@ -7,6 +7,7 @@
 #include "COMMAND_create_precipitate_domain.h"
 #include "COMMAND_create_tm_treatment.h"
 #include "COMMAND_edit_tmt_segment.h"
+#include "COMMAND_equilibrium_configuration.h"
 #include "COMMAND_exception.h"
 #include "COMMAND_export_precipitate_distribution.h"
 #include "COMMAND_export_variables.h"

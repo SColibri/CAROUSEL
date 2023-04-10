@@ -2,24 +2,25 @@
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
 #include "../../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_edit_tmt_segment : public COMMAND_abstract
 {
 public:
 	// constructor
-	COMMAND_edit_tmt_segment(IPC_winapi* mccComm, AM_Config* configuration, std::string htName, std::string treatemtSegment, std::string startTemperature) :
+	COMMAND_edit_tmt_segment(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::string htName, std::string treatemtSegment, std::string startTemperature) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 		_scriptContent = _command + " tm-treatment-name=" + htName + " tm-treatment-segment=." + treatemtSegment + " segment-start-temperature=" + startTemperature + "\n";
 	}
 
-	COMMAND_edit_tmt_segment(IPC_winapi* mccComm, AM_Config* configuration, std::string htName, std::string precipitationDomainName) :
+	COMMAND_edit_tmt_segment(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::string htName, std::string precipitationDomainName) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 		_scriptContent = _command + " tm-treatment-name=" + htName + " tm-treatment-segment=." + " precipitation-domain=" + precipitationDomainName + "\n";
 	}
 
-	COMMAND_edit_tmt_segment(IPC_winapi* mccComm, AM_Config* configuration, std::string htName, DBS_HeatTreatmentSegment* segment) :
+	COMMAND_edit_tmt_segment(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::string htName, DBS_HeatTreatmentSegment* segment) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 		_scriptContent = _command;

@@ -2,12 +2,13 @@
 #include <string>
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_generate_precipitate_distribution : public COMMAND_abstract
 {
 public:
 	// constructor
-	COMMAND_generate_precipitate_distribution(IPC_winapi* mccComm, AM_Config* configuration, std::string PhaseName, 
+	COMMAND_generate_precipitate_distribution(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::string PhaseName,
 		std::string calculationType, double minRadius, double meanRadius, double maxRadius, double stdDev) :
 		COMMAND_abstract(mccComm, configuration)
 	{

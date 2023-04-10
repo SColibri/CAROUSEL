@@ -2,12 +2,13 @@
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
 #include "../../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_load_buffer_state : public COMMAND_abstract
 {
 public:
 
-	COMMAND_load_buffer_state(IPC_winapi* mccComm, AM_Config* configuration, int bufferIndex) :
+	COMMAND_load_buffer_state(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, int bufferIndex) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 		_scriptContent = _command + " " + std::to_string(bufferIndex) + "\n";

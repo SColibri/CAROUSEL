@@ -1,12 +1,13 @@
 #pragma once
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_run_script : public COMMAND_abstract
 {
 public:
 	// constructor
-	COMMAND_run_script(IPC_winapi* mccComm, AM_Config* configuration, std::string filename) :
+	COMMAND_run_script(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::string filename) :
 		COMMAND_abstract(mccComm, configuration), _filename(filename)
 	{
 		_scriptContent = _command + " \"" + _filename + "\" \n";

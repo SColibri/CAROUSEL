@@ -6,6 +6,7 @@
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
 #include "COMMAND_run_script.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_export_variables : public COMMAND_abstract
 {
@@ -19,7 +20,7 @@ public:
 	/// <param name="FormattedString"></param>
 	/// <param name="Variables"></param>
 	/// <param name="Header"></param>
-	COMMAND_export_variables(IPC_winapi* mccComm, AM_Config* configuration, std::string filename, std::string FormattedString, std::string Variables, std::string Header) :
+	COMMAND_export_variables(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::string filename, std::string FormattedString, std::string Variables, std::string Header) :
 		COMMAND_abstract(mccComm, configuration), _filename(filename)
 	{
 		// create script

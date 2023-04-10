@@ -6,7 +6,7 @@ namespace AMFramework
 	namespace Callback
 	{
 		/// <summary>
-		/// Message callback, gets message from core implementation
+		/// Error callback, gets message from core implementation
 		/// </summary>
 		class ErrorCallback
 		{
