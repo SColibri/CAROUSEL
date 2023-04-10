@@ -258,11 +258,11 @@ namespace AMFramework.Controller
         {
             return true;
         }
-        #endregion
-        #endregion
+		#endregion
+		#endregion
 
-        #region Events
-        public event EventHandler TabClosed;
+		#region Events
+		public event EventHandler TabClosed;
 
         #endregion
     }
