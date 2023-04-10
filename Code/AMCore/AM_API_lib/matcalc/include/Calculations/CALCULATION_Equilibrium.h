@@ -134,12 +134,11 @@ namespace APIMatcalc
 					string_manipulators::remove_empty_entries(row);
 					for (int n1 = 1; n1 < row.size(); n1++)
 					{
-						DBS_ScheilPhaseFraction* SPF = new DBS_ScheilPhaseFraction(db, -1);
+						DBS_EquilibriumPhaseFraction* SPF = new DBS_EquilibriumPhaseFraction(db, -1);
 						SPF->IDCase = pixel_parameters->get_caseID();
 						SPF->Temperature = std::stod(row[0]);
 						SPF->Value = std::stold(row[n1]);
 						SPF->IDPhase = phasesID[n1 - 1];
-						SPF->TypeComposition = "weight";
 
 						entries.push_back(SPF);
 					}

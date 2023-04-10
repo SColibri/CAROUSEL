@@ -4,6 +4,7 @@
 #include "../../../../AMLib/include/AM_Config.h"
 #include "../../../../AMLib/x_Helpers/string_manipulators.h"
 #include "../../../../AMLib/interfaces/IAM_Communication.h"
+#include "../../../../AMLib/include/callbackFunctions/ErrorCallback.h"
 
 class COMMAND_abstract : public IAM_Command
 {
@@ -12,7 +13,12 @@ public:
 	COMMAND_abstract(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration) :
 		_communication(mccComm), _configuration(configuration)
 	{
-		if (!_communication->isRunning()) { throw new exception("Command API: Communication is closed!"); }
+		if (!_communication->isRunning())
+		{
+			std::string errMessage = "COMMAND_abstract - Command API: There is no open communication channel! Check if the path to the external CALPHAD software is correct";
+			AMFramework::Callback::ErrorCallback::TriggerCallback(&errMessage[0]);
+			throw new exception(&errMessage[0]);
+		}
 	}
 
 	virtual std::string DoAction() override = 0;
@@ -31,7 +37,7 @@ protected:
 	std::string _name{ "Generic command" };
 	AMFramework::Interfaces::IAM_Communication* _communication;
 	AM_Config* _configuration;
-	std::string _scriptContent{""};
+	std::string _scriptContent{ "" };
 
 	std::string send_command(std::string commandLine)
 	{

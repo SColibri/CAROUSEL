@@ -661,7 +661,7 @@ private:
 		int end = std::stoi(rangeIDCase[1]);
 		int range = end - start;
 
-		// run scheil simulations
+		// run equilibrium simulations
 		APIMatcalc::ScriptingCommands::ScriptingDoSolidification::run_equilibrium_simulations(_dbFramework->get_database(), _configuration, std::stoi(parameters[0]), start, end);
 
 		//for(int n1 = 0; n1 < range + 1; n1++)

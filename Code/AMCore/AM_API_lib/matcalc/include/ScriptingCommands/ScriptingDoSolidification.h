@@ -49,7 +49,7 @@ namespace APIMatcalc
 			{
 				// Initialize AM_project object to get corresponding pixel cases
 				AM_Project Project(database, configuration, IDProject);
-				std::vector<AM_pixel_parameters*> pixel_parameters = get_pixel_parameters(IDCaseStart, IDCaseEnd, Project);
+				std::vector<AM_pixel_parameters*> pixel_parameters = get_pixel_parameters(IDCaseEnd, IDCaseStart, Project);
 
 				// Create communication to mcc for each thread
 				std::vector<int> threadWorkload = AMFramework::Threading::thread_workload_distribution(configuration->get_max_thread_number(), pixel_parameters.size());
@@ -61,7 +61,6 @@ namespace APIMatcalc
 				AMFramework::Threading::run_thread_jobs_in_parallel(taskList);
 
 				// Clear memory
-				clear_pixel_cases_vector(pixel_parameters);
 				clear_thread_jobs_vector(taskList);
 
 				return "run_scheil_simulations finished running";
@@ -84,7 +83,7 @@ namespace APIMatcalc
 			{
 				// Initialize AM_project object to get corresponding pixel cases
 				AM_Project Project(database, configuration, IDProject);
-				std::vector<AM_pixel_parameters*> pixel_parameters = get_pixel_parameters(IDCaseStart, IDCaseEnd, Project);
+				std::vector<AM_pixel_parameters*> pixel_parameters = get_pixel_parameters(IDCaseEnd, IDCaseStart, Project);
 
 				// Create communication to mcc for each thread
 				std::vector<int> threadWorkload = AMFramework::Threading::thread_workload_distribution(configuration->get_max_thread_number(), pixel_parameters.size());
@@ -96,7 +95,6 @@ namespace APIMatcalc
 				AMFramework::Threading::run_thread_jobs_in_parallel(taskList);
 
 				// Clear memory
-				clear_pixel_cases_vector(pixel_parameters);
 				clear_thread_jobs_vector(taskList);
 
 				return "run_scheil_simulations finished running";
@@ -223,19 +221,6 @@ namespace APIMatcalc
 			}
 
 			/// <summary>
-			/// Removes from memory all loaded pixels
-			/// </summary>
-			/// <param name="pixels"></param>
-			inline static void clear_pixel_cases_vector(std::vector<AM_pixel_parameters*>& pixels) 
-			{
-				for (auto pixel : pixels)
-				{
-					delete pixel;
-				}
-				pixels.clear();
-			}
-
-			/// <summary>
 			/// Removes from memory all thread job objects
 			/// </summary>
 			/// <param name="taskList"></param>
@@ -243,6 +228,7 @@ namespace APIMatcalc
 			{
 				for (auto pixel : taskList)
 				{
+					pixel->Dispose();
 					delete pixel;
 				}
 				taskList.clear();

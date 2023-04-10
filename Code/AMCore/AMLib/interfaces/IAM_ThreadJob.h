@@ -15,6 +15,11 @@ namespace AMFramework
 			/// </summary>
 			/// <returns></returns>
 			virtual int execute() = 0;
+
+			/// <summary>
+			/// Disposes the thread job object
+			/// </summary>
+			virtual void Dispose() = 0;
 		};
 
 	}

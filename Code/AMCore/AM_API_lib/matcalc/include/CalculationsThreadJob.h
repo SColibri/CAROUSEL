@@ -20,9 +20,9 @@
 #include "Calculations/CALCULATION_ALL.h"
 #include "API_CommunicationFactory.h"
 
-namespace APIMatcalc 
+namespace APIMatcalc
 {
-	namespace Threading 
+	namespace Threading
 	{
 		/// <summary>
 		/// CalculationsThreadJob contains all tasks to be executed per thread
@@ -50,16 +50,34 @@ namespace APIMatcalc
 			/// </summary>
 			bool _commStatus{ false };
 
+			/// <summary>
+			/// Returns true if object is disposed
+			/// </summary>
+			bool _isDisposed{ false };
+
+			/// <summary>
+			/// Returns true if object can execute commands
+			/// </summary>
+			bool can_execute()
+			{
+				// Check for comm availability
+				if (!_commStatus) return false;
+				// Check if object is disposed or not
+				if(_isDisposed) return false;
+
+				return true;
+			}
+
 		public:
 			/// <summary>
 			/// Constructor
 			/// </summary>
-			CalculationsThreadJob(IAM_Database* db, AM_Config* configuration) : 
+			CalculationsThreadJob(IAM_Database* db, AM_Config* configuration) :
 				_configuration(configuration)
 			{
 				// Get communication object
 				_comm = APIMatcalc::APICommunicationFactory::get_communication_object(configuration);
-				
+
 				// Check if comm was created
 				if (_comm != nullptr)
 				{
@@ -73,8 +91,7 @@ namespace APIMatcalc
 			~CalculationsThreadJob()
 			{
 				// dispose comm
-				_comm->Dispose();
-				delete _comm;
+				Dispose();
 			}
 
 			/// <summary>
@@ -84,8 +101,9 @@ namespace APIMatcalc
 			virtual int execute() override
 			{
 				// Check if comm is initialized and ready
-				if (!_commStatus)
+				if (!can_execute())
 				{
+					AMFramework::Callback::ErrorCallback::TriggerCallback("Matcalc CalculationsThreadJob, Cannot execute jobs!");
 					return 1;
 				}
 
@@ -108,11 +126,29 @@ namespace APIMatcalc
 				return 0;
 			}
 
+			/// <summary>
+			/// Disposes the object
+			/// </summary>
+			virtual void Dispose() override
+			{
+				if (!_isDisposed)
+				{
+					// dispose comm
+					_comm->Dispose();
+					delete _comm;
+
+					// delete calculations
+					delete_calculations();
+
+					_isDisposed = true;
+				}
+			}
+
 #pragma region Getters
 			/// <summary>
 			/// Returns true if comm was initialized correctly
 			/// </summary>
-			const bool& get_status() 
+			const bool& get_status()
 			{
 				return _commStatus;
 			}
@@ -140,7 +176,7 @@ namespace APIMatcalc
 			/// <summary>
 			/// Removes from memory all calculation objects
 			/// </summary>
-			void delete_calculations() 
+			void delete_calculations()
 			{
 				// remove objects
 				for (auto calculation : _calculations)
