@@ -1,12 +1,13 @@
 #pragma once
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_set_reference_element : public COMMAND_abstract
 {
 public: 
 	// constructor
-	COMMAND_set_reference_element(IPC_winapi* mccComm,AM_Config* configuration, std::string reference_element):
+	COMMAND_set_reference_element(AMFramework::Interfaces::IAM_Communication* mccComm,AM_Config* configuration, std::string reference_element):
 		COMMAND_abstract(mccComm, configuration), _refElement(reference_element)
 	{
 		_scriptContent = _command + " " + _refElement + "\n";

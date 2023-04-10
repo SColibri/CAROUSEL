@@ -5,11 +5,12 @@
 #include <thread>
 #include <chrono>
 #include <atltime.h>
+#include "../interfaces/IAM_Communication.h"
 
 #define BUFSIZE 4096 
 using namespace std;
 
-class IPC_winapi
+class IPC_winapi : public AMFramework::Interfaces::IAM_Communication
 {
 public:
     struct subprocess_info {
@@ -49,7 +50,7 @@ public:
         ReadFromPipe(&process_info);
     }
 
-    string& send_command(const string& commandString) 
+    virtual string& send_command(const string& commandString) override
     {
         //flush_pipe(); // check if pipe is empty
         DWORD dwWritten{0}, dwAvail{0};
@@ -89,6 +90,7 @@ private:
     string _stdout{""};
     string _endflag{ "" };
     bool _isRunning{ false };
+    bool _isDisposed{ false };
 
     int create_subprocess(wchar_t* cmdexec, struct subprocess_info* info)
     {
@@ -218,6 +220,17 @@ private:
         catch (const std::exception&)
         {
 
+        }
+    }
+
+    /// <summary>
+    /// Dispose method (IAM_Communication.h)
+    /// </summary>
+    virtual void Dispose() override
+    {
+        if (!_isDisposed)
+        {
+            CloseHandles(&process_info);
         }
     }
 

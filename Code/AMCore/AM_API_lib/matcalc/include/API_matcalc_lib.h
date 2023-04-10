@@ -98,7 +98,6 @@ private:
 	/// set-up socket communication with mcc defined on port=_mccPort
 	/// Async
 	/// </summary>
-	/// <param name="portNumber"></param>
 	void start_mcc_socket_async()
 	{
 		if (_mccSokcet_active) return;
@@ -124,7 +123,6 @@ private:
 	/// <summary>
 	/// set-up socket communication with mcc defined on port=_mccPort
 	/// </summary>
-	/// <param name="portNumber"></param>
 	void mcc_socketHandles()
 	{
 		WaitForSingleObject(mcc_pi.hProcess, INFINITE);

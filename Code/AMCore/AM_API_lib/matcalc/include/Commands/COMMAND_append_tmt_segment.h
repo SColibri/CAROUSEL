@@ -1,12 +1,13 @@
 #pragma once
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_append_tmt_segment : public COMMAND_abstract
 {
 public:
 	// constructor
-	COMMAND_append_tmt_segment(IPC_winapi* mccComm, AM_Config* configuration, std::string htName) :
+	COMMAND_append_tmt_segment(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::string htName) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 		_scriptContent = _command + " " + htName + "\n";

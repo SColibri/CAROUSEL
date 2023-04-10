@@ -1,12 +1,13 @@
 #pragma once
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_create_calc_state : public COMMAND_abstract
 {
 public:
 	// constructor
-	COMMAND_create_calc_state(IPC_winapi* mccComm, AM_Config* configuration, std::string stateName) :
+	COMMAND_create_calc_state(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::string stateName) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 		_scriptContent = _command + " new-state-name=" + stateName +"\n";

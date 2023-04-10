@@ -23,6 +23,11 @@ namespace AMFramework
 		/// </summary>
 		typedef void(__stdcall *ErrorCallbackF)(char*);
 
+		/// <summary>
+		/// Reports any errors
+		/// </summary>
+		typedef void(__stdcall* LogCallbackF)(char*);
+
 		// ======================================================
 		//						SCRIPTS
 		// ======================================================

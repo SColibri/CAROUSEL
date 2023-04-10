@@ -569,7 +569,6 @@ namespace API_Scripting
 	/// </summary>
 	/// <param name="db"></param>
 	/// <param name="configuration"></param>
-	/// <param name="IDCase"></param>
 	/// <param name="outVector"></param>
 	/// <param name="storedFiles"></param>
 	void static Script_run_heat_treatment(IAM_Database* db, AM_Config* configuration, std::string heatTreatmentName,

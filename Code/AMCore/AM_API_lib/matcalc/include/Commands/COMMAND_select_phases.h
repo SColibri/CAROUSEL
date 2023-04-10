@@ -1,12 +1,13 @@
 #pragma once
 #include "COMMAND_abstract.h"
 #include "COMMAND_exception.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_select_phases : public COMMAND_abstract
 {
 public:
 	// constructor
-	COMMAND_select_phases(IPC_winapi* mccComm, AM_Config* configuration, std::vector<std::string> Phases) :
+	COMMAND_select_phases(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, std::vector<std::string> Phases) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 		_command = "select-phases ";
@@ -22,7 +23,7 @@ public:
 			if (index > 10)
 			{
 				index = 0;
-				_command += " \n ";
+				_command += " \n select-phases ";
 			}
 		}
 

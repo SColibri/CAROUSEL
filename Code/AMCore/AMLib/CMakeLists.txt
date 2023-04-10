@@ -26,6 +26,7 @@ add_library(AMLib STATIC ${AMLIB_SRC} ${AMLIB_CALLBACK} ${AMLIB_H} ${AMLIB_I} ${
 target_link_libraries(AMLib ${CMAKE_CURRENT_SOURCE_DIR}/external/lua542/lua54.lib)
 target_link_libraries(AMLib sqlite3)
 target_link_libraries(AMLib ${CMAKE_CURRENT_SOURCE_DIR}/external/sshlib/ssh.lib)
+
 # target_link_libraries(AMLib ftxui::component)
 # target_link_libraries(AMLib ftxui::screen)
 # target_link_libraries(AMLib ftxui::dom)

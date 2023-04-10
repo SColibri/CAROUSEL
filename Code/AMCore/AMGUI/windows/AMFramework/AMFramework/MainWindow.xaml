@@ -18,7 +18,9 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:be="clr-namespace:AMControls.Behaviors;assembly=AMControls"
         mc:Ignorable="d"
-        Title="AMFramework" Height="450" Width="800">
+        Title="Carousel" Height="450" Width="800" 
+        UseLayoutRounding="True"
+        Icon="Carousel.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />

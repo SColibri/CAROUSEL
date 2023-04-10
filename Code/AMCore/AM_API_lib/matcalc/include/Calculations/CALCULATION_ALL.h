@@ -1,4 +1,5 @@
 #pragma once
+#include "CALCULATION_Equilibrium.h"
 #include "CALCULATION_scheil.h"
 #include "CALCULATION_scheilActivePhases.h"
 #include "CALCULATION_scheilPrecipitation_distribution.h"

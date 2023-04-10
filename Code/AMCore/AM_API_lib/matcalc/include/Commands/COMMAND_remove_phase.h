@@ -1,11 +1,12 @@
 #pragma once
 #include "COMMAND_abstract.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_remove_phase : public COMMAND_abstract
 {
 public:
 	// constructor
-	COMMAND_remove_phase(IPC_winapi* mccComm, AM_Config* configuration, string PhaseName) :
+	COMMAND_remove_phase(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, string PhaseName) :
 		COMMAND_abstract(mccComm, configuration)
 	{
 		_scriptContent = _command + " " + PhaseName + "\n";

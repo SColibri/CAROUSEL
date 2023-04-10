@@ -5,12 +5,13 @@
 #include "../../../../AMLib/include/Database_implementations/Data_stuctures/DBS_HeatTreatment.h"
 #include "../../../../AMLib/include/Database_implementations/Data_stuctures/DBS_HeatTreatmentSegment.h"
 #include "../../../../AMLib/include/Database_implementations/Data_stuctures/DBS_PrecipitationDomain.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 class COMMAND_heat_treatment_configuration : COMMAND_abstract
 {
 public:
 	// constructor
-	COMMAND_heat_treatment_configuration(IPC_winapi* mccComm, AM_Config* configuration, DBS_HeatTreatment* heatTreatment,
+	COMMAND_heat_treatment_configuration(AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, DBS_HeatTreatment* heatTreatment,
 		std::vector<DBS_HeatTreatmentSegment*>& listSegments, DBS_PrecipitationDomain* precipitationDomain) :
 		COMMAND_abstract(mccComm, configuration)
 	{

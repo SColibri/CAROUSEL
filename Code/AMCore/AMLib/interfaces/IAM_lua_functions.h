@@ -1380,7 +1380,7 @@ protected:
 			{
 				DBS_Project::remove_project_data(_dbFramework->get_database(), std::stoi(parameters[0]));
 				lua_pushstring(state, "Bind_project_clearContent: All data has been removed");
-				AMFramework::Callback::ErrorCallback::TriggerCallback("Bind_project_clearContent: All data has been removed");
+				AMFramework::Callback::MessageCallBack::TriggerCallback("Bind_project_clearContent: All data has been removed");
 				return 1;
 			}
 			lua_pushstring(state, "Bind_project_clearContent: Input parameter is not an integer for ID project.");

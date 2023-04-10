@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <ApplicationIcon>Carousel.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -1994,6 +1995,12 @@
     <None Remove="Resources\Icons\tablerIcons\zoom-out.png" />
     <None Remove="Resources\Icons\tablerIcons\zoom-pan.png" />
     <None Remove="Resources\Icons\tablerIcons\zoom-question.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Carousel.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -7984,6 +7991,9 @@
     </None>
     <None Update="Components\ScriptingEditor\Templates\_LUA.autocomplete">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="lua.config">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="lua\AMFramework.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
