@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <fstream>
 #include <filesystem>
+#include <iosfwd>
+#include <sstream>
 
 namespace string_manipulators
 {

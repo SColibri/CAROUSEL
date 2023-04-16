@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Schemas -->
+<!--
+  This schema contains all data models that the frameworks uses, .h and .cpp
+  files are generated using xsd, to generate the models just run the following
+  command:
+  
+  "xsd cxx-tree _-std c++17 <filename>"
+  
+  Note: The above command the "_" char is actually a "-", (xml comment restriction)
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <!-- A -->
+  <!-- Active phases -->
+  <!--
+    active phases are those phases that are present in the simulated
+    composition and temperature range. Model saves the phases.
+  -->
+  <xs:element name="ActivePhasesModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDProject" type="xs:int"/>
+      <xs:attribute name="IDPhase" type="xs:int"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <!-- Active phases configuration -->
+  <!--
+    Configuration used for calculating the active phases.
+  -->
+  <xs:element name="ActivePhasesConfigurationModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDProject" type="xs:int"/>
+      <xs:attribute name="StartTemp" type="xs:double"/>
+      <xs:attribute name="EndTemp" type="xs:double"/>
+      <xs:attribute name="StepSize" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Active Phases Element Composition -->
+  <!--
+    Composition to be used for the calculations, each model
+    contains a single element reference.
+  -->
+  <xs:element name="ActivePhasesElementCompositionModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDProject" type="xs:int"/>
+      <xs:attribute name="IDElement" type="xs:int"/>
+      <xs:attribute name="Value" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- C -->
+  <!-- CALPHAD database -->
+  <xs:element name="CALPHADDatabaseModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDProject" type="xs:int"/>
+      <xs:attribute name="Thermodynamic" type="xs:string"/>
+      <xs:attribute name="Physical" type="xs:string"/>
+      <xs:attribute name="Mobility" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Case -->
+  <xs:element name="CaseModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDProject" type="xs:int"/>
+      <xs:attribute name="IDGroup" type="xs:int"/>
+      <xs:attribute name="Name" type="xs:string"/>
+      <xs:attribute name="Script" type="xs:string"/>
+      <xs:attribute name="Date" type="xs:string"/>
+      <xs:attribute name="PosX" type="xs:double"/>
+      <xs:attribute name="PosY" type="xs:double"/>
+      <xs:attribute name="PosZ" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- E -->
+  <!-- Element -->
+  <xs:element name="ElementModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="Name" type="xs:int"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Element Composition -->
+  <xs:element name="ElementCompositionModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDCase" type="xs:int"/>
+      <xs:attribute name="IDElement" type="xs:int"/>
+      <xs:attribute name="TypeComposition" type="xs:string"/>
+      <xs:attribute name="Value" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Equilibrium Configuration -->
+  <xs:element name="EquilibriumConfigurationModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDCase" type="xs:int"/>
+      <xs:attribute name="Temperature" type="xs:double"/>
+      <xs:attribute name="StartTemperature" type="xs:double"/>
+      <xs:attribute name="EndTemperature" type="xs:double"/>
+      <xs:attribute name="TemperatureType" type="xs:string"/>
+      <xs:attribute name="StepSize" type="xs:double"/>
+      <xs:attribute name="Pressure" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Equilibrium Phase fraction -->
+  <xs:element name="EquilibriumPhaseFractionModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDCase" type="xs:int"/>
+      <xs:attribute name="Temperature" type="xs:double"/>
+      <xs:attribute name="Value" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- H -->
+  <!-- Heat Treatment -->
+  <xs:element name="HeatTreatmentModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDCase" type="xs:int"/>
+      <xs:attribute name="Name" type="xs:double"/>
+      <xs:attribute name="MaxTemperatureStep" type="xs:int"/>
+      <xs:attribute name="IDPrecipitationDomain" type="xs:int"/>
+      <xs:attribute name="StartTemperature" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Heat Treatment Profile -->
+  <xs:element name="HeatTreatmentProfileModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDHeatTreatment" type="xs:int"/>
+      <xs:attribute name="Time" type="xs:double"/>
+      <xs:attribute name="Temperature" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Heat Treatment Segment -->
+  <xs:element name="HeatTreatmentSegmentModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="StepIndex" type="xs:int"/>
+      <xs:attribute name="IDHeatTreatment" type="xs:int"/>
+      <xs:attribute name="IDPrecipitationDomain" type="xs:int"/>
+      <xs:attribute name="EndTemperature" type="xs:double"/>
+      <xs:attribute name="TemperatureGradient" type="xs:double"/>
+      <xs:attribute name="Duration" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- P -->
+  <!-- Phase -->
+  <xs:element name="PhaseModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="Name" type="xs:string"/>
+      <xs:attribute name="DBType" type="xs:int"/>
+    </xs:complexType>
+  </xs:element>
+
+
+  <!-- Precipitation simulation data -->
+  <xs:element name="PrecipitationSimulationDataModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDPrecipitationPhase" type="xs:int"/>
+      <xs:attribute name="IDHeatTreatment" type="xs:int"/>
+      <xs:attribute name="Time" type="xs:double"/>
+      <xs:attribute name="PhaseFraction" type="xs:double"/>
+      <xs:attribute name="NumberDensity" type="xs:double"/>
+      <xs:attribute name="MeanRadius" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Precipitation Domain -->
+  <xs:element name="PrecipitationDomainModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDCase" type="xs:int"/>
+      <xs:attribute name="Name" type="xs:string"/>
+      <xs:attribute name="IDPhase" type="xs:int"/>
+      <xs:attribute name="InitialGrainDiameter" type="xs:double"/>
+      <xs:attribute name="EquilibriumDiDe" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Precipitation Phase -->
+  <xs:element name="PrecipitationPhaseModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDCase" type="xs:int"/>
+      <xs:attribute name="IDPhase" type="xs:int"/>
+      <xs:attribute name="NumberSizeClasses" type="xs:int"/>
+      <xs:attribute name="Name" type="xs:string"/>
+      <xs:attribute name="NucleationSites" type="xs:string"/>
+      <xs:attribute name="IDPrecipitationDomain" type="xs:int"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Project -->
+  <xs:element name="ProjectModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="Name" type="xs:string"/>
+      <xs:attribute name="APIName" type="xs:string"/>
+      <xs:attribute name="External_APIName" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- S -->
+  <!-- Scheil Configuration -->
+  <xs:element name="ScheilConfigurationModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDCase" type="xs:int"/>
+      <xs:attribute name="StartTemperature" type="xs:double"/>
+      <xs:attribute name="EndTemperature" type="xs:double"/>
+      <xs:attribute name="StepSize" type="xs:double"/>
+      <xs:attribute name="DependentPhase" type="xs:int"/>
+      <xs:attribute name="MinimumLiquidFraction" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Scheil Cumulative Fraction -->
+  <xs:element name="ScheilCumulativeFractionModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDCase" type="xs:int"/>
+      <xs:attribute name="IDPhase" type="xs:double"/>
+      <xs:attribute name="TypeComposition" type="xs:string"/>
+      <xs:attribute name="Temperature" type="xs:double"/>
+      <xs:attribute name="Value" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Scheil Phase Fraction -->
+  <xs:element name="ScheilPhaseFractionModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDCase" type="xs:int"/>
+      <xs:attribute name="IDPhase" type="xs:double"/>
+      <xs:attribute name="TypeComposition" type="xs:string"/>
+      <xs:attribute name="Temperature" type="xs:double"/>
+      <xs:attribute name="Value" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Selected Elements -->
+  <xs:element name="SelectedElementsModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDProject" type="xs:int"/>
+      <xs:attribute name="IDElement" type="xs:int"/>
+      <xs:attribute name="IsReferenceElement" type="xs:int"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Selected Phases -->
+  <xs:element name="SelectedPhasesModel">
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:int"/>
+      <xs:attribute name="IDCase" type="xs:int"/>
+      <xs:attribute name="IDPhase" type="xs:int"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

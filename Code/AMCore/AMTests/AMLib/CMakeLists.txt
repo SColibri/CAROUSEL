@@ -8,8 +8,16 @@ enable_testing()
 # Directory that contains the tests
 set(AMLib_TEST_DIRECTORY ${PROJECT_SOURCE_DIR}/AMTests/AMLib/Tests)
 
+# Data models require xercesc library
+file(COPY ${XERCES_LIBRARY_DLL}
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}) 
+
 # Get list of all files
 file(GLOB AMLib_TESTS ${AMLib_TEST_DIRECTORY}/*.cpp)
+
+# Include xsd
+get_property(XSD_INCLUDE_DIR GLOBAL PROPERTY XSD_INCLUDE_DIR_P)
+include_directories(${XSD_INCLUDE_DIR})
 
 # Create all tests
 foreach(target IN LISTS AMLib_TESTS)

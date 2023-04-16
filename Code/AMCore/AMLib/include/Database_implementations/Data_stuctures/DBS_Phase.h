@@ -3,6 +3,10 @@
 /// <summary>
 /// Implements IAM_DBS.h interface, this is a phase
 /// object structure.
+///
+/// Note:
+///	DBType specifies if the phase is contained in a database or other. Thus only Type
+///	0 can be passed as parameters to the external calphad software
 /// </summary>
 class DBS_Phase : public IAM_DBS
 {
@@ -12,6 +16,9 @@ private:
 public:
 	// [DBS_Parameter]
 	std::string Name{ "" };
+	// [DBS_Parameter]
+	int DBType{ 0 };
+
 
 	DBS_Phase(IAM_Database* database, int id) :
 		IAM_DBS(database)
@@ -41,7 +48,8 @@ public:
 	virtual std::vector<std::string> get_input_vector() override
 	{
 		std::vector<std::string> input{ std::to_string(_id),
-										Name};
+										Name,
+											std::to_string(DBType)};
 		return input;
 	}
 
@@ -60,9 +68,10 @@ public:
 	virtual int load(std::vector<std::string>& rawData) override
 	{
 		_id = -1;
-		if (rawData.size() < 2) return 1;
+		if (rawData.size() < 3) return 1;
 		set_id(std::stoi(rawData[0]));
 		Name = rawData[1];
+		DBType = std::stoi(rawData[2]);
 		return 0;
 	}
 
