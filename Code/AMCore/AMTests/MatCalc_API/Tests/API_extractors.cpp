@@ -43,22 +43,9 @@ TEST_CASE("Extractors")
 		// Object to test
 		APIMatcalc::Extractors::PhaseNameExtractor extractor;
 
-		// vector output, this should only contain the phase names without the "_S" char,
-		// spaces or any other text element
+		// vector output, this should only contain the phase names
 		std::vector<std::string> result = extractor.extract(textToParse);
-
-		ActivePhasesModel apm;
-		apm.Id(1);
-		apm.IDPhase(1);
-		apm.IDProject(1);
-		
-		int testy = *apm.Id();
-		
-		std::stringstream sstream;
-		std::ofstream offy("tasr.xml");
-		sstream << apm;
-		
-		std::string strtesty = sstream.str();
+		REQUIRE(result.size() == 41);
 		
 		bool gi = false;
 	}

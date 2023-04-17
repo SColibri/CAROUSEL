@@ -15,7 +15,7 @@ set(BUILD_TESTING true)
 
 # Re-builds schema c++ files, set to true if you plan to modify the data
 # structures.
-set(REBUILD_SCHEMA true)
+set(REBUILD_SCHEMA false)
 
 
 

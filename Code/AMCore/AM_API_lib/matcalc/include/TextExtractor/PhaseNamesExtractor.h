@@ -119,17 +119,14 @@ namespace APIMatcalc
 				// extract section from string
 				std::string neededSection = _text.substr(indexStart, _text.size() - 1);
 
-				// regular expression that finds all phases that do not contain the 
-				// "_S" identifier (we might also need to discriminate the _p identifier)
-				// but these phases are declared for the grain precipitation calculations
-				std::regex pattern("(.*[a-z\nA-Z#_0-9])^((?!_S).)*$");
+				// Gets all phase names contained in the list
+				std::regex pattern("\\b[\\w#]+\\b");
+				std::smatch matchValue;
 
-				// Get string container from regex
-				// Define an iterator to search for the regular expression in the text
-				std::sregex_iterator currentMatch(neededSection.begin(), neededSection.end(), pattern);
-				std::sregex_iterator lastMatch;
-
-				// TODO: fill vector
+				while (std::regex_search(neededSection, matchValue, pattern)) {
+					result.push_back(matchValue[0]);
+					neededSection = matchValue.suffix().str();
+				}
 
 				return result;
 			}

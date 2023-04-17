@@ -3606,4 +3606,4 @@ operator<< (::xercesc::DOMElement&, const SelectedPhasesModel&);
 //
 // End epilogue.
 
-#endif // C__USERS_DROGO_DOCUMENTS_TUM_THESIS_FRAMEWORK_AMFRAMEWORK_CODE_AMCORE_AMMODELS_MODEL_SCHEMA_H
+#endif //
