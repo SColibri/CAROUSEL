@@ -22,56 +22,6 @@ namespace AMFramework
 		static inline std::mutex _lockDatabase;
 
 		/// <summary>
-		/// This adds all created phases that are marked with # into the database and
-		/// marks the phase as "not selectable" which means that the phase is a derivate from
-		/// another phase but different constituents
-		/// </summary>
-		/// <param name="phases">List of phases</param>
-		static inline void add_created_phases(IAM_Database* database, std::vector<std::string> phases)
-		{
-			// Get phases of interest 
-			std::vector<std::string> phaseSelection = get_created_phase_names(phases);
-
-			// Use mutex to avoid multiple saves of same or similar list of phases
-			_lockDatabase.lock();
-
-			if (!is_contained(phaseSelection))
-			{
-				try
-				{
-					// Phases to save
-					std::vector<IAM_DBS*> phasesToSave;
-
-					for (std::string phaseName : phaseSelection)
-					{
-						DBS_Phase* phase = try_find(phaseName);
-						
-						if (phase == nullptr)
-						{
-							DBS_Phase* tempPhase = new DBS_Phase(database, -1);
-							tempPhase->Name = phaseName;
-							tempPhase->DBType = 1;
-
-							phasesToSave.push_back(tempPhase)
-						}
-					}
-
-					// save and load into memory
-					IAM_DBS::save(phasesToSave);
-					load_vector(database, phaseSelection);
-				}
-				catch (const std::exception& e)
-				{
-					// Log the error
-					std::string msg = "PhaseExtension::add_created_phases Encountered an error: " + e.what();
-					AMFramework::Callback::ErrorCallback::TriggerCallback(&msg[0]);
-				}
-			}
-
-			_lockDatabase.unlock();
-		}
-
-		/// <summary>
 		/// Gets all phases that are marked with #, these are "duplicated" phase names with 
 		/// different constituents
 		/// </summary>
@@ -88,7 +38,6 @@ namespace AMFramework
 				if (string_manipulators::find_index_of_keyword(phaseName, "#") != std::string::npos)
 				{
 					result.push_back(phaseName);
-					DBS_Phase phase(database, -1);
 				}
 			}
 
@@ -100,10 +49,10 @@ namespace AMFramework
 		/// </summary>
 		/// <param name="phases"></param>
 		/// <returns></returns>
-		static inline bool is_contained(std::vector<std::string> phases) 
+		static inline bool is_contained(std::vector<std::string> phases)
 		{
 			// Search by name
-			for (auto phaseName : phases)
+			for (std::string phaseName : phases)
 			{
 				IAM_DBS* phaseObject = try_find(phaseName);
 				if (phaseObject == nullptr)
@@ -115,5 +64,59 @@ namespace AMFramework
 			return true;
 		}
 
+		/// <summary>
+		/// This adds all created phases that are marked with # into the database and
+		/// marks the phase as "not selectable" which means that the phase is a derivate from
+		/// another phase but different constituents
+		/// </summary>
+		/// <param name="phases">List of phases</param>
+		static inline void add_created_phases(IAM_Database* database, std::vector<std::string> phases)
+		{
+			// Get phases of interest 
+			std::vector<std::string> phaseSelection = get_created_phase_names(phases);
+
+			// Use mutex to avoid multiple saves of same or similar list of phases
+			_lockDatabase.lock();
+
+			// Check if phases are loaded in memory, if not add them.
+			if (!is_contained(phaseSelection))
+			{
+				try
+				{
+					// Phases to save
+					std::vector<IAM_DBS*> phasesToSave;
+
+					for (std::string phaseName : phaseSelection)
+					{
+						DBS_Phase* phase =  try_find(phaseName);
+
+						if (phase == nullptr)
+						{
+							DBS_Phase* tempPhase = new DBS_Phase(database, -1);
+							tempPhase->Name = phaseName;
+							tempPhase->DBType = 1;
+
+							phasesToSave.push_back(tempPhase);
+						}
+					}
+
+					// save and load into memory
+					IAM_DBS::save(phasesToSave);
+					 load_vector(database, phaseSelection);
+				}
+				catch (const std::exception& e)
+				{
+					// Log the error
+					std::string msg = "PhaseExtension::add_created_phases Encountered an error: " + std::string(e.what());
+					AMFramework::Callback::ErrorCallback::TriggerCallback(&msg[0]);
+				}
+			}
+
+			_lockDatabase.unlock();
+		}
+
+		
+
+		
 	}
 }

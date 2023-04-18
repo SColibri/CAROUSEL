@@ -19,6 +19,7 @@ set(APILib_MATCALC_TEST_DIRECTORY ${PROJECT_SOURCE_DIR}/AMTests/MatCalc_API/Test
 
 # Get list of all files
 file(GLOB APILib_MATCALC_TESTS ${APILib_MATCALC_TEST_DIRECTORY}/*.cpp)
+file(GLOB APILib_MATCALC_H ${APILib_MATCALC_TEST_DIRECTORY}/*.h)
 
 set(XSD_INCLUDE_DIR "C:/Users/drogo/Downloads/xsd/libxsd")
 
@@ -38,7 +39,7 @@ foreach(target IN LISTS APILib_MATCALC_TESTS)
     
     # create tests
     message("Looking into filename: ${fname}")
-    add_executable(${fname} "${target}")
+    add_executable(${fname} "${target}" ${APILib_MATCALC_H})
 	set_target_properties(${fname} PROPERTIES CXX_EXTENSIONS OFF)
     target_compile_features(${fname} PUBLIC cxx_std_17)
     target_compile_options(${fname} PRIVATE ${DEFAULT_COMPILER_OPTIONS_AND_WARNINGS})

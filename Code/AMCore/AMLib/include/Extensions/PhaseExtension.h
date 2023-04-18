@@ -35,53 +35,25 @@ namespace AMFramework
 		}
 
 		/// <summary>
-		/// Loads all phases into memory
+		/// Find phase in memory
 		/// </summary>
-		static inline void load_all_phases(IAM_Database* database)
+		/// <param name="phaseName"></param>
+		/// <returns></returns>
+		static inline DBS_Phase* try_find(std::string& phaseName)
 		{
-			try
+			DBS_Phase* result = nullptr;
+
+			// Find in memory
+			for (auto phase : phasesInMemory)
 			{
-				// Phase table structure
-				AM_Database_Datatable phaseTable(database, &AMLIB::TN_Phase());
-				phaseTable.load_data();
-
-				// load data into phase object
-				if (phaseTable.row_count() > 0)
+				if (phase->Name.compare(phaseName) == 0)
 				{
-					for (int n1 = 0; n1 < phaseTable.row_count(); n1++)
-					{
-						phasesInMemory.push_back(new DBS_Phase(database, std::stoi(phaseTable(0, n1))));
-					}
-
-					// Success
-					std::string msg = "PhaseExtension::load_all_phases, total of phases loaded into memory: " + std::to_string(phasesInMemory.size());
-					AMFramework::Callback::LogCallback::TriggerCallback(&msg[0]);
-				}
-				else
-				{
-					// No phases found in database
-					std::string msg = "PhaseExtension::load_all_phases, there are no phases available in the database  ");
-					AMFramework::Callback::ErrorCallback::TriggerCallback(&msg[0]);
+					result = phase;
+					break;
 				}
 			}
-			catch (const std::exception& ex)
-			{
-				// Exception
-				std::string msg = "PhaseExtension::load_all_phases, an error occurred while loading all phases: " + ex.what();
-				AMFramework::Callback::ErrorCallback::TriggerCallback(&msg[0]);
-			}
-		}
 
-		/// <summary>
-		/// Loads phases by name, does not throw exception when a phase was not found
-		/// </summary>
-		/// <param name="phases"></param>
-		static inline void load_vector(IAM_Database* database, std::vector<std::string> phases)
-		{
-			for (std::string phaseName : phases) 
-			{
-				get_phase_by_name(database, phaseName);
-			}
+			return result;
 		}
 
 		/// <summary>
@@ -135,6 +107,28 @@ namespace AMFramework
 		}
 
 		/// <summary>
+		/// Find phase in memory
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		static inline DBS_Phase* try_find(int& id)
+		{
+			DBS_Phase* result = nullptr;
+
+			// Find in memory
+			for (auto phase : phasesInMemory)
+			{
+				if (phase->id() == id)
+				{
+					result = phase;
+					break;
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
 		/// Searches for a phase object that is already loaded into memory.
 		/// If the phase is found, a pointer to the phase object is returned.
 		/// If the phase is not found, the function tries to add it to memory.
@@ -146,7 +140,7 @@ namespace AMFramework
 		{
 			// find by name in memory
 			DBS_Phase* result = try_find(phaseName);
-			
+
 			// If not found try to load by name 
 			result = result != nullptr ? result : add_by_name(database, phaseName);
 
@@ -188,47 +182,59 @@ namespace AMFramework
 		}
 
 		/// <summary>
-		/// Find phase in memory
+		/// Loads all phases into memory
 		/// </summary>
-		/// <param name="phaseName"></param>
-		/// <returns></returns>
-		static inline DBS_Phase* try_find(std::string& phaseName)
+		static inline void load_all_phases(IAM_Database* database)
 		{
-			DBS_Phase* result = nullptr;
-
-			// Find in memory
-			for (auto phase : phasesInMemory)
+			try
 			{
-				if (phase->Name.compare(phaseName) == 0)
+				// Phase table structure
+				AM_Database_Datatable phaseTable(database, &AMLIB::TN_Phase());
+				phaseTable.load_data();
+
+				// load data into phase object
+				if (phaseTable.row_count() > 0)
 				{
-					result = phase;
-					break;
+					for (int n1 = 0; n1 < phaseTable.row_count(); n1++)
+					{
+						phasesInMemory.push_back(new DBS_Phase(database, std::stoi(phaseTable(0, n1))));
+					}
+
+					// Success
+					std::string msg = "PhaseExtension::load_all_phases, total of phases loaded into memory: " + std::to_string(phasesInMemory.size());
+					AMFramework::Callback::LogCallback::TriggerCallback(&msg[0]);
+				}
+				else
+				{
+					// No phases found in database
+					std::string msg = "PhaseExtension::load_all_phases, there are no phases available in the database  ";
+					AMFramework::Callback::ErrorCallback::TriggerCallback(&msg[0]);
 				}
 			}
-
-			return result;
+			catch (const std::exception& ex)
+			{
+				// Exception
+				std::string msg = "PhaseExtension::load_all_phases, an error occurred while loading all phases: " + std::string(ex.what());
+				AMFramework::Callback::ErrorCallback::TriggerCallback(&msg[0]);
+			}
 		}
 
 		/// <summary>
-		/// Find phase in memory
+		/// Loads phases by name, does not throw exception when a phase was not found
 		/// </summary>
-		/// <param name="id"></param>
-		/// <returns></returns>
-		static inline DBS_Phase* try_find(int& id)
+		/// <param name="phases"></param>
+		static inline void load_vector(IAM_Database* database, std::vector<std::string> phases)
 		{
-			DBS_Phase* result = nullptr;
-
-			// Find in memory
-			for (auto phase : phasesInMemory)
+			for (std::string phaseName : phases) 
 			{
-				if (phase->id() == id)
-				{
-					result = phase;
-					break;
-				}
+				get_phase_by_name(database, phaseName);
 			}
-
-			return result;
 		}
+
+		
+
+		
+
+		
 	}
 }
