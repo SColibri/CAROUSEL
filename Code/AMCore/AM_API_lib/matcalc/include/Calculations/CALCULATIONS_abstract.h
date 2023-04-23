@@ -51,6 +51,11 @@ namespace matcalc
 			return output;
 		}
 
+		virtual std::string& Get_output() override 
+		{
+			return _output;
+		}
+
 		virtual void AfterCalculation() override = 0;
 		virtual void BeforeCalculation() override = 0;
 

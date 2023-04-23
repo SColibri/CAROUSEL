@@ -3,6 +3,7 @@
 // c++
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 // Core
 #include "../../interfaces/IAM_DBS.h"
@@ -20,7 +21,9 @@ namespace AMFramework
 		/// <summary>
 		/// List of phases loaded in memory, with this we avoid multiple IO operations
 		/// </summary>
-		static inline std::vector<DBS_Phase*> phasesInMemory;
+		// static inline std::vector<DBS_Phase*> phasesInMemory;
+
+		static inline std::unordered_map<std::string, DBS_Phase*> phasesInMemory;
 
 		/// <summary>
 		/// Removes all phases from memory
@@ -29,7 +32,7 @@ namespace AMFramework
 		{
 			for (auto phase : phasesInMemory)
 			{
-				delete phase;
+				delete phase.second;
 			}
 			phasesInMemory.clear();
 		}
@@ -46,10 +49,31 @@ namespace AMFramework
 			// Find in memory
 			for (auto phase : phasesInMemory)
 			{
-				if (phase->Name.compare(phaseName) == 0)
+				if (phase.second->Name.compare(phaseName) == 0)
 				{
-					result = phase;
+					result = phase.second;
 					break;
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Returns found phases from given list
+		/// </summary>
+		/// <param name="phases"></param>
+		/// <returns></returns>
+		static inline std::vector<DBS_Phase*> try_find(std::vector<std::string> phases) 
+		{
+			std::vector<DBS_Phase*> result;
+
+			for (auto& phaseName : phases)
+			{
+				auto phaseIterator = phasesInMemory.find(phaseName);
+				if (phaseIterator != phasesInMemory.end())
+				{
+					result.push_back(phasesInMemory[phaseName]);
 				}
 			}
 
@@ -70,7 +94,7 @@ namespace AMFramework
 			if (phase->id() > -1)
 			{
 				// add found object
-				phasesInMemory.push_back(phase);
+				phasesInMemory.insert(std::make_pair(phase->Name, phase));
 				return phase;
 			}
 			else
@@ -95,7 +119,7 @@ namespace AMFramework
 			if (phase->id() > -1)
 			{
 				// add found object
-				phasesInMemory.push_back(phase);
+				phasesInMemory.insert(std::make_pair(phase->Name, phase));
 				return phase;
 			}
 			else
@@ -118,9 +142,9 @@ namespace AMFramework
 			// Find in memory
 			for (auto phase : phasesInMemory)
 			{
-				if (phase->id() == id)
+				if (phase.second->id() == id)
 				{
-					result = phase;
+					result = phase.second;
 					break;
 				}
 			}
@@ -197,7 +221,8 @@ namespace AMFramework
 				{
 					for (int n1 = 0; n1 < phaseTable.row_count(); n1++)
 					{
-						phasesInMemory.push_back(new DBS_Phase(database, std::stoi(phaseTable(0, n1))));
+						DBS_Phase* phase = new DBS_Phase(database, std::stoi(phaseTable(0, n1)));
+						phasesInMemory.insert(std::make_pair(phase->Name, phase));
 					}
 
 					// Success

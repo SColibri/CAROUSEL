@@ -70,7 +70,7 @@ namespace AMFramework
 		/// another phase but different constituents
 		/// </summary>
 		/// <param name="phases">List of phases</param>
-		static inline void add_created_phases(IAM_Database* database, std::vector<std::string> phases)
+		static inline std::vector<DBS_Phase*> add_created_phases(IAM_Database* database, std::vector<std::string> phases)
 		{
 			// Get phases of interest 
 			std::vector<std::string> phaseSelection = get_created_phase_names(phases);
@@ -78,7 +78,7 @@ namespace AMFramework
 			// Use mutex to avoid multiple saves of same or similar list of phases
 			_lockDatabase.lock();
 
-			// Check if phases are loaded in memory, if not add them.
+			// Check if phases are loaded in memory, if not add them. If phases don't exist they also get added into the database
 			if (!is_contained(phaseSelection))
 			{
 				try
@@ -102,7 +102,9 @@ namespace AMFramework
 
 					// save and load into memory
 					IAM_DBS::save(phasesToSave);
-					 load_vector(database, phaseSelection);
+
+					// Will only load phases that are not already loaded
+					load_vector(database, phaseSelection);
 				}
 				catch (const std::exception& e)
 				{
@@ -113,6 +115,11 @@ namespace AMFramework
 			}
 
 			_lockDatabase.unlock();
+
+			// Get pointers
+			std::vector<DBS_Phase*> loadedPhases = try_find(phaseSelection);
+
+			return loadedPhases;
 		}
 
 		

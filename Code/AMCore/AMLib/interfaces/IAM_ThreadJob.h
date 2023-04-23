@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace AMFramework
 {
 	namespace Interfaces
@@ -20,6 +22,12 @@ namespace AMFramework
 			/// Disposes the thread job object
 			/// </summary>
 			virtual void Dispose() = 0;
+
+			/// <summary>
+			/// Gets output string
+			/// </summary>
+			/// <returns></returns>
+			virtual std::string get_output() = 0;
 		};
 
 	}

@@ -51,7 +51,7 @@ TEST_CASE("PhaseExtensions")
 		{
 			DBS_Phase* phase = new DBS_Phase(dbf->get_database(), -1);
 			phase->Name = phaseName;
-			AMFramework::PhaseExtension::phasesInMemory.push_back(phase);
+			AMFramework::PhaseExtension::phasesInMemory.insert(std::make_pair(phase->Name, phase));
 		}
 
 		// All phases should be found
