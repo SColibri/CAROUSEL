@@ -95,16 +95,24 @@ namespace AMFramework.Controller
 
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if (File.Exists(ofd.FileName) == true)
-                {
-                    // create view
-                    Scripting_ViewModel scriptViewModel = Create_NewScript();
-                    scriptViewModel.Load(ofd.FileName);
+	            if (File.Exists(ofd.FileName))
+	            {
+		            // create view
+		            Scripting_ViewModel scriptViewModel = Create_NewScript();
+		            scriptViewModel.Load(ofd.FileName);
 
-                    // create tab and add scripting view
-                    tabController.Create_Tab(scriptViewModel.ScriptingEditor, scriptViewModel, Path.GetFileName(scriptViewModel.Filename));
-                }
-                else
+		            // create tab and add scripting view
+		            tabController.Create_Tab(scriptViewModel.ScriptingEditor, scriptViewModel,
+			            Path.GetFileName(scriptViewModel.Filename));
+
+		            if (!Controller_Global.UserPreferences.RecentFiles.Contains(ofd.FileName))
+		            {
+			            Controller_Global.UserPreferences.RecentFiles.Add(ofd.FileName);
+			            Controller_Global.UserPreferences.save();
+					}
+
+	            }
+	            else
                 {
                     System.Windows.Forms.MessageBox.Show("Ups, where did the file go?", "Script file", System.Windows.Forms.MessageBoxButtons.OK);
                 }

@@ -214,7 +214,6 @@ namespace matcalc
 		}
 
 
-
 	private:
 		IAM_Database* _db;
 		IPC_winapi* _mccComm;

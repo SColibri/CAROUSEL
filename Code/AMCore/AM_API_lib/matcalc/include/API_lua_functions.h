@@ -887,7 +887,9 @@ private:
 		int end = std::stoi(rangeIDCase[1]);
 		int range = end - start;
 
-		// run scheil simulations
+		// run scheil simulations, we use the ScriptingDoSolidification here because of time issues, this has to be finished soon. So 
+		// refactoring is in order.
+		// Note: to use scheil calculation from CALCULATIONS, you need to manage the jobs as done in ScriptingDoSolidification
 		APIMatcalc::ScriptingCommands::ScriptingDoSolidification::run_scheil_simulations(_dbFramework->get_database(), _configuration, std::stoi(parameters[0]), start, end );
 
 		//for (int n1 = 0; n1 < range + 1; n1++)

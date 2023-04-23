@@ -15,6 +15,7 @@
 #include "COMMAND_heat_treatmet_configuration.h"
 #include "COMMAND_import_precipitate_distribution.h"
 #include "COMMAND_initialize_core.h"
+#include "COMMAND_list_core_status.h"
 #include "COMMAND_load_buffer_state.h"
 #include "COMMAND_read_thermodynamic_database.h"
 #include "COMMAND_remove_phase.h"

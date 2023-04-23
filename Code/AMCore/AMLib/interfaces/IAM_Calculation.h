@@ -17,6 +17,12 @@ public:
 	virtual std::string Get_script_text() = 0;
 
 	/// <summary>
+	/// Returns execution output
+	/// </summary>
+	/// <returns></returns>
+	virtual std::string& Get_output() = 0;
+
+	/// <summary>
 	/// Actions to do before calculation
 	/// </summary>
 	virtual void BeforeCalculation() = 0;

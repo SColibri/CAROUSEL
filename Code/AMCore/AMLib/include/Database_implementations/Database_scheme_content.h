@@ -40,6 +40,7 @@ namespace AMLIB
 		AM_Database_TableStruct out;
 		out.add_new("ID", "INTEGER PRIMARY KEY"); // Auto increment ID
 		out.add_new("Name", "TEXT"); // Name of phase
+		out.add_new("DBType","INTEGER");
 		out.tableName = "Phase";
 
 		return out;

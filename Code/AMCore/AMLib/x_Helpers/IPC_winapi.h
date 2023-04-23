@@ -6,6 +6,7 @@
 #include <chrono>
 #include <atltime.h>
 #include "../interfaces/IAM_Communication.h"
+#include "../x_Helpers/string_manipulators.h"
 
 #define BUFSIZE 4096 
 using namespace std;

@@ -3,6 +3,7 @@
 // c++
 #include <codecvt>
 #include <vector>
+#include <string>
 
 // Core
 #include "../../../AMLib/include/callbackFunctions/LogCallback.h"
@@ -142,6 +143,33 @@ namespace APIMatcalc
 
 					_isDisposed = true;
 				}
+			}
+
+			/// <summary>
+			/// Returns the collected output for all jobs done by this
+			/// worker
+			/// </summary>
+			/// <returns></returns>
+			virtual std::string get_output() override
+			{
+				// Extract all output strings that this job worked on
+				std::stringstream ss;
+				for (int i = 0; i < _calculations.size(); i++)
+				{
+					ss << "|-----------------------------|" << "\n";
+					ss << "| OUTPUT: " << std::to_string(i) << "   |" << "\n";
+					ss << "|-----------------------------|" << "\n";
+					ss << "\n\n" << _calculations[i]->Get_output() << "\n\n";
+
+					ss << "|-----------------------------|" << "\n";
+					ss << "| SCRIPT: " << std::to_string(i) << "   |" << "\n";
+					ss << "|-----------------------------|" << "\n";
+					ss << "\n\n" << _calculations[i]->Get_script_text() << "\n\n";
+				}
+
+				std::string result = ss.str();
+
+				return result;
 			}
 
 #pragma region Getters

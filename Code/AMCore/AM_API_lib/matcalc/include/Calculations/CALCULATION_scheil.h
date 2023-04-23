@@ -1,9 +1,18 @@
 #pragma once
+
+// c++
 #include <vector>
-#include "CALCULATIONS_abstract.h"
+#include <mutex>
+
+// core
 #include "../../../../AMLib/interfaces/IAM_DBS.h"
 #include "../../../../AMLib/interfaces/IAM_Communication.h"
 #include "../../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+
+// local
+#include "CALCULATIONS_abstract.h"
+#include "../TextExtractor/PhaseNamesExtractor.h"
+#include "../Extension/PhasesExtension.h"
 
 namespace matcalc
 {
@@ -19,6 +28,11 @@ namespace matcalc
 		IAM_Database* _db;
 
 		/// <summary>
+		/// Pointer to configuration object
+		/// </summary>
+		AM_Config* _configuration;
+
+		/// <summary>
 		/// Pointer to case data
 		/// </summary>
 		AM_pixel_parameters* _pixel_parameters;
@@ -27,6 +41,11 @@ namespace matcalc
 		/// Flag, save after execution automatically
 		/// </summary>
 		bool _autosave{ false };
+
+		/// <summary>
+		/// Reference to communication object
+		/// </summary>
+		AMFramework::Interfaces::IAM_Communication* _comm;
 
 	public:
 
@@ -41,7 +60,9 @@ namespace matcalc
 		/// <param name="pixel_parameters"></param>
 		CALCULATION_scheil(IAM_Database* db, AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, DBS_ScheilConfiguration* scheilConfig, AM_Project* project, AM_pixel_parameters* pixel_parameters) :
 			_db(db),
-			_pixel_parameters(pixel_parameters)
+			_pixel_parameters(pixel_parameters),
+			_comm(mccComm),
+			_configuration(configuration)
 		{
 			// get dependent phase
 			DBS_Phase dependentPhase(db, scheilConfig->DependentPhase);
@@ -82,8 +103,7 @@ namespace matcalc
 			_commandList.push_back(new COMMAND_calculate_equilibrium(mccComm, configuration, scheilConfig->StartTemperature)); // add user defined temperature!
 			_commandList.push_back(new COMMAND_scheil_configuration(mccComm, configuration, scheilConfig, dependentPhase.Name));
 			_commandList.push_back(new COMMAND_run_step_equilibrium(mccComm, configuration));
-			_commandList.push_back(new COMMAND_export_variables(mccComm, configuration, _filename, variableType, variableNames, ""));
-
+			//_commandList.push_back(new COMMAND_export_variables(mccComm, configuration, _filename, variableType, variableNames, ""));
 		}
 
 		/// <summary>
@@ -99,17 +119,27 @@ namespace matcalc
 		/// <summary>
 		/// Sets flag for saving after command execution
 		/// </summary>
-		void set_auto_save() 
+		void set_auto_save()
 		{
 			_autosave = true;
 		}
 
-		virtual void BeforeCalculation() override { }
+		/// <summary>
+		/// Implementation for before calculation
+		/// </summary>
+		virtual void BeforeCalculation() override
+		{
+			// empty
+		}
 
-		virtual void AfterCalculation() override 
-		{ 
+		/// <summary>
+		/// Implementation for after calculation
+		/// </summary>
+		virtual void AfterCalculation() override
+		{
 			if (_autosave)
 			{
+				export_phase_fraction_data();
 				Save_to_database(_db, _pixel_parameters);
 			}
 		}
@@ -173,7 +203,79 @@ namespace matcalc
 
 
 	private:
+		/// <summary>
+		/// filename for saving exported data
+		/// </summary>
 		std::string _filename{ "" };
+
+		/// <summary>
+		/// Gets the formatted string command for extracting the phase fractions from matcalc.
+		/// This methods looks for all calculated phases and not only the selected phases, so
+		/// if more phases where added these get added to the selected phases and into the
+		/// database if these phases are missing from the database
+		/// </summary>
+		/// <returns></returns>
+		std::string export_phase_fraction_data()
+		{
+			// ouput
+			std::string format;
+
+			// Get active phases
+			APIMatcalc::Extractors::PhaseNameExtractor pne;
+			std::vector<std::string> foundPhases = pne.extract(_comm);
+
+			// Since phases with '#' are created after the scheil/Equilibrium calculations
+			// we have to check and make sure that all involved phases are correctly selected
+			update_selected_phases(foundPhases);
+			std::vector<std::string> selectedPhase = _pixel_parameters->get_selected_phases_ByName();
+
+			// string format -> by default we leave temperature in celsius
+			std::string variableNames{ "t$c " };
+			std::string variableType{ "%12.2f" };
+			for (auto& phase : selectedPhase)
+			{
+				if (string_manipulators::find_index_of_keyword(phase, "_S") == std::string::npos)
+				{
+					if (string_manipulators::trim_whiteSpace(phase).compare("LIQUID") != 0)
+					{
+						variableNames += "F$" + string_manipulators::trim_whiteSpace(phase) + "_S ";
+					}
+					else
+					{
+						variableNames += "F$" + string_manipulators::trim_whiteSpace(phase) + " ";
+					}
+
+					variableType += " %12.2g";
+				}
+			}
+			variableType += "";
+
+			// Export data into a file
+			COMMAND_export_variables* exportCommand = new COMMAND_export_variables(_comm, _configuration, _filename, variableType, variableNames, "");
+			exportCommand->DoAction();
+			delete exportCommand;
+
+			return format;
+		}
+
+		/// <summary>
+		/// Checks if any phases where added during the calculation phase
+		/// </summary>
+		/// <param name="phases"></param>
+		void update_selected_phases(std::vector<std::string>& phases)
+		{
+			// Add phases
+			std::vector<DBS_Phase*> addedPhases = AMFramework::PhaseExtension::add_created_phases(_db, phases);
+
+			for (int i = 0; i < addedPhases.size(); i++)
+			{
+				// Method checks if phase is already selected and if not it gets added
+				_pixel_parameters->add_selectedPhase(addedPhases[i]->Name);
+			}
+
+			// Save update
+			_pixel_parameters->save();
+		}
 
 	};
 }

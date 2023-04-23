@@ -118,7 +118,7 @@ public:
 	}
 
 	/// <summary>
-	/// Save unitialized item using as input a csv formatted vector.
+	/// Save uninitialized item using as input a csv formatted vector.
 	/// If the object is new it will create a new ID for the object.
 	/// </summary>
 	/// <param name="DBSObject"></param>

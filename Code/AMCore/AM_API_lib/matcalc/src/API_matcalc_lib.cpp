@@ -26,7 +26,7 @@ void API_matcalc_lib::load_dll(AM_Config* configuration)
 	// load library
 	_library = LoadLibrary(TEXT(configuration->get_apiExternal_path().c_str()));
 
-	AM_MCC_LIB_LOAD_ALL(_library);
+	//AM_MCC_LIB_LOAD_ALL(_library);
 }
 
 int API_matcalc_lib::MCC_script_read(std::string script_filename)

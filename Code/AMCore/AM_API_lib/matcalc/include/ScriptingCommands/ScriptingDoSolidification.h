@@ -60,6 +60,20 @@ namespace APIMatcalc
 				// Execute tasks in parallel
 				AMFramework::Threading::run_thread_jobs_in_parallel(taskList);
 
+				// Save Logs
+				AM_FileManagement logFile(configuration->get_working_directory());
+
+				std::stringstream ss;
+				for(auto& th : taskList)
+				{
+					ss << th->get_output();
+				}
+
+				std::stringstream filename;
+				filename << IDProject << "_" << IDCaseStart << "-" << IDCaseEnd;
+				logFile.save_file(AM_FileManagement::FILEPATH::LOGS, filename.str(), ss.str());
+
+
 				// Clear memory
 				clear_thread_jobs_vector(taskList);
 
