@@ -74,15 +74,25 @@ database_create_view("CREATE VIEW IF NOT EXISTS vd_case_composition AS "..
 
 database_create_view("CREATE VIEW IF NOT EXISTS vd_ScheilSimulation AS "..
     "Select DISTINCT ScheilPhaseFraction.Temperature, ScheilPhaseFraction.Value as phaseFraction, Phase.Name as phaseName, Projects.Name as projectName, ScheilPhaseFraction.IDCase, ScheilPhaseFraction.IDPhase, [Case].IDProject FROM ScheilPhaseFraction "..
-    "INNER JOIN"..
-    "[Case] ON [Case].ID = ScheilPhaseFraction.IDCase"..
-    "INNER JOIN"..
-    "Phase ON Phase.ID = ScheilPhaseFraction.IDPhase"..
-    "INNER JOIN"..
-    "Projects ON Projects.ID = [Case].IDProject"..
-    "WHERE phaseFraction > 0"..
+    "INNER JOIN "..
+    "[Case] ON [Case].ID = ScheilPhaseFraction.IDCase "..
+    "INNER JOIN "..
+    "Phase ON Phase.ID = ScheilPhaseFraction.IDPhase "..
+    "INNER JOIN "..
+    "Projects ON Projects.ID = [Case].IDProject "..
+    "WHERE phaseFraction > 0 "..
     "ORDER BY ScheilPhaseFraction.IDCase, ScheilPhaseFraction.IDPhase, ScheilPhaseFraction.Temperature;")
 
 -----------------------------------------------------------------------------------------------------------------------
 --												EQUILIBRIUM SIMULATIONS
 -----------------------------------------------------------------------------------------------------------------------
+
+database_create_view("Select DISTINCT EquilibriumPhaseFraction.Temperature, EquilibriumPhaseFraction.Value as phaseFraction, Phase.Name as phaseName, Projects.Name as projectName, EquilibriumPhaseFraction.IDCase, EquilibriumPhaseFraction.IDPhase, [Case].IDProject FROM EquilibriumPhaseFraction "..
+"INNER JOIN "..
+"[Case] ON [Case].ID = EquilibriumPhaseFraction.IDCase "..
+"INNER JOIN "..
+"Phase ON Phase.ID = EquilibriumPhaseFraction.IDPhase "..
+"INNER JOIN "..
+"Projects ON Projects.ID = [Case].IDProject "..
+"WHERE phaseFraction > 0 "..
+"ORDER BY EquilibriumPhaseFraction.IDCase, EquilibriumPhaseFraction.IDPhase, EquilibriumPhaseFraction.Temperature;")
