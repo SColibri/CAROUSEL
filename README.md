@@ -3,54 +3,46 @@
 </div>
 
 # CAROUSEL
-Advanced computational framework for high-throughput microstructure simuLations (CAROUSEL) is a framework developed for simulating and mapping the material properties during advanced manufacturing. It is specially designed for a high-throughput screening of different chemical compositions and processing parameters. The approach is based on the calculation of phase diagrams known as the CALPHAD. The solidification process is modelled using the Scheil-Gulliver approach which gives the information about primary precipitates for further calculation of precipitation kinetics in solid state. It is possible to design speical heat treatments, test different chemical compositions and track the history of a single precipitation phase. The AMCF offers also various tools for analizing the generated data and making  decisions on the best material-processing parameters combination according to the applied criteria (e.g. strength).
+The advanCed frAmewoRk fOr high-throUghput microStructurE simuLation is a precious tool for rapid alloy design. It is specially designed for performing high-throughput screenings of different chemical compositions and processing parameters. The precipitation behavior can be predicted for each chemical composition and processing parameter combination.  The developed approach is based on the CALPHAD method (Calculation of Phase Diagrams). The solidification process is modeled using the Scheil-Gulliver approach, which provides information about the primary precipitates. This information is further used to calculate the precipitation kinetics in solid-state. Using CAROUSEL, it is possible to optimize the manufacturing parameters (e.g. temperature, duration, cooling, and heating rates), test different alloy compositions, and track the history of a single precipitation phase. With the help of various analysis and visualization tools, underlying process-structure-property correlations can be detected, and promising combinations of chemical composition and process parameters can be identified according to user-defined criteria (e.g. strength of the material). 
 
-The framework is using the external software MatCalc as the CALPHAD implementation. It is important to keep in mind that the AMCF framework does not provide any license to the MatCalc software. To be able to use the framework, the availability of the MatCalc license is required at the user side. Alternatively, one can use the MatCalc free version which is restricted to 3 chemical elements and free databases. 
+# Important features
 
-## CAROUSEL Core
-CAROUSEL CORE is a command-line interface that facilitates automation of tasks. It provides all backend functionalities without any graphical representation options.
+## Software structure
+The CAROUSEL software structure consists of different packages. The two main ones are the graphical user interface (GUI) and the core implementation. The GUI is sufficient for using the framework. The user needs to look into the core implementation to extend the software.
 
-## GUI
-The graphical user interface offers a full set of visualization tools to enhance the material design process. It is built using C# and WPF .Net framework on Visual Studio.
+## Graphical User Interface (GUI)
+The CAROUSEL GUI is designed to interact with the framework without any programming knowledge easily. The GUI is built using C and WPF.Net on Visual Studio.
 
-# Windows
-The framework is currently only available for the Windows desktop, however, it is planned to expand its availability to other platforms in the future.
+## Core Implementation
+The core implementation includes logic for communication with external packages (e.g. external CALPHAD software, scripting language), data management, and data modeling. It is only necessary for advanced users who want to extend the software.
 
-## Requirements
+## Operating Systems
+The CAROUSEL GUI is currently available only for Windows. In the future, it is planned to expand the availability of the software for other operating systems. The core implementation can be used on any operating system. 
 
-- CALPHAD software: The AMCF framework does not include or promote any CALPHAD based software, and does not provide a license. Currently, only the [MatCalc](https://www.matcalc.at/) API is supported, but more options will be added in the future.
+## CALPHAD Software
+The framework uses the external CALPHAD software MatCalc. It is important to note that CAROUSEL does not provide any license for the MatCalc software. A valid MatCalc license is required on the user side to use the framework. Alternatively, the user can use a free version of MatCalc, which is restricted to 3 chemical elements and free databases. MatCalc API is used for communication with CAROUSEL.
 
-## Install
+## High-Performance Computing
+The thread manager is implemented into CAROUSEL to utilize all available resources to ensure efficient and rapid calculations. At the next step, it is planned to test the framework on a supercomputer.
 
-- Download the [MatCalc interpreter API]()
-- Download the [WPF desktop application]()
-- Extract all files and place them in your desired directory.
-- The application is now ready for use and you just need to follow the [configuration guide](https://github.com/SColibri/AMFramework/wiki) to get started.
+## Scripting
+Next to the GUI, CAROUSEL offers a scripting option using LUA. The scripting option gives access to various options and allows for creating complex simulation parameters and highly-automatized simulations of a large set of simulation parameters. Scripting allows a significantly higher degree of automation. 
 
-# Features
+## Data Management
+The generated configuration data and simulation results are stored in a SQL database, providing fast access and storage of all data. This enables the users to retrieve information and enjoy several other benefits quickly. 
 
-## Visualization
-
-We offer more than just plotting visualization tools. You can interact with the data, create custom queries, and access many other useful features.
+## Data Visualization
+CAROUSEL offers different visualization options for fast data analysis. Different types of plots are implemented. Users can also interact with the data, create custom queries, and access other helpful visualization features.
 
 <div style="width:70%; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
     <img src="Design/img/vis_mapChart.png" alt="AL" title="Example AL alloy" style="border-radius: 1%;"/> 
 </div>
 
+# Installation of the GUI Version
 
-## Data management
-
-Data is saved in a SQL database, providing fast access and storage of all calculations. This enables users to quickly retrieve information and enjoy several other benefits.
-
-## Scripting
-
-The framework provides scripting capabilities using LUA as the base language, which offers access to various mapping options and the ability to create complex simulation parameters that would be difficult to automate otherwise. This makes automation more efficient and straightforward.
-
-## Parallelism
-
-Our thread manager utilizes all available resources to ensure you receive results as quickly as possible.
-
+- Download the [WPF desktop application]().
+- Extract all files and place them in your desired directory.
+- The application is now ready for use; you need to follow the instructions in the [documentation](https://github.com/SColibri/AMFramework/wiki) on how to get started.
 
 # Documentation
-More on how to build or contribute, please refer to the documentation [here](https://codedocs.xyz/SColibri/AMFramework)
-
+A more detailed description of the CAROUSEL software can be found in the [documentation](https://codedocs.xyz/SColibri/AMFramework). This includes information about CAROUSEL and instructions on how to use and contribute to CAROUSEL.
