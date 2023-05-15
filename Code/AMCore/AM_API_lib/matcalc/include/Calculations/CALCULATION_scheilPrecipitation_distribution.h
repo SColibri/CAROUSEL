@@ -5,6 +5,7 @@
 #include "CALCULATION_scheil.h"
 #include "../../../../AMLib/interfaces/IAM_DBS.h"
 #include "../../../../AMLib/include/Database_implementations/Data_stuctures/DBS_All_Structures_Header.h"
+#include "../../../../AMLib/interfaces/IAM_Communication.h"
 
 namespace matcalc
 {
@@ -12,10 +13,11 @@ namespace matcalc
 	{
 	public:
 
-		CALCULATION_scheilPrecipitation_distribution(IAM_Database* db, IPC_winapi* mccComm, AM_Config* configuration, DBS_ScheilConfiguration* scheilConfig, AM_Project* project, AM_pixel_parameters* pixel_parameters): _db(db), _pixel_parameters(pixel_parameters)
+		CALCULATION_scheilPrecipitation_distribution(IAM_Database* db, AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, AM_Project* project, AM_pixel_parameters* pixel_parameters): _db(db), _pixel_parameters(pixel_parameters)
 		{
 			// decorator object
-			_calculation = new CALCULATION_scheil(db, mccComm, configuration, scheilConfig, project, pixel_parameters);
+			_calculation = new CALCULATION_scheil(db, mccComm, configuration, pixel_parameters->get_ScheilConfiguration(), project, pixel_parameters);
+			((CALCULATION_scheil*)_calculation)->set_auto_save();
 
 			// Check if data was generated before
 			std::vector<DBS_PrecipitationPhase*> precipitationPhases = pixel_parameters->get_precipitation_phases();
@@ -53,7 +55,7 @@ namespace matcalc
 				//_commandList.push_back(new COMMAND_set_start_values(mccComm, configuration));
 				_commandList.push_back(new COMMAND_step_equilibrium(mccComm, configuration));
 				_commandList.push_back(new COMMAND_load_buffer_state(mccComm, configuration, -1));
-				Add_calculation_commands(db, mccComm, configuration, scheilConfig, project, pixel_parameters);
+				Add_calculation_commands(db, mccComm, configuration, pixel_parameters->get_ScheilConfiguration(), project, pixel_parameters);
 			}
 
 		}
@@ -131,7 +133,7 @@ namespace matcalc
 			return Result;
 		}
 
-		void Add_calculation_commands(IAM_Database* db, IPC_winapi* mccComm, AM_Config* configuration, DBS_ScheilConfiguration* scheilConfig, AM_Project* project, AM_pixel_parameters* pixel_parameters)
+		void Add_calculation_commands(IAM_Database* db, AMFramework::Interfaces::IAM_Communication* mccComm, AM_Config* configuration, DBS_ScheilConfiguration* scheilConfig, AM_Project* project, AM_pixel_parameters* pixel_parameters)
 		{			
 			for (auto& item : _precipitationPhases)
 			{

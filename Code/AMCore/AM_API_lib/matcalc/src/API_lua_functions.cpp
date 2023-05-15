@@ -79,7 +79,7 @@ void API_lua_functions::add_functions_to_lua(lua_State* state)
 #pragma region Calculations
 	add_new_function(state, "pixelcase_step_equilibrium_parallel", "std::string out", "<int ID project> <int IDCase (optional more than 1)>", Bind_SPC_Parallel_StepEquilibrium);
 	add_new_function(state, "pixelcase_step_scheil_parallel", "std::string out", "<int ID project> <int IDCase (optional more than 1)>", Bind_SPC_Parallel_StepScheil);
-	add_new_function(state, "pixelcase_calculate_precipitate_distribution", "std::string out", "pixelcase_calculate_precipitate_distribution", Bind_SPC_parallel_calculate_precipitate_distribution_V02);
+	add_new_function(state, "pixelcase_calculate_precipitate_distribution", "std::string out", "pixelcase_calculate_precipitate_distribution", Bind_SPC_parallel_calculate_precipitate_distribution_V03);
 	add_new_function(state, "pixelcase_calculate_heat_treatment", "std::string out", "pixelcase_calculate_heat_treatment", Bind_SPC_parallel_calculate_heat_treatment_V02);
 
 	// Bind_SPC_run_all_Heat_treatments

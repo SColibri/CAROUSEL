@@ -114,6 +114,28 @@ namespace APIMatcalc
 				return "run_scheil_simulations finished running";
 			}
 
+			static inline std::string run_precipitation_simulations(IAM_Database* database,
+				AM_Config* configuration,
+				int IDProject,
+				int IDCaseStart,
+				int IDCaseEnd)
+			{
+				// Initialize AM_project object to get corresponding pixel cases
+				AM_Project Project(database, configuration, IDProject);
+				std::vector<AM_pixel_parameters*> pixel_parameters = get_pixel_parameters(IDCaseEnd, IDCaseStart, Project);
+
+				// Create communication to mcc for each thread
+				std::vector<int> threadWorkload = AMFramework::Threading::thread_workload_distribution(configuration->get_max_thread_number(), pixel_parameters.size());
+
+				// Create thread workers
+				std::vector<AMFramework::Interfaces::IAM_ThreadJob*> taskList = get_precipitation_taskList(threadWorkload, database, configuration, pixel_parameters, Project);
+
+				// Execute tasks in parallel
+				AMFramework::Threading::run_thread_jobs_in_parallel(taskList);
+
+				return "run_precipitation_simulations finished running";
+			}
+
 		private:
 
 #pragma region Helper Methods
@@ -223,6 +245,43 @@ namespace APIMatcalc
 
 						// Add calculation to task list
 						taskObject->add_calculation(calcScheil);
+
+						pixelIndex++;
+					}
+
+					// Add worker to vector
+					taskList.push_back(taskObject);
+				}
+
+				return taskList;
+			}
+
+			/// <summary>
+			/// Gets the tasklist for precipitation calculations
+			/// </summary>
+			static inline std::vector<AMFramework::Interfaces::IAM_ThreadJob*> get_precipitation_taskList(std::vector<int> threadWorkload,
+				IAM_Database* database, AM_Config* configuration, std::vector<AM_pixel_parameters*> pixel_parameters, AM_Project& Project)
+			{
+				std::vector<AMFramework::Interfaces::IAM_ThreadJob*> taskList;
+
+				int pixelIndex = 0;
+				for (int n1 = 0; n1 < threadWorkload.size(); n1++)
+				{
+					// Create new worker
+					APIMatcalc::Threading::CalculationsThreadJob* taskObject = new APIMatcalc::Threading::CalculationsThreadJob(database, configuration);
+
+					// Add Calculations to worker
+					for (int n2 = 0; n2 < threadWorkload[n1]; n2++)
+					{
+						// create new precipitation calculation set
+						matcalc::CALCULATION_scheilPrecipitation_distribution* calcPrecipitation = new matcalc::CALCULATION_scheilPrecipitation_distribution(database,
+							taskObject->get_comm(),
+							configuration,
+							&Project,
+							pixel_parameters[pixelIndex]);
+
+						// Add calculation to task list
+						taskObject->add_calculation(calcPrecipitation);
 
 						pixelIndex++;
 					}

@@ -36,7 +36,7 @@ namespace matcalc
 					variableNames += "F$" + string_manipulators::trim_whiteSpace(phase) + " ";
 				}
 
-				variableType += " %.6f";
+				variableType += " %22.32f";
 			}
 			variableType += "";
 

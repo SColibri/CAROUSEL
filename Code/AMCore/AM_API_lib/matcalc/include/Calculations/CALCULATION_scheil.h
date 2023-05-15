@@ -47,6 +47,11 @@ namespace matcalc
 		/// </summary>
 		AMFramework::Interfaces::IAM_Communication* _comm;
 
+		/// <summary>
+		/// Solidification temperature 
+		/// </summary>
+		double _solidificationTemperature{ 0 };
+
 	public:
 
 		/// <summary>
@@ -72,7 +77,7 @@ namespace matcalc
 
 			// string format
 			std::string variableNames{ "t$c " }; // by default we leave temperature
-			std::string variableType{ "%12.2f" };
+			std::string variableType{ "%12.10f" };
 			for (auto& phase : selectedPhase)
 			{
 				if (string_manipulators::trim_whiteSpace(phase).compare("LIQUID") != 0)
@@ -84,7 +89,7 @@ namespace matcalc
 					variableNames += "F$" + string_manipulators::trim_whiteSpace(phase) + " ";
 				}
 
-				variableType += " %12.2g";
+				variableType += " %22.32f";
 			}
 			variableType += "";
 
@@ -197,7 +202,18 @@ namespace matcalc
 
 			entries.clear();
 
-			return std::stod(TBdATA[TBdATA.size() - 1][0]);
+			if (TBdATA.size() > 0) 
+			{
+				_solidificationTemperature = std::stod(TBdATA[TBdATA.size() - 1][0]);
+			}
+			else 
+			{
+				AMFramework::Callback::ErrorCallback::TriggerCallback("Save_to_database - Scheil calculation: Error while trying to get the solidification temperature, please refer to the logs");
+			}
+
+			
+
+			return _solidificationTemperature;
 		}
 
 
