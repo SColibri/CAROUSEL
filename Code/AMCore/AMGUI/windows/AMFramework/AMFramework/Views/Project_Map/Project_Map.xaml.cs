@@ -236,14 +236,14 @@ namespace AMFramework.Views.Project_Map
             Random random = new();
 
             // set data  options
-            foreach (var dplot in _dataPlots) 
+            foreach (var dplot in _dataPlots)
             {
                 dplot.X_Data_Option(_xDataOption);
                 dplot.Y_Data_Option(_yDataOption);
             }
 
-                ScatterBoxSeries[] sbsArray = new ScatterBoxSeries[_dataPlots.Count];
-
+            SetSpyder();
+            ScatterBoxSeries[] sbsArray = new ScatterBoxSeries[_dataPlots.Count];
             for (int i = 0; i < _dataPlots.Count; i++)
             {
                 sbsArray[i] = new();
@@ -262,6 +262,47 @@ namespace AMFramework.Views.Project_Map
                 Main_plot.Adjust_axes_to_data();
                 Controller_Global.MainControl?.Show_loading(false);
             }));
+        }
+
+        private void SetSpyder()
+        {
+            Random random = new();
+            SpyderSeries[] sbsArray = new SpyderSeries[_dataPlots.Count];
+
+            for (int i = 0; i < _dataPlots.Count; i++)
+            {
+                sbsArray[i] = new();
+                sbsArray[i].Label = _dataPlots[i].SeriesName;
+
+                _dataPlots[i].DataPoints.ForEach(e => { sbsArray[i].Add_DataPoint(e); });
+                sbsArray[i].ColorSeries = Color.FromRgb((byte)random.Next(1, 255), (byte)random.Next(1, 255), (byte)random.Next(1, 255));
+            }
+
+            int axisNumber = sbsArray.Max(e => e.DataPoints.Count);
+            string[] axisNames = sbsArray.Where(e => e.DataPoints.Count == axisNumber).SelectMany(e => e.DataPoints.Select(s => s.Label)).ToArray();
+            double maxValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.X))?.Max() ?? 0;
+            double minValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.X))?.Min() ?? 0;
+
+            spyderPlot.ClearAxis();
+            for (int i = 0; i < axisNumber; i++)
+            {
+                LinearAxe lAxe = new()
+                {
+                    Name = axisNames[i],
+                    MinValue = minValue,
+                    MaxValue = maxValue,
+                    Ticks = 10,
+                };
+                spyderPlot.Add_axis(lAxe);
+            }
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                spyderPlot.Clear_Series();
+                sbsArray.Where(e => e.DataPoints.Count > 0).ForEach(e => spyderPlot.Add_series(e));
+                spyderPlot.InvalidateVisual();
+            }));
+
         }
 
         public void Select_Data()
@@ -428,6 +469,24 @@ namespace AMFramework.Views.Project_Map
             Thread TH01 = new(Plot_Data);
             TH01.Priority = ThreadPriority.Highest;
             TH01.Start();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (spyderPlot.Visibility == Visibility.Visible)
+            {
+                Main_plot.Visibility = Visibility.Visible;
+                spyderPlot.Visibility = Visibility.Collapsed;
+                yAxisData.IsEnabled = true;
+            }
+            else
+            {
+                Main_plot.Visibility = Visibility.Collapsed;
+                spyderPlot.Visibility = Visibility.Visible;
+                yAxisData.IsEnabled = false;
+            }
+
+
         }
     }
 }

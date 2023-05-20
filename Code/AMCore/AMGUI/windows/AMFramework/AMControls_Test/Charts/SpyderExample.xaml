@@ -4,9 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AMControls_Test.Charts"
+        xmlns:plot="clr-namespace:AMControls.Charts.Spyder;assembly=AMControls"
         mc:Ignorable="d"
         Title="SpyderExample" Height="450" Width="800">
     <Grid>
-        
+        <plot:SpyderPlot x:Name="spyderFriend">
+            
+        </plot:SpyderPlot>
     </Grid>
 </Window>

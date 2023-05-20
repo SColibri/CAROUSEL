@@ -3,12 +3,32 @@ using AMControls.Charts.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
 namespace AMControls.Charts.Spyder
 {
+
+    public class LineVector 
+    {
+        public Point StartPoint = new();
+        public Point EndPoint = new();
+
+        public double GetAngle() 
+        { 
+            double xDiff = EndPoint.X - StartPoint.X;
+            double yDiff = EndPoint.Y - StartPoint.Y;
+            return Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
+        }
+    }
+
+    public class AxisLines 
+    { 
+        public List<LineVector> Lines = new List<LineVector>();
+    }
+
     public class SpyderPlot : Canvas, IChart
     {
         // Axes
@@ -37,23 +57,10 @@ namespace AMControls.Charts.Spyder
         private double _axis_Thickness = 1;
 
         // Intermediate Tick lines
-        private System.Windows.Media.Color _axisTick_BorderColor = Colors.Black;
-        private double _axisTick_Thickness = 0.5;
-        private FontFamily _axisTick_FontFamily = new("Lucida Sans");
-        private int _axisTick_FontSize = 8;
-        private System.Windows.FontStyle _axisTick_FontStyle = System.Windows.FontStyles.Normal; // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.fontstyle?view=dotnet-plat-ext-6.0
-        private System.Windows.FontWeight _axisTick_FontWeight = System.Windows.FontWeights.Light; // https://docs.microsoft.com/en-us/dotnet/api/system.windows.fontweights?view=windowsdesktop-6.0
-        private System.Windows.FontStretch _axisTick_FontStretch = System.Windows.FontStretches.Normal;
-        private System.Windows.Media.Color _axisTickFontColor = Colors.Black;
+        private FONT_AxisData _axisDataLabel;
 
         // Axis Header
         private FONT_AxisLabel _axisLabel;
-        private FontFamily _axisHeader_FontFamily = new("Lucida Sans");
-        private int _axisHeader_FontSize = 12;
-        private System.Windows.FontStyle _axisHeader_FontStyle = System.Windows.FontStyles.Normal; // https://docs.microsoft.com/en-us/dotnet/api/system.drawing.fontstyle?view=dotnet-plat-ext-6.0
-        private System.Windows.FontWeight _axisHeader_FontWeight = System.Windows.FontWeights.Light; // https://docs.microsoft.com/en-us/dotnet/api/system.windows.fontweights?view=windowsdesktop-6.0
-        private System.Windows.FontStretch _axisHeader_FontStretch = System.Windows.FontStretches.Normal;
-        private System.Windows.Media.Color _axisHeaderFontColor = Colors.Black;
 
         public event EventHandler SelectionChanged;
         public event EventHandler ContextMenuClicked;
@@ -69,6 +76,7 @@ namespace AMControls.Charts.Spyder
             _dataSeries = new();
 
             _axisLabel = new(this);
+            _axisDataLabel = new(this);
         }
 
 
@@ -77,6 +85,12 @@ namespace AMControls.Charts.Spyder
             _axes.Add(newaxis);
             _angleSplit = 360 / _axes.Count;
             _axisUnitVector.Add(new());
+        }
+
+        public void ClearAxis() 
+        { 
+            _axes.Clear();
+            _dataSeries.Clear();
         }
 
         public void Add_series(IDataSeries dSeries)
@@ -236,6 +250,10 @@ namespace AMControls.Charts.Spyder
 
         private void Draw_AxisTicks(DrawingContext dc)
         {
+            if (_axes.Count == 0) return;
+            // Refactoring is needed ofc, this is just used to avoid repetitive labels
+            string[] tickyLabel = new string[_axes.Select(e => e.Ticks).Max()];
+
             for (int n1 = 0; n1 < _axes.Count; n1++)
             {
                 System.Windows.Point perpendicular_vector = new System.Windows.Point(-_axisUnitVector[n1].Y, _axisUnitVector[n1].X);
@@ -251,13 +269,30 @@ namespace AMControls.Charts.Spyder
 
                     dc.DrawLine(new Pen(new SolidColorBrush(_axis_BorderColor), _axis_Thickness), locAxis, topLine);
                     dc.DrawLine(new Pen(new SolidColorBrush(_axis_BorderColor), _axis_Thickness), locAxis, botLine);
+
+
+                    _axisDataLabel.Text = (_axes[n1].MinValue + _axes[n1].Interval * (n2 + 1)).ToString("0.#E+0");
+
+                    if (tickyLabel[n2] == _axisDataLabel.Text) continue;
+                    tickyLabel[n2] = _axisDataLabel.Text;
+
+                    RotateTransform rt = new(_lineVectors[n1].Lines[n2].GetAngle(), _lineVectors[n1].Lines[n2].StartPoint.X, _lineVectors[n1].Lines[n2].StartPoint.Y);
+                    dc.PushTransform(rt);
+                    FormattedText tickLabel = _axisDataLabel.GetFormattedText();
+                    Point sPoint = new Point(_lineVectors[n1].Lines[n2].StartPoint.X + 5, _lineVectors[n1].Lines[n2].StartPoint.Y - tickLabel.Height/2);
+                    dc.DrawText(tickLabel, sPoint);
+                    dc.Pop();
                 }
             }
         }
 
+        List<AxisLines> _lineVectors = new();
         private void Draw_AxisConnectingLines(DrawingContext dc)
         {
             if (_axes.Count <= 1) return;
+
+            _lineVectors.Clear();
+            _axes.ForEach(e => _lineVectors.Add(new()));
 
             System.Windows.Point pInitial;
             for (int i = 1; i < _axes[0].Ticks; i++)
@@ -265,20 +300,28 @@ namespace AMControls.Charts.Spyder
                 System.Windows.Point pStart = _axes[0].ValueToPoint(_axes[0].MinValue + _axes[0].Interval * i);
                 pInitial = new(pStart.X, pStart.Y);
 
+                int count = 0;
                 foreach (var item in _axes.Skip(1))
                 {
                     System.Windows.Point pEnd = item.ValueToPoint(item.MinValue + item.Interval * i);
                     dc.DrawLine(new Pen(new SolidColorBrush(Colors.Silver), 0.4), pStart, pEnd);
+
+                    _lineVectors[count].Lines.Add(new() { EndPoint = new Point(pEnd.X, pEnd.Y), StartPoint = new Point(pStart.X, pStart.Y) });
+                    count++;
+
                     pStart = pEnd;
                 }
 
+                _lineVectors[count].Lines.Add(new() { EndPoint = new Point(pInitial.X, pInitial.Y), StartPoint = new Point(pStart.X, pStart.Y) });
                 dc.DrawLine(new Pen(new SolidColorBrush(Colors.Silver), 0.4), pInitial, pStart);
             }
         }
 
         public void Clear_Series()
         {
-            throw new NotImplementedException();
+            _dataSeries.Clear();
+
+            // throw new NotImplementedException();
         }
 
         public void Adjust_axes_to_data()
@@ -305,5 +348,6 @@ namespace AMControls.Charts.Spyder
         {
             throw new NotImplementedException();
         }
+
     }
 }

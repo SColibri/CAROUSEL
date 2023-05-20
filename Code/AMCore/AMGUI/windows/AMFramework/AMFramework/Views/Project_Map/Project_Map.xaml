@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:AMFramework.Views.Project_Map"
              xmlns:AMPlot="clr-namespace:AMControls.Charts.Scatter;assembly=AMControls"
+             xmlns:spyderPlot="clr-namespace:AMControls.Charts.Spyder;assembly=AMControls"
              xmlns:butt="clr-namespace:AMFramework.Components.Button" 
              d:DataContext="{d:DesignInstance Type=local:Project_Map}"
              mc:Ignorable="d" 
@@ -16,10 +17,13 @@
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="25" MaxWidth="25" x:Name="ExpanderColumn"/>
         </Grid.ColumnDefinitions>
-
+        
+        <!--Splitter object -->
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" 
                       Background="LightSteelBlue" Visibility="Visible" Name="MainSplitter"/>
-        <AMPlot:ScatterPlot x:Name="Main_plot" PreviewKeyDown="Main_plot_PreviewKeyDown" MouseEnter="Main_plot_MouseEnter" Focusable="True">
+        
+        <!-- Scatter plot -->
+        <AMPlot:ScatterPlot x:Name="Main_plot" PreviewKeyDown="Main_plot_PreviewKeyDown" MouseEnter="Main_plot_MouseEnter" Focusable="True" Visibility="Visible">
             <Border x:Name="Tooltip" Background="WhiteSmoke" BorderBrush="Silver" BorderThickness="0.5" CornerRadius="4" Visibility="{Binding Path=ShowToolTip, Converter = {StaticResource BoolToVis}, UpdateSourceTrigger=PropertyChanged}">
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Orientation="Horizontal" Margin="0">
@@ -32,9 +36,14 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-
-            
         </AMPlot:ScatterPlot>
+
+        <spyderPlot:SpyderPlot x:Name = "spyderPlot" Visibility="Collapsed">
+            
+        </spyderPlot:SpyderPlot>
+        
+        
+        
         <StackPanel VerticalAlignment="Top" 
                 HorizontalAlignment="Right" MaxWidth="400">
             <Border Background="White" 
@@ -175,8 +184,9 @@
                                             <TextBlock Text="x_Data" Margin="5,5,1,5"/>
                                             <ComboBox Margin="5,1,5,5" ItemsSource="{Binding Path=ColumnNames}" SelectedItem="{Binding Path=XDataColumn}"/>
                                             <TextBlock Text="y_Data" Margin="5,5,1,5"/>
-                                            <ComboBox Margin="5,1,5,5" ItemsSource="{Binding Path=ColumnNames}" SelectedItem="{Binding Path=YDataColumn}"/>
+                                            <ComboBox x:Name="yAxisData" Margin="5,1,5,5" ItemsSource="{Binding Path=ColumnNames}" SelectedItem="{Binding Path=YDataColumn}"/>
                                             <Button Content="Update" Margin="5" Click="Button_Click"/>
+                                            <Button Content="Change Chart Type" Click="Button_Click_1"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>

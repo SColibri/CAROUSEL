@@ -131,6 +131,8 @@ namespace AMControls.Charts.Scatter
         {
             base.OnRender(dc);
 
+            if (_xAxis == null || _yAxis == null) return;
+
             // Render axis
             RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.Fant);
             Draw_HorizontalAxis(dc, _xAxis);

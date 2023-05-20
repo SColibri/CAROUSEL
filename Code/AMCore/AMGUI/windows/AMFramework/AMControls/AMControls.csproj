@@ -7,9 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Helpers\**" />
+    <Page Remove="Helpers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Charts\Spyder\" />
     <Folder Include="Custom\TabControl\" />
-    <Folder Include="Helpers\" />
     <Folder Include="Styles\" />
   </ItemGroup>
 
