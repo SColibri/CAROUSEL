@@ -44,13 +44,11 @@ namespace AMControls.Charts.Implementations.DataSeries
                 ctx.BeginFigure(axesList[0].ValueToPoint(DataPoints[0].X), true, true);
                 for (int n1 = 1; n1 < axesList.Count; n1++)
                 {
-                    ctx.LineTo(axesList[n1].ValueToPoint(DataPoints[n1].X), true, false);
+                    ctx.LineTo(axesList[n1].ValueToPoint(DataPoints[n1].X), true, true);
                 }
-                ctx.LineTo(axesList[0].ValueToPoint(DataPoints[0].X), true, false);
+                ctx.LineTo(axesList[0].ValueToPoint(DataPoints[0].X), true, true);
                 ctx.Close();
             }
-
-
 
             _dataGeometry.Freeze();
             SolidColorBrush scb = new(ColorSeries) { Opacity = 0.4 };

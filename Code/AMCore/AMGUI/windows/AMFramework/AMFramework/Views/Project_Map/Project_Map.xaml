@@ -187,7 +187,7 @@
                                             <TextBlock Text="Data origin" Margin="5,5,1,5"/>
                                             <ComboBox Margin="5,1,5,5" ItemsSource="{Binding Path=DataOrigin}" SelectedItem="{Binding Path=SelectedDataOrigin}" />
                                             <TextBlock Text="x_Data" Margin="5,5,1,5"/>
-                                            <ComboBox Margin="5,1,5,5" ItemsSource="{Binding Path=ColumnNames}" SelectedItem="{Binding Path=XDataColumn}"/>
+                                            <ComboBox x:Name="xAxisData" Margin="5,1,5,5" ItemsSource="{Binding Path=ColumnNames}" SelectedItem="{Binding Path=XDataColumn}"/>
                                             <TextBlock Text="y_Data" Margin="5,5,1,5"/>
                                             <ComboBox x:Name="yAxisData" Margin="5,1,5,5" ItemsSource="{Binding Path=ColumnNames}" SelectedItem="{Binding Path=YDataColumn}"/>
                                             <Button Content="Update" Margin="5" Click="Button_Click"/>

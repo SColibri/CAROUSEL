@@ -120,28 +120,28 @@ namespace AMControls.Charts.Spyder
                                    new System.Windows.Size(_drawingRadius * 2, _drawingRadius * 2));
 
             Draw_Base(dc);
-            Draw_Axes(dc);
+            Draw_Axes(dc); //Todo: split implementation that calculates axis tick locations
 
             foreach (var item in _dataSeries)
             {
                 item.Draw(dc, this, _chartArea, _axes);
             }
 
+            Draw_Axes(dc);
+
             _legend.Draw(dc, this, _chartArea, _dataSeries);
         }
 
         private void Draw_Base(DrawingContext dc)
         {
-
             dc.DrawEllipse(new SolidColorBrush(Colors.White),
                            new Pen(new SolidColorBrush(_base_BorderColor), _base_Thickness),
                            _center, _drawingRadius, _drawingRadius);
-
         }
 
         private void Draw_Axes(DrawingContext dc)
         {
-            _currentAngle = _currentAngle + 1;
+            // _currentAngle = _currentAngle + 1; // rotation for testing
             double currentAngle = _currentAngle;
             _chartArea = new(new System.Windows.Point(0, 0), new System.Windows.Size(this.ActualWidth, this.ActualHeight));
 

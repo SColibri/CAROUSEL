@@ -5,6 +5,7 @@ using AMFramework.Components.Charting.Interfaces;
 using AMFramework.Controller;
 using AMFramework_Lib.Controller;
 using Catel.Collections;
+using ScottPlot.Drawing.Colormaps;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,19 +24,55 @@ namespace AMFramework.Views.Project_Map
     /// </summary>
     public partial class Project_Map : UserControl, INotifyPropertyChanged
     {
+        #region Fields
+        /// <summary>
+        /// Controller with methods that retrieves data from AMCore
+        /// </summary>
         private Controller_Plot _plotController;
+
+        /// <summary>
+        /// List of structure like containers used for storing data
+        /// </summary>
         private List<IDataPlot> _dataPlots;
-        private IAxes _xaxis;
-        private IAxes _yaxis;
-        private DataOptions _dataOption = DataOptions.Precipitation_Phase;
+
+        /// <summary>
+        /// Scatter, Spyder and parallax plot x-axis data source
+        /// </summary>
         private int _xDataOption = 2;
+
+        /// <summary>
+        /// scatter plot y-axis data source
+        /// </summary>
         private int _yDataOption = 0;
+        
+        /// <summary>
+        /// Data sorted by key 
+        /// </summary>
+        private Dictionary<string, List<IDataPoint>> _sortedData = new();
+        private string[] _htNames = new string[0];
+        private string[] _phaseNames = new string[0];
 
-        public enum DataOptions
-        {
-            Precipitation_Phase
-        }
+        // -------------------------------------
+        // Deprecated variables TODO
+        private DataOptions _dataOption = DataOptions.Precipitation_Phase;
 
+        /// <summary>
+        /// Used for scatter plot // TODO: Obsolete, this should not be handled here
+        /// </summary>
+        private IAxes _xaxis;
+
+        /// <summary>
+        /// Used for scatter plot // TODO: Obsolete, this should not be handled here
+        /// </summary>
+        private IAxes _yaxis;
+
+        #endregion
+
+        #region Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="plotController"></param>
         public Project_Map(Controller.Controller_Plot plotController)
         {
             InitializeComponent();
@@ -52,7 +89,14 @@ namespace AMFramework.Views.Project_Map
             this.DataContext = this;
             Refresh_Data();
         }
+        #endregion
+        public enum DataOptions
+        {
+            Precipitation_Phase
+        }
 
+
+        #region Handle
         private void OnChartMouseMove_Handle(object? sender, MouseEventArgs e)
         {
             if (sender == null) return;
@@ -78,6 +122,7 @@ namespace AMFramework.Views.Project_Map
         {
             SelectedPoints = Main_plot.Get_Selected_DataPoints();
         }
+        #endregion
 
         private void ContextMenuClicked(object? sender, EventArgs e)
         {
@@ -202,9 +247,92 @@ namespace AMFramework.Views.Project_Map
         }
         #endregion
 
+        /// <summary>
+        /// Sorts data in two ways, by phase name, by heat treatment
+        /// </summary>
+        private void UpdateSortedData() 
+        {
+            // Get heat treatment items
+            _htNames = _dataPlots
+                .SelectMany(e => e.DataPoints)
+                .Select(e => e.Label)
+                .Distinct()
+                .ToArray();
+
+            // Get all phase names
+            _phaseNames = _dataPlots.Select(e => e.SeriesName).ToArray();
+
+
+            // Get data sorted by Phase
+            foreach (var item in _dataPlots)
+            {
+                if (_sortedData.ContainsKey(item.SeriesName))
+                {
+                    _sortedData[item.SeriesName] = item.DataPoints;
+                }
+                else 
+                {
+                    _sortedData.Add(item.SeriesName, item.DataPoints);
+                }
+            }
+
+            // Get data sorted by Heat treatment
+            List<Tuple<string, double>> sortedByValue = new();
+            foreach (var item in _phaseNames)
+            {
+                sortedByValue.Add(new Tuple<string,double>(item, 0));
+            }
+
+            // Sort by value
+            foreach (var item in _htNames)
+            {
+                for (int i = 0; i < _phaseNames.Length; i++)
+                {
+                    IDataPoint? phaseValue = _dataPlots
+                        .Where(e => e.SeriesName == _phaseNames[i])
+                        .SelectMany(e => e.DataPoints)
+                        .Where(e => e.Label == item)
+                        .FirstOrDefault();
+
+                    sortedByValue[i] = new Tuple<string, double>(sortedByValue[i].Item1, sortedByValue[i].Item2 + (phaseValue?.X ?? 0) );
+                }
+            }
+
+            var customComparer = Comparer<Tuple<string, double>>.Create((x, y) => x.Item2.CompareTo(y.Item2));
+
+            sortedByValue.Sort(customComparer);
+            _phaseNames = sortedByValue.Select(x => x.Item1).ToArray();
+
+            foreach (var item in _htNames)
+            {
+                List<IDataPoint> listy = new();
+
+                for (int i = 0; i < _phaseNames.Length; i++)
+                {
+                    IDataPoint? phaseValue = _dataPlots
+                        .Where(e => e.SeriesName == _phaseNames[i])
+                        .SelectMany(e => e.DataPoints)
+                        .Where(e => e.Label == item)
+                        .FirstOrDefault();
+
+                    listy.Add(phaseValue);
+                }
+
+                if (_sortedData.ContainsKey(item))
+                {
+                    _sortedData[item] = listy;
+                }
+                else
+                {
+                    _sortedData.Add(item, listy);
+                }
+            }
+        }
+
         public void Refresh_Data()
         {
             _dataPlots = _plotController.Get_HeatMap_GrainSize_vs_PhaseFraction_ObjectData();
+            UpdateSortedData();
 
             _dataOrigin.Clear();
             foreach (var item in _dataPlots)
@@ -242,8 +370,10 @@ namespace AMFramework.Views.Project_Map
                 dplot.Y_Data_Option(_yDataOption);
             }
 
-            SetSpyder();
-            SetParallax();
+            UpdateSortedData();
+
+            SetSpyder3();
+            //SetParallax2();
             ScatterBoxSeries[] sbsArray = new ScatterBoxSeries[_dataPlots.Count];
             for (int i = 0; i < _dataPlots.Count; i++)
             {
@@ -306,10 +436,9 @@ namespace AMFramework.Views.Project_Map
 
         }
 
-        // TODO: Example on data set for parallax, this is just a fast implementation, refactor please :')
-        private void SetParallax() 
+        private void SetSpyder2()
         {
-            
+
             string[] uniqueHT = _dataPlots
                 .SelectMany(e => e.DataPoints)
                 .Select(e => e.Label)
@@ -319,14 +448,14 @@ namespace AMFramework.Views.Project_Map
             string[] phaseNames = _dataPlots.Select(e => e.SeriesName).ToArray();
 
             Random random = new();
-            ParallaxLineSeries[] sbsArray = new ParallaxLineSeries[uniqueHT.Length];
+            SpyderSeries[] sbsArray = new SpyderSeries[uniqueHT.Length];
 
             Dictionary<string, List<IDataPoint>> seriesData = new();
             foreach (var item in uniqueHT)
             {
                 List<IDataPoint> listy = new();
 
-                foreach (var phase in phaseNames) 
+                foreach (var phase in phaseNames)
                 {
                     IDataPoint? phaseValue = _dataPlots
                         .Where(e => e.SeriesName == phase)
@@ -360,6 +489,163 @@ namespace AMFramework.Views.Project_Map
             string[] axisNames = sbsArray.Where(e => e.DataPoints.Count == axisNumber).SelectMany(e => e.DataPoints.Select(s => s.Label)).ToArray();
             double maxValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.X))?.Max() ?? 0;
             double minValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.X))?.Min() ?? 0;
+
+            spyderPlot.ClearAxis();
+            for (int i = 0; i < axisNumber; i++)
+            {
+                LinearAxe lAxe = new()
+                {
+                    Name = axisNames[i],
+                    MinValue = minValue,
+                    MaxValue = maxValue,
+                    Ticks = 10,
+                };
+                spyderPlot.Add_axis(lAxe);
+            }
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                spyderPlot.Clear_Series();
+                sbsArray.Where(e => e.DataPoints.Count > 0).ForEach(e => spyderPlot.Add_series(e));
+                spyderPlot.InvalidateVisual();
+            }));
+        }
+
+        private void SetSpyder3()
+        {
+            Random random = new();
+            SpyderSeries[] sbsArray = new SpyderSeries[_htNames.Length];
+
+            for (int i = 0; i < _htNames.Length; i++)
+            {
+
+                sbsArray[i] = new();
+                sbsArray[i].Label = _htNames[i];
+
+                List<IDataPoint> testy = _sortedData[_htNames[i]];
+                for (int j = 0; j < _phaseNames.Length; j++)
+                {
+                    testy[j].Label = _phaseNames[j];
+                }
+
+                _sortedData[_htNames[i]].ForEach(e => { sbsArray[i].Add_DataPoint(e); });
+                sbsArray[i].ColorSeries = Color.FromRgb((byte)random.Next(1, 255), (byte)random.Next(1, 255), (byte)random.Next(1, 255));
+            }
+
+            double maxValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.X))?.Max() ?? 0;
+            double minValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.X))?.Min() ?? 0;
+
+            spyderPlot.ClearAxis();
+            for (int i = 0; i < _phaseNames.Length; i++)
+            {
+                double localMaxValue = _sortedData[_phaseNames[i]].Select(e => e.X).Max();
+                LinearAxe lAxe = new()
+                {
+                    Name = _phaseNames[i],
+                    MinValue = minValue,
+                    MaxValue = maxValue * 0.2 < localMaxValue ? maxValue : localMaxValue > 0 ? localMaxValue * 2 : maxValue,
+                    Ticks = 5,
+                };
+                spyderPlot.Add_axis(lAxe);
+            }
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                spyderPlot.Clear_Series();
+                sbsArray.Where(e => e.DataPoints.Count > 0).ForEach(e => spyderPlot.Add_series(e));
+                spyderPlot.InvalidateVisual();
+            }));
+        }
+
+
+        // TODO: Example on data set for parallax, this is just a fast implementation, refactor please :')
+        private void SetParallax()
+        {
+
+            string[] uniqueHT = _dataPlots
+                .SelectMany(e => e.DataPoints)
+                .Select(e => e.Label)
+                .Distinct()
+                .ToArray();
+
+            string[] phaseNames = _dataPlots.Select(e => e.SeriesName).ToArray();
+
+            Random random = new();
+            ParallaxLineSeries[] sbsArray = new ParallaxLineSeries[uniqueHT.Length];
+
+            Dictionary<string, List<IDataPoint>> seriesData = new();
+            foreach (var item in uniqueHT)
+            {
+                List<IDataPoint> listy = new();
+
+                foreach (var phase in phaseNames)
+                {
+                    IDataPoint? phaseValue = _dataPlots
+                        .Where(e => e.SeriesName == phase)
+                        .SelectMany(e => e.DataPoints)
+                        .Where(e => e.Label == item)
+                        .FirstOrDefault();
+
+                    listy.Add(phaseValue);
+                }
+
+                seriesData.Add(item, listy);
+            }
+
+            for (int i = 0; i < uniqueHT.Length; i++)
+            {
+
+                sbsArray[i] = new();
+                sbsArray[i].Label = uniqueHT[i];
+
+                List<IDataPoint> testy = seriesData[uniqueHT[i]];
+                for (int j = 0; j < phaseNames.Length; j++)
+                {
+                    testy[j].Label = phaseNames[j];
+                }
+
+                seriesData[uniqueHT[i]].ForEach(e => { sbsArray[i].Add_DataPoint(e); });
+                sbsArray[i].ColorSeries = Color.FromRgb((byte)random.Next(1, 255), (byte)random.Next(1, 255), (byte)random.Next(1, 255));
+            }
+
+            int axisNumber = sbsArray.Max(e => e.DataPoints.Count);
+            string[] axisNames = sbsArray.Where(e => e.DataPoints.Count == axisNumber).SelectMany(e => e.DataPoints.Select(s => s.Label)).ToArray();
+            double maxValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.X))?.Max() ?? 0;
+            double minValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.X))?.Min() ?? 0;
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                parallaxPlot.Clear_Series();
+                sbsArray.Where(e => e.DataPoints.Count > 0).ForEach(e => parallaxPlot.Add_series(e));
+                parallaxPlot.InvalidateVisual();
+            }));
+        }
+
+        private void SetParallax2()
+        {
+            Random random = new();
+            ParallaxLineSeries[] sbsArray = new ParallaxLineSeries[_htNames.Length];
+
+            for (int i = 0; i < _htNames.Length; i++)
+            {
+
+                sbsArray[i] = new();
+                sbsArray[i].Label = _htNames[i];
+
+                List<IDataPoint> testy = _sortedData[_htNames[i]];
+                for (int j = 0; j < _phaseNames.Length; j++)
+                {
+                    testy[j].Label = _phaseNames[j];
+                }
+
+                _sortedData[_htNames[i]].ForEach(e => { sbsArray[i].Add_DataPoint(e); });
+                sbsArray[i].ColorSeries = Color.FromRgb((byte)random.Next(1, 255), (byte)random.Next(1, 255), (byte)random.Next(1, 255));
+            }
+
+            int axisNumber = sbsArray.Max(e => e.DataPoints.Count);
+            string[] axisNames = sbsArray.Where(e => e.DataPoints.Count == axisNumber).SelectMany(e => e.DataPoints.Select(s => s.Label)).ToArray();
+            double maxValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.Y))?.Max() ?? 0;
+            double minValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.Y))?.Min() ?? 0;
 
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
@@ -544,6 +830,7 @@ namespace AMFramework.Views.Project_Map
                 parallaxPlot.Visibility = Visibility.Visible;
                 spyderPlot.Visibility = Visibility.Collapsed;
                 yAxisData.IsEnabled = false;
+                
             }
             else if (parallaxPlot.Visibility == Visibility.Visible)
             {
