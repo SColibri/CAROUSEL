@@ -31,7 +31,7 @@ namespace AMControls_Test
             //                           PLOTS
             // ------------------------------------------------------------
             enabledOptions.Add(typeof(ScatterExample), false);
-            enabledOptions.Add(typeof(ParallaxExample), false);
+            enabledOptions.Add(typeof(ParallaxExample), true);
             enabledOptions.Add(typeof(SpyderExample), true);
 
             // ------------------------------------------------------------

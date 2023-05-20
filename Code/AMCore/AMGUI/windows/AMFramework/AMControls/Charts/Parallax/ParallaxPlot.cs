@@ -265,7 +265,8 @@ namespace AMControls.Charts.Parallax
 
         public void Clear_Series()
         {
-            throw new NotImplementedException();
+            _dataSeries.Clear();
+            //throw new NotImplementedException();
         }
 
         public IDataPoint Get_Position(double x_mouse, double y_mouse)

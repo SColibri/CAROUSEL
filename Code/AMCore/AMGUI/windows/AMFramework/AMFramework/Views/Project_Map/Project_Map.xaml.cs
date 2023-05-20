@@ -243,6 +243,7 @@ namespace AMFramework.Views.Project_Map
             }
 
             SetSpyder();
+            SetParallax();
             ScatterBoxSeries[] sbsArray = new ScatterBoxSeries[_dataPlots.Count];
             for (int i = 0; i < _dataPlots.Count; i++)
             {
@@ -303,6 +304,69 @@ namespace AMFramework.Views.Project_Map
                 spyderPlot.InvalidateVisual();
             }));
 
+        }
+
+        // TODO: Example on data set for parallax, this is just a fast implementation, refactor please :')
+        private void SetParallax() 
+        {
+            
+            string[] uniqueHT = _dataPlots
+                .SelectMany(e => e.DataPoints)
+                .Select(e => e.Label)
+                .Distinct()
+                .ToArray();
+
+            string[] phaseNames = _dataPlots.Select(e => e.SeriesName).ToArray();
+
+            Random random = new();
+            ParallaxLineSeries[] sbsArray = new ParallaxLineSeries[uniqueHT.Length];
+
+            Dictionary<string, List<IDataPoint>> seriesData = new();
+            foreach (var item in uniqueHT)
+            {
+                List<IDataPoint> listy = new();
+
+                foreach (var phase in phaseNames) 
+                {
+                    IDataPoint? phaseValue = _dataPlots
+                        .Where(e => e.SeriesName == phase)
+                        .SelectMany(e => e.DataPoints)
+                        .Where(e => e.Label == item)
+                        .FirstOrDefault();
+
+                    listy.Add(phaseValue);
+                }
+
+                seriesData.Add(item, listy);
+            }
+
+            for (int i = 0; i < uniqueHT.Length; i++)
+            {
+
+                sbsArray[i] = new();
+                sbsArray[i].Label = uniqueHT[i];
+
+                List<IDataPoint> testy = seriesData[uniqueHT[i]];
+                for (int j = 0; j < phaseNames.Length; j++)
+                {
+                    testy[j].Label = phaseNames[j];
+                }
+
+                seriesData[uniqueHT[i]].ForEach(e => { sbsArray[i].Add_DataPoint(e); });
+                sbsArray[i].ColorSeries = Color.FromRgb((byte)random.Next(1, 255), (byte)random.Next(1, 255), (byte)random.Next(1, 255));
+            }
+
+            int axisNumber = sbsArray.Max(e => e.DataPoints.Count);
+            string[] axisNames = sbsArray.Where(e => e.DataPoints.Count == axisNumber).SelectMany(e => e.DataPoints.Select(s => s.Label)).ToArray();
+            double maxValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.X))?.Max() ?? 0;
+            double minValue = sbsArray.SelectMany(e => e.DataPoints.Select(s => s.X))?.Min() ?? 0;
+
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                parallaxPlot.Clear_Series();
+                sbsArray.Where(e => e.DataPoints.Count > 0).ForEach(e => parallaxPlot.Add_series(e));
+                parallaxPlot.InvalidateVisual();
+            }));
         }
 
         public void Select_Data()
@@ -471,11 +535,20 @@ namespace AMFramework.Views.Project_Map
             TH01.Start();
         }
 
+        // TODO: temporal solution for showing different charts
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             if (spyderPlot.Visibility == Visibility.Visible)
             {
+                Main_plot.Visibility = Visibility.Collapsed;
+                parallaxPlot.Visibility = Visibility.Visible;
+                spyderPlot.Visibility = Visibility.Collapsed;
+                yAxisData.IsEnabled = false;
+            }
+            else if (parallaxPlot.Visibility == Visibility.Visible)
+            {
                 Main_plot.Visibility = Visibility.Visible;
+                parallaxPlot.Visibility = Visibility.Collapsed;
                 spyderPlot.Visibility = Visibility.Collapsed;
                 yAxisData.IsEnabled = true;
             }
@@ -483,6 +556,7 @@ namespace AMFramework.Views.Project_Map
             {
                 Main_plot.Visibility = Visibility.Collapsed;
                 spyderPlot.Visibility = Visibility.Visible;
+                parallaxPlot.Visibility = Visibility.Collapsed;
                 yAxisData.IsEnabled = false;
             }
 

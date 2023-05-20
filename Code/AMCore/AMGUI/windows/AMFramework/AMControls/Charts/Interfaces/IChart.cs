@@ -46,7 +46,7 @@ namespace AMControls.Charts.Interfaces
         public List<IDataPoint> Search(string searchString);
 
         /// <summary>
-        /// Search reagion in datapoints
+        /// Search region in datapoints
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>

@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:AMFramework.Views.Project_Map"
              xmlns:AMPlot="clr-namespace:AMControls.Charts.Scatter;assembly=AMControls"
              xmlns:spyderPlot="clr-namespace:AMControls.Charts.Spyder;assembly=AMControls"
+             xmlns:parallax="clr-namespace:AMControls.Charts.Parallax;assembly=AMControls"
              xmlns:butt="clr-namespace:AMFramework.Components.Button" 
              d:DataContext="{d:DesignInstance Type=local:Project_Map}"
              mc:Ignorable="d" 
@@ -41,6 +42,10 @@
         <spyderPlot:SpyderPlot x:Name = "spyderPlot" Visibility="Collapsed">
             
         </spyderPlot:SpyderPlot>
+
+        <parallax:ParallaxPlot x:Name="parallaxPlot" Visibility="Collapsed">
+            
+        </parallax:ParallaxPlot>
         
         
         
