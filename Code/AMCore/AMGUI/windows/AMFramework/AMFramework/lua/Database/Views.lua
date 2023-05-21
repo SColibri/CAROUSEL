@@ -83,6 +83,13 @@ database_create_view("CREATE VIEW IF NOT EXISTS vd_ScheilSimulation AS "..
     "WHERE phaseFraction > 0 "..
     "ORDER BY ScheilPhaseFraction.IDCase, ScheilPhaseFraction.IDPhase, ScheilPhaseFraction.Temperature;")
 
+-- Creates view that groups phases and cases by solidification temperature (lowest temp available)
+database_create_view("DROP VIEW IF EXISTS v_scheil_solidification; "..
+    "CREATE VIEW IF NOT EXISTS v_scheil_solidification AS "..
+    "SELECT phaseFraction, phaseName, IDCase, IDPhase, IDProject, MIN(Temperature) AS solidification_temperature "..
+    "FROM vd_ScheilSimulation "..
+    "GROUP BY IDCase, phaseName; ")
+
 -----------------------------------------------------------------------------------------------------------------------
 --												EQUILIBRIUM SIMULATIONS
 -----------------------------------------------------------------------------------------------------------------------

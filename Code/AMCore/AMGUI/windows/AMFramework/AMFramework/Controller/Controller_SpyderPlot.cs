@@ -33,6 +33,8 @@ namespace AMFramework.Controller
             // Get list of phases
             if (_projectController.SelectedProject != null)
                 PhaseList = ControllerM_Phase.UniquePhasesByIDProject(_comm, _projectController.SelectedProject.MCObject.ModelObject.ID);
+
+            CreatePlot();
         }
         #endregion
 

@@ -302,6 +302,21 @@ namespace AMFramework.Controller
             return Result;
         }
 
+        /// <summary>
+        /// Scheil solidification data
+        /// </summary>
+        /// <returns></returns>
+        public IDataPlot GetScheilSolidificationPlotData(int IDProject)
+        {
+            IDataPlot Result = new DataPlot_ScheilSimulation(_AMCore_Socket);
+            Result.X_Data_Option(0);
+            Result.Y_Data_Option(1);
+            ((DataPlot_ScheilSimulation)Result).WhereClause = $" IDProject = {IDProject} ";
+            Result.SeriesName = "All available data";
+
+            return Result;
+        }
+
         public void Find_DataPoint(int IDProject, int IDCase, int IDHT)
         {
             //_projectController.TreeIDCase = IDCase;
