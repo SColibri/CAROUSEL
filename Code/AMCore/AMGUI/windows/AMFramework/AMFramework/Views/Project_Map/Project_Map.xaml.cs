@@ -262,7 +262,6 @@ namespace AMFramework.Views.Project_Map
             // Get all phase names
             _phaseNames = _dataPlots.Select(e => e.SeriesName).ToArray();
 
-
             // Get data sorted by Phase
             foreach (var item in _dataPlots)
             {
@@ -327,6 +326,8 @@ namespace AMFramework.Views.Project_Map
                     _sortedData.Add(item, listy);
                 }
             }
+
+
         }
 
         public void Refresh_Data()
@@ -525,6 +526,7 @@ namespace AMFramework.Views.Project_Map
                 List<IDataPoint> testy = _sortedData[_htNames[i]];
                 for (int j = 0; j < _phaseNames.Length; j++)
                 {
+                    if (testy[j] == null) testy[j] = new DataPoint();
                     testy[j].Label = _phaseNames[j];
                 }
 
