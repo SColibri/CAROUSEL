@@ -3,6 +3,7 @@ using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace AMFramework.Controller
@@ -66,11 +67,11 @@ namespace AMFramework.Controller
             {
                 ID = Convert.ToInt32(DataRaw[0]),
                 IDCase = Convert.ToInt32(DataRaw[1]),
-                StartTemperature = Convert.ToDouble(DataRaw[2]),
-                EndTemperature = Convert.ToDouble(DataRaw[3]),
-                StepSize = Convert.ToDouble(DataRaw[4]),
+                StartTemperature = Convert.ToDouble(DataRaw[2], CultureInfo.InvariantCulture),
+                EndTemperature = Convert.ToDouble(DataRaw[3], CultureInfo.InvariantCulture),
+                StepSize = Convert.ToDouble(DataRaw[4], CultureInfo.InvariantCulture),
                 DependentPhase = Convert.ToInt32(DataRaw[5]),
-                MinLiquidFraction = Convert.ToDouble(DataRaw[6]),
+                MinLiquidFraction = Convert.ToDouble(DataRaw[6], CultureInfo.InvariantCulture),
                 DependentPhaseName = DataRaw[7]
             };
             return modely;

@@ -3,6 +3,7 @@ using AMFramework_Lib.Core;
 using AMFramework_Lib.Model;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace AMFramework.Controller
@@ -48,10 +49,10 @@ namespace AMFramework.Controller
                 ID = Convert.ToInt32(DataRaw[0]),
                 IDPrecipitationPhase = Convert.ToInt32(DataRaw[1]),
                 IDHeatTreatment = Convert.ToInt32(DataRaw[2]),
-                Time = Convert.ToDouble(DataRaw[3]),
-                PhaseFraction = Convert.ToDouble(DataRaw[4]),
-                NumberDensity = Convert.ToDouble(DataRaw[5]),
-                MeanRadius = Convert.ToDouble(DataRaw[6]),
+                Time = Convert.ToDouble(DataRaw[3], CultureInfo.InvariantCulture),
+                PhaseFraction = Convert.ToDouble(DataRaw[4], CultureInfo.InvariantCulture),
+                NumberDensity = Convert.ToDouble(DataRaw[5], CultureInfo.InvariantCulture),
+                MeanRadius = Convert.ToDouble(DataRaw[6], CultureInfo.InvariantCulture),
                 PrecipitationName = DataRaw[7]
             };
 

@@ -3,6 +3,7 @@ using AMFramework_Lib.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 
 namespace AMFramework.Controller
@@ -54,9 +55,9 @@ namespace AMFramework.Controller
             Model_HeatTreatmentProfile modely = new()
             {
                 ID = Convert.ToInt32(DataRaw[0]),
-                IDHeatTreatment = (int)Convert.ToDouble(DataRaw[1]),
-                Time = Convert.ToDouble(DataRaw[2]),
-                Temperature = Convert.ToDouble(DataRaw[3])
+                IDHeatTreatment = (int)Convert.ToDouble(DataRaw[1], CultureInfo.InvariantCulture),
+                Time = Convert.ToDouble(DataRaw[2], CultureInfo.InvariantCulture),
+                Temperature = Convert.ToDouble(DataRaw[3], CultureInfo.InvariantCulture)
             };
 
             return modely;

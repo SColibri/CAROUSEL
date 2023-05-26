@@ -5,6 +5,7 @@ using AMFramework.Components.Charting.Interfaces;
 using AMFramework_Lib.Core;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace AMFramework.Components.Charting.DataPlot
@@ -163,9 +164,9 @@ namespace AMFramework.Components.Charting.DataPlot
             {
                 IDataPoint tempObject = new DataPoint();
 
-                if (xIndex > -1) { tempObject.X = Convert.ToDouble(cells[xIndex]); }
-                if (yIndex > -1) { tempObject.Y = Convert.ToDouble(cells[yIndex]); }
-                if (zIndex > -1) { tempObject.Z = Convert.ToDouble(cells[zIndex]); }
+                if (xIndex > -1) { tempObject.X = Convert.ToDouble(cells[xIndex], CultureInfo.InvariantCulture); }
+                if (yIndex > -1) { tempObject.Y = Convert.ToDouble(cells[yIndex], CultureInfo.InvariantCulture); }
+                if (zIndex > -1) { tempObject.Z = Convert.ToDouble(cells[zIndex], CultureInfo.InvariantCulture); }
 
                 tempObject.ContextMenu = new DataPoint_ProjectViewContextMenu(cells, cells[9]);
                 tempObject.Label = cells[9];
